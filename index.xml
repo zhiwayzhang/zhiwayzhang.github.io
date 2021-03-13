@@ -35,7 +35,14 @@ git submodule add https://github.com/CaiJimmy/hugo-theme-stack/ themes/hugo-them
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;之后可以通过打开&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;localhost:1313&lt;/a&gt;来进行预览&lt;/p&gt;
 &lt;h2 id=&#34;部署到github仓库&#34;&gt;部署到GitHub仓库&lt;/h2&gt;
-</description>
+&lt;pre&gt;&lt;code&gt;hugo -D
+cd public
+git init
+git add .
+git commit -m &amp;quot;first commit&amp;quot;
+git remote add origin https://github.com/yourname/yourname.github.io
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;</description>
         </item>
         
     </channel>

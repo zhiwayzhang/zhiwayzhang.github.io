@@ -6,7 +6,23 @@
         <description>Recent content on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 13 Mar 2021 23:28:31 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 14 Mar 2021 20:50:48 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Katex测试及其语法总结</title>
+        <link>https://ez4zzw.github.io/p/katex%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%85%B6%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/</link>
+        <pubDate>Sun, 14 Mar 2021 20:50:48 +0800</pubDate>
+        
+        <guid>https://ez4zzw.github.io/p/katex%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%85%B6%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/</guid>
+        <description>&lt;p&gt;文章总结自KaTex Support
+待更新&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://katex.org/docs/supported.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;KATEX Support&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;KATEX测试
+$$
+\frac{\sum_{i=1}^Nf(x_i)}{\int_1^\infin \frac{1}{e^x}}
+$$&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>博客迁移记录</title>
         <link>https://ez4zzw.github.io/p/%E5%8D%9A%E5%AE%A2%E8%BF%81%E7%A7%BB%E8%AE%B0%E5%BD%95/</link>
         <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>

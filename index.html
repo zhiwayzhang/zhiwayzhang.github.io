@@ -162,6 +162,182 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/07/26/localhost/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/26/localhost/" class="post-title-link" itemprop="url">127.0.0.1,localhost和0.0.0.0暨🐼一次两次的神神秘秘的debug记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-07-26 22:23:38 / Modified: 23:29:20" itemprop="dateCreated datePublished" datetime="2021-07-26T22:23:38+08:00">2021-07-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index"><span itemprop="name">Tech</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/07/26/localhost/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/07/26/localhost/" class="cy_cmt_count" data-xid="2021/07/26/localhost/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h1><p>潘达某天在本机docker部署了他的服务，但是发现无论如何都无法ping通，他冥(疯)思(狂)苦(谷)想(歌)，逛遍了GitHub上的各种issues，stack overflow上的各种回答，各种博客文章，都没有解决他的问题，直到他的mentor来到他的电脑前，一通命令猛如虎啊，发现他竟然在docker内监听了容器中的<code>127.0.0.1</code>的端口，那必然会访问不到，检查发现原来是在服务的config中写了magic number，让服务开在了<code>127.0.0.1</code>，在本地这样必然是没问题的，但是如果要与外部进行通信，那就要改成<code>0.0.0.0</code>了。</p>
+<p>又是一天，潘达又部署起了他的rpc服务，想在服务器上部署一个微服务然后本机去访问，测试框架是否可以通过域名通信各个微服务，然而，服务器上启动成功，本地依然迟迟无法连接，上来就是一个<code>curl: (7) Failed to connect to ababab.ababab port ababa: Connection refused</code>，安全组也放行了对应的端口，然后他看到了一行<code>127.0.0.1</code>，但是他感觉不是这个问题，继续debug，然后再次呼叫他的mentor，希望得到帮助，还是一顿操作猛如虎，找到了那个<code>127.0.0.1</code>的监听服务，乐。</p>
+<p>于是，这篇blog就诞生了。<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/WhQRUK"><img src="https://z3.ax1x.com/2021/07/26/WhQRUK.png" alt="WhQRUK.png"></a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/07/26/localhost/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/07/12/golanddebugger/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/07/12/golanddebugger/" class="post-title-link" itemprop="url">M1 Mac生产环境搭建-Goland Debug功能配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-07-12 20:23:06 / Modified: 20:24:23" itemprop="dateCreated datePublished" datetime="2021-07-12T20:23:06+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/07/12/golanddebugger/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/07/12/golanddebugger/" class="cy_cmt_count" data-xid="2021/07/12/golanddebugger/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/07/02/bilibili/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -328,79 +504,6 @@
       
           <h1 id="SVM简介"><a href="#SVM简介" class="headerlink" title="SVM简介"></a>SVM简介</h1><p>SVM(支持向量机，Support Vector Machine),是在分类与回归分析中分析数据的监督式学习模型与相关的学习算法。给定一组训练实例，每个训练实例被标记为属于两个类别中的一个或另一个，SVM训练算法创建一个将新的实例分配给两个类别之一的模型，使其成为非概率二元线性分类器。SVM模型是将实例表示为空间中的点，这样映射就使得单独类别的实例被尽可能宽的明显的间隔分开。然后，将新的实例映射到同一空间，并基于它们落在间隔的哪一侧来预测所属类别。除了进行线性分类之外，SVM还可以使用所谓的核技巧有效地进行非线性分类，将其输入隐式映射到高维特征空间中。</p>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/06/01/ojnote/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/01/ojnote/" class="post-title-link" itemprop="url">ojnote</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-06-01 13:15:40" itemprop="dateCreated datePublished" datetime="2021-06-01T13:15:40+08:00">2021-06-01</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/06/01/ojnote/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/06/01/ojnote/" class="cy_cmt_count" data-xid="2021/06/01/ojnote/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
       
     </div>
 
@@ -943,7 +1046,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-04-04 10:34:27" itemprop="dateModified" datetime="2021-04-04T10:34:27+08:00">2021-04-04</time>
+                <time title="Modified: 2021-07-26 23:32:07" itemprop="dateModified" datetime="2021-07-26T23:32:07+08:00">2021-07-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -986,97 +1089,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/04/03/debugnote/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/02/GitNote/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/02/GitNote/" class="post-title-link" itemprop="url">Git学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-04-02 22:33:25 / Modified: 23:26:31" itemprop="dateCreated datePublished" datetime="2021-04-02T22:33:25+08:00">2021-04-02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/02/GitNote/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/02/GitNote/" class="cy_cmt_count" data-xid="2021/04/02/GitNote/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/02/GitNote/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -1167,20 +1179,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

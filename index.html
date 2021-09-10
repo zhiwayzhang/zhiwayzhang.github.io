@@ -162,6 +162,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/09/10/sklearn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/09/10/sklearn/" class="post-title-link" itemprop="url">M1 Mac搭建Python机器学习环境的糟心精力</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-09-10 17:21:44 / Modified: 23:08:41" itemprop="dateCreated datePublished" datetime="2021-09-10T17:21:44+08:00">2021-09-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/09/10/sklearn/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/09/10/sklearn/" class="cy_cmt_count" data-xid="2021/09/10/sklearn/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前前前世我也有个能用的环境"><a href="#前前前世我也有个能用的环境" class="headerlink" title="前前前世我也有个能用的环境"></a>前前前世我也有个能用的环境</h1><p>自从🐼配上了M1的MacBook，便马上配置了平日里干活需要的环境，什么go啊，python啊，各种开发工具也是一个不差，从macOS独享的Xcode到JB全家桶，再到vim和vs code，直接从工具层面把咱的电脑给武装起来了，虽说咱们arm架构对于开发工具的支持还不完善，得亏各个厂商的积极适配还有🍎的Rosetta2，使用体验也是很不错的。</p>
+<p>学python啊，为了方便管理依赖，通常使用conda环境，于是便轻轻松松装好了conda，装上了常用的一些依赖，本地的环境也算是一个能用的状态了，除了tensorflow这些库装不上之外，常用的库都能成功安装。</p>
+<h1 id="然而有一天我手贱删除了他"><a href="#然而有一天我手贱删除了他" class="headerlink" title="然而有一天我手贱删除了他"></a>然而有一天我手贱删除了他</h1><p>conda虽然方便，但是本地一共用好多python的环境，一个系统默认的，一个brew安装的，一个conda，一个python官方包，就想精简一下，conda由于使用的是非官方源，可用性上自然有一些查，于是果断删除了conda的环境，只留下了python的官方包和系统包。</p>
+<p>如果再问我为什么要删除conda环境，我只能说非常的后悔。就像好不容易选上了很好的公选课然后又手贱退掉了它一样吧。</p>
+<h1 id="结果再装回来的时候给我整懵了"><a href="#结果再装回来的时候给我整懵了" class="headerlink" title="结果再装回来的时候给我整懵了"></a>结果再装回来的时候给我整懵了</h1><p>python官方的版本自然是很不错的，一个最大的问题就是sklearn包装不上，去查了官方文档，结果官方直接去让安装conda环境再去安装scikit-learn，重新安装conda后，按照常规步骤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">conda install numpy</span><br><span class="line">conda install pandas</span><br><span class="line">conda install scikit-learn</span><br></pre></td></tr></table></figure>
+<p>结果在<code>import sklearn</code>的时候，发现了报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Original error was: dlopen(&#x2F;Users&#x2F;brodzik&#x2F;miniconda3&#x2F;envs&#x2F;numpy&#x2F;lib&#x2F;python3.6&#x2F;site-packages&#x2F;numpy&#x2F;core&#x2F;_multiarray_umath.cpython-36m-darwin.so, 2): Library not loaded: @rpath&#x2F;libgfortran.3.dylib</span><br><span class="line">Referenced from: &#x2F;Users&#x2F;brodzik&#x2F;miniconda3&#x2F;envs&#x2F;numpy&#x2F;lib&#x2F;libopenblas.dylib</span><br><span class="line">Reason: image not found</span><br></pre></td></tr></table></figure>
+<p>一看就是numpy出了问题</p>
+<h1 id="好歹最后问题解决了"><a href="#好歹最后问题解决了" class="headerlink" title="好歹最后问题解决了"></a>好歹最后问题解决了</h1><p>通过查找，在GitHub社区numpy仓库的issues中找到了答案。<br><a target="_blank" rel="noopener" href="https://github.com/numpy/numpy/issues/12970">On Mac OS X, import numpy complaining about “Library not loaded: @rpath/libgfortran.3.dylib” #12970</a><br>在最后一个同学的回复中<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/hvfTpR"><img src="https://z3.ax1x.com/2021/09/10/hvfTpR.md.png" alt="hvfTpR.md.png"></a></p>
+<p>使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install openblas</span><br></pre></td></tr></table></figure>
+<p>然后重新安装numpy包</p>
+<p>问题成功解决</p>
+<h1 id="写在最后的杂谈"><a href="#写在最后的杂谈" class="headerlink" title="写在最后的杂谈"></a>写在最后的杂谈</h1><p>M1是否真的是苹果对于笔记本电脑现状的一场革命呢？arm架构下的精简指令集，带来的是客观的性能提升以及5nm工艺带来的超低功耗，伴随着这些优点的则是软件层面的适配问题，Rosetta 2虽然是一个很好的解决方案，但是初衷是在厂商来不及进行新架构芯片适配时的过渡方案，我恰恰担心就像Linux有wine的存在，导致个别厂商直接对Linux系统上的软件适配问题不管不顾（仅限办公所需），是一种对Linux软件生态的繁荣，也是一场毁灭，就像有conda或者Rosetta 2这样的工具存在，使得一些软件不去跟进适配，当然是否去适配也是开发者自己去决定的事情，只是为了arm架构能真的走向成熟，每个人的努力都是不可或缺的。不再因为软件层面上的适配问题去耗费精力。</p>
+<p>也是因为有🍎这样的公司，才有能力去带动这场变革，希望能在M1X/M2上看到更多可能。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/07/26/localhost/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1011,103 +1110,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/03/debugnote/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/03/debugnote/" class="post-title-link" itemprop="url">OJ部署debug记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-04-03 22:22:14" itemprop="dateCreated datePublished" datetime="2021-04-03T22:22:14+08:00">2021-04-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-26 23:32:07" itemprop="dateModified" datetime="2021-07-26T23:32:07+08:00">2021-07-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/03/debugnote/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/03/debugnote/" class="cy_cmt_count" data-xid="2021/04/03/debugnote/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/03/debugnote/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1179,7 +1181,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1192,7 +1194,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

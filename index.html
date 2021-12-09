@@ -162,7 +162,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/09/10/sklearn/">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/09/csapp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -176,7 +176,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/09/10/sklearn/" class="post-title-link" itemprop="url">M1 Mac搭建Python机器学习环境的糟心精力</a>
+            <a href="/2021/12/09/csapp/" class="post-title-link" itemprop="url">操作系统</a>
         </h2>
 
         <div class="post-meta">
@@ -187,7 +187,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-09-10 17:21:44 / Modified: 23:08:41" itemprop="dateCreated datePublished" datetime="2021-09-10T17:21:44+08:00">2021-09-10</time>
+              <time title="Created: 2021-12-09 19:58:54 / Modified: 20:45:46" itemprop="dateCreated datePublished" datetime="2021-12-09T19:58:54+08:00">2021-12-09</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -195,7 +195,7 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
                 </span>
             </span>
 
@@ -209,8 +209,8 @@
       <span class="post-meta-item-text">Changyan: </span>
     
     
-      <a title="changyan" href="/2021/09/10/sklearn/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/09/10/sklearn/" class="cy_cmt_count" data-xid="2021/09/10/sklearn/" itemprop="commentCount"></span>
+      <a title="changyan" href="/2021/12/09/csapp/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/12/09/csapp/" class="cy_cmt_count" data-xid="2021/12/09/csapp/" itemprop="commentCount"></span>
       </a>
     
   </span>
@@ -226,22 +226,47 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="前前前世我也有个能用的环境"><a href="#前前前世我也有个能用的环境" class="headerlink" title="前前前世我也有个能用的环境"></a>前前前世我也有个能用的环境</h1><p>自从🐼配上了M1的MacBook，便马上配置了平日里干活需要的环境，什么go啊，python啊，各种开发工具也是一个不差，从macOS独享的Xcode到JB全家桶，再到vim和vs code，直接从工具层面把咱的电脑给武装起来了，虽说咱们arm架构对于开发工具的支持还不完善，得亏各个厂商的积极适配还有🍎的Rosetta2，使用体验也是很不错的。</p>
-<p>学python啊，为了方便管理依赖，通常使用conda环境，于是便轻轻松松装好了conda，装上了常用的一些依赖，本地的环境也算是一个能用的状态了，除了tensorflow这些库装不上之外，常用的库都能成功安装。</p>
-<h1 id="然而有一天我手贱删除了他"><a href="#然而有一天我手贱删除了他" class="headerlink" title="然而有一天我手贱删除了他"></a>然而有一天我手贱删除了他</h1><p>conda虽然方便，但是本地一共用好多python的环境，一个系统默认的，一个brew安装的，一个conda，一个python官方包，就想精简一下，conda由于使用的是非官方源，可用性上自然有一些查，于是果断删除了conda的环境，只留下了python的官方包和系统包。</p>
-<p>如果再问我为什么要删除conda环境，我只能说非常的后悔。就像好不容易选上了很好的公选课然后又手贱退掉了它一样吧。</p>
-<h1 id="结果再装回来的时候给我整懵了"><a href="#结果再装回来的时候给我整懵了" class="headerlink" title="结果再装回来的时候给我整懵了"></a>结果再装回来的时候给我整懵了</h1><p>python官方的版本自然是很不错的，一个最大的问题就是sklearn包装不上，去查了官方文档，结果官方直接去让安装conda环境再去安装scikit-learn，重新安装conda后，按照常规步骤</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">conda install numpy</span><br><span class="line">conda install pandas</span><br><span class="line">conda install scikit-learn</span><br></pre></td></tr></table></figure>
-<p>结果在<code>import sklearn</code>的时候，发现了报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Original error was: dlopen(&#x2F;Users&#x2F;brodzik&#x2F;miniconda3&#x2F;envs&#x2F;numpy&#x2F;lib&#x2F;python3.6&#x2F;site-packages&#x2F;numpy&#x2F;core&#x2F;_multiarray_umath.cpython-36m-darwin.so, 2): Library not loaded: @rpath&#x2F;libgfortran.3.dylib</span><br><span class="line">Referenced from: &#x2F;Users&#x2F;brodzik&#x2F;miniconda3&#x2F;envs&#x2F;numpy&#x2F;lib&#x2F;libopenblas.dylib</span><br><span class="line">Reason: image not found</span><br></pre></td></tr></table></figure>
-<p>一看就是numpy出了问题</p>
-<h1 id="好歹最后问题解决了"><a href="#好歹最后问题解决了" class="headerlink" title="好歹最后问题解决了"></a>好歹最后问题解决了</h1><p>通过查找，在GitHub社区numpy仓库的issues中找到了答案。<br><a target="_blank" rel="noopener" href="https://github.com/numpy/numpy/issues/12970">On Mac OS X, import numpy complaining about “Library not loaded: @rpath/libgfortran.3.dylib” #12970</a><br>在最后一个同学的回复中<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/hvfTpR"><img src="https://z3.ax1x.com/2021/09/10/hvfTpR.md.png" alt="hvfTpR.md.png"></a></p>
-<p>使用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install openblas</span><br></pre></td></tr></table></figure>
-<p>然后重新安装numpy包</p>
-<p>问题成功解决</p>
-<h1 id="写在最后的杂谈"><a href="#写在最后的杂谈" class="headerlink" title="写在最后的杂谈"></a>写在最后的杂谈</h1><p>M1是否真的是苹果对于笔记本电脑现状的一场革命呢？arm架构下的精简指令集，带来的是客观的性能提升以及5nm工艺带来的超低功耗，伴随着这些优点的则是软件层面的适配问题，Rosetta 2虽然是一个很好的解决方案，但是初衷是在厂商来不及进行新架构芯片适配时的过渡方案，我恰恰担心就像Linux有wine的存在，导致个别厂商直接对Linux系统上的软件适配问题不管不顾（仅限办公所需），是一种对Linux软件生态的繁荣，也是一场毁灭，就像有conda或者Rosetta 2这样的工具存在，使得一些软件不去跟进适配，当然是否去适配也是开发者自己去决定的事情，只是为了arm架构能真的走向成熟，每个人的努力都是不可或缺的。不再因为软件层面上的适配问题去耗费精力。</p>
-<p>也是因为有🍎这样的公司，才有能力去带动这场变革，希望能在M1X/M2上看到更多可能。</p>
+          <p>CSAPP读书笔记</p>
+<h1 id="Ch1"><a href="#Ch1" class="headerlink" title="Ch1"></a>Ch1</h1><p>源程序 -&gt; 预处理器 (cpp) —hello.i—&gt; 编译器(ccl) —–hello.s—–&gt; 汇编器(as) —-hello.o(binary) with printf.o—&gt; 连接器 ——-&gt; 可执行二进制文件</p>
+<ul>
+<li><p>主存：临时存储设备 DRAM组成 </p>
+</li>
+<li><p>进程：并发执行多个进程-上下文切换</p>
+</li>
+</ul>
+<p>进程运行所需的所有状态信息 <strong>上下文</strong></p>
+<p>例如：PC和寄存器文件的当前值，主存的内容    </p>
+<ul>
+<li><p>并发执行 ：一个进程的指令和另一个进程的指令交错执行</p>
+</li>
+<li><p>线程：进程是由多个线程的执行单元组成 ，运行在进程的上下文中，共享同样的代码和全局数据</p>
+</li>
+</ul>
+<p>多线程共享数据比多进程容易</p>
+<ul>
+<li><p>虚拟内存：对于进程，提供虚拟地址空间</p>
+<p>包含 程序代码和数据，堆malloc 和free，共享库so，栈，内核虚拟内存为内核保留，不允许应用程序读写这个区域</p>
+<p>基本思想：一个进程虚拟内存的内容存储在磁盘，利用主存座位磁盘的高速缓存</p>
+</li>
+<li><p>并发和并行：</p>
+<ul>
+<li>并发：同时具有多个活动的系统</li>
+<li>并行：用并发是一个系统运行的更快</li>
+<li>线程级并发：在一个进程中执行多个控制流</li>
+<li>指令级并行：流水线技术</li>
+<li>单指令，多数据并行 SIMD并行</li>
+</ul>
+</li>
+<li><p>操作系统的抽象：</p>
+<ul>
+<li>文件是对I/O设备的抽象</li>
+<li>虚拟内存是对主存和磁盘的抽象</li>
+<li>进程是对处理器，主存和IO设备的抽象</li>
+</ul>
+</li>
+<li><p>网络可以看做一种IO设备</p>
+</li>
+</ul>
 
       
     </div>
@@ -354,89 +379,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/07/12/golanddebugger/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/07/12/golanddebugger/" class="post-title-link" itemprop="url">M1 Mac生产环境搭建-Goland Debug功能配置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-07-12 20:23:06 / Modified: 20:24:23" itemprop="dateCreated datePublished" datetime="2021-07-12T20:23:06+08:00">2021-07-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/07/12/golanddebugger/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/07/12/golanddebugger/" class="cy_cmt_count" data-xid="2021/07/12/golanddebugger/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/07/02/bilibili/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -519,90 +461,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/06/01/svm/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/01/svm/" class="post-title-link" itemprop="url">SVM详解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-06-01 16:38:04 / Modified: 18:50:43" itemprop="dateCreated datePublished" datetime="2021-06-01T16:38:04+08:00">2021-06-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/06/01/svm/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/06/01/svm/" class="cy_cmt_count" data-xid="2021/06/01/svm/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="SVM简介"><a href="#SVM简介" class="headerlink" title="SVM简介"></a>SVM简介</h1><p>SVM(支持向量机，Support Vector Machine),是在分类与回归分析中分析数据的监督式学习模型与相关的学习算法。给定一组训练实例，每个训练实例被标记为属于两个类别中的一个或另一个，SVM训练算法创建一个将新的实例分配给两个类别之一的模型，使其成为非概率二元线性分类器。SVM模型是将实例表示为空间中的点，这样映射就使得单独类别的实例被尽可能宽的明显的间隔分开。然后，将新的实例映射到同一空间，并基于它们落在间隔的哪一侧来预测所属类别。除了进行线性分类之外，SVM还可以使用所谓的核技巧有效地进行非线性分类，将其输入隐式映射到高维特征空间中。</p>
-
       
     </div>
 
@@ -1110,6 +968,194 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/03/debugnote/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/03/debugnote/" class="post-title-link" itemprop="url">OJ部署debug记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-04-03 22:22:14" itemprop="dateCreated datePublished" datetime="2021-04-03T22:22:14+08:00">2021-04-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-26 23:32:07" itemprop="dateModified" datetime="2021-07-26T23:32:07+08:00">2021-07-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/04/03/debugnote/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/04/03/debugnote/" class="cy_cmt_count" data-xid="2021/04/03/debugnote/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/03/debugnote/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/02/GitNote/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/02/GitNote/" class="post-title-link" itemprop="url">Git学习笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-04-02 22:33:25 / Modified: 23:26:31" itemprop="dateCreated datePublished" datetime="2021-04-02T22:33:25+08:00">2021-04-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/04/02/GitNote/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/04/02/GitNote/" class="cy_cmt_count" data-xid="2021/04/02/GitNote/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/02/GitNote/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -1181,20 +1227,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

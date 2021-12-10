@@ -162,6 +162,93 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/10/luckynumber/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/10/luckynumber/" class="post-title-link" itemprop="url">【算法题】幸运数字</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-12-10 12:46:33 / Modified: 12:51:05" itemprop="dateCreated datePublished" datetime="2021-12-10T12:46:33+08:00">2021-12-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/12/10/luckynumber/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/12/10/luckynumber/" class="cy_cmt_count" data-xid="2021/12/10/luckynumber/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>给定一个数字N，给定一个数字的集合，使用集合里的数字构造出小于数字N的最大数。</p>
+<p>如N = 23131，集合为{2, 4, 9}</p>
+<p>则构造出22999</p>
+<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>分两种情况讨论，构造的数字长度和N一样，或者比N少一位，若长度一样，则是从头开始按照比数字N小的数构造，若长度少一位可以直接用集合中的最大数填满。</p>
+<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MAXN = <span class="number">1e5</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MOD = <span class="number">1e9</span>+<span class="number">7</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="comment">// 23131</span></span><br><span class="line"><span class="comment">// 2 4 9</span></span><br><span class="line"><span class="comment">// 22999</span></span><br><span class="line"><span class="comment">// 229</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// 22</span></span><br><span class="line"><span class="keyword">int</span> N, x;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line"><span class="keyword">int</span> maxv = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; N;</span><br><span class="line">    v.clear();</span><br><span class="line">    nums.clear();</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; x) &#123;</span><br><span class="line">        v.push_back(x);</span><br><span class="line">        maxv = max(maxv, x);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> temp = N;</span><br><span class="line">    <span class="keyword">int</span> setNumber = v.size();</span><br><span class="line">    sort(v.begin(), v.end());</span><br><span class="line">    <span class="keyword">while</span> (temp) &#123;</span><br><span class="line">        nums.push_back(temp % <span class="number">10</span>);</span><br><span class="line">        temp /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    reverse(nums.begin(), nums.end());</span><br><span class="line">    <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">bool</span> done = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.size(); i++) &#123;</span><br><span class="line">        number = number*<span class="number">10</span> + nums[i];</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;number = &quot;</span> &lt;&lt; number &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">bool</span> find = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = setNumber - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (v[j] &lt;= number) &#123;</span><br><span class="line">                ans = ans*<span class="number">10</span> + v[j];</span><br><span class="line">                find = <span class="literal">true</span>;</span><br><span class="line">                number -= v[j];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!find) &#123;</span><br><span class="line">            done = <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;size &quot;</span> &lt;&lt; nums.size() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">if</span> (!done) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.size() - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; maxv;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/09/leetcode-179/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -185,10 +272,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-12-09 21:22:30 / Modified: 21:31:46" itemprop="dateCreated datePublished" datetime="2021-12-09T21:22:30+08:00">2021-12-09</time>
+              <time title="Created: 2021-12-09 21:22:30" itemprop="dateCreated datePublished" datetime="2021-12-09T21:22:30+08:00">2021-12-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-12-10 12:47:41" itemprop="dateModified" datetime="2021-12-10T12:47:41+08:00">2021-12-10</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -237,7 +330,7 @@
 </ul>
 <p>注意数字全为0的情况</p>
 <p>sort里用lambda很香</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">largestNumber</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; nums_str;</span><br><span class="line">        <span class="keyword">bool</span> zero_flag = <span class="literal">false</span>;</span><br><span class="line">        nums_str.clear();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> num : nums) &#123;</span><br><span class="line">            <span class="keyword">if</span> (num != <span class="number">0</span>) zero_flag = <span class="literal">true</span>;</span><br><span class="line">            nums_str.push_back(to_string(num));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!zero_flag) <span class="keyword">return</span> <span class="string">&quot;0&quot;</span>;</span><br><span class="line">        sort(nums_str.begin(), nums_str.end(), [](<span class="keyword">const</span> <span class="built_in">string</span> &amp;a, <span class="keyword">const</span> <span class="built_in">string</span> &amp;b) -&gt; <span class="keyword">bool</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (a[<span class="number">0</span>] != b[<span class="number">0</span>]) &#123;</span><br><span class="line">                <span class="keyword">return</span> a[<span class="number">0</span>] &gt; b[<span class="number">0</span>];</span><br><span class="line">            &#125; </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; min(a.size(), b.size()); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a[i] == b[i]) <span class="keyword">continue</span>;</span><br><span class="line">                <span class="keyword">return</span> a[i] &gt; b[i];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> a + b &gt; b + a;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">string</span> ans = <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> str : nums_str) &#123;</span><br><span class="line">            ans += str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">largestNumber</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; nums_str;</span><br><span class="line">        <span class="keyword">bool</span> zero_flag = <span class="literal">false</span>;</span><br><span class="line">        nums_str.clear();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> num : nums) &#123;</span><br><span class="line">            <span class="keyword">if</span> (num != <span class="number">0</span>) zero_flag = <span class="literal">true</span>;</span><br><span class="line">            nums_str.push_back(to_string(num));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!zero_flag) <span class="keyword">return</span> <span class="string">&quot;0&quot;</span>;</span><br><span class="line">        sort(nums_str.begin(), nums_str.end(), [](<span class="keyword">const</span> <span class="built_in">string</span> &amp;a, <span class="keyword">const</span> <span class="built_in">string</span> &amp;b) -&gt; <span class="keyword">bool</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (a[<span class="number">0</span>] != b[<span class="number">0</span>]) &#123;</span><br><span class="line">                <span class="keyword">return</span> a[<span class="number">0</span>] &gt; b[<span class="number">0</span>];</span><br><span class="line">            &#125; </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; min(a.size(), b.size()); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a[i] == b[i]) <span class="keyword">continue</span>;</span><br><span class="line">                <span class="keyword">return</span> a[i] &gt; b[i];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> a + b &gt; b + a;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">string</span> ans = <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> str : nums_str) &#123;</span><br><span class="line">            ans += str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -1062,103 +1155,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/03/debugnote/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/03/debugnote/" class="post-title-link" itemprop="url">OJ部署debug记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-04-03 22:22:14" itemprop="dateCreated datePublished" datetime="2021-04-03T22:22:14+08:00">2021-04-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-26 23:32:07" itemprop="dateModified" datetime="2021-07-26T23:32:07+08:00">2021-07-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/03/debugnote/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/03/debugnote/" class="cy_cmt_count" data-xid="2021/04/03/debugnote/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/03/debugnote/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1230,7 +1226,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1243,7 +1239,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

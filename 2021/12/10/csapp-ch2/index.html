@@ -20,19 +20,20 @@
     var CONFIG = {"hostname":"ez4zzw.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Web开发者Learning and Sharing">
-<meta property="og:type" content="website">
-<meta property="og:title" content="About🐼">
-<meta property="og:url" content="https://ez4zzw.github.io/about/index.html">
+  <meta name="description" content="信息存储最小可寻址内存单位 -字节byte 一般为8位的块 内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识 地址的集合为虚拟地址空间 虚拟内存中包含程序的数据，指令，控制信息 十六进制表示跳 字数据大小字长为数据标称大小 字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $$2^w-1$$] 最多访问$$2^w$$个字节 32位和64位 gcc -m32可以编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【操作系统】信息的表示和处理">
+<meta property="og:url" content="https://ez4zzw.github.io/2021/12/10/csapp-ch2/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="Web开发者Learning and Sharing">
+<meta property="og:description" content="信息存储最小可寻址内存单位 -字节byte 一般为8位的块 内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识 地址的集合为虚拟地址空间 虚拟内存中包含程序的数据，指令，控制信息 十六进制表示跳 字数据大小字长为数据标称大小 字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $$2^w-1$$] 最多访问$$2^w$$个字节 32位和64位 gcc -m32可以编">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-03-14T16:09:26.000Z">
-<meta property="article:modified_time" content="2021-07-26T15:32:47.827Z">
+<meta property="article:published_time" content="2021-12-10T05:02:03.000Z">
+<meta property="article:modified_time" content="2021-12-10T13:18:54.906Z">
 <meta property="article:author" content="Coding_Panda">
+<meta property="article:tag" content="Note">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://ez4zzw.github.io/about/">
+<link rel="canonical" href="https://ez4zzw.github.io/2021/12/10/csapp-ch2/">
 
 
 <script id="page-configurations">
@@ -40,13 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>About🐼 | Coding_Panda's Blog
-</title>
+  <title>【操作系统】信息的表示和处理 | Coding_Panda's Blog</title>
   
 
 
@@ -158,43 +158,136 @@
       <div class="main-inner">
         <div class="content-wrap">
           
-  
-  
 
-          <div class="content page posts-expand">
+          <div class="content post posts-expand">
             
 
     
-    
-    
-    <div class="post-block" lang="en">
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/10/csapp-ch2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【操作系统】信息的表示和处理
+        </h1>
 
-<h1 class="post-title" itemprop="name headline">About🐼
-</h1>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
 
-<div class="post-meta">
+              <time title="Created: 2021-12-10 13:02:03 / Modified: 21:18:54" itemprop="dateCreated datePublished" datetime="2021-12-10T13:02:03+08:00">2021-12-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/12/10/csapp-ch2/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/12/10/csapp-ch2/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
   
 
-</div>
+        </div>
+      </header>
 
-</header>
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-      
-      <div class="post-body">
-          <h1 id="Web开发者"><a href="#Web开发者" class="headerlink" title="Web开发者"></a>Web开发者</h1><h1 id="Learning-and-Sharing"><a href="#Learning-and-Sharing" class="headerlink" title="Learning and Sharing"></a>Learning and Sharing</h1>
-      </div>
-      
-      
-      
+        <h1 id="信息存储"><a href="#信息存储" class="headerlink" title="信息存储"></a>信息存储</h1><p>最小可寻址内存单位 -字节byte 一般为8位的块</p>
+<p>内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识</p>
+<p>地址的集合为虚拟地址空间</p>
+<p>虚拟内存中包含程序的数据，指令，控制信息</p>
+<h2 id="十六进制表示"><a href="#十六进制表示" class="headerlink" title="十六进制表示"></a>十六进制表示</h2><p>跳</p>
+<h2 id="字数据大小"><a href="#字数据大小" class="headerlink" title="字数据大小"></a>字数据大小</h2><p>字长为数据标称大小</p>
+<p>字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $$2^w-1$$]</p>
+<p>最多访问$$2^w$$个字节</p>
+<p>32位和64位</p>
+<p><code>gcc -m32</code>可以编译32位程序</p>
+<p><code>gcc -m64</code>可以编译64位程序</p>
+<h2 id="寻址和字节顺序"><a href="#寻址和字节顺序" class="headerlink" title="寻址和字节顺序"></a>寻址和字节顺序</h2><p>最低有效字节在前-小端法</p>
+<p>最高有效字节在前-大端法</p>
+<p>部分cpu支持双端法 ，但是操作系统只支持小端模式（iOS &amp; Android）</p>
+<h3 id="大小端的影响"><a href="#大小端的影响" class="headerlink" title="大小端的影响"></a>大小端的影响</h3><ol>
+<li>网络收发统一顺序</li>
+<li>汇编阅读字节顺序</li>
+<li>按字节打印</li>
+</ol>
+<h2 id="字符串表示"><a href="#字符串表示" class="headerlink" title="字符串表示"></a>字符串表示</h2><p>以null结尾的字符数组</p>
+<p>每个字符使用ASCII码，在各个系统都相同，因此文本数据的表示有更高的平台独立性（than二进制数据）</p>
+<p>终止字符<code>0x00</code></p>
+<p>UTF-8，每个字符使用一个字节来编码</p>
+<h2 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h2><p>null</p>
+<h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>掩码运算</p>
+<blockquote>
+<p>掩码：表示从一个字中选出来位的集合</p>
+</blockquote>
+<h1 id="整数表示"><a href="#整数表示" class="headerlink" title="整数表示"></a>整数表示</h1><p>跳</p>
+
     </div>
-    
 
     
     
     
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Note/" rel="tag"># Note</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/10/luckynumber/" rel="prev" title="【算法题】幸运数字">
+      <i class="fa fa-chevron-left"></i> 【算法题】幸运数字
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
 
 
           </div>
@@ -250,7 +343,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Web%E5%BC%80%E5%8F%91%E8%80%85"><span class="nav-number">1.</span> <span class="nav-text">Web开发者</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Learning-and-Sharing"><span class="nav-number">2.</span> <span class="nav-text">Learning and Sharing</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8"><span class="nav-number">1.</span> <span class="nav-text">信息存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.1.</span> <span class="nav-text">十六进制表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.2.</span> <span class="nav-text">字数据大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BB%E5%9D%80%E5%92%8C%E5%AD%97%E8%8A%82%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">寻址和字节顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E5%B0%8F%E7%AB%AF%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">1.3.1.</span> <span class="nav-text">大小端的影响</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.4.</span> <span class="nav-text">字符串表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E4%BB%A3%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">布尔代数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="nav-number">1.6.</span> <span class="nav-text">位运算</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A1%A8%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">整数表示</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

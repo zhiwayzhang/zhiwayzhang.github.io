@@ -162,6 +162,118 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/10/csapp-ch2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/10/csapp-ch2/" class="post-title-link" itemprop="url">【操作系统】信息的表示和处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-12-10 13:02:03 / Modified: 21:18:54" itemprop="dateCreated datePublished" datetime="2021-12-10T13:02:03+08:00">2021-12-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/12/10/csapp-ch2/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/12/10/csapp-ch2/" class="cy_cmt_count" data-xid="2021/12/10/csapp-ch2/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="信息存储"><a href="#信息存储" class="headerlink" title="信息存储"></a>信息存储</h1><p>最小可寻址内存单位 -字节byte 一般为8位的块</p>
+<p>内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识</p>
+<p>地址的集合为虚拟地址空间</p>
+<p>虚拟内存中包含程序的数据，指令，控制信息</p>
+<h2 id="十六进制表示"><a href="#十六进制表示" class="headerlink" title="十六进制表示"></a>十六进制表示</h2><p>跳</p>
+<h2 id="字数据大小"><a href="#字数据大小" class="headerlink" title="字数据大小"></a>字数据大小</h2><p>字长为数据标称大小</p>
+<p>字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $$2^w-1$$]</p>
+<p>最多访问$$2^w$$个字节</p>
+<p>32位和64位</p>
+<p><code>gcc -m32</code>可以编译32位程序</p>
+<p><code>gcc -m64</code>可以编译64位程序</p>
+<h2 id="寻址和字节顺序"><a href="#寻址和字节顺序" class="headerlink" title="寻址和字节顺序"></a>寻址和字节顺序</h2><p>最低有效字节在前-小端法</p>
+<p>最高有效字节在前-大端法</p>
+<p>部分cpu支持双端法 ，但是操作系统只支持小端模式（iOS &amp; Android）</p>
+<h3 id="大小端的影响"><a href="#大小端的影响" class="headerlink" title="大小端的影响"></a>大小端的影响</h3><ol>
+<li>网络收发统一顺序</li>
+<li>汇编阅读字节顺序</li>
+<li>按字节打印</li>
+</ol>
+<h2 id="字符串表示"><a href="#字符串表示" class="headerlink" title="字符串表示"></a>字符串表示</h2><p>以null结尾的字符数组</p>
+<p>每个字符使用ASCII码，在各个系统都相同，因此文本数据的表示有更高的平台独立性（than二进制数据）</p>
+<p>终止字符<code>0x00</code></p>
+<p>UTF-8，每个字符使用一个字节来编码</p>
+<h2 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h2><p>null</p>
+<h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>掩码运算</p>
+<blockquote>
+<p>掩码：表示从一个字中选出来位的集合</p>
+</blockquote>
+<h1 id="整数表示"><a href="#整数表示" class="headerlink" title="整数表示"></a>整数表示</h1><p>跳</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/10/luckynumber/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1054,107 +1166,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/19/newtown/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/newtown/" class="post-title-link" itemprop="url">三种插值方法及实现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-04-19 22:22:57" itemprop="dateCreated datePublished" datetime="2021-04-19T22:22:57+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-04-25 14:54:04" itemprop="dateModified" datetime="2021-04-25T14:54:04+08:00">2021-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/19/newtown/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/19/newtown/" class="cy_cmt_count" data-xid="2021/04/19/newtown/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="插值方法"><a href="#插值方法" class="headerlink" title="插值方法"></a>插值方法</h1><p>插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。</p>
-<p>常用的插值方法有很多，本文章给出三种常见的插值方法的实现。</p>
-<p>使用语言: Python</p>
-<p>使用下面的数据，预测函数在x=1处的值</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = np.array([<span class="number">0.5</span>, <span class="number">0.6</span>, <span class="number">0.4</span>, <span class="number">0.7</span>])</span><br><span class="line">y = np.array([-<span class="number">0.6931</span>, -<span class="number">0.5108</span>, -<span class="number">0.9163</span>, -<span class="number">0.3567</span>])</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/19/newtown/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1226,7 +1237,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

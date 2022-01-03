@@ -20,21 +20,20 @@
     var CONFIG = {"hostname":"ez4zzw.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="迭代法求解方程的根求解方程的根，即$f(x)&#x3D;0$的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。 选取样例 $f(x) &#x3D;x^3 - x - 2$ $\frac{dy}{dx} &#x3D; 3x^2-1$ 求解$f(x)$在[1, 2]上的零点">
+  <meta name="description" content="编译原理笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="方程求根的迭代法">
-<meta property="og:url" content="https://ez4zzw.github.io/2021/04/25/equtaion/index.html">
+<meta property="og:title" content="编译原理笔记">
+<meta property="og:url" content="https://ez4zzw.github.io/2022/01/02/compiler/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="迭代法求解方程的根求解方程的根，即$f(x)&#x3D;0$的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。 选取样例 $f(x) &#x3D;x^3 - x - 2$ $\frac{dy}{dx} &#x3D; 3x^2-1$ 求解$f(x)$在[1, 2]上的零点">
+<meta property="og:description" content="编译原理笔记">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-04-25T05:04:57.000Z">
-<meta property="article:modified_time" content="2021-04-25T05:06:18.759Z">
+<meta property="article:published_time" content="2022-01-02T02:33:48.000Z">
+<meta property="article:modified_time" content="2022-01-03T05:38:55.194Z">
 <meta property="article:author" content="Coding_Panda">
-<meta property="article:tag" content="Math">
-<meta property="article:tag" content="Numpy">
+<meta property="article:tag" content="Note">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://ez4zzw.github.io/2021/04/25/equtaion/">
+<link rel="canonical" href="https://ez4zzw.github.io/2022/01/02/compiler/">
 
 
 <script id="page-configurations">
@@ -47,7 +46,7 @@
   };
 </script>
 
-  <title>方程求根的迭代法 | Coding_Panda's Blog</title>
+  <title>编译原理笔记 | Coding_Panda's Blog</title>
   
 
 
@@ -167,7 +166,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/25/equtaion/">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2022/01/02/compiler/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -180,7 +179,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          方程求根的迭代法
+          编译原理笔记
         </h1>
 
         <div class="post-meta">
@@ -189,17 +188,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-04-25 13:04:57 / Modified: 13:06:18" itemprop="dateCreated datePublished" datetime="2021-04-25T13:04:57+08:00">2021-04-25</time>
+              <time title="Created: 2022-01-02 10:33:48" itemprop="dateCreated datePublished" datetime="2022-01-02T10:33:48+08:00">2022-01-02</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-03 13:38:55" itemprop="dateModified" datetime="2022-01-03T13:38:55+08:00">2022-01-03</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
                 </span>
             </span>
 
@@ -213,8 +218,8 @@
       <span class="post-meta-item-text">Changyan: </span>
     
     
-      <a title="changyan" href="/2021/04/25/equtaion/#SOHUCS" itemprop="discussionUrl">
-        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/04/25/equtaion/" itemprop="commentCount"></span>
+      <a title="changyan" href="/2022/01/02/compiler/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2022/01/02/compiler/" itemprop="commentCount"></span>
       </a>
     
   </span>
@@ -230,33 +235,53 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="迭代法求解方程的根"><a href="#迭代法求解方程的根" class="headerlink" title="迭代法求解方程的根"></a>迭代法求解方程的根</h1><p>求解方程的根，即$f(x)=0$的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。</p>
-<p>选取样例</p>
-<p>$f(x) =x^3 - x - 2$</p>
-<p>$\frac{dy}{dx} = 3x^2-1$</p>
-<p>求解$f(x)$在[1, 2]上的零点</p>
+        <p>编译原理笔记</p>
 <span id="more"></span>
 
-<h1 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h1><p>在高中数学课本我们就接触过二分法求函数零点，根据零点存在性定理，可以保证我们得到符合要求的一个根，但是该方法局限性太大，只能求解区间内的一个根。</p>
-<p>大致流程如下</p>
-<p>先确定要求解的区间[x, y]，然后不断对区间进行二分，根据精度要求判断根是否合法，再根据中点值与端点值的符号是否相同缩小二分范围。</p>
-<p>$if \ f(mid)\times f(l) &gt; 0$</p>
-<p>$let \ l = mid$</p>
-<p>$or \ r = mid$</p>
-<p>Code </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> math <span class="keyword">as</span> m</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x**<span class="number">3</span>-x-<span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">binary</span>(<span class="params">x, y</span>):</span></span><br><span class="line">    res = <span class="number">0</span></span><br><span class="line">    eps = <span class="number">1e-3</span></span><br><span class="line">    h = <span class="number">1e-3</span></span><br><span class="line">    l = x</span><br><span class="line">    r = y</span><br><span class="line">    <span class="keyword">while</span> l &lt;= r:</span><br><span class="line">        mid = (l+r)/<span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">abs</span>(f(mid)-<span class="number">0</span>) &lt; eps:</span><br><span class="line">            <span class="keyword">return</span> mid</span><br><span class="line">        <span class="keyword">if</span> f(mid)*f(x) &gt; <span class="number">0</span>:</span><br><span class="line">            l = mid</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            r = mid</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line"></span><br><span class="line">answer = binary(<span class="number">1.0</span>, <span class="number">2.0</span>)</span><br><span class="line">print(np.around(answer, <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
-<p>运算结果为1.5215</p>
-<h1 id="牛顿迭代法"><a href="#牛顿迭代法" class="headerlink" title="牛顿迭代法"></a>牛顿迭代法</h1><p>牛顿迭代法的基本思想为将非线性方程线性化，选取一个初始点，做切线交与x轴一点，然后继续该操作，直到根收敛或者达到精度要求。</p>
-<p>基本流程为</p>
+<h1 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h1><h2 id="有穷自动机-DFA"><a href="#有穷自动机-DFA" class="headerlink" title="有穷自动机 DFA"></a>有穷自动机 DFA</h2><p>$$f: K \times \sum \to K$$是一个单值函数，任何输入符号都唯一的确定了下一个状态</p>
+<h2 id="不确定的有穷自动机-NFA"><a href="#不确定的有穷自动机-NFA" class="headerlink" title="不确定的有穷自动机 NFA"></a>不确定的有穷自动机 NFA</h2><p>至少一个初态节点，若干个终态节点<br>DFA是NFA的特例</p>
+<h2 id="子集法-NFA转换为DFA"><a href="#子集法-NFA转换为DFA" class="headerlink" title="子集法 NFA转换为DFA"></a>子集法 NFA转换为DFA</h2><p>对于状态集合$I$，定义两个运算</p>
 <ol>
-<li>取任意的迭代初始值$x_0$</li>
-<li>计算 $x_1 = x_0 - \frac{f(x_0)}{f’(x_0)}$</li>
-<li>判断收敛性：如果$|x_1 - x_0|&lt; \epsilon \ or |f(x_1)-0| &lt; \epsilon$</li>
-<li>令$x_0 = x_1$，保存上一步结果，继续迭代</li>
+<li>集合$I$的$\epsilon-Closure(I)$，是一个状态集$I$中的任何状态经过任意条$\epsilon$弧能到达的状态集合<br> 因为当输入符号为空时，则自动机停留在原来的位置上，所以有关系$\forall S \in I \ \ , S \in \epsilon-Closure(I)$</li>
+<li>状态集合$I$的$a$弧转换，表示为$move(I,a)$，定义为状态集合J，其中$J$是所有那些可以从$I$中的某一状态经过一条$a$弧而到达的状态的全体<br> 有关系$\forall S_i \in I \ \ , move(I,a)=f(S_1,a)\bigcup f(S_2,a) \bigcup f(S_3,a)…$<br>算法流程：<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">let C as a <span class="built_in">set</span> save Status-Set</span><br><span class="line">let K_0 = epsilon-Closure(<span class="number">0</span>)</span><br><span class="line">C &lt;- epsilon-Closure(K_0)</span><br><span class="line"><span class="keyword">while</span>(<span class="keyword">if</span> C have <span class="built_in">set</span> <span class="keyword">not</span> visit) &#123;</span><br><span class="line">	visit[T] = <span class="literal">true</span></span><br><span class="line">	<span class="keyword">for</span> a in Char Set &#123;</span><br><span class="line">		U := epsilon-Closure(Move(T,a))</span><br><span class="line">		<span class="keyword">if</span> (U <span class="keyword">not</span> in C) &#123;</span><br><span class="line">			C &lt;- U</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+经过状态重新命名可以得到DFA<h2 id="DFA的化简"><a href="#DFA的化简" class="headerlink" title="DFA的化简"></a>DFA的化简</h2>化简 的DFA：没有多余状态，没有两个状态是互相等价的。<br>DFA可以通过消除无用状态和合并等价状态二转换成一个与之等价的最小状态的DFA</li>
 </ol>
-<p>Code</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> math <span class="keyword">as</span> m</span><br><span class="line"></span><br><span class="line"><span class="comment"># f(x) = x**3 - x - 2</span></span><br><span class="line"><span class="comment"># df/dx = 3x**2 -1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">df</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">3</span>*x**<span class="number">2</span> - <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">return</span> x**<span class="number">3</span> - x - <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">newton</span>(<span class="params">x</span>):</span></span><br><span class="line">    eps = <span class="number">1e-7</span></span><br><span class="line">    x0 = x</span><br><span class="line">    x1 = x0 - f(x0)/df(x0)</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">abs</span>(x1-x0) &gt; eps:</span><br><span class="line">        t = x1</span><br><span class="line">        x1 = t - f(t)/df(t)</span><br><span class="line">        x0 = t</span><br><span class="line">    <span class="keyword">return</span> x1</span><br><span class="line"></span><br><span class="line">answer = newton(<span class="number">1.0</span>)</span><br><span class="line">print(np.around(answer, <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
-<p>运算结果为1.5214</p>
+<p>无用状态：从开始状态触发，任何输入串都无法到达<br>                或者从这个状态没有通路到达终态<br>![[Pasted image 20211230203930.png]]<br>如s4，s6，s8，可以直接消除</p>
+<p>DFA中的状态等价条件：</p>
+<ol>
+<li>一致性条件-状态s和t必须同时为可接受状态或不可接受状态</li>
+<li>蔓延性条件-对于所有输入符号，状态s和t必须转换到等价的状态</li>
+</ol>
+<p>分割法分解DFA状态：<br>步骤：</p>
+<ol>
+<li>先将终态和非终态分割，作为两个子集，作为一个划分</li>
+<li>在划分中对每个子集加上可输入字符，将可区别的状态拆分，得到新的划分</li>
+<li>重复直到划分不可以再分割</li>
+</ol>
+<p>化简后的DFA便于在计算机上实现</p>
+<h2 id="由DFA化简为正规式"><a href="#由DFA化简为正规式" class="headerlink" title="由DFA化简为正规式"></a>由DFA化简为正规式</h2><p>很简单<br>缩缩缩</p>
+<h2 id="由正规式生成NFA"><a href="#由正规式生成NFA" class="headerlink" title="由正规式生成NFA"></a>由正规式生成NFA</h2><p>$L(G)$表示文法G产生的语言的集合<br>$L(G1) = L(G2)$ 则两个文法等价<br>反正就是构造一个等价的$\mathbb{NFA}$</p>
+<h3 id="语法制导"><a href="#语法制导" class="headerlink" title="语法制导"></a>语法制导</h3><p>按照语法结构构造<br>将正规式分解为子表达式<br> <br>闭包：终态输入epsilon到达初态<br>分解方式不唯一<br>可以从头开始，也可以分部进行</p>
+<p>处理步骤：</p>
+<ul>
+<li>如$r_1 r_2$，顺序拼接两个NFA</li>
+<li>如$r1^*$处理闭包，终态输入epsilon链接到初态</li>
+<li>如$r_1|r_2$，由初态输入epsilon到两个NFA，由两个NFA输入epsilon到达终态</li>
+</ul>
+<h1 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h1><h2 id="自顶向下"><a href="#自顶向下" class="headerlink" title="自顶向下"></a>自顶向下</h2><p>文法特点：</p>
+<ol>
+<li>每个产生式右部都由终结符号开始</li>
+<li>若两个产生式都由相同的左部，右部都由不同的终结符开始<br>分析过程是唯一的</li>
+</ol>
+<p>FIRST集<br>$FIRST(\alpha)={以\alpha为左部的，产生式右部的第一个非终结符集合}$<br>为a的开始符号集</p>
+<p>FOLLOW集<br>对于上下文无关文法，S是开始符号<br>$FOLLOW(A)={状态A后跟符号}$<br>若A可以引导终止epsilon ，则加入#到FOLLOW集</p>
+<h4 id="构造算法"><a href="#构造算法" class="headerlink" title="构造算法"></a>构造算法</h4><p>对文法中每一非终结符A，构造FOLLOW(A)的算法如下：反复使用如下规则，直至FOLLOW集不再增大为止。<br>⑴若A是文法的开始符号,则把输入结束符＃加入FOLLOW(A)中；<br>⑵若B→αAaβ,a是终结符,则把a加入FOLLOW(A)中；<br>⑶若B→αAXβ,X是非终结符,则把FIRST(Xβ)加入FOLLOW(A)中；<br>⑷若B→αA或B→αAβ,且β可以推导至ε，则把FOLLOW(B)加入FOLLOW(A)中。 </p>
+<p>SELECT集<br>$SELECT(A  \to a)=(FIRST(a)-{\epsilon})\bigcup FOLLOW(A)$</p>
+<p>LL(1)文法：第一个L表示自顶向下分析是从左到右扫描输入串，第二个L表明分析过程中将用最左推导，1表明只需要向右看一个符号便可以决定如何推导。<br>充要条件:<br>对于每个非终结符A，的两个不同产生式<br>$SELECT(A \to \alpha)\bigcap SELECT(A \to \beta)=\varnothing$</p>
+<h2 id="非LL-1-文法到LL-1-文法的等价转换"><a href="#非LL-1-文法到LL-1-文法的等价转换" class="headerlink" title="非LL(1)文法到LL(1)文法的等价转换"></a>非LL(1)文法到LL(1)文法的等价转换</h2><p>LL(1)文法的性质：<br>① LL(1)文法是无二义性的；<br>② LL(1)文法不含左递归；<br>③ LL(1)文法没有公共左因子。</p>
+<p>消除左递归<br>消除回溯：提取左公因子<br>改造成LL1文法</p>
+<h3 id="消除直接左递归："><a href="#消除直接左递归：" class="headerlink" title="消除直接左递归："></a>消除直接左递归：</h3><p>例如：<br> A→Aα|β<br>对A引入一个新的非终结符A′，把上式改写为：<br>A →βA′<br>A′→αA′|ε<br>例2：<br>E→E +T | T<br>T→T * F | F<br>F→i |（E）<br>改造为<br>E→TE′<br>E′→+T E′|ε<br>T→FT ′<br>T′→* FT′|ε<br>F→i |（E）</p>
+<h3 id="消除间接左递归"><a href="#消除间接左递归" class="headerlink" title="消除间接左递归"></a>消除间接左递归</h3><p>把式子带入，然后按照消除直接左递归的方法去消除<br>S → Aα|β      ⑴<br>A → Sγ           ⑵<br>得到<br>S → Sγα|β     ⑶<br>消除左递归<br>S → βS′<br>S ′→γαS′|ε </p>
 
     </div>
 
@@ -266,8 +291,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Math/" rel="tag"># Math</a>
-              <a href="/tags/Numpy/" rel="tag"># Numpy</a>
+              <a href="/tags/Note/" rel="tag"># Note</a>
           </div>
 
         
@@ -276,12 +300,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/04/25/matrix/" rel="prev" title="迭代法求解线性方程组">
-      <i class="fa fa-chevron-left"></i> 迭代法求解线性方程组
+    <a href="/2021/12/10/csapp-ch3/" rel="prev" title="【操作系统】程序的机器级表示">
+      <i class="fa fa-chevron-left"></i> 【操作系统】程序的机器级表示
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/07/02/bilibili/" rel="next" title="Bilibili视频网站排行榜评分的线性回归分析">
-      Bilibili视频网站排行榜评分的线性回归分析 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/01/03/sysio/" rel="next" title="【操作系统】系统级IO">
+      【操作系统】系统级IO <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -346,7 +370,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E6%96%B9%E7%A8%8B%E7%9A%84%E6%A0%B9"><span class="nav-number">1.</span> <span class="nav-text">迭代法求解方程的根</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">二分法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">牛顿迭代法</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">词法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA-DFA"><span class="nav-number">1.1.</span> <span class="nav-text">有穷自动机 DFA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E7%A1%AE%E5%AE%9A%E7%9A%84%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA-NFA"><span class="nav-number">1.2.</span> <span class="nav-text">不确定的有穷自动机 NFA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%90%E9%9B%86%E6%B3%95-NFA%E8%BD%AC%E6%8D%A2%E4%B8%BADFA"><span class="nav-number">1.3.</span> <span class="nav-text">子集法 NFA转换为DFA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DFA%E7%9A%84%E5%8C%96%E7%AE%80"><span class="nav-number">1.4.</span> <span class="nav-text">DFA的化简</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B1DFA%E5%8C%96%E7%AE%80%E4%B8%BA%E6%AD%A3%E8%A7%84%E5%BC%8F"><span class="nav-number">1.5.</span> <span class="nav-text">由DFA化简为正规式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B1%E6%AD%A3%E8%A7%84%E5%BC%8F%E7%94%9F%E6%88%90NFA"><span class="nav-number">1.6.</span> <span class="nav-text">由正规式生成NFA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC"><span class="nav-number">1.6.1.</span> <span class="nav-text">语法制导</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">语法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">自顶向下</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.0.1.</span> <span class="nav-text">构造算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9ELL-1-%E6%96%87%E6%B3%95%E5%88%B0LL-1-%E6%96%87%E6%B3%95%E7%9A%84%E7%AD%89%E4%BB%B7%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.2.</span> <span class="nav-text">非LL(1)文法到LL(1)文法的等价转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E9%99%A4%E7%9B%B4%E6%8E%A5%E5%B7%A6%E9%80%92%E5%BD%92%EF%BC%9A"><span class="nav-number">2.2.1.</span> <span class="nav-text">消除直接左递归：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E9%99%A4%E9%97%B4%E6%8E%A5%E5%B7%A6%E9%80%92%E5%BD%92"><span class="nav-number">2.2.2.</span> <span class="nav-text">消除间接左递归</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

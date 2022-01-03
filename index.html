@@ -162,6 +162,300 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2022/01/03/compiler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/03/compiler/" class="post-title-link" itemprop="url">compiler</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-01-03 10:33:48" itemprop="dateCreated datePublished" datetime="2022-01-03T10:33:48+08:00">2022-01-03</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2022/01/03/compiler/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2022/01/03/compiler/" class="cy_cmt_count" data-xid="2022/01/03/compiler/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2022/01/03/sysio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/03/sysio/" class="post-title-link" itemprop="url">【操作系统】系统级IO</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-01-03 10:31:33 / Modified: 13:33:31" itemprop="dateCreated datePublished" datetime="2022-01-03T10:31:33+08:00">2022-01-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2022/01/03/sysio/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2022/01/03/sysio/" class="cy_cmt_count" data-xid="2022/01/03/sysio/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>高级别的IO程序，如c中的printf和scanf，c++中的<code>&gt;&gt;</code>和<code>&lt;&lt;</code>，都依赖Unix 系统级IO</p>
+<h2 id="Unix-IO"><a href="#Unix-IO" class="headerlink" title="Unix IO"></a>Unix IO</h2><p>Linux文件即是m个字节的序列$B_0, B_1, …, B_k, …, B_{m-1}$</p>
+<p>所有的IO设备（网络，磁盘，终端）被抽象为文件，输入和输出被作为相应文件的读和写进行，Linux内核只需要暴露一个简单低级的应用接口</p>
+<p>输入和输出的统一方式:</p>
+<ul>
+<li>打开文件：应用程序请求IO设备，内核返回描述符</li>
+<li>Linux Shell创建的进程开始时有三个文件：标准输入0，标准输出1，标准错误2</li>
+<li>改变当前的文件位置：内核存储文件位置k，初始为0，通过seek改变这个偏移量</li>
+<li>读写文件：读为复制字节到内存，当k&gt;=m时，会触发EOF条件；写为复制字节到一个文件中，从当前位置k开始，然后更新k</li>
+<li>关闭文件：通知内核，内核释放文件打开时创建的数据结构，释放描述符，进程终止时内核会释放打开的文件以及内存</li>
+</ul>
+<h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><ul>
+<li>普通文件：文本文件：ASCII或Unicode字符文件，其他的都是二进制文件，对内核而言无区别，换行符<code>\n</code>对应ASCII LF</li>
+<li>目录：包含一组链接的文件，链接将文件名映射到一个文件</li>
+<li>套接字socket：与另一个进程进行跨网络通信的文件</li>
+<li>命名通道named pipe，符号链接，字符和块设备</li>
+</ul>
+<p>绝对路径：以斜杠开始<code>/home/test</code></p>
+<p>相对路径：以文件名开始,<code>../test</code></p>
+<h2 id="打开和关闭文件"><a href="#打开和关闭文件" class="headerlink" title="打开和关闭文件"></a>打开和关闭文件</h2><p>open函数打开或创建文件</p>
+<p>返回一个文件描述符，在进程中没有打开的最小描述符<br>几种控制参数flags</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">O_RDONLY 只读</span><br><span class="line">O_WRONLY 只写</span><br><span class="line">O_RDWR 可读可写</span><br><span class="line">O_CREAT 文件不存在则创建空文件</span><br><span class="line">O_TRUNC 存在则截断，清空</span><br><span class="line">O_APPEND 追加写入</span><br></pre></td></tr></table></figure>
+
+<p>mode参数控制读写权限</p>
+<p>每个进程都有umask</p>
+<p>访问权限为<code>mode &amp; ~umask</code></p>
+<p>close(int fd)关闭文件，成功返回0，失败-1</p>
+<h2 id="读写文件"><a href="#读写文件" class="headerlink" title="读写文件"></a>读写文件</h2><p>read和write</p>
+<p>输入的size为unsigned long类型，ssize_t为long类型，因为read和write函数需要返回-1</p>
+<p>read和write读写遇到不足的情况：</p>
+<ul>
+<li>读取时遇到EOF</li>
+<li>从终端读文本行</li>
+<li>读写socket：网络延迟导致read和write返回值不足</li>
+</ul>
+<h2 id="RIO包-Robust-IO"><a href="#RIO包-Robust-IO" class="headerlink" title="RIO包 Robust IO"></a>RIO包 Robust IO</h2><h2 id="读取文件元数据"><a href="#读取文件元数据" class="headerlink" title="读取文件元数据"></a>读取文件元数据</h2><p>stat和fstat函数，读取文件信息</p>
+<h2 id="读取目录内容"><a href="#读取目录内容" class="headerlink" title="读取目录内容"></a>读取目录内容</h2><p>opendir函数</p>
+<h2 id="共享文件"><a href="#共享文件" class="headerlink" title="共享文件"></a>共享文件</h2><ul>
+<li>描述符表，每个进程之间独立</li>
+<li>文件表，打开文件的集合，所有进程共享，包含文件位置，引用计数，指向vnode表的指针，当引用计数为0时，操作系统删除表项</li>
+<li>v-node，进程间共享，包含stat中的信息，st mode，st size</li>
+</ul>
+<h2 id="IO重定向"><a href="#IO重定向" class="headerlink" title="IO重定向"></a>IO重定向</h2><p><strong>标准输出</strong>重定向到磁盘文件</p>
+<p>覆盖写入文件之前的内容</p>
+<p>使用dup2函数，将终端的输出关闭，改为磁盘文件，磁盘文件引用次数+1</p>
+<h2 id="标准IO"><a href="#标准IO" class="headerlink" title="标准IO"></a>标准IO</h2><p>标准IO将打开的文件模型化为一个流，减少系统级IO操作的调用</p>
+<p>第一次getc调用IO read函数读取到缓冲区，之后调用将缓冲区第一个字节返回给应用程序</p>
+<h2 id="选取IO函数问题"><a href="#选取IO函数问题" class="headerlink" title="选取IO函数问题"></a>选取IO函数问题</h2><p>socket中不要使用标准IO，可能会导致崩溃，使用RIO函数/Unix IO</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/10/csapp-ch3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Coding_Panda">
+      <meta itemprop="description" content="浮生若梦，为欢几何">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Coding_Panda's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/10/csapp-ch3/" class="post-title-link" itemprop="url">【操作系统】程序的机器级表示</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-10 21:19:54" itemprop="dateCreated datePublished" datetime="2021-12-10T21:19:54+08:00">2021-12-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-12-13 10:15:47" itemprop="dateModified" datetime="2021-12-13T10:15:47+08:00">2021-12-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan: </span>
+    
+    
+      <a title="changyan" href="/2021/12/10/csapp-ch3/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::https://ez4zzw.github.io/2021/12/10/csapp-ch3/" class="cy_cmt_count" data-xid="2021/12/10/csapp-ch3/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>讲解机器代码以及汇编</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/12/10/csapp-ch2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -869,307 +1163,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/25/matrix/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/25/matrix/" class="post-title-link" itemprop="url">迭代法求解线性方程组</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-04-25 00:38:16 / Modified: 14:34:56" itemprop="dateCreated datePublished" datetime="2021-04-25T00:38:16+08:00">2021-04-25</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/25/matrix/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/25/matrix/" class="cy_cmt_count" data-xid="2021/04/25/matrix/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="求解线性方程组"><a href="#求解线性方程组" class="headerlink" title="求解线性方程组"></a>求解线性方程组</h1><p>在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。</p>
-<p>以线性方程组：</p>
-<p>$$<br> \left[<br> \begin{matrix}<br>   10 &amp; -1 &amp; -2 \<br>   -1 &amp; 10 &amp; -2 \<br>   -1 &amp; -1 &amp; 5<br>  \end{matrix}<br>  \right] x =<br>  \left[<br> \begin{matrix}<br>   7.2  \<br>   8.3  \<br>   4.2<br>  \end{matrix}<br>  \right]<br>$$<br>为例</p>
-<h1 id="Jacobi迭代法"><a href="#Jacobi迭代法" class="headerlink" title="Jacobi迭代法"></a>Jacobi迭代法</h1><p>考虑线性方程组$Ax=b$</p>
-<p>用L和U分别表示严格下三角矩阵和严格上三角矩阵</p>
-<p>可以利用迭代公式</p>
-<p>$x^{k+1}=D^{-1}(b-(L+U)x^{k}))$</p>
-<p>进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。</p>
-<p>迭代法需要给定解列向量的初值，因此初值的选取也很重要。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/25/matrix/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/23/ode/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/23/ode/" class="post-title-link" itemprop="url">常微分方程初值问题求解方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-04-23 23:26:18" itemprop="dateCreated datePublished" datetime="2021-04-23T23:26:18+08:00">2021-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-04-25 15:24:31" itemprop="dateModified" datetime="2021-04-25T15:24:31+08:00">2021-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/23/ode/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/23/ode/" class="cy_cmt_count" data-xid="2021/04/23/ode/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="常微分方程初值问题"><a href="#常微分方程初值问题" class="headerlink" title="常微分方程初值问题"></a>常微分方程初值问题</h1><p>常微分方程描述了不同变量之间的变化关系，通过该关系我们可以确定变量之间的具体函数关系，但是微分方程不一定总是可解的，并且有些求解起来相当困难。给出积分曲线初始位置的状态，求解需要预测点的状态，为常微分方程的初值问题，我们可以在求解微分方程即的情况下对结果做出复合精度要求的预测。</p>
-<p>以$f(x) = \sqrt{1+2x}$为例</p>
-<p>有$y’=\frac{dy}{dx}=y-\frac{2x}{y}$</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/23/ode/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://ez4zzw.github.io/2021/04/23/integration/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Coding_Panda">
-      <meta itemprop="description" content="浮生若梦，为欢几何">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Coding_Panda's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/23/integration/" class="post-title-link" itemprop="url">数值积分方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-04-23 20:18:59" itemprop="dateCreated datePublished" datetime="2021-04-23T20:18:59+08:00">2021-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-04-25 14:34:39" itemprop="dateModified" datetime="2021-04-25T14:34:39+08:00">2021-04-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Math/" itemprop="url" rel="index"><span itemprop="name">Math</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan: </span>
-    
-    
-      <a title="changyan" href="/2021/04/23/integration/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::https://ez4zzw.github.io/2021/04/23/integration/" class="cy_cmt_count" data-xid="2021/04/23/integration/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="数值积分"><a href="#数值积分" class="headerlink" title="数值积分"></a>数值积分</h1><p>应用背景：微积分的基本计算公式为经典的牛顿莱布尼茨公式，但是作为计算机来说，计算原函数等操作过于困难，因此需要其他方法进行优化，代替牛顿莱布尼茨公式进行计算，本文将分享两种求积公式及其代码实现。</p>
-<p>使用语言： Python-Numpy</p>
-<p>使用两种方法计算$f(x)=sin(x)$在[1,2]上的积分</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/23/integration/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1237,7 +1234,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1295,7 +1292,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

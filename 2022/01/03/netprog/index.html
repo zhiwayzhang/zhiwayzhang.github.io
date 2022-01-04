@@ -20,16 +20,17 @@
     var CONFIG = {"hostname":"ez4zzw.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="浮生若梦，为欢几何">
+  <meta name="description" content="CSAPP Ch-11 笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="netprog">
+<meta property="og:title" content="【操作系统】网络编程">
 <meta property="og:url" content="https://ez4zzw.github.io/2022/01/03/netprog/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="浮生若梦，为欢几何">
+<meta property="og:description" content="CSAPP Ch-11 笔记">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-03T05:37:02.000Z">
-<meta property="article:modified_time" content="2022-01-03T05:37:02.170Z">
+<meta property="article:modified_time" content="2022-01-04T13:13:14.279Z">
 <meta property="article:author" content="Coding_Panda">
+<meta property="article:tag" content="Note">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://ez4zzw.github.io/2022/01/03/netprog/">
@@ -45,7 +46,7 @@
   };
 </script>
 
-  <title>netprog | Coding_Panda's Blog</title>
+  <title>【操作系统】网络编程 | Coding_Panda's Blog</title>
   
 
 
@@ -178,7 +179,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          netprog
+          【操作系统】网络编程
         </h1>
 
         <div class="post-meta">
@@ -189,6 +190,22 @@
               <span class="post-meta-item-text">Posted on</span>
 
               <time title="Created: 2022-01-03 13:37:02" itemprop="dateCreated datePublished" datetime="2022-01-03T13:37:02+08:00">2022-01-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-04 21:13:14" itemprop="dateModified" datetime="2022-01-04T21:13:14+08:00">2022-01-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">Note</span></a>
+                </span>
             </span>
 
           
@@ -218,7 +235,68 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>CSAPP Ch-11 笔记</p>
+<span id="more"></span>
+<h2 id="CS编程模型"><a href="#CS编程模型" class="headerlink" title="CS编程模型"></a>CS编程模型</h2><p>客户端服务器模型</p>
+<p>一个服务器进程，多个客户端进程</p>
+<p>基本操作是事务transaction</p>
+<p>有四步</p>
+<ol>
+<li>客户端向服务器发送请求，发起一个事务</li>
+<li>服务器解释请求，用响应的方式操作资源</li>
+<li>服务器返回响应，等待下一个请求</li>
+<li>客户端接受响应并处理</li>
+</ol>
+<h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p>网络是一种IO设备，是数据源和数据接收方</p>
+<p>网络数据接收后经IO和内存总线复制到内存，双向传输</p>
+<p>以太网Ethernet是局域网技术</p>
+<p>电缆链接主机和集线器，集线器广播每个端口的信息到所有主机</p>
+<p>主机发送帧frame开头的信息，包括header，随后是有效载荷，payload，网内每个主机都可以见，只有目的主机读取</p>
+<p>桥接以太网，主机…-集线器-桥-桥-集线器-…主机，网桥会根据通信需要来选择是否转发帧到其他网桥</p>
+<p>连接多个局域网使用路由器</p>
+<p>协议解决网络传输中的差异，提供命名机制（网络地址）和传输机制（包头+有效载荷）</p>
+<p>数据发送过程：</p>
+<ol>
+<li>主机A通过系统调用从虚存加载数据到内核缓冲区</li>
+<li>主机A上的协议软件添加互联网包头和接口帧头，互联网包头指向主机B，接口帧头指向主机LAN1。是封装关系。<br>帧头的包数据为互联网包头以及数据，帧头为其自己的互联网包头</li>
+<li>LAN1适配器复制数据到网络</li>
+<li>路由器读取数据猴传送到协议软件</li>
+<li>协议软件读取目标互联网地址，作为路由表的索引转发到对应的LAN2适配器</li>
+<li>LAN2适配器复制帧到网络</li>
+<li>到达主机B，从适配器读取帧，传输到协议软件</li>
+<li>协议软件去除包头和帧头，读取数据，主机B通过系统调用拷贝数据到虚拟地址空间</li>
+</ol>
+<h2 id="全球IP"><a href="#全球IP" class="headerlink" title="全球IP"></a>全球IP</h2><p>客户端（用户）-【socket接口系统调用】-TCP/IP（内核）-【硬件接口，中断】-网络适配器（硬件）-全局IP因特网</p>
+<p>使用socket接口函数和Unix IO函数通信，socket函数为系统调用，调用内核的TCP/IP函数</p>
+<p>TCP/IP是一个协议族，IP协议提供命名方法和传递机制，数据报</p>
+<p>IP机制不可靠，数据报丢失不会自动恢复</p>
+<p>UDP UNreliable datagram protocol，不可靠数据报协议对其进行了扩展，包可以在进程之间传递，而不是主机之间</p>
+<p>TCP是基于IP的协议，进程间可靠的全双工连接</p>
+<p>因特网的特性：</p>
+<ul>
+<li>主机集合映射到32位ip地址</li>
+<li>ip地址映射为一组域名</li>
+<li>主机上的进程能够通过连接其他主机的进程通信</li>
+</ul>
+<p>ipv4和ipv6：</p>
+<ul>
+<li>version 4：32位地址</li>
+<li>version 6：128位地址</li>
+</ul>
+<h3 id="ip地址"><a href="#ip地址" class="headerlink" title="ip地址"></a>ip地址</h3><p>32位无符号整数，8*4</p>
+<p>TCP/IP统一了字节顺序，大端法</p>
+<p>使用点分十进制表示，Linux查看主机地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname -i</span><br></pre></td></tr></table></figure>
+<h3 id="域名"><a href="#域名" class="headerlink" title="域名"></a>域名</h3><p>一级域名mil，edu，gov，com，cn</p>
+<p>二级域名whut.edu</p>
+<p>hosts文件手工维护ip和域名的映射</p>
+<p>DNS，domain name system</p>
+<p>Linux使用nslookup查看域名ip</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup baidu.com</span><br></pre></td></tr></table></figure>
+
+<p>通常域名和ip一一对应，多个域名也可以对应同一ip，泛域名cs.whut.edu, ee.whut.edu</p>
+<p>多个域名可以映射到同一组的多个ip，如<a target="_blank" rel="noopener" href="http://www.twitter.com和twitter.com映射到199.16.156/">www.twitter.com和twitter.com映射到199.16.156</a>.*</p>
+
     </div>
 
     
@@ -226,6 +304,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Note/" rel="tag"># Note</a>
+          </div>
 
         
 
@@ -236,7 +317,10 @@
     <a href="/2022/01/03/sysio/" rel="prev" title="【操作系统】系统级IO">
       <i class="fa fa-chevron-left"></i> 【操作系统】系统级IO
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/03/redis/" rel="next" title="redis实战读书笔记">
+      redis实战读书笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -300,6 +384,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CS%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">CS编程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E7%90%83IP"><span class="nav-number">3.</span> <span class="nav-text">全球IP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ip%E5%9C%B0%E5%9D%80"><span class="nav-number">3.1.</span> <span class="nav-text">ip地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D"><span class="nav-number">3.2.</span> <span class="nav-text">域名</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -315,7 +400,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -432,6 +517,59 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

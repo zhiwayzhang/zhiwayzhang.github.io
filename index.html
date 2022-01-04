@@ -291,7 +291,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-05 01:54:16" itemprop="dateModified" datetime="2022-01-05T01:54:16+08:00">2022-01-05</time>
+                <time title="Modified: 2022-01-05 02:17:21" itemprop="dateModified" datetime="2022-01-05T02:17:21+08:00">2022-01-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -495,7 +495,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-03 13:38:55" itemprop="dateModified" datetime="2022-01-03T13:38:55+08:00">2022-01-03</time>
+                <time title="Modified: 2022-01-05 02:15:29" itemprop="dateModified" datetime="2022-01-05T02:15:29+08:00">2022-01-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -541,7 +541,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>编译原理笔记</p>
+          <p>编译原理笔记，词法语法分析</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/01/02/compiler/#more" rel="contents">
@@ -599,7 +599,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-12-13 10:15:47" itemprop="dateModified" datetime="2021-12-13T10:15:47+08:00">2021-12-13</time>
+                <time title="Modified: 2022-01-05 02:17:10" itemprop="dateModified" datetime="2022-01-05T02:17:10+08:00">2022-01-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -630,7 +630,7 @@
   
 		<br>
 		<span title="post.wordcount">
-			WordCount: 10 words
+			WordCount: 16 words
 			</span>
 		<span> | </span>
 		<span title="post.min2read">
@@ -646,6 +646,7 @@
 
       
           <p>讲解机器代码以及汇编</p>
+<p>TODO了，有个bomb lab</p>
 
       
     </div>
@@ -688,10 +689,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-12-10 13:02:03 / Modified: 21:18:54" itemprop="dateCreated datePublished" datetime="2021-12-10T13:02:03+08:00">2021-12-10</time>
+              <time title="Created: 2021-12-10 13:02:03" itemprop="dateCreated datePublished" datetime="2021-12-10T13:02:03+08:00">2021-12-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-05 02:17:14" itemprop="dateModified" datetime="2022-01-05T02:17:14+08:00">2022-01-05</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -721,7 +728,7 @@
   
 		<br>
 		<span title="post.wordcount">
-			WordCount: 356 words
+			WordCount: 377 words
 			</span>
 		<span> | </span>
 		<span title="post.min2read">
@@ -736,36 +743,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="信息存储"><a href="#信息存储" class="headerlink" title="信息存储"></a>信息存储</h1><p>最小可寻址内存单位 -字节byte 一般为8位的块</p>
-<p>内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识</p>
-<p>地址的集合为虚拟地址空间</p>
-<p>虚拟内存中包含程序的数据，指令，控制信息</p>
-<h2 id="十六进制表示"><a href="#十六进制表示" class="headerlink" title="十六进制表示"></a>十六进制表示</h2><p>跳</p>
-<h2 id="字数据大小"><a href="#字数据大小" class="headerlink" title="字数据大小"></a>字数据大小</h2><p>字长为数据标称大小</p>
-<p>字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $$2^w-1$$]</p>
-<p>最多访问$$2^w$$个字节</p>
-<p>32位和64位</p>
-<p><code>gcc -m32</code>可以编译32位程序</p>
-<p><code>gcc -m64</code>可以编译64位程序</p>
-<h2 id="寻址和字节顺序"><a href="#寻址和字节顺序" class="headerlink" title="寻址和字节顺序"></a>寻址和字节顺序</h2><p>最低有效字节在前-小端法</p>
-<p>最高有效字节在前-大端法</p>
-<p>部分cpu支持双端法 ，但是操作系统只支持小端模式（iOS &amp; Android）</p>
-<h3 id="大小端的影响"><a href="#大小端的影响" class="headerlink" title="大小端的影响"></a>大小端的影响</h3><ol>
-<li>网络收发统一顺序</li>
-<li>汇编阅读字节顺序</li>
-<li>按字节打印</li>
-</ol>
-<h2 id="字符串表示"><a href="#字符串表示" class="headerlink" title="字符串表示"></a>字符串表示</h2><p>以null结尾的字符数组</p>
-<p>每个字符使用ASCII码，在各个系统都相同，因此文本数据的表示有更高的平台独立性（than二进制数据）</p>
-<p>终止字符<code>0x00</code></p>
-<p>UTF-8，每个字符使用一个字节来编码</p>
-<h2 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h2><p>null</p>
-<h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>掩码运算</p>
-<blockquote>
-<p>掩码：表示从一个字中选出来位的集合</p>
-</blockquote>
-<h1 id="整数表示"><a href="#整数表示" class="headerlink" title="整数表示"></a>整数表示</h1><p>跳</p>
-
+          <p>本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/10/csapp-ch2/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -807,10 +793,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-12-10 12:46:33 / Modified: 12:51:05" itemprop="dateCreated datePublished" datetime="2021-12-10T12:46:33+08:00">2021-12-10</time>
+              <time title="Created: 2021-12-10 12:46:33" itemprop="dateCreated datePublished" datetime="2021-12-10T12:46:33+08:00">2021-12-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-05 02:15:48" itemprop="dateModified" datetime="2022-01-05T02:15:48+08:00">2022-01-05</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -858,8 +850,14 @@
           <h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>给定一个数字N，给定一个数字的集合，使用集合里的数字构造出小于数字N的最大数。</p>
 <p>如N = 23131，集合为{2, 4, 9}</p>
 <p>则构造出22999</p>
-<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>分两种情况讨论，构造的数字长度和N一样，或者比N少一位，若长度一样，则是从头开始按照比数字N小的数构造，若长度少一位可以直接用集合中的最大数填满。</p>
-<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;map&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;set&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MAXN = <span class="number">1e5</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MOD = <span class="number">1e9</span>+<span class="number">7</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="comment">// 23131</span></span><br><span class="line"><span class="comment">// 2 4 9</span></span><br><span class="line"><span class="comment">// 22999</span></span><br><span class="line"><span class="comment">// 229</span></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="comment">// 22</span></span><br><span class="line"><span class="keyword">int</span> N, x;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; v;</span><br><span class="line"><span class="keyword">int</span> maxv = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; N;</span><br><span class="line">    v.clear();</span><br><span class="line">    nums.clear();</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; x) &#123;</span><br><span class="line">        v.push_back(x);</span><br><span class="line">        maxv = max(maxv, x);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> temp = N;</span><br><span class="line">    <span class="keyword">int</span> setNumber = v.size();</span><br><span class="line">    sort(v.begin(), v.end());</span><br><span class="line">    <span class="keyword">while</span> (temp) &#123;</span><br><span class="line">        nums.push_back(temp % <span class="number">10</span>);</span><br><span class="line">        temp /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    reverse(nums.begin(), nums.end());</span><br><span class="line">    <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">bool</span> done = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.size(); i++) &#123;</span><br><span class="line">        number = number*<span class="number">10</span> + nums[i];</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;number = &quot;</span> &lt;&lt; number &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">bool</span> find = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = setNumber - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (v[j] &lt;= number) &#123;</span><br><span class="line">                ans = ans*<span class="number">10</span> + v[j];</span><br><span class="line">                find = <span class="literal">true</span>;</span><br><span class="line">                number -= v[j];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!find) &#123;</span><br><span class="line">            done = <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;size &quot;</span> &lt;&lt; nums.size() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">if</span> (!done) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nums.size() - <span class="number">1</span>; i++) &#123;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; maxv;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; ans;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/10/luckynumber/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -909,7 +907,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-12-10 12:47:41" itemprop="dateModified" datetime="2021-12-10T12:47:41+08:00">2021-12-10</time>
+                <time title="Modified: 2022-01-05 02:15:38" itemprop="dateModified" datetime="2022-01-05T02:15:38+08:00">2022-01-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -958,15 +956,14 @@
           <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/largest-number/">https://leetcode-cn.com/problems/largest-number/</a></p>
 <h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>给定一组非负整数 <code>nums</code>，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。</p>
 <p>注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。</p>
-<h1 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h1><p>将数字全部转为字符串，进行逐个比较，比较规则为：</p>
-<ul>
-<li>从最高位开始比较，如果第一个数字较大，则把较大的排在前面</li>
-<li>比较后续数字，将出现更大数字的数排在前面</li>
-<li>若数字a为数字b的前缀，或相反，则返回a+b&gt;b+a，判断如何构造可以使得数字更大</li>
-</ul>
-<p>注意数字全为0的情况</p>
-<p>sort里用lambda很香</p>
-<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="built_in">string</span> <span class="title">largestNumber</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; nums_str;</span><br><span class="line">        <span class="keyword">bool</span> zero_flag = <span class="literal">false</span>;</span><br><span class="line">        nums_str.clear();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> num : nums) &#123;</span><br><span class="line">            <span class="keyword">if</span> (num != <span class="number">0</span>) zero_flag = <span class="literal">true</span>;</span><br><span class="line">            nums_str.push_back(to_string(num));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!zero_flag) <span class="keyword">return</span> <span class="string">&quot;0&quot;</span>;</span><br><span class="line">        sort(nums_str.begin(), nums_str.end(), [](<span class="keyword">const</span> <span class="built_in">string</span> &amp;a, <span class="keyword">const</span> <span class="built_in">string</span> &amp;b) -&gt; <span class="keyword">bool</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (a[<span class="number">0</span>] != b[<span class="number">0</span>]) &#123;</span><br><span class="line">                <span class="keyword">return</span> a[<span class="number">0</span>] &gt; b[<span class="number">0</span>];</span><br><span class="line">            &#125; </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; min(a.size(), b.size()); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (a[i] == b[i]) <span class="keyword">continue</span>;</span><br><span class="line">                <span class="keyword">return</span> a[i] &gt; b[i];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> a + b &gt; b + a;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">string</span> ans = <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> str : nums_str) &#123;</span><br><span class="line">            ans += str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/09/leetcode-179/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1008,10 +1005,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-12-09 19:58:54 / Modified: 20:45:46" itemprop="dateCreated datePublished" datetime="2021-12-09T19:58:54+08:00">2021-12-09</time>
+              <time title="Created: 2021-12-09 19:58:54" itemprop="dateCreated datePublished" datetime="2021-12-09T19:58:54+08:00">2021-12-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-05 02:16:58" itemprop="dateModified" datetime="2022-01-05T02:16:58+08:00">2022-01-05</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -1041,7 +1044,7 @@
   
 		<br>
 		<span title="post.wordcount">
-			WordCount: 406 words
+			WordCount: 433 words
 			</span>
 		<span> | </span>
 		<span title="post.min2read">
@@ -1056,48 +1059,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>CSAPP读书笔记</p>
-<h1 id="Ch1"><a href="#Ch1" class="headerlink" title="Ch1"></a>Ch1</h1><p>源程序 -&gt; 预处理器 (cpp) —hello.i—&gt; 编译器(ccl) —–hello.s—–&gt; 汇编器(as) —-hello.o(binary) with printf.o—&gt; 连接器 ——-&gt; 可执行二进制文件</p>
-<ul>
-<li><p>主存：临时存储设备 DRAM组成 </p>
-</li>
-<li><p>进程：并发执行多个进程-上下文切换</p>
-</li>
-</ul>
-<p>进程运行所需的所有状态信息 <strong>上下文</strong></p>
-<p>例如：PC和寄存器文件的当前值，主存的内容    </p>
-<ul>
-<li><p>并发执行 ：一个进程的指令和另一个进程的指令交错执行</p>
-</li>
-<li><p>线程：进程是由多个线程的执行单元组成 ，运行在进程的上下文中，共享同样的代码和全局数据</p>
-</li>
-</ul>
-<p>多线程共享数据比多进程容易</p>
-<ul>
-<li><p>虚拟内存：对于进程，提供虚拟地址空间</p>
-<p>包含 程序代码和数据，堆malloc 和free，共享库so，栈，内核虚拟内存为内核保留，不允许应用程序读写这个区域</p>
-<p>基本思想：一个进程虚拟内存的内容存储在磁盘，利用主存座位磁盘的高速缓存</p>
-</li>
-<li><p>并发和并行：</p>
-<ul>
-<li>并发：同时具有多个活动的系统</li>
-<li>并行：用并发是一个系统运行的更快</li>
-<li>线程级并发：在一个进程中执行多个控制流</li>
-<li>指令级并行：流水线技术</li>
-<li>单指令，多数据并行 SIMD并行</li>
-</ul>
-</li>
-<li><p>操作系统的抽象：</p>
-<ul>
-<li>文件是对I/O设备的抽象</li>
-<li>虚拟内存是对主存和磁盘的抽象</li>
-<li>进程是对处理器，主存和IO设备的抽象</li>
-</ul>
-</li>
-<li><p>网络可以看做一种IO设备</p>
-</li>
-</ul>
-
+          <p>CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/09/csapp/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1296,7 +1266,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

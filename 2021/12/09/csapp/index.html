@@ -20,17 +20,18 @@
     var CONFIG = {"hostname":"ez4zzw.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="CSAPP读书笔记 Ch1源程序 -&gt; 预处理器 (cpp) —hello.i—&gt; 编译器(ccl) —–hello.s—–&gt; 汇编器(as) —-hello.o(binary) with printf.o—&gt; 连接器 ——-&gt; 可执行二进制文件  主存：临时存储设备 DRAM组成   进程：并发执行多个进程-上下文切换   进程运行所需的所有状态信息 上下文 例如：">
+  <meta name="description" content="CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统">
 <meta property="og:url" content="https://ez4zzw.github.io/2021/12/09/csapp/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="CSAPP读书笔记 Ch1源程序 -&gt; 预处理器 (cpp) —hello.i—&gt; 编译器(ccl) —–hello.s—–&gt; 汇编器(as) —-hello.o(binary) with printf.o—&gt; 连接器 ——-&gt; 可执行二进制文件  主存：临时存储设备 DRAM组成   进程：并发执行多个进程-上下文切换   进程运行所需的所有状态信息 上下文 例如：">
+<meta property="og:description" content="CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-09T11:58:54.000Z">
-<meta property="article:modified_time" content="2021-12-09T12:45:46.335Z">
+<meta property="article:modified_time" content="2022-01-04T18:16:58.292Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
+<meta property="article:tag" content="CSAPP">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://ez4zzw.github.io/2021/12/09/csapp/">
@@ -188,10 +189,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-12-09 19:58:54 / Modified: 20:45:46" itemprop="dateCreated datePublished" datetime="2021-12-09T19:58:54+08:00">2021-12-09</time>
+              <time title="Created: 2021-12-09 19:58:54" itemprop="dateCreated datePublished" datetime="2021-12-09T19:58:54+08:00">2021-12-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-05 02:16:58" itemprop="dateModified" datetime="2022-01-05T02:16:58+08:00">2022-01-05</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -221,7 +228,7 @@
   
 		<br>
 		<span title="post.wordcount">
-			WordCount: 406 words
+			WordCount: 433 words
 			</span>
 		<span> | </span>
 		<span title="post.min2read">
@@ -236,7 +243,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>CSAPP读书笔记</p>
+        <p>CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读</p>
+<span id="more"></span>
 <h1 id="Ch1"><a href="#Ch1" class="headerlink" title="Ch1"></a>Ch1</h1><p>源程序 -&gt; 预处理器 (cpp) —hello.i—&gt; 编译器(ccl) —–hello.s—–&gt; 汇编器(as) —-hello.o(binary) with printf.o—&gt; 连接器 ——-&gt; 可执行二进制文件</p>
 <ul>
 <li><p>主存：临时存储设备 DRAM组成 </p>
@@ -287,6 +295,7 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Note/" rel="tag"># Note</a>
+              <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
           </div>
 
         
@@ -394,7 +403,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

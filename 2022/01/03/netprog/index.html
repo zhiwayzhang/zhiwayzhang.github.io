@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"ez4zzw.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="CSAPP Ch-11 笔记">
+  <meta name="description" content="承接Unix I&#x2F;O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习 CSAPP Ch-11 笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【操作系统】网络编程">
 <meta property="og:url" content="https://ez4zzw.github.io/2022/01/03/netprog/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="CSAPP Ch-11 笔记">
+<meta property="og:description" content="承接Unix I&#x2F;O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习 CSAPP Ch-11 笔记">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-03T05:37:02.000Z">
-<meta property="article:modified_time" content="2022-01-04T13:13:14.279Z">
+<meta property="article:modified_time" content="2022-01-04T17:54:16.895Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta name="twitter:card" content="summary">
@@ -196,7 +196,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-04 21:13:14" itemprop="dateModified" datetime="2022-01-04T21:13:14+08:00">2022-01-04</time>
+                <time title="Modified: 2022-01-05 01:54:16" itemprop="dateModified" datetime="2022-01-05T01:54:16+08:00">2022-01-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -225,7 +225,14 @@
   </span>
   
   
-
+		<br>
+		<span title="post.wordcount">
+			WordCount: 2.7k words
+			</span>
+		<span> | </span>
+		<span title="post.min2read">
+			ReadTime: 9 minutes
+			</span>
         </div>
       </header>
 
@@ -235,7 +242,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>CSAPP Ch-11 笔记</p>
+        <p>承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习</p>
+<p>CSAPP Ch-11 笔记</p>
 <span id="more"></span>
 <h2 id="CS编程模型"><a href="#CS编程模型" class="headerlink" title="CS编程模型"></a>CS编程模型</h2><p>客户端服务器模型</p>
 <p>一个服务器进程，多个客户端进程</p>
@@ -296,6 +304,98 @@
 
 <p>通常域名和ip一一对应，多个域名也可以对应同一ip，泛域名cs.whut.edu, ee.whut.edu</p>
 <p>多个域名可以映射到同一组的多个ip，如<a target="_blank" rel="noopener" href="http://www.twitter.com和twitter.com映射到199.16.156/">www.twitter.com和twitter.com映射到199.16.156</a>.*</p>
+<h3 id="因特网连接"><a href="#因特网连接" class="headerlink" title="因特网连接"></a>因特网连接</h3><p>客户端和服务器在连接上发送和接收字节流来通信，点对点，全双工，可以同时双向流动</p>
+<p>socket是连接的端点，每个socket都有socket地址，由<code>地址:端口</code>构成，十六位端口号0-65535</p>
+<p>客户端发起请求时，客户端socket地址端口由内核自动分配，临时端口；服务器的为默认端口</p>
+<p>web使用80（http），电子邮件地址使用25（SMTP）</p>
+<p>可以通过<code>/etc/services</code>看查<strong>知名</strong>服务默认端口</p>
+<p>一个连接两端的socket地址是唯一确定的，socket pair，格式<code>(cliaddr:cliport, servaddr:servport)</code>，即<code>(客户端IP:客户端端口,服务器IP:服务器端口)</code></p>
+<h2 id="socket接口"><a href="#socket接口" class="headerlink" title="socket接口"></a>socket接口</h2><p>一组函数实现，和Unix IO配合创建网络应用</p>
+<p>流程：</p>
+<p>客户端getaddrinfo-&gt;socket-&gt;connect发送连接请求-&gt;rio_writen-&gt;rio_readlineb-&gt;close发送EOF</p>
+<p>服务器getaddrinfo-&gt;socket-&gt;bind-&gt;listen-&gt;accept接受请求-&gt;rio_readlineb读客户端的write-&gt;rio_writen写入response-&gt;rio_readlineb读取EOF-close</p>
+<h3 id="socket地址结构"><a href="#socket地址结构" class="headerlink" title="socket地址结构"></a>socket地址结构</h3><p>对于Linux内核，socket就是一个有描述符的打开文件</p>
+<p>socket地址存放与<code>sockaddr_in</code>，包含<code>AF_INET</code>，<code>sin_port</code>为16位端口号，<code>sin_addr</code>为32位ip地址，都是以大端法存放</p>
+<h3 id="socket函数"><a href="#socket函数" class="headerlink" title="socket函数"></a>socket函数</h3><p>客户端和服务器使用socket函数创建socket描述符</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clientfd = Socket(AF_INET, SOCK_STREAM, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>AF_INET</code>表示使用32位IP地址，<code>SOCK_STREAM</code>表示该socket为连接端点</p>
+<p>该函数返回的描述符为部分打开的，不能读写，将有客户端完成打开socket的工作</p>
+<h3 id="connect函数"><a href="#connect函数" class="headerlink" title="connect函数"></a>connect函数</h3><p>客户端调用connect函数建立和服务器连接</p>
+<p>connect函数会阻塞一直到连接成功建立或者错误，成功后clientfd为可读写状态</p>
+<p>由getaddrinfo函数获取connect的参数</p>
+<h3 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h3><p>bind函数通知内核将addr中的服务器socket地址和socket描述符socketfd联系到一起</p>
+<p>由getaddrinfo函数获取bind的参数</p>
+<h3 id="listen函数"><a href="#listen函数" class="headerlink" title="listen函数"></a>listen函数</h3><p>客户端是发起请求的主动实体，服务器是被动实体</p>
+<p>默认，内核认为socket函数创建的描述符为主动socket，服务器通过listen函数通知内核描述符是被服务器使用而不是客户端</p>
+<p>将socketfd从主动socket转化为监听socket，监听socket可以接受客户端的连接请求</p>
+<p>参数backlog为队列中未完成的请求数量，一般设置较大的数</p>
+<h3 id="accept函数"><a href="#accept函数" class="headerlink" title="accept函数"></a>accept函数</h3><p>服务器使用accept函数等待客户端的连接请求</p>
+<p>已经获得监听描述符connfd，listenfd，返回一个已连接描述符，该描述符可以被Unix IO读写，可以和客户端通信，将connfd返回给客户端</p>
+<p>与监听描述符不太，监听描述符是客户端连接请求的端点，只创建一次，存在于服务器的整个生命周期</p>
+<p>已连接描述符为客户端和服务器直接已经建立连接的端点，服务器每次接受请求都会创建</p>
+<p>可以理解为后端程序当前已经监听系统的某个端口，此时客户端请求后后端在该基础上创建一个线程去处理该请求</p>
+<h3 id="主机和服务的转换"><a href="#主机和服务的转换" class="headerlink" title="主机和服务的转换"></a>主机和服务的转换</h3><ol>
+<li><code>getaddrinfo</code><br>将主机名、主机地址、服务名端口号转为socket地址结构<br>返回result为一个addrinfo链表，每个结构对应一个host和service的socket地址结构<br>客户端调用之后，遍历链表，尝试每个地址，直到socket和connect成功，建立连接<br>服务器会遍历每个地址，直到socket和bind成功<br>避免内存泄露，最后调用freeaddrinfo释放链表<br>参数讲解跳了</li>
+<li><code>getnameinfo</code><br>将socket地址转换为主机和服务名字符串</li>
+</ol>
+<h3 id="socket接口辅助函数"><a href="#socket接口辅助函数" class="headerlink" title="socket接口辅助函数"></a>socket接口辅助函数</h3><p>以上接口的整合封装</p>
+<ol>
+<li>open_clientfd<br><code>int open_clientfd(char *hostname, char *port)</code></li>
+</ol>
+<p>open_clientfd建立和服务器的连接，返回描述符，可以直接用于Unix IO函数读写</p>
+<p>流程：getaddrinfo，返回addrinfo链表，遍历链表尝试建立连接，失败则关闭描述符，成功后释放链表将描述符（connfd）返回给客户端</p>
+<ol start="2">
+<li>open_listenfd<br>服务器创建监听描述符</li>
+</ol>
+<p><code>int open_listenfd(char *port)</code></p>
+<p>遍历链表直到调用socket和bind成功</p>
+<h3 id="echo实例"><a href="#echo实例" class="headerlink" title="echo实例"></a>echo实例</h3><p>简单的单线程处理服务器</p>
+<p>EOF概念，并不是字符，而是内核检测的一个条件，read函数返回0时，程序检测到EOF条件。磁盘文件读写，文件位置超出长度，判断EOF。网络连接，进程关闭连接其中一端，触发EOF。尝试读取通信中字节流的最后一个字节之后的字节，触发EOF。</p>
+<h2 id="Web服务器"><a href="#Web服务器" class="headerlink" title="Web服务器"></a>Web服务器</h2><h3 id="Web基础"><a href="#Web基础" class="headerlink" title="Web基础"></a>Web基础</h3><p>HTTP协议，Hypertext Transfer Protocol超文本传输协议</p>
+<h3 id="Web内容"><a href="#Web内容" class="headerlink" title="Web内容"></a>Web内容</h3><p>内容是MIME，多用途的网际邮件扩充协议，类型相关的字节序列</p>
+<ul>
+<li>读取一个磁盘文件，将内容返回给客户端，磁盘文件为静态内容</li>
+<li>运行可执行文件，将输出返回</li>
+</ul>
+<p>使用URL标识每个文件</p>
+<p>根据目录指定返回规则</p>
+<p>根目录为网页静态内容的根目录</p>
+<p>后缀为<code>/</code>时服务器自动补全默认文件名</p>
+<h3 id="HTTP事务"><a href="#HTTP事务" class="headerlink" title="HTTP事务"></a>HTTP事务</h3><p>使用Linux的Telnet和任何web服务器执行事务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet url port</span><br></pre></td></tr></table></figure>
+
+<p>HTTP请求</p>
+<p>请求行<code>method URI version</code></p>
+<p>0个或多个请求报头</p>
+<p>一个空的文本行终止报头列表</p>
+<p>body</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F; HTTP&#x2F;1.1  </span><br><span class="line">Host: www.baidu.com</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>请求方法GET、POST、OPTIONS、HEAD、PUT、DELETE、TRACE</p>
+<p>URI是相应URL的后缀，包括文件名和参数</p>
+<p>version为http版本</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Glossary/Request_header">Mozilla文档</a></p>
+<p>header可以存放多种信息，比如cookie等</p>
+<p>host请求头在HTTP 1.1位必须，1.0中不必须。代理缓存proxy cache会使用host报头，理解为反向代理？</p>
+<p>客户端和服务器直接可以由代理，<code>代理链</code></p>
+<p>HTTP响应组成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">响应行</span><br><span class="line">0个或多个响应头</span><br><span class="line">终止报头的空行</span><br><span class="line">响应主体body</span><br></pre></td></tr></table></figure>
+<p>响应行格式</p>
+<p><code>version status-code status-message</code></p>
+<p>version对于HTTP版本，code为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1**</span><br><span class="line">200</span><br><span class="line">301 </span><br><span class="line">400</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">501</span><br><span class="line">505</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status">更多状态码</a></p>
+<p>响应头中应有Content-Type，告知客户端主体内容的MIME类型，Content-Length，告知主体的字节大小</p>
+<ol>
+<li>传递参数</li>
+</ol>
+<p>URI或者请求主体<br>2. 服务器传递参数给子进程</p>
+<p>fork一个子进程，调用execve在子进程上下文中执行对应的程序，通过环境变量，如QUERY_STRING, REQUEST_METHOD等信息，程序做出对应的处理</p>
+<ol start="3">
+<li>子进程的输出到哪里？<br>CGI程序（通用网关接口Common Gateway Interface），将内容发送到标准输出，在子进程调用CGI程序之前，使用Linux dup2函数将标准输出重定向到和客户端相连的已连接描述符，CGI程序写入到标准输出的内容都会直接到达客户端</li>
+</ol>
+<h1 id="实现一个Web服务器"><a href="#实现一个Web服务器" class="headerlink" title="实现一个Web服务器"></a>实现一个Web服务器</h1><p>使用c配合CSAPP提供的封装搭建一个简易的web服务器</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本章主要了解了Unix如何建立一个网络连接，以及数据传输的具体过程，socket的设计巧妙之处，以及Linux一切皆文件的进一步理解。</p>
 
     </div>
 
@@ -384,7 +484,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CS%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">CS编程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E7%90%83IP"><span class="nav-number">3.</span> <span class="nav-text">全球IP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ip%E5%9C%B0%E5%9D%80"><span class="nav-number">3.1.</span> <span class="nav-text">ip地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D"><span class="nav-number">3.2.</span> <span class="nav-text">域名</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CS%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">CS编程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E7%90%83IP"><span class="nav-number">3.</span> <span class="nav-text">全球IP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ip%E5%9C%B0%E5%9D%80"><span class="nav-number">3.1.</span> <span class="nav-text">ip地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D"><span class="nav-number">3.2.</span> <span class="nav-text">域名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.3.</span> <span class="nav-text">因特网连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socket%E6%8E%A5%E5%8F%A3"><span class="nav-number">4.</span> <span class="nav-text">socket接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket%E5%9C%B0%E5%9D%80%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.</span> <span class="nav-text">socket地址结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text">socket函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#connect%E5%87%BD%E6%95%B0"><span class="nav-number">4.3.</span> <span class="nav-text">connect函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bind%E5%87%BD%E6%95%B0"><span class="nav-number">4.4.</span> <span class="nav-text">bind函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#listen%E5%87%BD%E6%95%B0"><span class="nav-number">4.5.</span> <span class="nav-text">listen函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept%E5%87%BD%E6%95%B0"><span class="nav-number">4.6.</span> <span class="nav-text">accept函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">4.7.</span> <span class="nav-text">主机和服务的转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket%E6%8E%A5%E5%8F%A3%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0"><span class="nav-number">4.8.</span> <span class="nav-text">socket接口辅助函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#echo%E5%AE%9E%E4%BE%8B"><span class="nav-number">4.9.</span> <span class="nav-text">echo实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">Web服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web%E5%9F%BA%E7%A1%80"><span class="nav-number">5.1.</span> <span class="nav-text">Web基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web%E5%86%85%E5%AE%B9"><span class="nav-number">5.2.</span> <span class="nav-text">Web内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP%E4%BA%8B%E5%8A%A1"><span class="nav-number">5.3.</span> <span class="nav-text">HTTP事务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAWeb%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number"></span> <span class="nav-text">实现一个Web服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">总结</span></a></div>
       </div>
       <!--/noindex-->
 

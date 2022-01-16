@@ -28,7 +28,7 @@
 <meta property="og:description" content="异常控制流 CSAPP CH-8 指令地址间的过度为控制转移，控制转移序列叫做控制流 ECF Exceptional Control Flow 异常控制流是系统实现IO，进程和虚拟内存的基本机制 ECF用于应用程序和操作系统的交互 try catch等语句基于ECF">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-14T02:12:15.000Z">
-<meta property="article:modified_time" content="2022-01-15T13:45:41.177Z">
+<meta property="article:modified_time" content="2022-01-16T15:36:48.716Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta property="article:tag" content="CSAPP">
@@ -197,7 +197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-15 21:45:41" itemprop="dateModified" datetime="2022-01-15T21:45:41+08:00">2022-01-15</time>
+                <time title="Modified: 2022-01-16 23:36:48" itemprop="dateModified" datetime="2022-01-16T23:36:48+08:00">2022-01-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -231,7 +231,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>724</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -286,8 +286,20 @@
 <p>异常由中断处理程序处理</p>
 <h3 id="trap和系统调用"><a href="#trap和系统调用" class="headerlink" title="trap和系统调用"></a>trap和系统调用</h3><p>trap是指向指令的结果，用于在用户程序和内核之间提供一个接口，叫做系统调用</p>
 <p>读文件，创建进程fork，加载程序</p>
-<h3 id="故障"><a href="#故障" class="headerlink" title="故障"></a>故障</h3><p>可以被修正</p>
+<h3 id="故障"><a href="#故障" class="headerlink" title="故障"></a>故障</h3><p>由错误情况引起，被故障处理程序修正，控制返回到引起故障的指令，从而重新执行，否则返回到内核的abort，将引起故障的程序终止。</p>
 <h3 id="终止"><a href="#终止" class="headerlink" title="终止"></a>终止</h3><p>硬件错误，dram或者sram损坏 会返回abort然后终止应用程序</p>
+<h2 id="Linux-x86-64系统中的异常"><a href="#Linux-x86-64系统中的异常" class="headerlink" title="Linux x86-64系统中的异常"></a>Linux x86-64系统中的异常</h2><p>故障号和cpu架构有关</p>
+<h3 id="Linux中的故障和终止"><a href="#Linux中的故障和终止" class="headerlink" title="Linux中的故障和终止"></a>Linux中的故障和终止</h3><p>除法错误：除以0，Unix会直接终止程序 floating exception</p>
+<p>一般故障保护：神秘的错误，如程序引用了未定义的虚拟内存地址，或者访问只读的文本，也就是段错误segmentation fault</p>
+<p>缺页：会从新执行产生故障的指令，将磁盘上的虚拟内存的一个页面映射到物理内存的一个页面，然后重新执行这条指令</p>
+<p>机器检查：是在导致故障的指令执行中检测到致命的硬件错误时发生的</p>
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>请求内核的服务</p>
+<p>每个系统调用有一个编号，对应内核中跳转表的偏移量</p>
+<p>c语言中syscall函数，c一般封装了系统调用库函数，带着参数陷入内核，将系统调用的执行状态返回</p>
+<p>Linux系统调用的参数通过寄存器传递</p>
+<h1 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h1><p>执行中程序的实例，每个程序运行在某个进程的上下文context中</p>
+<p>上下文包括内存中程序的代码和数据，栈，通用目的寄存器，程序计数器，环境变量，文件描述符集合</p>
+<p>提供抽象：独立的逻辑控制流，假象程序独占处理器；私有地址空间，假象程序独占内存</p>
 
     </div>
 
@@ -310,7 +322,10 @@
     <a href="/2022/01/03/redis/" rel="prev" title="redis实战读书笔记">
       <i class="fa fa-chevron-left"></i> redis实战读书笔记
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/16/tujiehttp/" rel="next" title="图解HTTP读书笔记">
+      图解HTTP读书笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -374,7 +389,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8"><span class="nav-number">1.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">异常类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD"><span class="nav-number">1.2.1.</span> <span class="nav-text">中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trap%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">trap和系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C"><span class="nav-number">1.2.3.</span> <span class="nav-text">故障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2"><span class="nav-number">1.2.4.</span> <span class="nav-text">终止</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8"><span class="nav-number">1.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">异常类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD"><span class="nav-number">1.2.1.</span> <span class="nav-text">中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trap%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">trap和系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C"><span class="nav-number">1.2.3.</span> <span class="nav-text">故障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2"><span class="nav-number">1.2.4.</span> <span class="nav-text">终止</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-x86-64%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="nav-number">1.3.</span> <span class="nav-text">Linux x86-64系统中的异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E4%B8%AD%E7%9A%84%E6%95%85%E9%9A%9C%E5%92%8C%E7%BB%88%E6%AD%A2"><span class="nav-number">1.3.1.</span> <span class="nav-text">Linux中的故障和终止</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">系统调用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">进程</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -390,7 +405,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

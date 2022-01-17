@@ -28,7 +28,7 @@
 <meta property="og:description" content="图解HTTP读书笔记">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-16T14:25:00.000Z">
-<meta property="article:modified_time" content="2022-01-16T15:02:07.721Z">
+<meta property="article:modified_time" content="2022-01-17T08:00:42.723Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta property="article:tag" content="计算机网络">
@@ -189,10 +189,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-01-16 22:25:00 / Modified: 23:02:07" itemprop="dateCreated datePublished" datetime="2022-01-16T22:25:00+08:00">2022-01-16</time>
+              <time title="Created: 2022-01-16 22:25:00" itemprop="dateCreated datePublished" datetime="2022-01-16T22:25:00+08:00">2022-01-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-01-17 16:00:42" itemprop="dateModified" datetime="2022-01-17T16:00:42+08:00">2022-01-17</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -225,7 +231,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>799</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -278,6 +284,18 @@
 <p>如果握手中的某个阶段中断，TCP协议会再次发送相同的数据包</p>
 <h3 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h3><p>域名解析</p>
 <h2 id="URI和URL"><a href="#URI和URL" class="headerlink" title="URI和URL"></a>URI和URL</h2><p>URL是URI的子集</p>
+<h1 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h1><p>http是无状态协议</p>
+<p>使用cookie管理状态</p>
+<p>使用URI定位资源</p>
+<p>持久连接：任意一端未提出断开，则保持tcp连接状态，减少tcp连接重复建立和断开的开销</p>
+<p>HTTP 1.1中，所有连接默认为持久连接</p>
+<p>pipeline技术：连续发送请求，不必等待上一个请求返回</p>
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p>服务器响应报文中Set-Cookie header字段，告知客户端保存</p>
+<p>客户端再次请求时自动在header中加入cookie</p>
+<h1 id="HTTP报文"><a href="#HTTP报文" class="headerlink" title="HTTP报文"></a>HTTP报文</h1><p>换行符CR+LF，CR回车符<code>0x0d</code>，LF换行符<code>0x0a</code></p>
+<p>header + CR+LF + Body</p>
+<p>报文message是通信基本单位，8位组字节流</p>
+<p>实体entity 请求或响应的在和，包含实体header和实体body</p>
 
     </div>
 
@@ -364,7 +382,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Web%E5%8F%8A%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">Web及网络基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-IP"><span class="nav-number">1.1.</span> <span class="nav-text">TCP&#x2F;IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP%E3%80%81TCP%E3%80%81DNS"><span class="nav-number">1.2.</span> <span class="nav-text">IP、TCP、DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP"><span class="nav-number">1.2.1.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.2.2.</span> <span class="nav-text">TCP协议的可靠性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS"><span class="nav-number">1.2.3.</span> <span class="nav-text">DNS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URI%E5%92%8CURL"><span class="nav-number">1.3.</span> <span class="nav-text">URI和URL</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Web%E5%8F%8A%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">Web及网络基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-IP"><span class="nav-number">1.1.</span> <span class="nav-text">TCP&#x2F;IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP%E3%80%81TCP%E3%80%81DNS"><span class="nav-number">1.2.</span> <span class="nav-text">IP、TCP、DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP"><span class="nav-number">1.2.1.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.2.2.</span> <span class="nav-text">TCP协议的可靠性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS"><span class="nav-number">1.2.3.</span> <span class="nav-text">DNS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URI%E5%92%8CURL"><span class="nav-number">1.3.</span> <span class="nav-text">URI和URL</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.</span> <span class="nav-text">HTTP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Cookie"><span class="nav-number">2.1.</span> <span class="nav-text">Cookie</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP%E6%8A%A5%E6%96%87"><span class="nav-number">3.</span> <span class="nav-text">HTTP报文</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"ez4zzw.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="数据结构数组声明 12[3]&amp;#123;1, 2, 3&amp;#125;[...]&amp;#123;1, 2, 3&amp;#125;语法糖 第二种编译器会进行上限推导 语句转换 由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化  元素数量&lt;&#x3D;4，元素放在栈上 &gt;4时，元素保存在静态区，运行时取出  元素数量&lt;&#x3D;4时，简化为赋值表达式 1234var arr [3]intarr[0]">
+  <meta name="description" content="Go语言源码阅读与原理分析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go语言学习笔记">
 <meta property="og:url" content="https://ez4zzw.github.io/2022/01/25/godesign/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="数据结构数组声明 12[3]&amp;#123;1, 2, 3&amp;#125;[...]&amp;#123;1, 2, 3&amp;#125;语法糖 第二种编译器会进行上限推导 语句转换 由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化  元素数量&lt;&#x3D;4，元素放在栈上 &gt;4时，元素保存在静态区，运行时取出  元素数量&lt;&#x3D;4时，简化为赋值表达式 1234var arr [3]intarr[0]">
+<meta property="og:description" content="Go语言源码阅读与原理分析">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-25T12:14:16.000Z">
-<meta property="article:modified_time" content="2022-02-03T09:31:00.187Z">
+<meta property="article:modified_time" content="2022-02-03T13:41:21.273Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta property="article:tag" content="Go">
@@ -197,7 +197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-02-03 17:31:00" itemprop="dateModified" datetime="2022-02-03T17:31:00+08:00">2022-02-03</time>
+                <time title="Modified: 2022-02-03 21:41:21" itemprop="dateModified" datetime="2022-02-03T21:41:21+08:00">2022-02-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -215,7 +215,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>382</span>
+              <span>665</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -234,7 +234,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>声明</p>
+        <p>Go语言源码阅读与原理分析</p>
+<span id="more"></span>
+
+<h1 id="Go的编译"><a href="#Go的编译" class="headerlink" title="Go的编译"></a>Go的编译</h1><h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>声明</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">3</span>]&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">[...]&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;语法糖</span><br></pre></td></tr></table></figure>
 <p>第二种编译器会进行上限推导</p>
 <p>语句转换</p>
@@ -257,6 +260,14 @@
 <li>已初始化的读写数据段 初始化的全局变量，初始化的静态局部变量static</li>
 <li>未初始化段 未初始化的全局变量和静态变量</li>
 </ol>
+<p>当数组元素个数大于四个时</p>
+<p>获取一个唯一的staticname，在静态存储区进行初始化，之后再拷贝到栈上</p>
+<p>访问和赋值</p>
+<p>编译器的静态类型检查时检测数组越界，索引是否为非负整数，索引越界</p>
+<p>使用变量作为索引时，无法编译检查，需要运行时阻止</p>
+<p>发现数组切片字符串越界时通过运行时的<code>runtime.panicIndex</code>和<code>runtime.goPanicIndex</code>触发panic</p>
+<p>下标没有越界时，编译器获取数组的内存地址和访问下标，计算出目标地址，使用Load将元素加载到内存中</p>
+<p>赋值时先确定目标元素地址，使用Store指令将数据存入地址，在编译阶段而不是运行时</p>
 
     </div>
 
@@ -338,7 +349,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#review"><span class="nav-number">1.1.1.</span> <span class="nav-text">review</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Go%E7%9A%84%E7%BC%96%E8%AF%91"><span class="nav-number">1.</span> <span class="nav-text">Go的编译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">2.1.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#review"><span class="nav-number">2.1.1.</span> <span class="nav-text">review</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

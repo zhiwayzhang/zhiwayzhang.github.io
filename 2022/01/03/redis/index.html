@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang=en>
 <head>
+  <link href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css" rel="stylesheet">
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -26,7 +27,7 @@
 <meta property="og:description" content="redis基础知识以及一些应用场景总结">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-03T08:22:27.000Z">
-<meta property="article:modified_time" content="2022-01-15T13:37:06.333Z">
+<meta property="article:modified_time" content="2022-03-02T06:45:38.177Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta name="twitter:card" content="summary">
@@ -387,7 +388,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/01/03/redis/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 742(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 760(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 2(minutes)</span>
@@ -399,35 +400,49 @@
       
         <p>redis基础知识以及一些应用场景总结</p>
 <span id="more"></span>
-
-<h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><p>内存数据库</p>
+<h1 id="基础"><a class="markdownIt-Anchor" href="#基础"></a> 基础</h1>
+<p>内存数据库</p>
 <p>优于memcached，速度上功能上</p>
 <p>基础数据结构：</p>
 <ul>
 <li>String，List，Set，Hash，ZSet</li>
 </ul>
 <p><a target="_blank" rel="noopener" href="https://redis.io/commands">redis命令手册</a></p>
-<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p>key-value</p>
+<h2 id="string"><a class="markdownIt-Anchor" href="#string"></a> String</h2>
+<p>key-value</p>
 <p>指令GET，SET，DEL</p>
-<h2 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h2><p>key-list</p>
+<h2 id="list"><a class="markdownIt-Anchor" href="#list"></a> LIST</h2>
+<p>key-list</p>
 <p>指令</p>
 <ul>
-<li>LPUSH，RPUSH 推入列表的左端和右端<br>LPUSH listname item<br>返回值为列表长度</li>
+<li>LPUSH，RPUSH 推入列表的左端和右端<br />
+LPUSH listname item<br />
+返回值为列表长度</li>
 <li>LPOP，RPOP，从左端和右端删除元素</li>
-<li>LINDEX，获取列表指定位置的元素<br>LINDEX listname 1</li>
-<li>LRANGE，获取给定范围内的所有元素<br>LRANGE listname 0 -1<br>0为开始索引，-1位结束索引</li>
+<li>LINDEX，获取列表指定位置的元素<br />
+LINDEX listname 1</li>
+<li>LRANGE，获取给定范围内的所有元素<br />
+LRANGE listname 0 -1<br />
+0为开始索引，-1位结束索引</li>
 </ul>
-<h2 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h2><p>key-set</p>
+<h2 id="set"><a class="markdownIt-Anchor" href="#set"></a> SET</h2>
+<p>key-set</p>
 <p>SADD, SMEMBERS, SISMEMBER, SREM</p>
-<h2 id="HASH"><a href="#HASH" class="headerlink" title="HASH"></a>HASH</h2><p>key-hash table</p>
-<p>内部也是key-value </p>
+<h2 id="hash"><a class="markdownIt-Anchor" href="#hash"></a> HASH</h2>
+<p>key-hash table</p>
+<p>内部也是key-value</p>
 <p>HSET, HGET, HGETALL, HDEL</p>
-<h2 id="ZSET"><a href="#ZSET" class="headerlink" title="ZSET"></a>ZSET</h2><p>key-zset</p>
+<h2 id="zset"><a class="markdownIt-Anchor" href="#zset"></a> ZSET</h2>
+<p>key-zset</p>
 <p>ZADD, ZRANGE, ZRANGEBYSCORE, ZREM</p>
-<h2 id="一个文章投票系统的设计"><a href="#一个文章投票系统的设计" class="headerlink" title="一个文章投票系统的设计"></a>一个文章投票系统的设计</h2><h3 id="基础功能设计"><a href="#基础功能设计" class="headerlink" title="基础功能设计"></a>基础功能设计</h3><p>根据文章的发布时间和投票数量计算一个评分，根据该评分来排序和展示文章</p>
+<h2 id="一个文章投票系统的设计"><a class="markdownIt-Anchor" href="#一个文章投票系统的设计"></a> 一个文章投票系统的设计</h2>
+<h3 id="基础功能设计"><a class="markdownIt-Anchor" href="#基础功能设计"></a> 基础功能设计</h3>
+<p>根据文章的发布时间和投票数量计算一个评分，根据该评分来排序和展示文章</p>
 <p>要求：如果有一篇文章符合有趣文章的要求（支持票至少200张），放在排行榜前100位至少一天</p>
 <p>构造分数</p>
-<p>$$<br>score = up\ vote\ *C + post\ time<br>$$</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>c</mi><mi>o</mi><mi>r</mi><mi>e</mi><mo>=</mo><mi>u</mi><mi>p</mi><mtext> </mtext><mi>v</mi><mi>o</mi><mi>t</mi><mi>e</mi><mtext> </mtext><mo>∗</mo><mi>C</mi><mo>+</mo><mi>p</mi><mi>o</mi><mi>s</mi><mi>t</mi><mtext> </mtext><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">
+score = up\ vote\ *C + post\ time
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault">c</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.80952em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">u</span><span class="mord mathdefault">p</span><span class="mspace"> </span><span class="mord mathdefault" style="margin-right:0.03588em;">v</span><span class="mord mathdefault">o</span><span class="mord mathdefault">t</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mspace"> </span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mspace"> </span><span class="mord mathdefault">t</span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span></span></span></span></p>
 <p>常量C可以选择432</p>
 <p>分析：一天的秒数为86400，文章达到有趣需要200票，可以利用86400/200=432来作为每个投票对得分的贡献</p>
 <p>保存评分以及存储文章信息</p>
@@ -442,9 +457,9 @@
 <li>ZINCRBY 将文章的评分增加432</li>
 <li>HINCRBY 对hash结构中的文章投票数量进行更新</li>
 </ul>
-<h3 id="发布获取文章"><a href="#发布获取文章" class="headerlink" title="发布获取文章"></a>发布获取文章</h3><p>发布文章需要新增id，使用计数器，执行incr指令</p>
+<h3 id="发布获取文章"><a class="markdownIt-Anchor" href="#发布获取文章"></a> 发布获取文章</h3>
+<p>发布文章需要新增id，使用计数器，执行incr指令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr keyname</span><br></pre></td></tr></table></figure>
-
 <p>可以得到计数器++之后的值</p>
 <p>使用sadd将发布者id添加到文章投票的用户集合中（避免自己给自己投票）</p>
 <p>集合的过期时间为一周，一周后自动释放expire</p>
@@ -457,7 +472,8 @@
 <li>使用ZREVRANGE获取文章的id</li>
 <li>使用HGETALL获取详细内容</li>
 </ul>
-<h3 id="文章分组"><a href="#文章分组" class="headerlink" title="文章分组"></a>文章分组</h3><p>TODO</p>
+<h3 id="文章分组"><a class="markdownIt-Anchor" href="#文章分组"></a> 文章分组</h3>
+<p>TODO</p>
 
       
     </div>
@@ -560,11 +576,17 @@
         	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
         </div>
     </div>
+    <div class="beian">
+        
+        <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2021030271号-1</a>
+        
+    </div>
 </footer>
   <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <script>
 window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 </script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"></script> -->
 
 <script src="/js/plugin.min.js"></script>
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang=en>
 <head>
+  <link href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css" rel="stylesheet">
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -26,7 +27,7 @@
 <meta property="og:description" content="本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-10T05:02:03.000Z">
-<meta property="article:modified_time" content="2022-01-04T18:17:14.287Z">
+<meta property="article:modified_time" content="2022-03-02T06:41:22.494Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta property="article:tag" content="CSAPP">
@@ -386,7 +387,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/12/10/csapp-ch2/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 377(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 379(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 1(minutes)</span>
@@ -398,35 +399,44 @@
       
         <p>本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式</p>
 <span id="more"></span>
-<h1 id="信息存储"><a href="#信息存储" class="headerlink" title="信息存储"></a>信息存储</h1><p>最小可寻址内存单位 -字节byte 一般为8位的块</p>
+<h1 id="信息存储"><a class="markdownIt-Anchor" href="#信息存储"></a> 信息存储</h1>
+<p>最小可寻址内存单位 -字节byte 一般为8位的块</p>
 <p>内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识</p>
 <p>地址的集合为虚拟地址空间</p>
 <p>虚拟内存中包含程序的数据，指令，控制信息</p>
-<h2 id="十六进制表示"><a href="#十六进制表示" class="headerlink" title="十六进制表示"></a>十六进制表示</h2><p>跳</p>
-<h2 id="字数据大小"><a href="#字数据大小" class="headerlink" title="字数据大小"></a>字数据大小</h2><p>字长为数据标称大小</p>
-<p>字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $$2^w-1$$]</p>
-<p>最多访问$$2^w$$个字节</p>
+<h2 id="十六进制表示"><a class="markdownIt-Anchor" href="#十六进制表示"></a> 十六进制表示</h2>
+<p>跳</p>
+<h2 id="字数据大小"><a class="markdownIt-Anchor" href="#字数据大小"></a> 字数据大小</h2>
+<p>字长为数据标称大小</p>
+<p>字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mi>w</mi></msup><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2^w-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.747722em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>]</p>
+<p>最多访问<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mi>w</mi></msup></mrow><annotation encoding="application/x-tex">2^w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span></span></span></span></span></span></span></span></span></span></span>个字节</p>
 <p>32位和64位</p>
 <p><code>gcc -m32</code>可以编译32位程序</p>
 <p><code>gcc -m64</code>可以编译64位程序</p>
-<h2 id="寻址和字节顺序"><a href="#寻址和字节顺序" class="headerlink" title="寻址和字节顺序"></a>寻址和字节顺序</h2><p>最低有效字节在前-小端法</p>
+<h2 id="寻址和字节顺序"><a class="markdownIt-Anchor" href="#寻址和字节顺序"></a> 寻址和字节顺序</h2>
+<p>最低有效字节在前-小端法</p>
 <p>最高有效字节在前-大端法</p>
 <p>部分cpu支持双端法 ，但是操作系统只支持小端模式（iOS &amp; Android）</p>
-<h3 id="大小端的影响"><a href="#大小端的影响" class="headerlink" title="大小端的影响"></a>大小端的影响</h3><ol>
+<h3 id="大小端的影响"><a class="markdownIt-Anchor" href="#大小端的影响"></a> 大小端的影响</h3>
+<ol>
 <li>网络收发统一顺序</li>
 <li>汇编阅读字节顺序</li>
 <li>按字节打印</li>
 </ol>
-<h2 id="字符串表示"><a href="#字符串表示" class="headerlink" title="字符串表示"></a>字符串表示</h2><p>以null结尾的字符数组</p>
+<h2 id="字符串表示"><a class="markdownIt-Anchor" href="#字符串表示"></a> 字符串表示</h2>
+<p>以null结尾的字符数组</p>
 <p>每个字符使用ASCII码，在各个系统都相同，因此文本数据的表示有更高的平台独立性（than二进制数据）</p>
 <p>终止字符<code>0x00</code></p>
 <p>UTF-8，每个字符使用一个字节来编码</p>
-<h2 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h2><p>null</p>
-<h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>掩码运算</p>
+<h2 id="布尔代数"><a class="markdownIt-Anchor" href="#布尔代数"></a> 布尔代数</h2>
+<p>null</p>
+<h2 id="位运算"><a class="markdownIt-Anchor" href="#位运算"></a> 位运算</h2>
+<p>掩码运算</p>
 <blockquote>
 <p>掩码：表示从一个字中选出来位的集合</p>
 </blockquote>
-<h1 id="整数表示"><a href="#整数表示" class="headerlink" title="整数表示"></a>整数表示</h1><p>跳</p>
+<h1 id="整数表示"><a class="markdownIt-Anchor" href="#整数表示"></a> 整数表示</h1>
+<p>跳</p>
 
       
     </div>
@@ -529,11 +539,17 @@
         	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
         </div>
     </div>
+    <div class="beian">
+        
+        <a href="https://beian.miit.gov.cn/" target="_blank">鲁ICP备2021030271号-1</a>
+        
+    </div>
 </footer>
   <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <script>
 window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 </script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"></script> -->
 
 <script src="/js/plugin.min.js"></script>
 

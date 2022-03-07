@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='编译原理笔记，词法语法分析
+'><title>编译原理笔记</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='编译原理笔记'>
+<meta property='og:description' content='编译原理笔记，词法语法分析
+'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Note' /><meta property='article:published_time' content='2022-01-02T10:33:48&#43;00:00'/><meta property='article:modified_time' content='2022-01-02T10:33:48&#43;00:00'/>
+<meta name="twitter:title" content="编译原理笔记">
+<meta name="twitter:description" content="编译原理笔记，词法语法分析
+">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/">编译原理笔记</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jan 02, 2022</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>编译原理笔记，词法语法分析</p>
+<h1 id="词法分析">词法分析</h1>
+<h2 id="有穷自动机-dfa">有穷自动机 DFA</h2>
+<p>$f: K \times \sum \to K$是一个单值函数，任何输入符号都唯一的确定了下一个状态</p>
+<h2 id="不确定的有穷自动机-nfa">不确定的有穷自动机 NFA</h2>
+<p>至少一个初态节点，若干个终态节点
+DFA是NFA的特例</p>
+<h2 id="子集法-nfa转换为dfa">子集法 NFA转换为DFA</h2>
+<p>对于状态集合$I$，定义两个运算</p>
+<ol>
+<li>
+<p>集合$I$的$\epsilon-Closure(I)$，是一个状态集$I$中的任何状态经过任意条$\epsilon$弧能到达的状态集合
+因为当输入符号为空时，则自动机停留在原来的位置上，所以有关系$\forall S \in I \ \ , S \in \epsilon-Closure(I)$</p>
+</li>
+<li>
+<p>状态集合$I$的$a$弧转换，表示为$move(I,a)$，定义为状态集合J，其中$J$是所有那些可以从$I$中的某一状态经过一条$a$弧而到达的状态的全体
+有关系$\forall S_i \in I \ \ , move(I,a)=f(S_1,a)\bigcup f(S_2,a) \bigcup f(S_3,a)&hellip;$
+算法流程：</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="n">let</span> <span class="n">C</span> <span class="n">as</span> <span class="n">a</span> <span class="n">set</span> <span class="n">save</span> <span class="n">Status</span><span class="o">-</span><span class="n">Set</span>
+<span class="n">let</span> <span class="n">K_0</span> <span class="o">=</span> <span class="n">epsilon</span><span class="o">-</span><span class="n">Closure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">&lt;-</span> <span class="n">epsilon</span><span class="o">-</span><span class="n">Closure</span><span class="p">(</span><span class="n">K_0</span><span class="p">)</span>
+<span class="k">while</span><span class="p">(</span><span class="k">if</span> <span class="n">C</span> <span class="n">have</span> <span class="n">set</span> <span class="n">not</span> <span class="n">visit</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">visit</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span>
+	<span class="k">for</span> <span class="n">a</span> <span class="n">in</span> <span class="n">Char</span> <span class="n">Set</span> <span class="p">{</span>
+		<span class="nl">U</span> <span class="p">:</span><span class="o">=</span> <span class="n">epsilon</span><span class="o">-</span><span class="n">Closure</span><span class="p">(</span><span class="n">Move</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="n">a</span><span class="p">))</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">U</span> <span class="n">not</span> <span class="n">in</span> <span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">C</span> <span class="o">&lt;-</span> <span class="n">U</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>经过状态重新命名可以得到DFA</p>
+<h2 id="dfa的化简">DFA的化简</h2>
+<p>化简 的DFA：没有多余状态，没有两个状态是互相等价的。
+DFA可以通过消除无用状态和合并等价状态二转换成一个与之等价的最小状态的DFA</p>
+<p>无用状态：从开始状态触发，任何输入串都无法到达
+或者从这个状态没有通路到达终态
+![[Pasted image 20211230203930.png]]
+如s4，s6，s8，可以直接消除</p>
+<p>DFA中的状态等价条件：</p>
+<ol>
+<li>一致性条件-状态s和t必须同时为可接受状态或不可接受状态</li>
+<li>蔓延性条件-对于所有输入符号，状态s和t必须转换到等价的状态</li>
+</ol>
+<p>分割法分解DFA状态：
+步骤：</p>
+<ol>
+<li>先将终态和非终态分割，作为两个子集，作为一个划分</li>
+<li>在划分中对每个子集加上可输入字符，将可区别的状态拆分，得到新的划分</li>
+<li>重复直到划分不可以再分割</li>
+</ol>
+<p>化简后的DFA便于在计算机上实现</p>
+<h2 id="由dfa化简为正规式">由DFA化简为正规式</h2>
+<p>很简单
+缩缩缩</p>
+<h2 id="由正规式生成nfa">由正规式生成NFA</h2>
+<p>$L(G)$表示文法G产生的语言的集合
+$L(G1) = L(G2)$ 则两个文法等价
+反正就是构造一个等价的$\mathbb{NFA}$</p>
+<h3 id="语法制导">语法制导</h3>
+<p>按照语法结构构造
+将正规式分解为子表达式
+ 
+闭包：终态输入epsilon到达初态
+分解方式不唯一
+可以从头开始，也可以分部进行</p>
+<p>处理步骤：</p>
+<ul>
+<li>如$r_1 r_2$，顺序拼接两个NFA</li>
+<li>如$r1^*$处理闭包，终态输入epsilon链接到初态</li>
+<li>如$r_1|r_2$，由初态输入epsilon到两个NFA，由两个NFA输入epsilon到达终态</li>
+</ul>
+<h1 id="语法分析">语法分析</h1>
+<h2 id="自顶向下">自顶向下</h2>
+<p>文法特点：</p>
+<ol>
+<li>每个产生式右部都由终结符号开始</li>
+<li>若两个产生式都由相同的左部，右部都由不同的终结符开始
+分析过程是唯一的</li>
+</ol>
+<p>FIRST集
+$FIRST(\alpha)={以\alpha为左部的，产生式右部的第一个非终结符集合}$
+为a的开始符号集</p>
+<p>FOLLOW集
+对于上下文无关文法，S是开始符号
+$FOLLOW(A)={状态A后跟符号}$
+若A可以引导终止epsilon ，则加入#到FOLLOW集</p>
+<h4 id="构造算法">构造算法</h4>
+<p>对文法中每一非终结符A，构造FOLLOW(A)的算法如下：反复使用如下规则，直至FOLLOW集不再增大为止。
+⑴若A是文法的开始符号,则把输入结束符＃加入FOLLOW(A)中；
+⑵若B→αAaβ,a是终结符,则把a加入FOLLOW(A)中；
+⑶若B→αAXβ,X是非终结符,则把FIRST(Xβ)加入FOLLOW(A)中；
+⑷若B→αA或B→αAβ,且β可以推导至ε，则把FOLLOW(B)加入FOLLOW(A)中。</p>
+<p>SELECT集
+$SELECT(A  \to a)=(FIRST(a)-{\epsilon})\bigcup FOLLOW(A)$</p>
+<p>LL(1)文法：第一个L表示自顶向下分析是从左到右扫描输入串，第二个L表明分析过程中将用最左推导，1表明只需要向右看一个符号便可以决定如何推导。
+充要条件:
+对于每个非终结符A，的两个不同产生式
+$SELECT(A \to \alpha)\bigcap SELECT(A \to \beta)=\varnothing$</p>
+<h2 id="非ll1文法到ll1文法的等价转换">非LL(1)文法到LL(1)文法的等价转换</h2>
+<p>LL(1)文法的性质：
+① LL(1)文法是无二义性的；
+② LL(1)文法不含左递归；
+③ LL(1)文法没有公共左因子。</p>
+<p>消除左递归
+消除回溯：提取左公因子
+改造成LL1文法</p>
+<h3 id="消除直接左递归">消除直接左递归：</h3>
+<p>例如：
+A→Aα|β
+对A引入一个新的非终结符A′，把上式改写为：
+A →βA′        <br>
+A′→αA′|ε
+例2：
+E→E +T | T
+T→T * F | F
+F→i |（E）
+改造为
+E→TE′
+E′→+T E′|ε
+T→FT ′
+T′→* FT′|ε
+F→i |（E）</p>
+<h3 id="消除间接左递归">消除间接左递归</h3>
+<p>把式子带入，然后按照消除直接左递归的方法去消除
+S → Aα|β      ⑴
+A → Sγ           ⑵
+得到
+S → Sγα|β     ⑶
+消除左递归
+S → βS′
+S ′→γαS′|ε</p>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/note/">Note</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

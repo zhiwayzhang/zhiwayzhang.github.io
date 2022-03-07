@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='中缀表达式求值 对于表达式求值，我们通常用栈来操作。 常用的做法是先转换为后缀表达式，再利用栈来求值。 步骤如下：
+ 开一个栈一个储存运算符，再开一个结构存后缀表达式，可以选择string数组 每遇到一个数字，将其加入到后缀表达式种 遇到左括号，加入到符号栈种 遇到右括号，不断将栈顶元素添加到后缀表达式中，直到遇到左括号，然后弹出左括号 遇到普通运算符，只要栈顶符号的优先级不低于新符号，就不断取出栈顶元素存到后缀表达式，然后将新符号入栈，优先级顺序为乘除&amp;gt;加减&amp;gt;左括号 依次取出符号栈中剩余元素，加入到后缀表达式中 将得到的后缀表达式求值  Note 代码在取栈顶元素时容易出错，需要注意对栈为空时的判断
+Code #include &amp;lt;cstdio&amp;gt;#include &amp;lt;iostream&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;queue&amp;gt;#include &amp;lt;cmath&amp;gt;#include &amp;lt;stack&amp;gt;#include &amp;lt;map&amp;gt;#include &amp;lt;set&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) #define debug cout&amp;lt;&amp;lt;0&amp;lt;&amp;lt;endl #define ll long long const int MAXN = 1e4 &#43; 10; const int MOD = 1e9 &#43; 7; using namespace std; stack&amp;lt;int&amp;gt; stnumber; stack&amp;lt;char&amp;gt; stsign; stack&amp;lt;int&amp;gt; ans; struct node { string s=&amp;#34;&amp;#34;; } a[MAXN]; int oder(char c) { if (c == &amp;#39;&#43;&amp;#39; || c == &amp;#39;-&amp;#39;) return 1; else if (c == &amp;#39;*&amp;#39; || c == &amp;#39;/&amp;#39;) return 2; return 0; } int toInt(string ss) { int res = 0; for (int i = 0; i &amp;lt; ss.'><title>中缀表达式求值</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='中缀表达式求值'>
+<meta property='og:description' content='中缀表达式求值 对于表达式求值，我们通常用栈来操作。 常用的做法是先转换为后缀表达式，再利用栈来求值。 步骤如下：
+ 开一个栈一个储存运算符，再开一个结构存后缀表达式，可以选择string数组 每遇到一个数字，将其加入到后缀表达式种 遇到左括号，加入到符号栈种 遇到右括号，不断将栈顶元素添加到后缀表达式中，直到遇到左括号，然后弹出左括号 遇到普通运算符，只要栈顶符号的优先级不低于新符号，就不断取出栈顶元素存到后缀表达式，然后将新符号入栈，优先级顺序为乘除&amp;gt;加减&amp;gt;左括号 依次取出符号栈中剩余元素，加入到后缀表达式中 将得到的后缀表达式求值  Note 代码在取栈顶元素时容易出错，需要注意对栈为空时的判断
+Code #include &amp;lt;cstdio&amp;gt;#include &amp;lt;iostream&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;queue&amp;gt;#include &amp;lt;cmath&amp;gt;#include &amp;lt;stack&amp;gt;#include &amp;lt;map&amp;gt;#include &amp;lt;set&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) #define debug cout&amp;lt;&amp;lt;0&amp;lt;&amp;lt;endl #define ll long long const int MAXN = 1e4 &#43; 10; const int MOD = 1e9 &#43; 7; using namespace std; stack&amp;lt;int&amp;gt; stnumber; stack&amp;lt;char&amp;gt; stsign; stack&amp;lt;int&amp;gt; ans; struct node { string s=&amp;#34;&amp;#34;; } a[MAXN]; int oder(char c) { if (c == &amp;#39;&#43;&amp;#39; || c == &amp;#39;-&amp;#39;) return 1; else if (c == &amp;#39;*&amp;#39; || c == &amp;#39;/&amp;#39;) return 2; return 0; } int toInt(string ss) { int res = 0; for (int i = 0; i &amp;lt; ss.'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='ACM' /><meta property='article:published_time' content='2020-10-07T22:03:17&#43;00:00'/><meta property='article:modified_time' content='2020-10-07T22:03:17&#43;00:00'/>
+<meta name="twitter:title" content="中缀表达式求值">
+<meta name="twitter:description" content="中缀表达式求值 对于表达式求值，我们通常用栈来操作。 常用的做法是先转换为后缀表达式，再利用栈来求值。 步骤如下：
+ 开一个栈一个储存运算符，再开一个结构存后缀表达式，可以选择string数组 每遇到一个数字，将其加入到后缀表达式种 遇到左括号，加入到符号栈种 遇到右括号，不断将栈顶元素添加到后缀表达式中，直到遇到左括号，然后弹出左括号 遇到普通运算符，只要栈顶符号的优先级不低于新符号，就不断取出栈顶元素存到后缀表达式，然后将新符号入栈，优先级顺序为乘除&amp;gt;加减&amp;gt;左括号 依次取出符号栈中剩余元素，加入到后缀表达式中 将得到的后缀表达式求值  Note 代码在取栈顶元素时容易出错，需要注意对栈为空时的判断
+Code #include &amp;lt;cstdio&amp;gt;#include &amp;lt;iostream&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;queue&amp;gt;#include &amp;lt;cmath&amp;gt;#include &amp;lt;stack&amp;gt;#include &amp;lt;map&amp;gt;#include &amp;lt;set&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) #define debug cout&amp;lt;&amp;lt;0&amp;lt;&amp;lt;endl #define ll long long const int MAXN = 1e4 &#43; 10; const int MOD = 1e9 &#43; 7; using namespace std; stack&amp;lt;int&amp;gt; stnumber; stack&amp;lt;char&amp;gt; stsign; stack&amp;lt;int&amp;gt; ans; struct node { string s=&amp;#34;&amp;#34;; } a[MAXN]; int oder(char c) { if (c == &amp;#39;&#43;&amp;#39; || c == &amp;#39;-&amp;#39;) return 1; else if (c == &amp;#39;*&amp;#39; || c == &amp;#39;/&amp;#39;) return 2; return 0; } int toInt(string ss) { int res = 0; for (int i = 0; i &amp;lt; ss.">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/acm/" >
+                ACM
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC/">中缀表达式求值</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Oct 07, 2020</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h1 id="中缀表达式求值">中缀表达式求值</h1>
+<p>对于表达式求值，我们通常用栈来操作。
+常用的做法是先转换为后缀表达式，再利用栈来求值。
+步骤如下：</p>
+<ul>
+<li>开一个栈一个储存运算符，再开一个结构存后缀表达式，可以选择string数组</li>
+<li>每遇到一个数字，将其加入到后缀表达式种</li>
+<li>遇到左括号，加入到符号栈种</li>
+<li>遇到右括号，不断将栈顶元素添加到后缀表达式中，直到遇到左括号，然后弹出左括号</li>
+<li>遇到普通运算符，只要栈顶符号的优先级不低于新符号，就不断取出栈顶元素存到后缀表达式，然后将新符号入栈，优先级顺序为<code>乘除&gt;加减&gt;左括号</code></li>
+<li>依次取出符号栈中剩余元素，加入到后缀表达式中</li>
+<li>将得到的后缀表达式求值</li>
+</ul>
+<!-- raw HTML omitted -->
+<h1 id="note">Note</h1>
+<p>代码在取栈顶元素时容易出错，需要注意对栈为空时的判断</p>
+<h1 id="code">Code</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stack&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;set&gt;</span><span class="cp">
+</span><span class="cp">#define mem(a,b) memset(a,b,sizeof(a))
+</span><span class="cp">#define debug cout&lt;&lt;0&lt;&lt;endl
+</span><span class="cp">#define ll long long
+</span><span class="cp"></span><span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mf">1e4</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MOD</span> <span class="o">=</span> <span class="mf">1e9</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">stnumber</span><span class="p">;</span>
+<span class="n">stack</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="n">stsign</span><span class="p">;</span>
+<span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ans</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">node</span> <span class="p">{</span>
+    <span class="n">string</span> <span class="n">s</span><span class="o">=</span><span class="s">&#34;&#34;</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">a</span><span class="p">[</span><span class="n">MAXN</span><span class="p">];</span>
+
+<span class="kt">int</span> <span class="nf">oder</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;+&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;-&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;*&#39;</span> <span class="o">||</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;/&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">toInt</span><span class="p">(</span><span class="n">string</span> <span class="n">ss</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">ss</span><span class="p">.</span><span class="n">length</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">*</span><span class="mi">10</span> <span class="o">+</span> <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">calc</span><span class="p">(</span><span class="kt">int</span> <span class="n">aa</span><span class="p">,</span> <span class="kt">int</span> <span class="n">bb</span><span class="p">,</span> <span class="kt">char</span> <span class="n">op</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="sc">&#39;+&#39;</span><span class="o">:</span>
+            <span class="k">return</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">bb</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="sc">&#39;/&#39;</span><span class="o">:</span> 
+            <span class="k">return</span> <span class="n">bb</span> <span class="o">/</span> <span class="n">aa</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="sc">&#39;*&#39;</span><span class="o">:</span>
+            <span class="k">return</span> <span class="n">aa</span><span class="o">*</span><span class="n">bb</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="sc">&#39;-&#39;</span><span class="o">:</span> 
+            <span class="k">return</span> <span class="n">bb</span> <span class="o">-</span> <span class="n">aa</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">bool</span> <span class="nf">isnum</span><span class="p">(</span><span class="kt">char</span> <span class="n">si</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">si</span> <span class="o">&lt;=</span> <span class="sc">&#39;9&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">si</span> <span class="o">&gt;=</span> <span class="sc">&#39;0&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+    <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">N</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">N</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">isnum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="n">string</span> <span class="n">t</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">isnum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="p">{</span>
+                    <span class="n">t</span> <span class="o">+=</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                    <span class="n">len</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="n">a</span><span class="p">[</span><span class="o">++</span><span class="n">cur</span><span class="p">].</span><span class="n">s</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;(&#39;</span><span class="p">)</span> 
+                <span class="n">stsign</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;)&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">stsign</span><span class="p">.</span><span class="n">top</span><span class="p">()</span> <span class="o">!=</span> <span class="sc">&#39;(&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kt">char</span> <span class="n">op</span> <span class="o">=</span> <span class="n">stsign</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+                    <span class="n">stsign</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+                    <span class="n">a</span><span class="p">[</span><span class="o">++</span><span class="n">cur</span><span class="p">].</span><span class="n">s</span> <span class="o">+=</span> <span class="n">op</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">stsign</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="kt">char</span> <span class="n">op</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">stsign</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+                <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">stsign</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">oder</span><span class="p">(</span><span class="n">stsign</span><span class="p">.</span><span class="n">top</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="n">oder</span><span class="p">(</span><span class="n">op</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="n">a</span><span class="p">[</span><span class="o">++</span><span class="n">cur</span><span class="p">].</span><span class="n">s</span> <span class="o">+=</span> <span class="n">stsign</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+                    <span class="n">stsign</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+                    <span class="c1">//if (stsign.empty()) break;
+</span><span class="c1"></span>                <span class="p">}</span>
+                <span class="n">stsign</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">op</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="n">len</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">stsign</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kt">char</span> <span class="n">op</span> <span class="o">=</span> <span class="n">stsign</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">stsign</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">a</span><span class="p">[</span><span class="o">++</span><span class="n">cur</span><span class="p">].</span><span class="n">s</span> <span class="o">+=</span> <span class="n">op</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">// for (int i = 1; i &lt;= cur; i++) {
+</span><span class="c1"></span>    <span class="c1">//     cout &lt;&lt; a[i].s &lt;&lt; endl;
+</span><span class="c1"></span>    <span class="c1">// }
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">cur</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">temp</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">isnum</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">toInt</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">s</span><span class="p">);</span>
+            <span class="n">ans</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">temp</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">aa</span> <span class="o">=</span> <span class="n">ans</span><span class="p">.</span><span class="n">top</span><span class="p">();</span> <span class="n">ans</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="kt">int</span> <span class="n">bb</span> <span class="o">=</span> <span class="n">ans</span><span class="p">.</span><span class="n">top</span><span class="p">();</span> <span class="n">ans</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="n">ans</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">calc</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/acm/">ACM</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Luogu3964-松鼠聚会</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/51nod3143-%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%9B%BC%E5%93%88%E9%A1%BF%E8%B7%9D%E7%A6%BB/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">51nod3143-切比雪夫距离与曼哈顿距离</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E8%8E%AB%E9%98%9F-%E5%B0%8Fb%E7%9A%84%E8%AF%A2%E9%97%AE%E6%B4%9B%E8%B0%B7p2709/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">莫队-小B的询问洛谷P2709</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">GCD-兔八哥与猎人</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E7%BB%9F%E8%AE%A1%E7%A1%AC%E5%B8%81-%E9%80%92%E6%8E%A8/dp/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">统计硬币-递推/DP</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

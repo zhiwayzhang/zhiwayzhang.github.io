@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Redis on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/redis/</link>
+    <description>Recent content in Redis on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 Mar 2022 16:11:42 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis设计与实现读书笔记</title>
+      <link>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 01 Mar 2022 16:11:42 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;redis设计与实现&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>计算几何 on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95/</link>
+    <description>Recent content in 计算几何 on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 13 May 2020 22:05:25 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算几何-平行四边形</title>
+      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95-%E5%B9%B3%E8%A1%8C%E5%9B%9B%E8%BE%B9%E5%BD%A2/</link>
+      <pubDate>Wed, 13 May 2020 22:05:25 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95-%E5%B9%B3%E8%A1%8C%E5%9B%9B%E8%BE%B9%E5%BD%A2/</guid>
+      <description>Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意三点不共线。 输出 一行一个整数表示平行四边形个数。
+Solution 按照平行四边形的性质，两组顶点的中点重合，可以统计出每组顶点的中点，再统计每个顶点的个数，排列组合一下
+Note 第一发对于顶点的统计出锅了，排序条件写错，提交都要检查排序</description>
+    </item>
+    
+  </channel>
+</rss>

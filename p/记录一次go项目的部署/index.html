@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:
+ps -e 列出所有进程 ps -f 显示进程的全部信息 grep grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称， 还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。'><title>记录一次Go项目的部署</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='记录一次Go项目的部署'>
+<meta property='og:description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:
+ps -e 列出所有进程 ps -f 显示进程的全部信息 grep grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称， 还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Golang' /><meta property='article:tag' content='Linux' /><meta property='article:tag' content='Shell' /><meta property='article:published_time' content='2021-03-30T12:23:42&#43;00:00'/><meta property='article:modified_time' content='2021-03-30T12:23:42&#43;00:00'/>
+<meta name="twitter:title" content="记录一次Go项目的部署">
+<meta name="twitter:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:
+ps -e 列出所有进程 ps -f 显示进程的全部信息 grep grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称， 还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/web/" >
+                Web
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/">记录一次Go项目的部署</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Mar 30, 2021</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>最近写了一个go项目，需要部署到服务器进行测试，如果只是<code>go run main.go</code>难免也太麻烦了点，于是学习了项目部署的相关知识。
+项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。</p>
+<!-- raw HTML omitted -->
+<h1 id="系统信息">系统信息</h1>
+<p>系统信息: <code>CentOS Linux release 8.3.2011 x86_64</code>
+Go version: <code>go version go1.14.12 linux/amd64</code></p>
+<h1 id="几条命令的介绍">几条命令的介绍</h1>
+<h2 id="nohup">nohup</h2>
+<p>nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。
+语法格式：
+<code>nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp;</code>
+解释：
+<code>&gt; xxx.log</code>表示将输出重定向至该文件，可以记录运行时的日志
+<code>2&gt;&amp;1</code>将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件</p>
+<h2 id="git-pull">git pull</h2>
+<p><code>git pull origin dev</code>
+为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。</p>
+<h2 id="ps">ps</h2>
+<p>ps命令为 process status,可以查看系统当前的进程状态</p>
+<p>例如</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">~&gt; ps
+    PID TTY          TIME CMD
+ <span class="m">255873</span> pts/0    00:00:02 zsh
+ <span class="m">258517</span> pts/0    00:00:00 sh
+ <span class="m">258519</span> pts/0    00:00:00 OnlineJudge
+ <span class="m">263021</span> pts/0    00:00:00 ps
+</code></pre></div><p>我们将用ps命令与grep等命令筛选出项目的pid
+ps命令有很多参数选择，这里介绍一下用到的两条命令:</p>
+<pre tabindex="0"><code>ps -e  列出所有进程
+ps -f  显示进程的全部信息
+</code></pre><h2 id="grep">grep</h2>
+<p>grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称，
+还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。</p>
+<h2 id="awk">awk</h2>
+<p>用于处理文本提取信息，将使用grep查询到的进程信息提取出pid
+查询到的结果为
+<code>root      263948  263946  0 12:49 pts/0    00:00:00 ./OnlineJudge</code>
+我们只需要第二项的pid，使用
+<code>awk {print $2}</code>
+即可提取出进程的pid 263948</p>
+<h2 id="kill">kill</h2>
+<p><code>kill pid</code>杀死进程</p>
+<h1 id="shell脚本">Shell脚本</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">echo</span> -e <span class="s2">&#34;*** Online_Judge ***\n&#34;</span>
+<span class="nb">echo</span> -e <span class="s2">&#34;*** 检查上游代码中 ***\n&#34;</span>
+
+git pull origin dev
+
+<span class="nb">echo</span> -e <span class="s2">&#34;*** 编译中 ***\n&#34;</span>
+go build
+chmod -R <span class="m">777</span> OnlineJudge
+<span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+<span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="nv">$pid</span><span class="s2">\n&#34;</span>
+<span class="nb">kill</span> <span class="nv">$pid</span> <span class="o">&amp;&amp;</span> nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span>
+
+<span class="nv">pid2</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+<span class="nb">echo</span> -e <span class="s2">&#34;项目部署成功***进程ID为:</span><span class="nv">$pid2</span><span class="s2">&#34;</span>
+</code></pre></div><p>将脚本保存至项目目录，赋予执行权限
+<code>chmod +x setup.sh</code>
+执行脚本</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">➜ git:<span class="o">(</span>dev<span class="o">)</span> ✗ ./setup.sh         
+*** Online_Judge ***
+
+
+*** 检查上游代码中 ***
+From url
+ * branch            dev        -&gt; FETCH_HEAD
+Already up to date.
+*** 编译中 ***
+
+*** 添加权限 ***
+
+添加权限成功
+
+*** kill进程 ***
+
+<span class="m">258519</span>
+
+./setup.sh: line 18: <span class="m">258519</span> Terminated              nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+项目部署成功***进程ID为:263948
+</code></pre></div><p>至此项目即可部署成功
+上述shell中的视个人情况而修改</p>
+<h1 id="reference">Reference</h1>
+<p><a class="link" href="https://www.runoob.com/linux/linux-command-manual.html"  target="_blank" rel="noopener"
+    >Linux命令大全</a>
+<a class="link" href="https://blog.csdn.net/w425772719/article/details/115241722"  target="_blank" rel="noopener"
+    >如何优雅的通过Shell脚本一键部署GO项目到服务器？
+</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/golang/">Golang</a>
+        
+            <a href="/tags/linux/">Linux</a>
+        
+            <a href="/tags/shell/">Shell</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">OJ部署debug记录</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

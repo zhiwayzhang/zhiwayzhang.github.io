@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
+首部只有8个字节，源端口号和目的端口号，长度和check sum
+为什么需要checksum校验和：
+ 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
+端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
+UDP只能检查错误，不能纠错
+DNS服务采用UDP
+何时UDP，何时TCP？
+ 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
+接收方反馈：
+ ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
+重传，收方发现差错，发送方重传
+序号，检测哪个数据包出错进行重传
+数据包可靠传输：
+ 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
+ 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
+ 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
+GBN发送方：
+ 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
+选择重传 避免不必要的重传
+发送方接收方都维护一个窗口
+发送方：
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
+ 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大'><title>计算机网络自顶向下</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='计算机网络自顶向下'>
+<meta property='og:description' content='多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
+首部只有8个字节，源端口号和目的端口号，长度和check sum
+为什么需要checksum校验和：
+ 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
+端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
+UDP只能检查错误，不能纠错
+DNS服务采用UDP
+何时UDP，何时TCP？
+ 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
+接收方反馈：
+ ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
+重传，收方发现差错，发送方重传
+序号，检测哪个数据包出错进行重传
+数据包可靠传输：
+ 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
+ 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
+ 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
+GBN发送方：
+ 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
+选择重传 避免不必要的重传
+发送方接收方都维护一个窗口
+发送方：
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
+ 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='计算机网络' /><meta property='article:tag' content='Note' /><meta property='article:published_time' content='2022-03-05T10:32:46&#43;00:00'/><meta property='article:modified_time' content='2022-03-05T10:32:46&#43;00:00'/>
+<meta name="twitter:title" content="计算机网络自顶向下">
+<meta name="twitter:description" content="多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
+首部只有8个字节，源端口号和目的端口号，长度和check sum
+为什么需要checksum校验和：
+ 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
+端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
+UDP只能检查错误，不能纠错
+DNS服务采用UDP
+何时UDP，何时TCP？
+ 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
+接收方反馈：
+ ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
+重传，收方发现差错，发送方重传
+序号，检测哪个数据包出错进行重传
+数据包可靠传输：
+ 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
+ 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
+ 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
+GBN发送方：
+ 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
+选择重传 避免不必要的重传
+发送方接收方都维护一个窗口
+发送方：
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
+ 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/note/" >
+                Note
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">计算机网络自顶向下</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Mar 05, 2022</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <h2 id="多路复用和多路分解">多路复用和多路分解</h2>
+<h2 id="无连接运输udp">无连接运输UDP</h2>
+<p>UDP无需建立连接，速度快</p>
+<p>无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）</p>
+<p>首部只有8个字节，源端口号和目的端口号，长度和check sum</p>
+<p>为什么需要checksum校验和：</p>
+<ul>
+<li>在路由器内存中可能有bit差错</li>
+<li>链路传输不可靠</li>
+</ul>
+<p>checksum最终为1111111&hellip;则可能无差错</p>
+<p>端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余</p>
+<p>UDP只能检查错误，不能纠错</p>
+<p>DNS服务采用UDP</p>
+<p>何时UDP，何时TCP？</p>
+<ul>
+<li>不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失</li>
+</ul>
+<h2 id="可靠数据传输">可靠数据传输</h2>
+<p>差错检测</p>
+<p>接收方反馈：</p>
+<ul>
+<li>ACK肯定确认</li>
+<li>NAK否定确认</li>
+</ul>
+<p>ACK 0接收成功，ACK 1接收失败</p>
+<p>重传，收方发现差错，发送方重传</p>
+<p>序号，检测哪个数据包出错进行重传</p>
+<p>数据包可靠传输：</p>
+<ul>
+<li>在没有ack的情况下，等待一定的时间后进行重传</li>
+<li>序号可以保证传输不冗余（接收方检测是否冗余）</li>
+</ul>
+<p>发送方需要实现：</p>
+<ul>
+<li>没发送或者重传一个分组，启动定时器countdown timer</li>
+<li>定时器过期后响应</li>
+<li>终止定时器</li>
+</ul>
+<p>流水线可靠传输协议：</p>
+<ul>
+<li>采用极小的数据包，接收方收到最后一bit立即ack</li>
+</ul>
+<h2 id="gbn协议回退n步滑动窗口协议">GBN协议（回退N步），滑动窗口协议</h2>
+<p>限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。</p>
+<p>GBN发送方：</p>
+<ul>
+<li>发送数据包时，检查发送窗口，未满则返回未发送的分组</li>
+<li>收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，<code>[0, N]</code></li>
+<li>超时，发送方重传所有未被确认的分组</li>
+</ul>
+<p>接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传</p>
+<h2 id="选择重传">选择重传</h2>
+<p>避免不必要的重传</p>
+<p>发送方接收方都维护一个窗口</p>
+<p>发送方：</p>
+<ul>
+<li>收到send base后窗口右移到第一个没确认的分组处</li>
+<li>接收ack将窗口内分组标记为ack</li>
+<li>定时器防止分组丢失</li>
+</ul>
+<p>接收方：</p>
+<ul>
+<li>接收的分组落在窗口内，返回ack</li>
+<li>如果序号不连续，直接缓存</li>
+<li>如果分组序号等于<code>rcv_base</code>将从rcv base开始的已缓存分组交付给上层，窗口移动</li>
+<li>序号落在窗口之外，<code>[rcv_base-N, rcv_base-1]</code>上一个窗口中，返回ack</li>
+</ul>
+<p>窗口长度不能太大</p>
+<h2 id="tcp">TCP</h2>
+<p>运行与端系统中，路由器等视角下看到的是数据报</p>
+<p>全双工</p>
+<p>socket是对tcp协议的封装</p>
+<h3 id="流量控制">流量控制</h3>
+<p>每一方都设置接收缓存，数据先放在缓存中，应用程序从缓存中读取数据。</p>
+<p>目的是消除发送方使接收方缓存溢出的可能。匹配发送方和接收方的读写速率。</p>
+<p>收发各自维护接收窗口。保存接收方还有多少缓存空间rwnd。</p>
+<p>发送方维持为确认的数据量在rwnd之内。</p>
+<p>如果剩余空间为0，发送方发送只有一个字节的报文。</p>
+<p>UDP没有流量控制，因此可能会出现缓冲区溢出。</p>
+<h3 id="三次握手">三次握手</h3>
+<ol>
+<li>客户端发送SYN=1，随机选择一个序列号seq=x</li>
+<li>服务器读取该报文，为tcp连接分配资源，对客户端发送SYN=1，ack=x+1，seq=y（随机选取）</li>
+<li>客户端为该连接分配资源（缓存和变量），发送SYN=0，ack=y+1，seq=x+1</li>
+</ol>
+<blockquote>
+<p>为什么三次？
+确保双方的收发能力都是正常的最小次数。</p>
+</blockquote>
+<blockquote>
+<p>握手能不能携带数据？
+第一二次握手不能携带数据，第三次握手可以携带数据</p>
+</blockquote>
+<h3 id="四次挥手">四次挥手</h3>
+<ol>
+<li>客户端发送FIN=1</li>
+<li>服务器响应ACK</li>
+<li>服务器发送FIN=1</li>
+<li>客户端发挥ACK</li>
+</ol>
+<h3 id="拥塞控制">拥塞控制</h3>
+<p>丢包的原因？</p>
+<ul>
+<li>网络堵塞后，路由器缓存溢出</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li>慢启动</li>
+<li>快速重传</li>
+<li>拥塞避免</li>
+<li>快速恢复</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+        
+            <a href="/tags/note/">Note</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">图解HTTP读书笔记</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Git学习笔记</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">汇编语言笔记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

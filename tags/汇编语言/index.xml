@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编语言 on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</link>
+    <description>Recent content in 汇编语言 on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 16 Mar 2021 10:29:27 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编语言笔记</title>
+      <link>https://ez4zzw.github.io/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 16 Mar 2021 10:29:27 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/</guid>
+      <description>简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。 其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。 本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些cs213/CSAPP 的内容以及bomb lab的解析。
+准备工作 dos系统现在以及年代久远，想使用8086CPU指令集调试的话需要借助DosBox来实现。 DosBox官网
+由于macOS下没有DOSbox需要的调试工具，因此下载之后需要挂载debug.exe等Windows下的调试工具 在DOSbox中输入
+mount C ~/dos C: debug 即可进入debug模式
+实验1 前置知识 几条汇编指令
+mov 目标操作对象,源操作数 add 目标操作对象,源操作数 jmp 寄存器 //修改IP寄存器的值 or jmp CS:IP eg: jmp ax == (let IP = ax) jmp 2AE3:3 == let CS = 2AE3H and let IP = 0003H sub ax,bx ax = ax - bx inc and dec inc 操作对象 eg: inc ax == ax+=1 dec ax == ax-=1 注意：不可用mov指令修改段寄存器的值。（代码段寄存器CS，指令指针寄存器IP） CPU中识别CS:IP为执行指令 操作对象可以是寄存器，也可以是地址</description>
+    </item>
+    
+  </channel>
+</rss>

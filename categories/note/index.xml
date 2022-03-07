@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Note on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/note/</link>
+    <description>Recent content in Note on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/note/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络自顶向下</title>
+      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
+      <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</guid>
+      <description>多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
+首部只有8个字节，源端口号和目的端口号，长度和check sum
+为什么需要checksum校验和：
+ 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
+端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
+UDP只能检查错误，不能纠错
+DNS服务采用UDP
+何时UDP，何时TCP？
+ 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
+接收方反馈：
+ ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
+重传，收方发现差错，发送方重传
+序号，检测哪个数据包出错进行重传
+数据包可靠传输：
+ 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
+ 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
+ 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
+GBN发送方：
+ 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
+选择重传 避免不必要的重传
+发送方接收方都维护一个窗口
+发送方：
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
+ 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大</description>
+    </item>
+    
+    <item>
+      <title>Git学习笔记</title>
+      <link>https://ez4zzw.github.io/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Fri, 02 Apr 2021 22:33:25 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>汇编语言笔记</title>
+      <link>https://ez4zzw.github.io/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 16 Mar 2021 10:29:27 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/</guid>
+      <description>简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。 其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。 本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些cs213/CSAPP 的内容以及bomb lab的解析。
+准备工作 dos系统现在以及年代久远，想使用8086CPU指令集调试的话需要借助DosBox来实现。 DosBox官网
+由于macOS下没有DOSbox需要的调试工具，因此下载之后需要挂载debug.exe等Windows下的调试工具 在DOSbox中输入
+mount C ~/dos C: debug 即可进入debug模式
+实验1 前置知识 几条汇编指令
+mov 目标操作对象,源操作数 add 目标操作对象,源操作数 jmp 寄存器 //修改IP寄存器的值 or jmp CS:IP eg: jmp ax == (let IP = ax) jmp 2AE3:3 == let CS = 2AE3H and let IP = 0003H sub ax,bx ax = ax - bx inc and dec inc 操作对象 eg: inc ax == ax+=1 dec ax == ax-=1 注意：不可用mov指令修改段寄存器的值。（代码段寄存器CS，指令指针寄存器IP） CPU中识别CS:IP为执行指令 操作对象可以是寄存器，也可以是地址</description>
+    </item>
+    
+  </channel>
+</rss>

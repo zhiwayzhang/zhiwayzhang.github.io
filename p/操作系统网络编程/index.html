@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习
+CSAPP Ch-11 笔记
+'><title>【操作系统】网络编程</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='【操作系统】网络编程'>
+<meta property='og:description' content='承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习
+CSAPP Ch-11 笔记
+'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Note' /><meta property='article:tag' content='CSAPP' /><meta property='article:published_time' content='2022-01-03T13:37:02&#43;00:00'/><meta property='article:modified_time' content='2022-01-03T13:37:02&#43;00:00'/>
+<meta name="twitter:title" content="【操作系统】网络编程">
+<meta name="twitter:description" content="承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习
+CSAPP Ch-11 笔记
+">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【操作系统】网络编程</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jan 03, 2022</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习</p>
+<p>CSAPP Ch-11 笔记</p>
+<h2 id="cs编程模型">CS编程模型</h2>
+<p>客户端服务器模型</p>
+<p>一个服务器进程，多个客户端进程</p>
+<p>基本操作是事务transaction</p>
+<p>有四步</p>
+<ol>
+<li>客户端向服务器发送请求，发起一个事务</li>
+<li>服务器解释请求，用响应的方式操作资源</li>
+<li>服务器返回响应，等待下一个请求</li>
+<li>客户端接受响应并处理</li>
+</ol>
+<h2 id="网络">网络</h2>
+<p>网络是一种IO设备，是数据源和数据接收方</p>
+<p>网络数据接收后经IO和内存总线复制到内存，双向传输</p>
+<p>以太网Ethernet是局域网技术</p>
+<p>电缆链接主机和集线器，集线器广播每个端口的信息到所有主机</p>
+<p>主机发送帧frame开头的信息，包括header，随后是有效载荷，payload，网内每个主机都可以见，只有目的主机读取</p>
+<p>桥接以太网，主机&hellip;-集线器-桥-桥-集线器-&hellip;主机，网桥会根据通信需要来选择是否转发帧到其他网桥</p>
+<p>连接多个局域网使用路由器</p>
+<p>协议解决网络传输中的差异，提供命名机制（网络地址）和传输机制（包头+有效载荷）</p>
+<p>数据发送过程：</p>
+<ol>
+<li>主机A通过系统调用从虚存加载数据到内核缓冲区</li>
+<li>主机A上的协议软件添加互联网包头和接口帧头，互联网包头指向主机B，接口帧头指向主机LAN1。是封装关系。
+帧头的包数据为互联网包头以及数据，帧头为其自己的互联网包头</li>
+<li>LAN1适配器复制数据到网络</li>
+<li>路由器读取数据猴传送到协议软件</li>
+<li>协议软件读取目标互联网地址，作为路由表的索引转发到对应的LAN2适配器</li>
+<li>LAN2适配器复制帧到网络</li>
+<li>到达主机B，从适配器读取帧，传输到协议软件</li>
+<li>协议软件去除包头和帧头，读取数据，主机B通过系统调用拷贝数据到虚拟地址空间</li>
+</ol>
+<h2 id="全球ip">全球IP</h2>
+<p>客户端（用户）-【socket接口系统调用】-TCP/IP（内核）-【硬件接口，中断】-网络适配器（硬件）-全局IP因特网</p>
+<p>使用socket接口函数和Unix IO函数通信，socket函数为系统调用，调用内核的TCP/IP函数</p>
+<p>TCP/IP是一个协议族，IP协议提供命名方法和传递机制，数据报</p>
+<p>IP机制不可靠，数据报丢失不会自动恢复</p>
+<p>UDP UNreliable datagram protocol，不可靠数据报协议对其进行了扩展，包可以在进程之间传递，而不是主机之间</p>
+<p>TCP是基于IP的协议，进程间可靠的全双工连接</p>
+<p>因特网的特性：</p>
+<ul>
+<li>主机集合映射到32位ip地址</li>
+<li>ip地址映射为一组域名</li>
+<li>主机上的进程能够通过连接其他主机的进程通信</li>
+</ul>
+<p>ipv4和ipv6：</p>
+<ul>
+<li>version 4：32位地址</li>
+<li>version 6：128位地址</li>
+</ul>
+<h3 id="ip地址">ip地址</h3>
+<p>32位无符号整数，8*4</p>
+<p>TCP/IP统一了字节顺序，大端法</p>
+<p>使用点分十进制表示，Linux查看主机地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">hostname -i
+</code></pre></div><h3 id="域名">域名</h3>
+<p>一级域名mil，edu，gov，com，cn</p>
+<p>二级域名whut.edu</p>
+<p>hosts文件手工维护ip和域名的映射</p>
+<p>DNS，domain name system</p>
+<p>Linux使用nslookup查看域名ip</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">nslookup baidu.com
+</code></pre></div><p>通常域名和ip一一对应，多个域名也可以对应同一ip，泛域名cs.whut.edu, ee.whut.edu</p>
+<p>多个域名可以映射到同一组的多个ip，如www.twitter.com和twitter.com映射到199.16.156.*</p>
+<h3 id="因特网连接">因特网连接</h3>
+<p>客户端和服务器在连接上发送和接收字节流来通信，点对点，全双工，可以同时双向流动</p>
+<p>socket是连接的端点，每个socket都有socket地址，由<code>地址:端口</code>构成，十六位端口号0-65535</p>
+<p>客户端发起请求时，客户端socket地址端口由内核自动分配，临时端口；服务器的为默认端口</p>
+<p>web使用80（http），电子邮件地址使用25（SMTP）</p>
+<p>可以通过<code>/etc/services</code>看查<strong>知名</strong>服务默认端口</p>
+<p>一个连接两端的socket地址是唯一确定的，socket pair，格式<code>(cliaddr:cliport, servaddr:servport)</code>，即<code>(客户端IP:客户端端口,服务器IP:服务器端口)</code></p>
+<h2 id="socket接口">socket接口</h2>
+<p>一组函数实现，和Unix IO配合创建网络应用</p>
+<p>流程：</p>
+<p>客户端getaddrinfo-&gt;socket-&gt;connect发送连接请求-&gt;rio_writen-&gt;rio_readlineb-&gt;close发送EOF</p>
+<p>服务器getaddrinfo-&gt;socket-&gt;bind-&gt;listen-&gt;accept接受请求-&gt;rio_readlineb读客户端的write-&gt;rio_writen写入response-&gt;rio_readlineb读取EOF-close</p>
+<h3 id="socket地址结构">socket地址结构</h3>
+<p>对于Linux内核，socket就是一个有描述符的打开文件</p>
+<p>socket地址存放与<code>sockaddr_in</code>，包含<code>AF_INET</code>，<code>sin_port</code>为16位端口号，<code>sin_addr</code>为32位ip地址，都是以大端法存放</p>
+<h3 id="socket函数">socket函数</h3>
+<p>客户端和服务器使用socket函数创建socket描述符</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="n">clientfd</span> <span class="o">=</span> <span class="n">Socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</code></pre></div><p><code>AF_INET</code>表示使用32位IP地址，<code>SOCK_STREAM</code>表示该socket为连接端点</p>
+<p>该函数返回的描述符为部分打开的，不能读写，将有客户端完成打开socket的工作</p>
+<h3 id="connect函数">connect函数</h3>
+<p>客户端调用connect函数建立和服务器连接</p>
+<p>connect函数会阻塞一直到连接成功建立或者错误，成功后clientfd为可读写状态</p>
+<p>由getaddrinfo函数获取connect的参数</p>
+<h3 id="bind函数">bind函数</h3>
+<p>bind函数通知内核将addr中的服务器socket地址和socket描述符socketfd联系到一起</p>
+<p>由getaddrinfo函数获取bind的参数</p>
+<h3 id="listen函数">listen函数</h3>
+<p>客户端是发起请求的主动实体，服务器是被动实体</p>
+<p>默认，内核认为socket函数创建的描述符为主动socket，服务器通过listen函数通知内核描述符是被服务器使用而不是客户端</p>
+<p>将socketfd从主动socket转化为监听socket，监听socket可以接受客户端的连接请求</p>
+<p>参数backlog为队列中未完成的请求数量，一般设置较大的数</p>
+<h3 id="accept函数">accept函数</h3>
+<p>服务器使用accept函数等待客户端的连接请求</p>
+<p>已经获得监听描述符connfd，listenfd，返回一个已连接描述符，该描述符可以被Unix IO读写，可以和客户端通信，将connfd返回给客户端</p>
+<p>与监听描述符不太，监听描述符是客户端连接请求的端点，只创建一次，存在于服务器的整个生命周期</p>
+<p>已连接描述符为客户端和服务器直接已经建立连接的端点，服务器每次接受请求都会创建</p>
+<p>可以理解为后端程序当前已经监听系统的某个端口，此时客户端请求后后端在该基础上创建一个线程去处理该请求</p>
+<h3 id="主机和服务的转换">主机和服务的转换</h3>
+<ol>
+<li><code>getaddrinfo</code>
+将主机名、主机地址、服务名端口号转为socket地址结构
+返回result为一个addrinfo链表，每个结构对应一个host和service的socket地址结构
+客户端调用之后，遍历链表，尝试每个地址，直到socket和connect成功，建立连接
+服务器会遍历每个地址，直到socket和bind成功
+避免内存泄露，最后调用freeaddrinfo释放链表
+参数讲解跳了</li>
+<li><code>getnameinfo</code>
+将socket地址转换为主机和服务名字符串</li>
+</ol>
+<h3 id="socket接口辅助函数">socket接口辅助函数</h3>
+<p>以上接口的整合封装</p>
+<ol>
+<li>open_clientfd
+<code>int open_clientfd(char *hostname, char *port)</code></li>
+</ol>
+<p>open_clientfd建立和服务器的连接，返回描述符，可以直接用于Unix IO函数读写</p>
+<p>流程：getaddrinfo，返回addrinfo链表，遍历链表尝试建立连接，失败则关闭描述符，成功后释放链表将描述符（connfd）返回给客户端</p>
+<ol start="2">
+<li>open_listenfd
+服务器创建监听描述符</li>
+</ol>
+<p><code>int open_listenfd(char *port)</code></p>
+<p>遍历链表直到调用socket和bind成功</p>
+<h3 id="echo实例">echo实例</h3>
+<p>简单的单线程处理服务器</p>
+<p>EOF概念，并不是字符，而是内核检测的一个条件，read函数返回0时，程序检测到EOF条件。磁盘文件读写，文件位置超出长度，判断EOF。网络连接，进程关闭连接其中一端，触发EOF。尝试读取通信中字节流的最后一个字节之后的字节，触发EOF。</p>
+<h2 id="web服务器">Web服务器</h2>
+<h3 id="web基础">Web基础</h3>
+<p>HTTP协议，Hypertext Transfer Protocol超文本传输协议</p>
+<h3 id="web内容">Web内容</h3>
+<p>内容是MIME，多用途的网际邮件扩充协议，类型相关的字节序列</p>
+<ul>
+<li>读取一个磁盘文件，将内容返回给客户端，磁盘文件为静态内容</li>
+<li>运行可执行文件，将输出返回</li>
+</ul>
+<p>使用URL标识每个文件</p>
+<p>根据目录指定返回规则</p>
+<p>根目录为网页静态内容的根目录</p>
+<p>后缀为<code>/</code>时服务器自动补全默认文件名</p>
+<h3 id="http事务">HTTP事务</h3>
+<p>使用Linux的Telnet和任何web服务器执行事务</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">telnet url port
+</code></pre></div><p>HTTP请求</p>
+<p>请求行<code>method URI version</code></p>
+<p>0个或多个请求报头</p>
+<p>一个空的文本行终止报头列表</p>
+<p>body</p>
+<pre tabindex="0"><code>GET / HTTP/1.1  
+Host: www.baidu.com
+
+</code></pre><p>请求方法GET、POST、OPTIONS、HEAD、PUT、DELETE、TRACE</p>
+<p>URI是相应URL的后缀，包括文件名和参数</p>
+<p>version为http版本</p>
+<p><a class="link" href="https://developer.mozilla.org/zh-CN/docs/Glossary/Request_header"  target="_blank" rel="noopener"
+    >Mozilla文档</a></p>
+<p>header可以存放多种信息，比如cookie等</p>
+<p>host请求头在HTTP 1.1位必须，1.0中不必须。代理缓存proxy cache会使用host报头，理解为反向代理？</p>
+<p>客户端和服务器直接可以由代理，<code>代理链</code></p>
+<p>HTTP响应组成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">响应行
+0个或多个响应头
+终止报头的空行
+响应主体body
+</code></pre></div><p>响应行格式</p>
+<p><code>version status-code status-message</code></p>
+<p>version对于HTTP版本，code为</p>
+<pre tabindex="0"><code>1**
+200
+301 
+400
+403
+404
+501
+505
+</code></pre><p><a class="link" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status"  target="_blank" rel="noopener"
+    >更多状态码</a></p>
+<p>响应头中应有Content-Type，告知客户端主体内容的MIME类型，Content-Length，告知主体的字节大小</p>
+<ol>
+<li>传递参数</li>
+</ol>
+<p>URI或者请求主体
+2. 服务器传递参数给子进程</p>
+<p>fork一个子进程，调用execve在子进程上下文中执行对应的程序，通过环境变量，如QUERY_STRING, REQUEST_METHOD等信息，程序做出对应的处理</p>
+<ol start="3">
+<li>子进程的输出到哪里？
+CGI程序（通用网关接口Common Gateway Interface），将内容发送到标准输出，在子进程调用CGI程序之前，使用Linux dup2函数将标准输出重定向到和客户端相连的已连接描述符，CGI程序写入到标准输出的内容都会直接到达客户端</li>
+</ol>
+<h1 id="实现一个web服务器">实现一个Web服务器</h1>
+<p>使用c配合CSAPP提供的封装搭建一个简易的web服务器</p>
+<h1 id="总结">总结</h1>
+<p>本章主要了解了Unix如何建立一个网络连接，以及数据传输的具体过程，socket的设计巧妙之处，以及Linux一切皆文件的进一步理解。</p>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/note/">Note</a>
+        
+            <a href="/tags/csapp/">CSAPP</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【操作系统】虚拟内存</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【操作系统】异常控制流</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【操作系统】程序的机器级表示</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【操作系统】信息的表示和处理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">操作系统</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

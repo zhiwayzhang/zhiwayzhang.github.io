@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数论 on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/%E6%95%B0%E8%AE%BA/</link>
+    <description>Recent content in 数论 on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Dec 2019 18:57:13 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/%E6%95%B0%E8%AE%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DP? 素数筛&#43;Lucas定理&#43;费马小定理</title>
+      <link>https://ez4zzw.github.io/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</link>
+      <pubDate>Fri, 13 Dec 2019 18:57:13 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</guid>
+      <description>Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &amp;lt; 1e4$
+Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}+C_{n-k+1}^{1}+C_{n-k+2}^{2}+&amp;hellip;+C_{n}^{k}=C_{n+1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k+1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}+C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n+1}^{k}$ 所以答案为$C_{n+1}^{k}+n-k$ 当$k &amp;gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到**费马小定理**
+ 费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
+ 已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
+对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
+可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
+long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; } 有了这些工具之后就可以预处理阶乘和逆元了</description>
+    </item>
+    
+  </channel>
+</rss>

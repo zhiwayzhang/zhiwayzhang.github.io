@@ -428,14 +428,14 @@
   </url>
   
   <url>
-    <loc>https://ez4zzw.github.io/tags/%E6%95%B0%E8%AE%BA/</loc>
+    <loc>https://ez4zzw.github.io/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ez4zzw.github.io/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/</loc>
+    <loc>https://ez4zzw.github.io/tags/%E6%95%B0%E8%AE%BA/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -491,6 +491,13 @@
   </url>
   
   <url>
+    <loc>https://ez4zzw.github.io/tags/Go/</loc>
+    <lastmod>2022-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://ez4zzw.github.io/tags/Golang/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
@@ -499,13 +506,6 @@
   
   <url>
     <loc>https://ez4zzw.github.io/tags/Shell/</loc>
-    <lastmod>2022-03-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ez4zzw.github.io/tags/Go/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -533,13 +533,6 @@
   </url>
   
   <url>
-    <loc>https://ez4zzw.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2022-03-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://ez4zzw.github.io/tags/Lucas%E5%AE%9A%E7%90%86/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
@@ -548,6 +541,13 @@
   
   <url>
     <loc>https://ez4zzw.github.io/tags/%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</loc>
+    <lastmod>2022-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ez4zzw.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -647,14 +647,14 @@
   </url>
   
   <url>
-    <loc>https://ez4zzw.github.io/categories/Tech/</loc>
+    <loc>https://ez4zzw.github.io/categories/%E6%95%B0%E8%AE%BA/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ez4zzw.github.io/categories/%E6%95%B0%E8%AE%BA/</loc>
+    <loc>https://ez4zzw.github.io/categories/Tech/</loc>
     <lastmod>2022-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

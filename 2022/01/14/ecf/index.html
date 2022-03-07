@@ -404,7 +404,8 @@
 <p>ECF用于应用程序和操作系统的交互</p>
 <p>try catch等语句基于ECF</p>
 <span id="more"></span>
-<h1 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h1><p>硬件实现，操作系统实现</p>
+<h1 id="异常"><a class="markdownIt-Anchor" href="#异常"></a> 异常</h1>
+<p>硬件实现，操作系统实现</p>
 <p>异常是控制流中的突变</p>
 <p>比如虚拟内存缺页， 算术溢出， 除以0</p>
 <p>事件：处理器状态变化</p>
@@ -414,7 +415,8 @@
 <li>控制返回给I-next，则没有发生异常，执行下一条指令</li>
 <li>终止被中断的程序</li>
 </ul>
-<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>每种异常分配一个异常号，是异常表中的索引</p>
+<h2 id="异常处理"><a class="markdownIt-Anchor" href="#异常处理"></a> 异常处理</h2>
+<p>每种异常分配一个异常号，是异常表中的索引</p>
 <p>系统启动时操作系统预处理一张异常表，第k个元素包含异常k的处理程序的地址</p>
 <p>异常表基地址寄存器存放异常表的起始地址</p>
 <p>过程调用和异常的区别：</p>
@@ -425,41 +427,54 @@
 <li>异常处理运行在内核模式</li>
 </ul>
 <p>硬件触发异常，异常处理程序在软件中完成</p>
-<h2 id="异常类型"><a href="#异常类型" class="headerlink" title="异常类型"></a>异常类型</h2><p>中断 interrupt 来自IO设备 异步 返回到下一条指令</p>
+<h2 id="异常类型"><a class="markdownIt-Anchor" href="#异常类型"></a> 异常类型</h2>
+<p>中断 interrupt 来自IO设备 异步 返回到下一条指令</p>
 <p>陷阱 trap 有意异常 同步 返回到下一条指令</p>
 <p>故障 fault 潜在的可恢复错误 同步 可能返回当前指令</p>
 <p>终止 abort 不可恢复错误 同步 不会返回</p>
-<h3 id="中断"><a href="#中断" class="headerlink" title="中断"></a>中断</h3><p>异步发生，来自处理器外部的IO设备</p>
+<h3 id="中断"><a class="markdownIt-Anchor" href="#中断"></a> 中断</h3>
+<p>异步发生，来自处理器外部的IO设备</p>
 <p>异步的含义：中断不是由一个专门指令造成的</p>
 <p>异常由中断处理程序处理</p>
-<h3 id="trap和系统调用"><a href="#trap和系统调用" class="headerlink" title="trap和系统调用"></a>trap和系统调用</h3><p>trap是指向指令的结果，用于在用户程序和内核之间提供一个接口，叫做系统调用</p>
+<h3 id="trap和系统调用"><a class="markdownIt-Anchor" href="#trap和系统调用"></a> trap和系统调用</h3>
+<p>trap是指向指令的结果，用于在用户程序和内核之间提供一个接口，叫做系统调用</p>
 <p>读文件，创建进程fork，加载程序</p>
-<h3 id="故障"><a href="#故障" class="headerlink" title="故障"></a>故障</h3><p>由错误情况引起，被故障处理程序修正，控制返回到引起故障的指令，从而重新执行，否则返回到内核的abort，将引起故障的程序终止。</p>
-<h3 id="终止"><a href="#终止" class="headerlink" title="终止"></a>终止</h3><p>硬件错误，dram或者sram损坏 会返回abort然后终止应用程序</p>
-<h2 id="Linux-x86-64系统中的异常"><a href="#Linux-x86-64系统中的异常" class="headerlink" title="Linux x86-64系统中的异常"></a>Linux x86-64系统中的异常</h2><p>故障号和cpu架构有关</p>
-<h3 id="Linux中的故障和终止"><a href="#Linux中的故障和终止" class="headerlink" title="Linux中的故障和终止"></a>Linux中的故障和终止</h3><p>除法错误：除以0，Unix会直接终止程序 floating exception</p>
+<h3 id="故障"><a class="markdownIt-Anchor" href="#故障"></a> 故障</h3>
+<p>由错误情况引起，被故障处理程序修正，控制返回到引起故障的指令，从而重新执行，否则返回到内核的abort，将引起故障的程序终止。</p>
+<h3 id="终止"><a class="markdownIt-Anchor" href="#终止"></a> 终止</h3>
+<p>硬件错误，dram或者sram损坏 会返回abort然后终止应用程序</p>
+<h2 id="linux-x86-64系统中的异常"><a class="markdownIt-Anchor" href="#linux-x86-64系统中的异常"></a> Linux x86-64系统中的异常</h2>
+<p>故障号和cpu架构有关</p>
+<h3 id="linux中的故障和终止"><a class="markdownIt-Anchor" href="#linux中的故障和终止"></a> Linux中的故障和终止</h3>
+<p>除法错误：除以0，Unix会直接终止程序 floating exception</p>
 <p>一般故障保护：神秘的错误，如程序引用了未定义的虚拟内存地址，或者访问只读的文本，也就是段错误segmentation fault</p>
 <p>缺页：会从新执行产生故障的指令，将磁盘上的虚拟内存的一个页面映射到物理内存的一个页面，然后重新执行这条指令</p>
 <p>机器检查：是在导致故障的指令执行中检测到致命的硬件错误时发生的</p>
-<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>请求内核的服务</p>
+<h3 id="系统调用"><a class="markdownIt-Anchor" href="#系统调用"></a> 系统调用</h3>
+<p>请求内核的服务</p>
 <p>每个系统调用有一个编号，对应内核中跳转表的偏移量</p>
 <p>c语言中syscall函数，c一般封装了系统调用库函数，带着参数陷入内核，将系统调用的执行状态返回</p>
 <p>Linux系统调用的参数通过寄存器传递</p>
-<h1 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h1><p>执行中程序的实例，每个程序运行在某个进程的上下文context中</p>
+<h1 id="进程"><a class="markdownIt-Anchor" href="#进程"></a> 进程</h1>
+<p>执行中程序的实例，每个程序运行在某个进程的上下文context中</p>
 <p>上下文包括内存中程序的代码和数据，栈，通用目的寄存器，程序计数器，环境变量，文件描述符集合</p>
 <p>提供抽象：独立的逻辑控制流，假象程序独占处理器；私有地址空间，假象程序独占内存</p>
 <p>逻辑控制流是交错的，进程轮流使用处理器，每个进程执行流的一部分</p>
-<h1 id="并发流"><a href="#并发流" class="headerlink" title="并发流"></a>并发流</h1><p>逻辑流可以是进程、线程等</p>
+<h1 id="并发流"><a class="markdownIt-Anchor" href="#并发流"></a> 并发流</h1>
+<p>逻辑流可以是进程、线程等</p>
 <p>并发：多个流并发的执行</p>
 <p>运行在同一个处理器上</p>
 <p>并行：运行在不同处理器核上</p>
 <p>每个控制流中的一部分是时间片</p>
-<h1 id="私有地址空间"><a href="#私有地址空间" class="headerlink" title="私有地址空间"></a>私有地址空间</h1><p>进程为每个程序提供假象，n位地址机器，地址空间<code>2^n</code>，</p>
+<h1 id="私有地址空间"><a class="markdownIt-Anchor" href="#私有地址空间"></a> 私有地址空间</h1>
+<p>进程为每个程序提供假象，n位地址机器，地址空间<code>2^n</code>，</p>
 <p>底部用于用户程序：包括代码，数据，堆，栈</p>
 <p>顶部给内核</p>
-<h1 id="用户模式和内核模式"><a href="#用户模式和内核模式" class="headerlink" title="用户模式和内核模式"></a>用户模式和内核模式</h1><p>通过模式位寄存器控制</p>
+<h1 id="用户模式和内核模式"><a class="markdownIt-Anchor" href="#用户模式和内核模式"></a> 用户模式和内核模式</h1>
+<p>通过模式位寄存器控制</p>
 <p>/proc文件系统，包含系统属性，如内核数，cpu类型，某进程使用的内存段地址</p>
-<h1 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h1><p>实现多任务</p>
+<h1 id="上下文切换"><a class="markdownIt-Anchor" href="#上下文切换"></a> 上下文切换</h1>
+<p>实现多任务</p>
 <p>内核为每个进程维护一个上下文，包含重新启动一个进程所需的状态</p>
 <p>包含通用目的寄存器，浮点寄存器，程序计数器，用户栈，状态寄存器，内核栈，内核数据结构（描述地址空间的页表、当前进程信息的进程表、已打开文件的文件表）</p>
 <p>内核可以通过调度决定执行哪个进程</p>
@@ -468,8 +483,11 @@
 <li>恢复先前被抢占进程的上下文</li>
 <li>控制传递给新恢复的进程</li>
 </ol>
-<h1 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h1><p>全局变量 errno，strerror(errno)</p>
-<h1 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h1><h2 id="获取进程id"><a href="#获取进程id" class="headerlink" title="获取进程id"></a>获取进程id</h2><p>pid</p>
+<h1 id="错误处理"><a class="markdownIt-Anchor" href="#错误处理"></a> 错误处理</h1>
+<p>全局变量 errno，strerror(errno)</p>
+<h1 id="进程控制"><a class="markdownIt-Anchor" href="#进程控制"></a> 进程控制</h1>
+<h2 id="获取进程id"><a class="markdownIt-Anchor" href="#获取进程id"></a> 获取进程id</h2>
+<p>pid</p>
 
       
     </div>

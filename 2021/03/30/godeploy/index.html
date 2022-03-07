@@ -19,18 +19,18 @@
   
   
   <title>记录一次Go项目的部署 | Coding_Panda的博客</title>
-  <meta name="description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。">
+  <meta name="description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记录一次Go项目的部署">
 <meta property="og:url" content="https://ez4zzw.github.io/2021/03/30/godeploy/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。">
+<meta property="og:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-30T04:23:42.000Z">
 <meta property="article:modified_time" content="2021-03-30T05:00:05.250Z">
 <meta property="article:author" content="Coding_Panda">
-<meta property="article:tag" content="Golang">
 <meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Golang">
 <meta property="article:tag" content="Shell">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
@@ -388,7 +388,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/03/30/godeploy/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 757(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 769(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 3(minutes)</span>
@@ -398,24 +398,53 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <p>最近写了一个go项目，需要部署到服务器进行测试，如果只是<code>go run main.go</code>难免也太麻烦了点，于是学习了项目部署的相关知识。<br>项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。</p>
+        <p>最近写了一个go项目，需要部署到服务器进行测试，如果只是<code>go run main.go</code>难免也太麻烦了点，于是学习了项目部署的相关知识。<br />
+项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。</p>
 <span id="more"></span>
-<h1 id="系统信息"><a href="#系统信息" class="headerlink" title="系统信息"></a>系统信息</h1><p>系统信息: <code>CentOS Linux release 8.3.2011 x86_64</code><br>Go version: <code>go version go1.14.12 linux/amd64</code></p>
-<h1 id="几条命令的介绍"><a href="#几条命令的介绍" class="headerlink" title="几条命令的介绍"></a>几条命令的介绍</h1><h2 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h2><p>nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。<br>语法格式：<br><code>nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp;</code><br>解释：<br><code>&gt; xxx.log</code>表示将输出重定向至该文件，可以记录运行时的日志<br><code>2&gt;&amp;1</code>将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件</p>
-<h2 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h2><p><code>git pull origin dev</code><br>为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。</p>
-<h2 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h2><p>ps命令为 process status,可以查看系统当前的进程状态</p>
+<h1 id="系统信息"><a class="markdownIt-Anchor" href="#系统信息"></a> 系统信息</h1>
+<p>系统信息: <code>CentOS Linux release 8.3.2011 x86_64</code><br />
+Go version: <code>go version go1.14.12 linux/amd64</code></p>
+<h1 id="几条命令的介绍"><a class="markdownIt-Anchor" href="#几条命令的介绍"></a> 几条命令的介绍</h1>
+<h2 id="nohup"><a class="markdownIt-Anchor" href="#nohup"></a> nohup</h2>
+<p>nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。<br />
+语法格式：<br />
+<code>nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp;</code><br />
+解释：<br />
+<code>&gt; xxx.log</code>表示将输出重定向至该文件，可以记录运行时的日志<br />
+<code>2&gt;&amp;1</code>将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件</p>
+<h2 id="git-pull"><a class="markdownIt-Anchor" href="#git-pull"></a> git pull</h2>
+<p><code>git pull origin dev</code><br />
+为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。</p>
+<h2 id="ps"><a class="markdownIt-Anchor" href="#ps"></a> ps</h2>
+<p>ps命令为 process status,可以查看系统当前的进程状态</p>
 <p>例如</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">~&gt;</span><span class="bash"> ps</span></span><br><span class="line">    PID TTY          TIME CMD</span><br><span class="line"> 255873 pts/0    00:00:02 zsh</span><br><span class="line"> 258517 pts/0    00:00:00 sh</span><br><span class="line"> 258519 pts/0    00:00:00 OnlineJudge</span><br><span class="line"> 263021 pts/0    00:00:00 ps</span><br></pre></td></tr></table></figure>
-<p>我们将用ps命令与grep等命令筛选出项目的pid<br>ps命令有很多参数选择，这里介绍一下用到的两条命令:</p>
+<p>我们将用ps命令与grep等命令筛选出项目的pid<br />
+ps命令有很多参数选择，这里介绍一下用到的两条命令:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps -e  列出所有进程</span><br><span class="line">ps -f  显示进程的全部信息</span><br></pre></td></tr></table></figure>
-<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><p>grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称，<br>还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。</p>
-<h2 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h2><p>用于处理文本提取信息，将使用grep查询到的进程信息提取出pid<br>查询到的结果为<br><code>root      263948  263946  0 12:49 pts/0    00:00:00 ./OnlineJudge</code><br>我们只需要第二项的pid，使用<br><code>awk &#123;print $2&#125;</code><br>即可提取出进程的pid 263948</p>
-<h2 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h2><p><code>kill pid</code>杀死进程</p>
-<h1 id="Shell脚本"><a href="#Shell脚本" class="headerlink" title="Shell脚本"></a>Shell脚本</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;*** Online_Judge ***\n&quot;</span></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;*** 检查上游代码中 ***\n&quot;</span></span><br><span class="line"></span><br><span class="line">git pull origin dev</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;*** 编译中 ***\n&quot;</span></span><br><span class="line">go build</span><br><span class="line">chmod -R 777 OnlineJudge</span><br><span class="line">pid=`ps -ef|grep OnlineJudge|grep -v grep|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$pid</span>\n&quot;</span></span><br><span class="line"><span class="built_in">kill</span> <span class="variable">$pid</span> &amp;&amp; nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">pid2=`ps -ef|grep OnlineJudge|grep -v grep|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;项目部署成功***进程ID为:<span class="variable">$pid2</span>&quot;</span></span><br></pre></td></tr></table></figure>
-<p>将脚本保存至项目目录，赋予执行权限<br><code>chmod +x setup.sh</code><br>执行脚本</p>
+<h2 id="grep"><a class="markdownIt-Anchor" href="#grep"></a> grep</h2>
+<p>grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称，<br />
+还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。</p>
+<h2 id="awk"><a class="markdownIt-Anchor" href="#awk"></a> awk</h2>
+<p>用于处理文本提取信息，将使用grep查询到的进程信息提取出pid<br />
+查询到的结果为<br />
+<code>root 263948 263946 0 12:49 pts/0 00:00:00 ./OnlineJudge</code><br />
+我们只需要第二项的pid，使用<br />
+<code>awk &#123;print $2&#125;</code><br />
+即可提取出进程的pid 263948</p>
+<h2 id="kill"><a class="markdownIt-Anchor" href="#kill"></a> kill</h2>
+<p><code>kill pid</code>杀死进程</p>
+<h1 id="shell脚本"><a class="markdownIt-Anchor" href="#shell脚本"></a> Shell脚本</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;*** Online_Judge ***\n&quot;</span></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;*** 检查上游代码中 ***\n&quot;</span></span><br><span class="line"></span><br><span class="line">git pull origin dev</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;*** 编译中 ***\n&quot;</span></span><br><span class="line">go build</span><br><span class="line">chmod -R 777 OnlineJudge</span><br><span class="line">pid=`ps -ef|grep OnlineJudge|grep -v grep|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;<span class="variable">$pid</span>\n&quot;</span></span><br><span class="line"><span class="built_in">kill</span> <span class="variable">$pid</span> &amp;&amp; nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">pid2=`ps -ef|grep OnlineJudge|grep -v grep|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>`</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;项目部署成功***进程ID为:<span class="variable">$pid2</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>将脚本保存至项目目录，赋予执行权限<br />
+<code>chmod +x setup.sh</code><br />
+执行脚本</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">➜ git:(dev) ✗ ./setup.sh         </span><br><span class="line">*** Online_Judge ***</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">*** 检查上游代码中 ***</span><br><span class="line">From url</span><br><span class="line"> * branch            dev        -&gt; FETCH_HEAD</span><br><span class="line">Already up to date.</span><br><span class="line">*** 编译中 ***</span><br><span class="line"></span><br><span class="line">*** 添加权限 ***</span><br><span class="line"></span><br><span class="line">添加权限成功</span><br><span class="line"></span><br><span class="line">*** kill进程 ***</span><br><span class="line"></span><br><span class="line">258519</span><br><span class="line"></span><br><span class="line">./setup.sh: line 18: 258519 Terminated              nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;&amp;1</span><br><span class="line">项目部署成功***进程ID为:263948</span><br></pre></td></tr></table></figure>
-<p>至此项目即可部署成功<br>上述shell中的视个人情况而修改</p>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-command-manual.html">Linux命令大全</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/w425772719/article/details/115241722">如何优雅的通过Shell脚本一键部署GO项目到服务器？
+<p>至此项目即可部署成功<br />
+上述shell中的视个人情况而修改</p>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> Reference</h1>
+<p><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-command-manual.html">Linux命令大全</a><br />
+<a target="_blank" rel="noopener" href="https://blog.csdn.net/w425772719/article/details/115241722">如何优雅的通过Shell脚本一键部署GO项目到服务器？<br />
 </a></p>
 
       

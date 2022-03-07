@@ -19,15 +19,15 @@
   
   
   <title>汇编语言笔记 | Coding_Panda的博客</title>
-  <meta name="description" content="简介本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些c">
+  <meta name="description" content="简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。 其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。 本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿">
 <meta property="og:type" content="article">
 <meta property="og:title" content="汇编语言笔记">
 <meta property="og:url" content="https://ez4zzw.github.io/2021/03/16/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Coding_Panda&#39;s Blog">
-<meta property="og:description" content="简介本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些c">
+<meta property="og:description" content="简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。 其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。 本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-16T02:29:27.000Z">
-<meta property="article:modified_time" content="2021-12-09T12:44:58.201Z">
+<meta property="article:modified_time" content="2021-12-09T13:31:20.780Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="汇编语言">
 <meta name="twitter:card" content="summary">
@@ -386,7 +386,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/03/16/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 566(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 568(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 2(minutes)</span>
@@ -396,28 +396,33 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。<br>其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。<br>本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些cs213/CSAPP 的内容以及bomb lab的解析。</p>
+        <h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p>本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。<br />
+其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。<br />
+本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些cs213/CSAPP 的内容以及bomb lab的解析。</p>
 <span id="more"></span>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>dos系统现在以及年代久远，想使用8086CPU指令集调试的话需要借助DosBox来实现。<br><a target="_blank" rel="noopener" href="https://www.dosbox.com/">DosBox官网</a></p>
-<p>由于macOS下没有DOSbox需要的调试工具，因此下载之后需要挂载debug.exe等Windows下的调试工具<br>在DOSbox中输入</p>
+<h2 id="准备工作"><a class="markdownIt-Anchor" href="#准备工作"></a> 准备工作</h2>
+<p>dos系统现在以及年代久远，想使用8086CPU指令集调试的话需要借助DosBox来实现。<br />
+<a target="_blank" rel="noopener" href="https://www.dosbox.com/">DosBox官网</a></p>
+<p>由于macOS下没有DOSbox需要的调试工具，因此下载之后需要挂载debug.exe等Windows下的调试工具<br />
+在DOSbox中输入</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount C ~/dos</span><br><span class="line">C:</span><br><span class="line">debug</span><br></pre></td></tr></table></figure>
 <p>即可进入debug模式</p>
-<h2 id="实验1"><a href="#实验1" class="headerlink" title="实验1"></a>实验1</h2><h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p>几条汇编指令</p>
+<h2 id="实验1"><a class="markdownIt-Anchor" href="#实验1"></a> 实验1</h2>
+<h3 id="前置知识"><a class="markdownIt-Anchor" href="#前置知识"></a> 前置知识</h3>
+<p>几条汇编指令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov 目标操作对象,源操作数</span><br><span class="line">add 目标操作对象,源操作数</span><br><span class="line">jmp 寄存器 &#x2F;&#x2F;修改IP寄存器的值</span><br><span class="line">or </span><br></pre></td></tr></table></figure>
-
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">jmp CS:IP</span><br><span class="line">eg: jmp ax &#x3D;&#x3D; (let IP &#x3D; ax)</span><br><span class="line">    jmp 2AE3:3 &#x3D;&#x3D; let CS &#x3D; 2AE3H and let IP &#x3D; 0003H</span><br><span class="line">sub ax,bx</span><br><span class="line">ax &#x3D; ax - bx</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">inc and dec</span><br><span class="line">inc 操作对象 </span><br><span class="line">eg: inc ax &#x3D;&#x3D; ax+&#x3D;1</span><br><span class="line">    dec ax &#x3D;&#x3D; ax-&#x3D;1</span><br></pre></td></tr></table></figure>
-
-<p>注意：不可用mov指令修改段寄存器的值。（代码段寄存器CS，指令指针寄存器IP）<br>CPU中识别<code>CS:IP</code>为执行指令<br>操作对象可以是寄存器，也可以是地址</p>
+<p>注意：不可用mov指令修改段寄存器的值。（代码段寄存器CS，指令指针寄存器IP）<br />
+CPU中识别<code>CS:IP</code>为执行指令<br />
+操作对象可以是寄存器，也可以是地址</p>
 <p>Debug命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">r: 看查寄存器内容，或者修改寄存器内容</span><br><span class="line">d: 看查内存内容</span><br><span class="line">e: 改写内存内容</span><br><span class="line">u: 将机器指令翻译为汇编指令</span><br><span class="line">t: 执行下一条汇编指令</span><br><span class="line">a: 写入汇编指令</span><br></pre></td></tr></table></figure>
-
 <p>编译指令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">masm test</span><br><span class="line">link test.obj</span><br><span class="line">debug test.exe</span><br></pre></td></tr></table></figure>
-
-<h3 id="lab1"><a href="#lab1" class="headerlink" title="lab1"></a>lab1</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MOV WORD PTR [1100],3445</span><br><span class="line">MOV WORD PTR [1102],5678</span><br><span class="line">MOV WORD PTR [1106],6732</span><br><span class="line">MOV AX,[1100]</span><br><span class="line">SUB AX,[1102]</span><br><span class="line">ADD AX,[1106]</span><br><span class="line">MOV [1104],AX</span><br><span class="line">HLT &#x2F;&#x2F;使CPU停止工作</span><br></pre></td></tr></table></figure>
-
+<h3 id="lab1"><a class="markdownIt-Anchor" href="#lab1"></a> lab1</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MOV WORD PTR [1100],3445</span><br><span class="line">MOV WORD PTR [1102],5678</span><br><span class="line">MOV WORD PTR [1106],6732</span><br><span class="line">MOV AX,[1100]</span><br><span class="line">SUB AX,[1102]</span><br><span class="line">ADD AX,[1106]</span><br><span class="line">MOV [1104],AX</span><br><span class="line">HLT &#x2F;&#x2F;使CPU停止工作</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MOV	AX,1234 </span><br><span class="line">MOV	[1000],AX</span><br><span class="line">MOV	BX,1002</span><br><span class="line">MOV	BYTE PTR[BX],20</span><br><span class="line">MOV	DL,39</span><br><span class="line">INC	BX</span><br><span class="line">MOV	[BX],DL</span><br><span class="line">DEC	DL</span><br><span class="line">MOV	SI,3</span><br><span class="line">MOV	[BX+SI],DL</span><br><span class="line">MOV	[BX+SI+1],DL</span><br><span class="line">MOV	WORD PTR[BX+SI+2],2846</span><br></pre></td></tr></table></figure>
       
     </div>

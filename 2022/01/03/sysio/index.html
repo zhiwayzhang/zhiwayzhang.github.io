@@ -27,7 +27,7 @@
 <meta property="og:description" content="高级别的IO程序，如c中的printf和scanf，c++中的&gt;&gt;和&lt;&lt;，都依赖Unix 系统级IO CSAPP Ch-10 笔记">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-01-03T02:31:33.000Z">
-<meta property="article:modified_time" content="2022-01-03T05:39:31.182Z">
+<meta property="article:modified_time" content="2022-01-03T05:39:48.489Z">
 <meta property="article:author" content="Coding_Panda">
 <meta property="article:tag" content="Note">
 <meta name="twitter:card" content="summary">
@@ -388,7 +388,7 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/01/03/sysio/#comments" class="article-comment-link">Comments</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 868(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 880(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 3(minutes)</span>
@@ -401,7 +401,8 @@
         <p>高级别的IO程序，如c中的printf和scanf，c++中的<code>&gt;&gt;</code>和<code>&lt;&lt;</code>，都依赖Unix 系统级IO</p>
 <p>CSAPP Ch-10 笔记</p>
 <span id="more"></span>
-<h2 id="Unix-IO"><a href="#Unix-IO" class="headerlink" title="Unix IO"></a>Unix IO</h2><p>Linux文件即是m个字节的序列$B_0, B_1, …, B_k, …, B_{m-1}$</p>
+<h2 id="unix-io"><a class="markdownIt-Anchor" href="#unix-io"></a> Unix IO</h2>
+<p>Linux文件即是m个字节的序列<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>B</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>B</mi><mn>1</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>B</mi><mi>k</mi></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>B</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">B_0, B_1, ..., B_k, ..., B_{m-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.891661em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:-0.05017em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">m</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span></p>
 <p>所有的IO设备（网络，磁盘，终端）被抽象为文件，输入和输出被作为相应文件的读和写进行，Linux内核只需要暴露一个简单低级的应用接口</p>
 <p>输入和输出的统一方式:</p>
 <ul>
@@ -411,7 +412,8 @@
 <li>读写文件：读为复制字节到内存，当k&gt;=m时，会触发EOF条件；写为复制字节到一个文件中，从当前位置k开始，然后更新k</li>
 <li>关闭文件：通知内核，内核释放文件打开时创建的数据结构，释放描述符，进程终止时内核会释放打开的文件以及内存</li>
 </ul>
-<h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><ul>
+<h2 id="文件"><a class="markdownIt-Anchor" href="#文件"></a> 文件</h2>
+<ul>
 <li>普通文件：文本文件：ASCII或Unicode字符文件，其他的都是二进制文件，对内核而言无区别，换行符<code>\n</code>对应ASCII LF</li>
 <li>目录：包含一组链接的文件，链接将文件名映射到一个文件</li>
 <li>套接字socket：与另一个进程进行跨网络通信的文件</li>
@@ -419,15 +421,17 @@
 </ul>
 <p>绝对路径：以斜杠开始<code>/home/test</code></p>
 <p>相对路径：以文件名开始,<code>../test</code></p>
-<h2 id="打开和关闭文件"><a href="#打开和关闭文件" class="headerlink" title="打开和关闭文件"></a>打开和关闭文件</h2><p>open函数打开或创建文件</p>
-<p>返回一个文件描述符，在进程中没有打开的最小描述符<br>几种控制参数flags</p>
+<h2 id="打开和关闭文件"><a class="markdownIt-Anchor" href="#打开和关闭文件"></a> 打开和关闭文件</h2>
+<p>open函数打开或创建文件</p>
+<p>返回一个文件描述符，在进程中没有打开的最小描述符<br />
+几种控制参数flags</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">O_RDONLY 只读</span><br><span class="line">O_WRONLY 只写</span><br><span class="line">O_RDWR 可读可写</span><br><span class="line">O_CREAT 文件不存在则创建空文件</span><br><span class="line">O_TRUNC 存在则截断，清空</span><br><span class="line">O_APPEND 追加写入</span><br></pre></td></tr></table></figure>
-
 <p>mode参数控制读写权限</p>
 <p>每个进程都有umask</p>
 <p>访问权限为<code>mode &amp; ~umask</code></p>
 <p>close(int fd)关闭文件，成功返回0，失败-1</p>
-<h2 id="读写文件"><a href="#读写文件" class="headerlink" title="读写文件"></a>读写文件</h2><p>read和write</p>
+<h2 id="读写文件"><a class="markdownIt-Anchor" href="#读写文件"></a> 读写文件</h2>
+<p>read和write</p>
 <p>输入的size为unsigned long类型，ssize_t为long类型，因为read和write函数需要返回-1</p>
 <p>read和write读写遇到不足的情况：</p>
 <ul>
@@ -435,19 +439,26 @@
 <li>从终端读文本行</li>
 <li>读写socket：网络延迟导致read和write返回值不足</li>
 </ul>
-<h2 id="RIO包-Robust-IO"><a href="#RIO包-Robust-IO" class="headerlink" title="RIO包 Robust IO"></a>RIO包 Robust IO</h2><h2 id="读取文件元数据"><a href="#读取文件元数据" class="headerlink" title="读取文件元数据"></a>读取文件元数据</h2><p>stat和fstat函数，读取文件信息</p>
-<h2 id="读取目录内容"><a href="#读取目录内容" class="headerlink" title="读取目录内容"></a>读取目录内容</h2><p>opendir函数</p>
-<h2 id="共享文件"><a href="#共享文件" class="headerlink" title="共享文件"></a>共享文件</h2><ul>
+<h2 id="rio包-robust-io"><a class="markdownIt-Anchor" href="#rio包-robust-io"></a> RIO包 Robust IO</h2>
+<h2 id="读取文件元数据"><a class="markdownIt-Anchor" href="#读取文件元数据"></a> 读取文件元数据</h2>
+<p>stat和fstat函数，读取文件信息</p>
+<h2 id="读取目录内容"><a class="markdownIt-Anchor" href="#读取目录内容"></a> 读取目录内容</h2>
+<p>opendir函数</p>
+<h2 id="共享文件"><a class="markdownIt-Anchor" href="#共享文件"></a> 共享文件</h2>
+<ul>
 <li>描述符表，每个进程之间独立</li>
 <li>文件表，打开文件的集合，所有进程共享，包含文件位置，引用计数，指向vnode表的指针，当引用计数为0时，操作系统删除表项</li>
 <li>v-node，进程间共享，包含stat中的信息，st mode，st size</li>
 </ul>
-<h2 id="IO重定向"><a href="#IO重定向" class="headerlink" title="IO重定向"></a>IO重定向</h2><p><strong>标准输出</strong>重定向到磁盘文件</p>
+<h2 id="io重定向"><a class="markdownIt-Anchor" href="#io重定向"></a> IO重定向</h2>
+<p><strong>标准输出</strong>重定向到磁盘文件</p>
 <p>覆盖写入文件之前的内容</p>
 <p>使用dup2函数，将终端的输出关闭，改为磁盘文件，磁盘文件引用次数+1</p>
-<h2 id="标准IO"><a href="#标准IO" class="headerlink" title="标准IO"></a>标准IO</h2><p>标准IO将打开的文件模型化为一个流，减少系统级IO操作的调用</p>
+<h2 id="标准io"><a class="markdownIt-Anchor" href="#标准io"></a> 标准IO</h2>
+<p>标准IO将打开的文件模型化为一个流，减少系统级IO操作的调用</p>
 <p>第一次getc调用IO read函数读取到缓冲区，之后调用将缓冲区第一个字节返回给应用程序</p>
-<h2 id="选取IO函数问题"><a href="#选取IO函数问题" class="headerlink" title="选取IO函数问题"></a>选取IO函数问题</h2><p>socket中不要使用标准IO，可能会导致崩溃，使用RIO函数/Unix IO</p>
+<h2 id="选取io函数问题"><a class="markdownIt-Anchor" href="#选取io函数问题"></a> 选取IO函数问题</h2>
+<p>socket中不要使用标准IO，可能会导致崩溃，使用RIO函数/Unix IO</p>
 
       
     </div>

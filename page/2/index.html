@@ -499,7 +499,8 @@
   </div>
   
   <div class="article-entry text-muted" itemprop="description">
-    <h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>给定一个数字N，给定一个数字的集合，使用集合里的数字构造出小于数字N的最大数。</p>
+    <h1 id="description"><a class="markdownIt-Anchor" href="#description"></a> Description</h1>
+<p>给定一个数字N，给定一个数字的集合，使用集合里的数字构造出小于数字N的最大数。</p>
 <p>如N = 23131，集合为{2, 4, 9}</p>
 <p>则构造出22999</p>
   </div>
@@ -527,7 +528,7 @@
     <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/12/10/luckynumber/#comments" class="article-comment-link">Comments</a></span>
     
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 361(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 363(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 1(minutes)</span>
@@ -550,7 +551,8 @@
   
   <div class="article-entry text-muted" itemprop="description">
     <p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/largest-number/">https://leetcode-cn.com/problems/largest-number/</a></p>
-<h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>给定一组非负整数 <code>nums</code>，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。</p>
+<h1 id="description"><a class="markdownIt-Anchor" href="#description"></a> Description</h1>
+<p>给定一组非负整数 <code>nums</code>，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。</p>
 <p>注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。</p>
   </div>
   
@@ -577,7 +579,7 @@
     <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/12/09/leetcode-179/#comments" class="article-comment-link">Comments</a></span>
     
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 312(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 313(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 1(minutes)</span>
@@ -647,9 +649,11 @@
   </div>
   
   <div class="article-entry text-muted" itemprop="description">
-    <h1 id="前记"><a href="#前记" class="headerlink" title="前记"></a>前记</h1><p>潘达某天在本机docker部署了他的服务，但是发现无论如何都无法ping通，他冥(疯)思(狂)苦(谷)想(歌)，逛遍了GitHub上的各种issues，stack overflow上的各种回答，各种博客文章，都没有解决他的问题，直到他的mentor来到他的电脑前，一通命令猛如虎啊，发现他竟然在docker内监听了容器中的<code>127.0.0.1</code>的端口，那必然会访问不到，检查发现原来是在服务的config中写了magic number，让服务开在了<code>127.0.0.1</code>，在本地这样必然是没问题的，但是如果要与外部进行通信，那就要改成<code>0.0.0.0</code>了。</p>
+    <h1 id="前记"><a class="markdownIt-Anchor" href="#前记"></a> 前记</h1>
+<p>潘达某天在本机docker部署了他的服务，但是发现无论如何都无法ping通，他冥(疯)思(狂)苦(谷)想(歌)，逛遍了GitHub上的各种issues，stack overflow上的各种回答，各种博客文章，都没有解决他的问题，直到他的mentor来到他的电脑前，一通命令猛如虎啊，发现他竟然在docker内监听了容器中的<code>127.0.0.1</code>的端口，那必然会访问不到，检查发现原来是在服务的config中写了magic number，让服务开在了<code>127.0.0.1</code>，在本地这样必然是没问题的，但是如果要与外部进行通信，那就要改成<code>0.0.0.0</code>了。</p>
 <p>又是一天，潘达又部署起了他的rpc服务，想在服务器上部署一个微服务然后本机去访问，测试框架是否可以通过域名通信各个微服务，然而，服务器上启动成功，本地依然迟迟无法连接，上来就是一个<code>curl: (7) Failed to connect to ababab.ababab port ababa: Connection refused</code>，安全组也放行了对应的端口，然后他看到了一行<code>127.0.0.1</code>，但是他感觉不是这个问题，继续debug，然后再次呼叫他的mentor，希望得到帮助，还是一顿操作猛如虎，找到了那个<code>127.0.0.1</code>的监听服务，乐。</p>
-<p>于是，这篇blog就诞生了。<br><a target="_blank" rel="noopener" href="https://imgtu.com/i/WhQRUK"><img src="https://z3.ax1x.com/2021/07/26/WhQRUK.png" alt="WhQRUK.png"></a></p>
+<p>于是，这篇blog就诞生了。<br />
+<a target="_blank" rel="noopener" href="https://imgtu.com/i/WhQRUK"><img src="https://z3.ax1x.com/2021/07/26/WhQRUK.png" alt="WhQRUK.png" /></a></p>
   </div>
   
   <p class="article-meta">
@@ -675,7 +679,7 @@
     <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/07/26/localhost/#comments" class="article-comment-link">Comments</a></span>
     
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 783(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 785(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 2(minutes)</span>
@@ -748,11 +752,12 @@
   </div>
   
   <div class="article-entry text-muted" itemprop="description">
-    <h1 id="迭代法求解方程的根"><a href="#迭代法求解方程的根" class="headerlink" title="迭代法求解方程的根"></a>迭代法求解方程的根</h1><p>求解方程的根，即$f(x)=0$的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。</p>
+    <h1 id="迭代法求解方程的根"><a class="markdownIt-Anchor" href="#迭代法求解方程的根"></a> 迭代法求解方程的根</h1>
+<p>求解方程的根，即<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">f(x)=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span>的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。</p>
 <p>选取样例</p>
-<p>$f(x) =x^3 - x - 2$</p>
-<p>$\frac{dy}{dx} = 3x^2-1$</p>
-<p>求解$f(x)$在[1, 2]上的零点</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>x</mi><mn>3</mn></msup><mo>−</mo><mi>x</mi><mo>−</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">f(x) =x^3 - x - 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mrow><mi>d</mi><mi>y</mi></mrow><mrow><mi>d</mi><mi>x</mi></mrow></mfrac><mo>=</mo><mn>3</mn><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\frac{dy}{dx} = 3x^2-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.277216em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9322159999999999em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">x</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.446108em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord">3</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></p>
+<p>求解<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span>在[1, 2]上的零点</p>
   </div>
   
   <p class="article-meta">
@@ -778,7 +783,7 @@
     <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/04/25/equtaion/#comments" class="article-comment-link">Comments</a></span>
     
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 542(words)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">Word Count: 614(words)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">Read Count: 2(minutes)</span>

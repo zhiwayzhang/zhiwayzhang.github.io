@@ -398,28 +398,46 @@
       
         <p>对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。</p>
 <span id="more"></span>
-<h1 id="About-Git"><a href="#About-Git" class="headerlink" title="About Git"></a>About Git</h1><p><code>git</code>是一个分布式版本控制工具，如果你是一个程序猿，那你必须要学会如何使用<code>git</code>来管理你的代码或者项目。<br>可能更多人所熟知的是GitHub，顾名思义，按照英语的命名特点，GitHub就是所有git上传的枢纽，汇聚到一起，你可以开源你的代码，指定一款开源协议共享给所有需要的人，也可以将仓库设为私有，只有自己或者受到邀请的人可见或者进行编辑。<br>除了GitHub，世界上还有很多这种代码托管平台，比如国内的gitee,coding等，国外还有gitlab等平台提供代码托管服务。</p>
-<h1 id="Setup"><a href="#Setup" class="headerlink" title="Setup"></a>Setup</h1><p>在一个目录中，你可以使用<code>git init</code>来初始化这个目录，git会把这个文件夹变为一个git目录，</p>
+<h1 id="about-git"><a class="markdownIt-Anchor" href="#about-git"></a> About Git</h1>
+<p><code>git</code>是一个分布式版本控制工具，如果你是一个程序猿，那你必须要学会如何使用<code>git</code>来管理你的代码或者项目。<br />
+可能更多人所熟知的是GitHub，顾名思义，按照英语的命名特点，GitHub就是所有git上传的枢纽，汇聚到一起，你可以开源你的代码，指定一款开源协议共享给所有需要的人，也可以将仓库设为私有，只有自己或者受到邀请的人可见或者进行编辑。<br />
+除了GitHub，世界上还有很多这种代码托管平台，比如国内的gitee,coding等，国外还有gitlab等平台提供代码托管服务。</p>
+<h1 id="setup"><a class="markdownIt-Anchor" href="#setup"></a> Setup</h1>
+<p>在一个目录中，你可以使用<code>git init</code>来初始化这个目录，git会把这个文件夹变为一个git目录，</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> GitTest git init</span></span><br><span class="line">Initialized empty Git repository in /Users/username/GitTest/.git/</span><br></pre></td></tr></table></figure>
-<p>使用<code>git remote add origin &#123;your repo url&#125;</code><br>即可添加远程的仓库地址。</p>
-<h1 id="Commit-amp-amp-Push"><a href="#Commit-amp-amp-Push" class="headerlink" title="Commit &amp;&amp; Push"></a>Commit &amp;&amp; Push</h1><p>对于一个采用迭代式开发或者其他开发模式的项目来说，都避免不了后续对代码进行修改或者添加一些新的文件，对于每一次这样的操作，都要对添加或者修改的文件指定一个commit。<br>例如：修改了项目功能中的bug，文件名字为<code>a.cpp</code><br>可以使用</p>
+<p>使用<code>git remote add origin &#123;your repo url&#125;</code><br />
+即可添加远程的仓库地址。</p>
+<h1 id="commit-push"><a class="markdownIt-Anchor" href="#commit-push"></a> Commit &amp;&amp; Push</h1>
+<p>对于一个采用迭代式开发或者其他开发模式的项目来说，都避免不了后续对代码进行修改或者添加一些新的文件，对于每一次这样的操作，都要对添加或者修改的文件指定一个commit。<br />
+例如：修改了项目功能中的bug，文件名字为<code>a.cpp</code><br />
+可以使用</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add a.cpp</span><br><span class="line">git commit -m &quot;fix: the bug in xxx&quot;</span><br></pre></td></tr></table></figure>
-<p>这样就可以将此次更改添加到提交的队列中<br>如果使用<code>git add .</code>，git将添加所有监控的文件到缓冲区<br>再使用<code>git push</code>就可以将修改添加到远程仓库中</p>
+<p>这样就可以将此次更改添加到提交的队列中<br />
+如果使用<code>git add .</code>，git将添加所有监控的文件到缓冲区<br />
+再使用<code>git push</code>就可以将修改添加到远程仓库中</p>
 <p>对与一个团队而言，有标准规范的commit格式是很重要的，例如以下格式</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">feat: 新功能feature</span><br><span class="line">fix: 解决bug</span><br><span class="line">add: 添加模块</span><br><span class="line">update: 更新模块</span><br><span class="line">... 等等</span><br></pre></td></tr></table></figure>
-
-<h1 id="Dangerous-Pull-ing"><a href="#Dangerous-Pull-ing" class="headerlink" title="Dangerous Pull ing"></a>Dangerous Pull ing</h1><p>如果是多人协作开发，那么必然会导致本地文件之间存在着不一致，为了解决这个问题，可以使用<code>git pull</code>，执行该命令后将同步仓库中存在并且与本地不同的文件。<br>这个操作看似简单，但是有时候如果使用了–force强制执行的话，会覆盖掉本地的文件，属于非常危险的操作，所以无论在什么时候使用–force之前都要思考清楚自己在干什么。</p>
-<h1 id="Branch"><a href="#Branch" class="headerlink" title="Branch"></a>Branch</h1><p>我觉得git很强大的一个功能就是对分支的管理，在不同分支中切换可以让项目的代码得到更有效的管理，例如在main主分支中保存可以稳定运行的版本，在另一个dev分支中保存正在开发的非稳定版，后续改进之后可以将dev分支合并到main分支中去。<br>如果更新过后的主分支依然出现问题，也是可以通过回滚的方式回到之前某个稳定的版本。<br>分支的创建也非常简单</p>
+<h1 id="dangerous-pull-ing"><a class="markdownIt-Anchor" href="#dangerous-pull-ing"></a> Dangerous Pull ing</h1>
+<p>如果是多人协作开发，那么必然会导致本地文件之间存在着不一致，为了解决这个问题，可以使用<code>git pull</code>，执行该命令后将同步仓库中存在并且与本地不同的文件。<br />
+这个操作看似简单，但是有时候如果使用了–force强制执行的话，会覆盖掉本地的文件，属于非常危险的操作，所以无论在什么时候使用–force之前都要思考清楚自己在干什么。</p>
+<h1 id="branch"><a class="markdownIt-Anchor" href="#branch"></a> Branch</h1>
+<p>我觉得git很强大的一个功能就是对分支的管理，在不同分支中切换可以让项目的代码得到更有效的管理，例如在main主分支中保存可以稳定运行的版本，在另一个dev分支中保存正在开发的非稳定版，后续改进之后可以将dev分支合并到main分支中去。<br />
+如果更新过后的主分支依然出现问题，也是可以通过回滚的方式回到之前某个稳定的版本。<br />
+分支的创建也非常简单</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git branch name</span><br><span class="line">git checkout name</span><br></pre></td></tr></table></figure>
 <p>切换后git所有的操作将在新的分支进行</p>
-<h1 id="gitignore"><a href="#gitignore" class="headerlink" title=".gitignore"></a>.gitignore</h1><p>顾名思义，肯定是让git去忽略某些项目，比如文件夹，或者是单个文件，添加到gitignore之后git将不在追踪这些文件的变化，因此我们可以将例如npm庞大的node_modules这种文件夹添加到其中，或者是编译器调试产生的临时文件，优化仓库的存储结构。</p>
+<h1 id="gitignore"><a class="markdownIt-Anchor" href="#gitignore"></a> .gitignore</h1>
+<p>顾名思义，肯定是让git去忽略某些项目，比如文件夹，或者是单个文件，添加到gitignore之后git将不在追踪这些文件的变化，因此我们可以将例如npm庞大的node_modules这种文件夹添加到其中，或者是编译器调试产生的临时文件，优化仓库的存储结构。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
 <p>使用该命令看查目前项目的改动</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">On branch dev</span><br><span class="line">Untracked files:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)</span><br><span class="line">	b.cpp</span><br><span class="line"></span><br><span class="line">nothing added to commit but untracked files present (use &quot;git add&quot; to track)</span><br></pre></td></tr></table></figure>
 <p>git监控到了文件b.cpp的产生，我们将b.cpp添加到.gitignore中</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">On branch dev</span><br><span class="line">nothing to commit, working tree clean</span><br></pre></td></tr></table></figure>
 <p>再次使用git status看查，发现b.cpp已经不再被监控了，在.gitignore中还可以使用文件夹名忽略整个文件夹的项目，或者使用通配忽略包含特定后缀名的文件等。</p>
-<h1 id="End"><a href="#End" class="headerlink" title="End"></a>End</h1><p>随着开发工具的现代化，很多时候我们已经用不到这些git命令了，很多繁琐的命令早已被图形化的界面取代，但不乏还有git爱好者们做出的努力，如<a target="_blank" rel="noopener" href="https://github.com/jesseduffield/lazygit">lazygit</a>等工具。<br>当你接收一台崭新的服务器时，这些命令又显得格为重要了。因此，在简便的工具的包裹下，他们背后的原理才是最值得我们去了解的，就如同学习汇编语言一样，给力我们另一种看待程序的方式。<br>很早就像总结一下git了，拖了这么久终于写完了，后续还想再添加一些更具体的内容，希望能给初入git的同学一些启发。</p>
+<h1 id="end"><a class="markdownIt-Anchor" href="#end"></a> End</h1>
+<p>随着开发工具的现代化，很多时候我们已经用不到这些git命令了，很多繁琐的命令早已被图形化的界面取代，但不乏还有git爱好者们做出的努力，如<a target="_blank" rel="noopener" href="https://github.com/jesseduffield/lazygit">lazygit</a>等工具。<br />
+当你接收一台崭新的服务器时，这些命令又显得格为重要了。因此，在简便的工具的包裹下，他们背后的原理才是最值得我们去了解的，就如同学习汇编语言一样，给力我们另一种看待程序的方式。<br />
+很早就像总结一下git了，拖了这么久终于写完了，后续还想再添加一些更具体的内容，希望能给初入git的同学一些启发。</p>
 
       
     </div>

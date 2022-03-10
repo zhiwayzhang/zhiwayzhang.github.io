@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Go语言源码阅读与原理分析
+'><title>Go语言学习笔记</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Go语言学习笔记'>
+<meta property='og:description' content='Go语言源码阅读与原理分析
+'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Note' /><meta property='article:tag' content='Go' /><meta property='article:published_time' content='2022-01-25T20:14:16&#43;00:00'/><meta property='article:modified_time' content='2022-01-25T20:14:16&#43;00:00'/>
+<meta name="twitter:title" content="Go语言学习笔记">
+<meta name="twitter:description" content="Go语言源码阅读与原理分析
+">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/note/" >
+                Note
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Go语言学习笔记</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Jan 25, 2022</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>Go语言源码阅读与原理分析</p>
+<h1 id="go的编译">Go的编译</h1>
+<h1 id="数据结构">数据结构</h1>
+<h2 id="数组">数组</h2>
+<p>声明</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="p">[</span><span class="mi">3</span><span class="p">]{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+<span class="p">[</span><span class="o">...</span><span class="p">]{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span><span class="nx">语法糖</span>
+</code></pre></div><p>第二种编译器会进行转换成第一种</p>
+<p>上限推导</p>
+<p>语句转换</p>
+<p>由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化</p>
+<ul>
+<li>元素数量<code>&lt;=</code>4，元素放在栈上</li>
+<li><code>&gt;</code>4时，元素保存在静态区，运行时取出</li>
+</ul>
+<p>元素数量<code>&lt;=</code>4时，简化为赋值表达式</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">arr</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span>
+<span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="nx">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
+<span class="nx">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">3</span>
+</code></pre></div><h3 id="review">review</h3>
+<p>编译之后的二进制文件包含：栈，堆，数据段，代码段</p>
+<p>堆栈为动态区域，数据段和代码段为静态区域</p>
+<p>栈：编译器自动分配释放，存放参数值，局部变量等</p>
+<p>堆：程序动态申请的内存，malloc，用链表实现</p>
+<p>代码区：函数体的二进制代码</p>
+<p>数据段：包含</p>
+<ol>
+<li>只读数据段 const</li>
+<li>已初始化的读写数据段 初始化的全局变量，初始化的静态局部变量static</li>
+<li>未初始化段 未初始化的全局变量和静态变量</li>
+</ol>
+<p>当数组元素个数大于四个时</p>
+<p>获取一个唯一的staticname，在静态存储区进行初始化，之后再拷贝到栈上</p>
+<p>访问和赋值</p>
+<p>编译器的静态类型检查时检测数组越界，索引是否为非负整数，索引越界</p>
+<p>使用变量作为索引时，无法编译检查，需要<strong>运行时</strong>阻止，出发panic</p>
+<p>发现数组切片字符串越界时通过运行时的<code>runtime.panicIndex</code>和<code>runtime.goPanicIndex</code>触发panic</p>
+<p>下标没有越界时，编译器获取数组的内存地址和访问下标，计算出目标地址，使用Load将元素加载到内存中</p>
+<p>编译时插入运行时越界检查函数</p>
+<p>赋值时先确定目标元素地址，使用Store指令将数据存入地址，在编译阶段而不是运行时</p>
+<h1 id="切片">切片</h1>
+<p>编译时确定类型，存储在Extra字段</p>
+<p>数据结构</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">Data</span>
+<span class="nx">Len</span>
+<span class="nx">Cap</span>
+</code></pre></div><p>切片只在运行时确定内容</p>
+<h2 id="初始化">初始化</h2>
+<h3 id="切片slicelr">切片<code>slice[l:r]</code></h3>
+<p>调用SliceMake函数，参数为 元素类型，数组指针，切片大小和容量</p>
+<p>这样初始化的切片创建了指向原切片的结构体</p>
+<h3 id="字面量">字面量</h3>
+<p>编译时：</p>
+<p>对字面量数组做大小推断，初始化为数组</p>
+<p>创建一个数组指针，指向静态数组</p>
+<p>使用<code>[:]</code>通过指针创建切片</p>
+<h3 id="make">make</h3>
+<p><code>make([]int, len, cap)</code>
+会做参数校验，<code>cap &gt;= len</code></p>
+<ol>
+<li>判断切片大小和容量是否足够</li>
+<li>切片是否发生了逃逸，最终在堆上初始化</li>
+</ol>
+<p>切片太大时也会在堆上初始化，使用运行时makeslice</p>
+<p>makeslice会在堆上申请连续的内存</p>
+<p>可能的运行时错误：</p>
+<ol>
+<li>内存空间大小发生了溢出</li>
+<li>申请内存大于最大可分配内存</li>
+<li>传入的<code>len&lt;0 or len &gt; cap</code></li>
+</ol>
+<h3 id="访问">访问</h3>
+<p>对len和cap的访问会在编译时替换为常量</p>
+<p>使用index获取元素会直接转换为对地址的访问</p>
+<h3 id="append和扩容">append和扩容</h3>
+<p>如果append之后<strong>不需要</strong>赋值给原有变量：</p>
+<p>判断append之后的大小和容量触发扩容</p>
+<p>如果append之后<strong>需要</strong>赋值给原有变量：</p>
+<p>append后的切片覆盖原切片，编译器优化为不发生拷贝，直接操作原切片</p>
+<h4 id="growslice">growslice</h4>
+<p>先确定新切片容量，扩容策略：</p>
+<ol>
+<li>如果期望容量大于当前的两倍，就会使用期望容量</li>
+<li>当前切片长度小于1024会将容量翻倍</li>
+<li>如果当前的切片长度大于1024每次增加25%的容量，直到新容量大于期望容量</li>
+</ol>
+<p>扩容之后进行内存对齐，提高内存分配效率，减少碎片</p>
+<p>使用预制的内存大小数组向上取整，然后通过该内存大小重新计算cap</p>
+<p>对于非指针切片，将原数组内容拷贝至新内存</p>
+<p>growslice返回的是一个新的切片，都是新的 slice(p, len, newcap)</p>
+<h2 id="copy">copy</h2>
+<p><code>copy(a,b)</code></p>
+<p>编译时会直接使用memmove拷贝到内存</p>
+<p>运行时会直接进行合法性检查</p>
+<p>大切片性能开销比较大</p>
+<h1 id="哈希">哈希</h1>
+<h2 id="解决冲突">解决冲突</h2>
+<h3 id="开放寻址">开放寻址</h3>
+<p>从index处向后寻找空闲位置，读取会从index处向后匹配相等元素</p>
+<p><code>装载因子=元素数量/数组大小</code></p>
+<p>装载因子增大，线性探测法的平均用时增加，最坏到On</p>
+<h3 id="拉链法">拉链法</h3>
+<p>使用链表数组，每个数组是一个桶，通过index访问</p>
+<p><code>装载因子=元素数量/桶数量</code></p>
+<p>一般情况下不超过1，装载因子太大会触发扩容</p>
+<h2 id="struct">struct</h2>
+<p>runtime hmap</p>
+<p>保存对数，桶的数量都是2的倍数</p>
+<p>包含runtime bmap，能存储8个键值对，超过8个时会使用extra.nextOverflow中的溢出桶存</p>
+<p>bmap中存储key哈希的高八位tophash uint8</p>
+<h2 id="初始化-1">初始化</h2>
+<h3 id="字面量-1">字面量</h3>
+<p>当哈希表的元素<code>&lt;=25</code>个时，将初始化转化为</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">hash</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="s">&#34;1&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">&#34;2&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="nx">to</span>
+<span class="nx">hash</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nx">hash</span><span class="p">[</span><span class="s">&#34;1&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="nx">hash</span><span class="p">[</span><span class="s">&#34;2&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
+</code></pre></div><p>超过时会转换为两个切片循环加入hash</p>
+<h3 id="运行时">运行时</h3>
+<p>当桶的数量小于$2^4$，不创建溢出桶</p>
+<p>否则创建$2^{B-4}$个溢出桶</p>
+<h2 id="读写">读写</h2>
+<p>遍历使用for range</p>
+<p>删除<code>delete(hash, key)</code></p>
+<p>bmap的实际存储是tophash为一个连续的空间，keys，values 。。。</p>
+<p>访问时限获取哈希值，再获取哈希的高8位</p>
+<p>通过哈希的最低几位获取桶序号</p>
+<blockquote>
+<p>这里因为哈希计算出来并不在桶范围内，在二进制中体现出来是取高几位和低几位，低几位就是取模之后的值，因此可以有效避免桶中有大量重复tophash</p>
+</blockquote>
+<p>在bmap中先比较哈希高8位，加速访问</p>
+<p>匹配成功会根据指针和偏移量获取key进行比较，匹配成功再获取value</p>
+<p><strong>尽量使用双值接收结果，防止实际的value是nil</strong></p>
+<p>写入时会遍历正常桶和溢出桶，溢出桶也包含tophash</p>
+<p>如果桶满，创建新的桶护着在溢出桶中保存</p>
+<p>获取存储地址后，将值拷贝到内存</p>
+<h3 id="扩容">扩容</h3>
+<p>在写入时，触发扩容</p>
+<ol>
+<li>装载因子超过6.5</li>
+<li>哈希使用了太多溢出桶，容易产生内存泄露</li>
+</ol>
+<p>扩容非原子过程，扩容前判断是否正在扩容</p>
+<p>溢出桶太多触发等量扩容，新桶保存数据，回收旧桶（大量的写入删除操作）</p>
+<p>翻倍扩容，随着写操作增量进行，不会产生性能的巨大抖动，创建一组新桶和溢出桶，将原来的桶组设置到oldbuckets，溢出桶也设置到oldoverflow上</p>
+<p>数据迁移发生在运行时 evacuate，对传入桶的元素再分配，每个旧桶元素分流到两个新桶</p>
+<p>分流逻辑：原来通过取模得到的桶掩码为<code>0b11</code>，扩容翻倍之后将变为<code>0b111</code>，因此该数据被分流到3号和7号桶</p>
+<p>当旧桶完全被分流后清除oldbuckets和oldoverflow，通过计数器控制</p>
+<p>扩容期间访问时，若oldbuckets存在，并且旧桶没有被分流时会先去旧桶寻找</p>
+<p>扩容期间写入赋值时，会触发增量拷贝，向新桶分流</p>
+<h2 id="删除">删除</h2>
+<p>扩容期间删除，会分流桶中的元素，然后找到桶中的目标键值对删除</p>
+<p>与写入类似</p>
+<p>访问，写入删除都是运行时处理</p>
+<h1 id="字符串">字符串</h1>
+<p><strong>只读</strong>的字节数组，使用连续空间</p>
+<p>data和len</p>
+<p>分配在只读的内存空间，修改需要和<code>[]byte</code>相互转换</p>
+<ol>
+<li>拷贝内存到栈或者堆</li>
+<li>将变量修改为<code>[]byte</code>然后修改字节数据</li>
+<li>修改字节数组转回<code>string</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;hello\&#34;&#34;</span>
+<span class="nx">str</span> <span class="o">:=</span> <span class="s">`
+</span><span class="s">{
+</span><span class="s">    &#34;name&#34; : &#34;panda&#34;,
+</span><span class="s">    &#34;tags&#34; : [&#34;panda&#34;]
+</span><span class="s">}
+</span><span class="s">`</span>
+</code></pre></div><p>赋值时使用scanner解析字符串成token流</p>
+<p><code>strconv.Unquote</code>去除引号</p>
+<p>使用+拼接，拼接字符串的数量小于等于五个时，使用concatstring{2,3,4,5}，否则使用runtime.concatstrings，传入数组切片，最终通过运行时过滤空字符串计算拼接后长度，如果非空字符串数量为1，并且不在栈上，则直接返回</p>
+<p>拷贝到目标地址空间</p>
+<p>类型转换有性能损失，需要拷贝数据</p>
+<h1 id="函数调用">函数调用</h1>
+<p>c语言使用寄存器传参数，小于等于六个时使用寄存器，大于6个的参数使用栈传递，使用寄存器传递返回值，并且只使用一个寄存器，因此只能有一个返回值。</p>
+<p>go语言使用栈传递参数和返回值，因此存在性能损失，但是可以支持多返回值，便于维护编译器，不需要考虑寄存器数量和命名。</p>
+<h2 id="参数传递方式">参数传递方式</h2>
+<p>传值，基本类型，结构体，指针，对参数进行拷贝</p>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/note/">Note</a>
+        
+            <a href="/tags/go/">Go</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">计算机网络自顶向下</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis设计与实现读书笔记</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【操作系统】虚拟内存</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Mysql学习笔记</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">图解HTTP读书笔记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

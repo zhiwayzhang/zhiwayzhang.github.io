@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>计算机网络 on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+    <description>Recent content in 计算机网络 on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络自顶向下</title>
+      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
+      <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</guid>
+      <description>多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
+首部只有8个字节，源端口号和目的端口号，长度和check sum
+为什么需要checksum校验和：
+ 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
+端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
+UDP只能检查错误，不能纠错
+DNS服务采用UDP
+何时UDP，何时TCP？
+ 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
+接收方反馈：
+ ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
+重传，收方发现差错，发送方重传
+序号，检测哪个数据包出错进行重传
+数据包可靠传输：
+ 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
+ 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
+ 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
+GBN发送方：
+ 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
+选择重传 避免不必要的重传
+发送方接收方都维护一个窗口
+发送方：
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
+ 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大</description>
+    </item>
+    
+    <item>
+      <title>图解HTTP读书笔记</title>
+      <link>https://ez4zzw.github.io/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 16 Jan 2022 22:25:00 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;图解HTTP读书笔记&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>127.0.0.1,localhost和0.0.0.0暨🐼一次两次的神神秘秘的debug记录</title>
+      <link>https://ez4zzw.github.io/p/127.0.0.1localhost%E5%92%8C0.0.0.0%E6%9A%A8%E4%B8%80%E6%AC%A1%E4%B8%A4%E6%AC%A1%E7%9A%84%E7%A5%9E%E7%A5%9E%E7%A7%98%E7%A7%98%E7%9A%84debug%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Mon, 26 Jul 2021 22:23:38 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/127.0.0.1localhost%E5%92%8C0.0.0.0%E6%9A%A8%E4%B8%80%E6%AC%A1%E4%B8%A4%E6%AC%A1%E7%9A%84%E7%A5%9E%E7%A5%9E%E7%A7%98%E7%A7%98%E7%9A%84debug%E8%AE%B0%E5%BD%95/</guid>
+      <description>前记 潘达某天在本机docker部署了他的服务，但是发现无论如何都无法ping通，他冥(疯)思(狂)苦(谷)想(歌)，逛遍了GitHub上的各种issues，stack overflow上的各种回答，各种博客文章，都没有解决他的问题，直到他的mentor来到他的电脑前，一通命令猛如虎啊，发现他竟然在docker内监听了容器中的127.0.0.1的端口，那必然会访问不到，检查发现原来是在服务的config中写了magic number，让服务开在了127.0.0.1，在本地这样必然是没问题的，但是如果要与外部进行通信，那就要改成0.0.0.0了。
+又是一天，潘达又部署起了他的rpc服务，想在服务器上部署一个微服务然后本机去访问，测试框架是否可以通过域名通信各个微服务，然而，服务器上启动成功，本地依然迟迟无法连接，上来就是一个curl: (7) Failed to connect to ababab.ababab port ababa: Connection refused，安全组也放行了对应的端口，然后他看到了一行127.0.0.1，但是他感觉不是这个问题，继续debug，然后再次呼叫他的mentor，希望得到帮助，还是一顿操作猛如虎，找到了那个127.0.0.1的监听服务，乐。
+于是，这篇blog就诞生了。 
+127.0.0.1 和 localhost 127.0.0.1是回路地址中的一个，在计算机中127.*.*.*被称为回路地址，所有对这些地址的请求都会让本机接收，最最重要的是，外部设备也不能通过这个地址访问到本机的服务。 localhost其实是一个域名，他一般指代本机的网络，大多数机器都会默认localhost指向127.0.0.1，可以自行修改为其他地址。
+0.0.0.0 可能我们都会以为localhost为本地的网络地址，但实际上真正的本地网络是0.0.0.0，但是他是不能被ping通的。在服务器中，0.0.0.0并不是一个真实的的IP地址，它表示本机中所有的ipv4地址。监听0.0.0.0的端口，就是监听本机中所有IP的端口。如果服务监听在0.0.0.0，那么外部访问的所有ip都可以通过对应的端口访问这个服务。
+所以问题得到了解答，如果是在本机的话，127.0.0.1的话显然是没问题的，但是如果要将服务上云或者容器，就需要进行调整，首先要避开127.0.0.1，再根据是否只允许内网ip访问进行端口映射和服务监听。
+后记 这两次问题前前后后折腾了半天，本想自己找到解决办法，查了不少资料后还是要寻求运维☁️的帮助，其实问题并不是很大，还是自己的知识储备不够，不能准确定位的问题的所在。另外，计网应该开始看了。🐼。</description>
+    </item>
+    
+  </channel>
+</rss>

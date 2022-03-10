@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>algorithm on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/algorithm/</link>
+    <description>Recent content in algorithm on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 10 Dec 2021 12:46:33 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【算法题】幸运数字</title>
+      <link>https://ez4zzw.github.io/p/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B9%B8%E8%BF%90%E6%95%B0%E5%AD%97/</link>
+      <pubDate>Fri, 10 Dec 2021 12:46:33 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E7%AE%97%E6%B3%95%E9%A2%98%E5%B9%B8%E8%BF%90%E6%95%B0%E5%AD%97/</guid>
+      <description>&lt;h1 id=&#34;description&#34;&gt;Description&lt;/h1&gt;
+&lt;p&gt;给定一个数字N，给定一个数字的集合，使用集合里的数字构造出小于数字N的最大数。&lt;/p&gt;
+&lt;p&gt;如N = 23131，集合为{2, 4, 9}&lt;/p&gt;
+&lt;p&gt;则构造出22999&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【leetcode-179】最大数</title>
+      <link>https://ez4zzw.github.io/p/leetcode-179%E6%9C%80%E5%A4%A7%E6%95%B0/</link>
+      <pubDate>Thu, 09 Dec 2021 21:22:30 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/leetcode-179%E6%9C%80%E5%A4%A7%E6%95%B0/</guid>
+      <description>&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode-cn.com/problems/largest-number/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://leetcode-cn.com/problems/largest-number/&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;description&#34;&gt;Description&lt;/h1&gt;
+&lt;p&gt;给定一组非负整数 &lt;code&gt;nums&lt;/code&gt;，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。&lt;/p&gt;
+&lt;p&gt;注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

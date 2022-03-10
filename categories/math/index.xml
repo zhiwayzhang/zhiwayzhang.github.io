@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Math on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/math/</link>
+    <description>Recent content in Math on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 25 Apr 2021 13:04:57 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/math/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>方程求根的迭代法</title>
+      <link>https://ez4zzw.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</link>
+      <pubDate>Sun, 25 Apr 2021 13:04:57 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</guid>
+      <description>&lt;h1 id=&#34;迭代法求解方程的根&#34;&gt;迭代法求解方程的根&lt;/h1&gt;
+&lt;p&gt;求解方程的根，即$f(x)=0$的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。&lt;/p&gt;
+&lt;p&gt;选取样例&lt;/p&gt;
+&lt;p&gt;$f(x) =x^3 - x - 2$&lt;/p&gt;
+&lt;p&gt;$\frac{dy}{dx} = 3x^2-1$&lt;/p&gt;
+&lt;p&gt;求解$f(x)$在[1, 2]上的零点&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>迭代法求解线性方程组</title>
+      <link>https://ez4zzw.github.io/p/%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/</link>
+      <pubDate>Sun, 25 Apr 2021 00:38:16 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/</guid>
+      <description>求解线性方程组 在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。
+以线性方程组：
+$ \left[ \begin{matrix} 10 &amp;amp; -1 &amp;amp; -2 \
+-1 &amp;amp; 10 &amp;amp; -2 \
+-1 &amp;amp; -1 &amp;amp; 5 \end{matrix} \right] x = \left[ \begin{matrix} 7.2 \
+8.3 \
+4.2 \end{matrix} \right] $ 为例
+Jacobi迭代法 考虑线性方程组$Ax=b$
+用L和U分别表示严格下三角矩阵和严格上三角矩阵
+可以利用迭代公式
+$x^{k+1}=D^{-1}(b-(L+U)x^{k}))$
+进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。
+迭代法需要给定解列向量的初值，因此初值的选取也很重要。
+import numpy as np def Jacobi(A, B, N, x): # Ax=B N为迭代次数 # 获得对角矩阵的数组 D = np.diag(A) # 获得L+U矩阵，减去对角矩阵即可 # diagflat为D数组转为对角矩阵 R = A - np.</description>
+    </item>
+    
+    <item>
+      <title>常微分方程初值问题求解方法</title>
+      <link>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 23 Apr 2021 23:26:18 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</guid>
+      <description>常微分方程初值问题 常微分方程描述了不同变量之间的变化关系，通过该关系我们可以确定变量之间的具体函数关系，但是微分方程不一定总是可解的，并且有些求解起来相当困难。给出积分曲线初始位置的状态，求解需要预测点的状态，为常微分方程的初值问题，我们可以在求解微分方程即的情况下对结果做出复合精度要求的预测。
+以$f(x) = \sqrt{1+2x}$为例
+有$y&#39;=\frac{dy}{dx}=y-\frac{2x}{y}$
+本文给出几种算法的原理与实现。
+Euler方法及其改进 从初始点开始，根据不同离散点的导数值对曲线进行预测，导数值可以通过对ODE的化简求解，做出一条折线图，最终曲线会逼近预测值。
+该方法有明显的缺点就是在每一步做出抉择时，只考虑了当前的状态，并没有考虑后面的状态，因此必然会造成较大的误差，因此采用下一个结点的导数值进行修正。
+具体流程如下
+选取一定的步长h，一般为区间的n等分
+预测下一个值$\overline{y}_{i+1} = y_i + hf(x_i, y_i)$
+校正预测值$y_{i+1} = y_i + \frac{h}{2}[f(x_i, y_i)+f(x_{i+1}, \overline{y}_{i+1})]$
+改写成平均化形式
+$y_p = y_i +hf(x_i, y_i)$
+$y_c = y_i + hf(x_{i+1}, y_p)$
+$y_{i+1} = \frac{1}{2} (y_p+y_c), i =0,1,2,3,&amp;hellip;,n-1$
+import numpy as np # 常微分方程化简 def ode(x, y): return y - 2 * x / y def f(x): return np.sqrt(1+2*x) def Euler(bound, start): &amp;#39;&amp;#39;&amp;#39; bound : 预测边界值 start : 起始点 &amp;#39;&amp;#39;&amp;#39; h = 0.</description>
+    </item>
+    
+    <item>
+      <title>数值积分方法</title>
+      <link>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 23 Apr 2021 20:18:59 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</guid>
+      <description>数值积分 应用背景：微积分的基本计算公式为经典的牛顿莱布尼茨公式，但是作为计算机来说，计算原函数等操作过于困难，因此需要其他方法进行优化，代替牛顿莱布尼茨公式进行计算，本文将分享两种求积公式及其代码实现。
+使用语言： Python-Numpy
+使用两种方法计算$f(x)=sin(x)$在[1,2]上的积分
+复化梯形的递推公式 由梯形公式改进，将区间[a, b]等分为n个小区间 $[x_i, x_{i+1}]$
+$\int_{a}^{b}f(x)dx=\sum_{i=0}^{n-1}\int_{x_i}^{x_{i+1}}f(x)dx\approx \frac{h_i}{2}[f(x_i)+f(x_{i+1})]$
+根据梯形公式化简为区间端点值组合
+将求和公式展开，分离出左右端点
+得到最终的化简结果
+$T_n = \frac{h}{2} [f(a)+2\sum_{i=1}^{n-1}f(x_i)+f(b)]$
+但是该方法的步长太小的话会导致计算次数太大，步长太大又难以保证效率
+采用区间不断对分的方法，取$n = 2^k$，反复使用复合求积公式
+$T^{(k)}=\frac{1}{2}T^{(k-1)}+\frac{h_{k-1}}{2}\sum_{i=0}^{2^{k-1}-1}f(a+ih_{k-1} + 0.5h_{k-1})$
+其中$h_{k-1} = \frac{b-a}{2^{k-1}}$
+Code
+import numpy as np def f(x): return np.sin(x) def Calc(): eps = 1e-7 Flag = True l = 1.0 r = 2.0 h = r - l t1 = 1.0*(h/2)*(1+f(r)) t2 = 0.0 while Flag: sum = 0 x = l + h/2 while x &amp;lt; r: sum += f(x) x += h t2 = t1/2 + h*sum/2 h /= 2.</description>
+    </item>
+    
+    <item>
+      <title>三种插值方法及实现</title>
+      <link>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Mon, 19 Apr 2021 22:22:57 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</guid>
+      <description>插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} + y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)+y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] + (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.</description>
+    </item>
+    
+    <item>
+      <title>Katex测试及其语法总结</title>
+      <link>https://ez4zzw.github.io/p/katex%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%85%B6%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Sun, 14 Mar 2021 20:50:48 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/katex%E6%B5%8B%E8%AF%95%E5%8F%8A%E5%85%B6%E8%AF%AD%E6%B3%95%E6%80%BB%E7%BB%93/</guid>
+      <description>文章总结自KaTex Support 待更新
+KATEX Support
+KATEX测试 $$ \frac{\sum_{i=1}^Nf(x_i)}{\int_1^\infin \frac{1}{e^x}} $$</description>
+    </item>
+    
+  </channel>
+</rss>

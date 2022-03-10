@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nginx on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/nginx/</link>
+    <description>Recent content in nginx on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 03 Apr 2021 22:22:14 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>OJ部署debug记录</title>
+      <link>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

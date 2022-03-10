@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Web on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/web/</link>
+    <description>Recent content in Web on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 03 Apr 2021 22:22:14 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/web/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>OJ部署debug记录</title>
+      <link>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>记录一次Go项目的部署</title>
+      <link>https://ez4zzw.github.io/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</link>
+      <pubDate>Tue, 30 Mar 2021 12:23:42 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
+      <description>最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:
+ps -e 列出所有进程 ps -f 显示进程的全部信息 grep grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称， 还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。</description>
+    </item>
+    
+  </channel>
+</rss>

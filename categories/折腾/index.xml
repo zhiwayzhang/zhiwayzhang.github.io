@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>折腾 on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/%E6%8A%98%E8%85%BE/</link>
+    <description>Recent content in 折腾 on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Mar 2021 23:28:31 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/%E6%8A%98%E8%85%BE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>博客迁移记录</title>
+      <link>https://ez4zzw.github.io/p/%E5%8D%9A%E5%AE%A2%E8%BF%81%E7%A7%BB%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%8D%9A%E5%AE%A2%E8%BF%81%E7%A7%BB%E8%AE%B0%E5%BD%95/</guid>
+      <description>从hexo到hugo 从高中开始就采用hexo+GitHub Pages的方式搭建博客，hexo确实很强大，但是由于需要借助node的原因，用起来总是没那么舒服，尤其是在换了电脑之后，配置环境比较麻烦，npm install也比较臃肿，于是决定采用hugo。
+hugo是一个使用go语言开发的博客框架，由于是go编写的，所以渲染速度总的来说比hexo快不少，而且安装起来也很简单，也有不少美观的主题，方便部署到各个平台。
+环境配置 系统环境：macOS arm64 (M1 Silicon) Go Version: go1.16beta1 darwin/arm64 homebrew版本：3.0.5
+我是用的为arm平台的golang，没有测试过用intel平台的go版本进行配置
+安装hugo brew install hugo 创建一个新网站 hugo new site blog 添加一个主题 git init // 初始化git git submodule add https://github.com/CaiJimmy/hugo-theme-stack/ themes/hugo-theme-stack //主题下载 添加篇文章 我的主题文章保存在了content文件夹中的post目录
+hugo new /post/first.md 本地进行渲染预览 hugo server -D 之后可以通过打开localhost:1313来进行预览
+部署到GitHub仓库 hugo -D cd public git init git add . git commit -m &amp;quot;first commit&amp;quot; git remote add origin https://github.com/yourname/yourname.github.io git push origin master </description>
+    </item>
+    
+  </channel>
+</rss>

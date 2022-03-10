@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数论 on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/%E6%95%B0%E8%AE%BA/</link>
+    <description>Recent content in 数论 on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Dec 2019 18:56:57 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/%E6%95%B0%E8%AE%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>小兔的棋盘 组合数学</title>
+      <link>https://ez4zzw.github.io/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/</link>
+      <pubDate>Fri, 13 Dec 2019 18:56:57 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/</guid>
+      <description>Description 小兔的叔叔从外面旅游回来给她带来了一个礼物，小兔高兴地跑回自己的房间，拆开一看是一个棋盘，小兔有所失望。不过没过几天发现了棋盘的好玩之处。从起点$(0，0)$走到终点$(n,n)$的最短路径数是$C_{2n}^{n}$,现在小兔又想如果不穿越对角线(但可接触对角线上的格点)，这样的路径数有多少?小兔想了很长时间都没想出来，现在想请你帮助小兔解决这个问题，对于你来说应该不难吧! $n \leq 35$
+Solution 由于规定不能超过对角线，可用分治的思想，只考虑沿对角线分隔开的三角形的情况，对于一个三角形中，求从$(0，0)$走到终点$(n,n)$的最短路径，观察发现无论怎么走，设到达某一点时向上走了$i$步，向右走了$j$步，都有$i \leq j$这也能通过线性规划相关知识证明。不难发现只是一个类括号匹配问题，可用$Catalan$数求解，计算$C(n)$后即是在一个三角形中的解，答案是$2C(n)$
+$C(n) = \sum_{i=0}^{n-1} C(i) \cdot C(n-i-1)$ 通项公式$C(n)=\frac{C_{2n}^{n}}{n+1}$
+预处理$C(n)$即可
+Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i++) { LL t = 0; for (int j = 0; j &amp;lt; i; j++) t += C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt++ &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; } </description>
+    </item>
+    
+  </channel>
+</rss>

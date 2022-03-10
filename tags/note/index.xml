@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Note on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/note/</link>
+    <description>Recent content in Note on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/note/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络自顶向下</title>
+      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
+      <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</guid>
+      <description>多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
+首部只有8个字节，源端口号和目的端口号，长度和check sum
+为什么需要checksum校验和：
+ 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
+端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
+UDP只能检查错误，不能纠错
+DNS服务采用UDP
+何时UDP，何时TCP？
+ 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
+接收方反馈：
+ ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
+重传，收方发现差错，发送方重传
+序号，检测哪个数据包出错进行重传
+数据包可靠传输：
+ 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
+ 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
+ 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
+GBN发送方：
+ 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
+选择重传 避免不必要的重传
+发送方接收方都维护一个窗口
+发送方：
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
+ 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大</description>
+    </item>
+    
+    <item>
+      <title>Redis设计与实现读书笔记</title>
+      <link>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 01 Mar 2022 16:11:42 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;redis设计与实现&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Go语言学习笔记</title>
+      <link>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】虚拟内存</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
+      <pubDate>Tue, 18 Jan 2022 15:27:22 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
+      <description>&lt;p&gt;虚拟内存提供了三个重要能力：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将主存看做是 存储在磁盘上地址空间的 高速缓存，主存按照需要在磁盘和主存中传递数据&lt;/li&gt;
+&lt;li&gt;每个进程提供一致的地址空间，简化内存管理&lt;/li&gt;
+&lt;li&gt;保护每个进程的地址空间不被其他进程破坏&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>Mysql学习笔记</title>
+      <link>https://ez4zzw.github.io/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Mon, 17 Jan 2022 23:16:08 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>图解HTTP读书笔记</title>
+      <link>https://ez4zzw.github.io/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 16 Jan 2022 22:25:00 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;图解HTTP读书笔记&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】异常控制流</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</link>
+      <pubDate>Fri, 14 Jan 2022 10:12:15 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</guid>
+      <description>&lt;p&gt;异常控制流&lt;/p&gt;
+&lt;p&gt;CSAPP CH-8&lt;/p&gt;
+&lt;p&gt;指令地址间的过度为控制转移，控制转移序列叫做控制流&lt;/p&gt;
+&lt;p&gt;ECF Exceptional Control Flow 异常控制流是系统实现IO，进程和虚拟内存的基本机制&lt;/p&gt;
+&lt;p&gt;ECF用于应用程序和操作系统的交互&lt;/p&gt;
+&lt;p&gt;try catch等语句基于ECF&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>redis实战读书笔记</title>
+      <link>https://ez4zzw.github.io/p/redis%E5%AE%9E%E6%88%98%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Mon, 03 Jan 2022 16:22:27 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/redis%E5%AE%9E%E6%88%98%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;redis基础知识以及一些应用场景总结&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】网络编程</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Mon, 03 Jan 2022 13:37:02 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid>
+      <description>&lt;p&gt;承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-11 笔记&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】系统级IO</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</link>
+      <pubDate>Mon, 03 Jan 2022 10:31:33 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</guid>
+      <description>&lt;p&gt;高级别的IO程序，如c中的printf和scanf，c++中的&lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;和&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt;，都依赖Unix 系统级IO&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-10 笔记&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>编译原理笔记</title>
+      <link>https://ez4zzw.github.io/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 02 Jan 2022 10:33:48 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;编译原理笔记，词法语法分析&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】程序的机器级表示</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</link>
+      <pubDate>Fri, 10 Dec 2021 21:19:54 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</guid>
+      <description>讲解机器代码以及汇编
+TODO了，有个bomb lab</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】信息的表示和处理</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</link>
+      <pubDate>Fri, 10 Dec 2021 13:02:03 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</guid>
+      <description>&lt;p&gt;本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>操作系统</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Thu, 09 Dec 2021 19:58:54 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+      <description>&lt;p&gt;CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>常微分方程初值问题求解方法</title>
+      <link>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 23 Apr 2021 23:26:18 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</guid>
+      <description>常微分方程初值问题 常微分方程描述了不同变量之间的变化关系，通过该关系我们可以确定变量之间的具体函数关系，但是微分方程不一定总是可解的，并且有些求解起来相当困难。给出积分曲线初始位置的状态，求解需要预测点的状态，为常微分方程的初值问题，我们可以在求解微分方程即的情况下对结果做出复合精度要求的预测。
+以$f(x) = \sqrt{1+2x}$为例
+有$y&#39;=\frac{dy}{dx}=y-\frac{2x}{y}$
+本文给出几种算法的原理与实现。
+Euler方法及其改进 从初始点开始，根据不同离散点的导数值对曲线进行预测，导数值可以通过对ODE的化简求解，做出一条折线图，最终曲线会逼近预测值。
+该方法有明显的缺点就是在每一步做出抉择时，只考虑了当前的状态，并没有考虑后面的状态，因此必然会造成较大的误差，因此采用下一个结点的导数值进行修正。
+具体流程如下
+选取一定的步长h，一般为区间的n等分
+预测下一个值$\overline{y}_{i+1} = y_i + hf(x_i, y_i)$
+校正预测值$y_{i+1} = y_i + \frac{h}{2}[f(x_i, y_i)+f(x_{i+1}, \overline{y}_{i+1})]$
+改写成平均化形式
+$y_p = y_i +hf(x_i, y_i)$
+$y_c = y_i + hf(x_{i+1}, y_p)$
+$y_{i+1} = \frac{1}{2} (y_p+y_c), i =0,1,2,3,&amp;hellip;,n-1$
+import numpy as np # 常微分方程化简 def ode(x, y): return y - 2 * x / y def f(x): return np.sqrt(1+2*x) def Euler(bound, start): &amp;#39;&amp;#39;&amp;#39; bound : 预测边界值 start : 起始点 &amp;#39;&amp;#39;&amp;#39; h = 0.</description>
+    </item>
+    
+    <item>
+      <title>数值积分方法</title>
+      <link>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 23 Apr 2021 20:18:59 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</guid>
+      <description>数值积分 应用背景：微积分的基本计算公式为经典的牛顿莱布尼茨公式，但是作为计算机来说，计算原函数等操作过于困难，因此需要其他方法进行优化，代替牛顿莱布尼茨公式进行计算，本文将分享两种求积公式及其代码实现。
+使用语言： Python-Numpy
+使用两种方法计算$f(x)=sin(x)$在[1,2]上的积分
+复化梯形的递推公式 由梯形公式改进，将区间[a, b]等分为n个小区间 $[x_i, x_{i+1}]$
+$\int_{a}^{b}f(x)dx=\sum_{i=0}^{n-1}\int_{x_i}^{x_{i+1}}f(x)dx\approx \frac{h_i}{2}[f(x_i)+f(x_{i+1})]$
+根据梯形公式化简为区间端点值组合
+将求和公式展开，分离出左右端点
+得到最终的化简结果
+$T_n = \frac{h}{2} [f(a)+2\sum_{i=1}^{n-1}f(x_i)+f(b)]$
+但是该方法的步长太小的话会导致计算次数太大，步长太大又难以保证效率
+采用区间不断对分的方法，取$n = 2^k$，反复使用复合求积公式
+$T^{(k)}=\frac{1}{2}T^{(k-1)}+\frac{h_{k-1}}{2}\sum_{i=0}^{2^{k-1}-1}f(a+ih_{k-1} + 0.5h_{k-1})$
+其中$h_{k-1} = \frac{b-a}{2^{k-1}}$
+Code
+import numpy as np def f(x): return np.sin(x) def Calc(): eps = 1e-7 Flag = True l = 1.0 r = 2.0 h = r - l t1 = 1.0*(h/2)*(1+f(r)) t2 = 0.0 while Flag: sum = 0 x = l + h/2 while x &amp;lt; r: sum += f(x) x += h t2 = t1/2 + h*sum/2 h /= 2.</description>
+    </item>
+    
+    <item>
+      <title>三种插值方法及实现</title>
+      <link>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Mon, 19 Apr 2021 22:22:57 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</guid>
+      <description>插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} + y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)+y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] + (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.</description>
+    </item>
+    
+    <item>
+      <title>OJ部署debug记录</title>
+      <link>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>计算机组成原理笔记</title>
+      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Mon, 15 Mar 2021 19:53:04 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;p&gt;本文随机更新机组笔记&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

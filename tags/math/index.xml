@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Math on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/math/</link>
+    <description>Recent content in Math on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 25 Apr 2021 13:04:57 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/math/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>方程求根的迭代法</title>
+      <link>https://ez4zzw.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</link>
+      <pubDate>Sun, 25 Apr 2021 13:04:57 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/</guid>
+      <description>&lt;h1 id=&#34;迭代法求解方程的根&#34;&gt;迭代法求解方程的根&lt;/h1&gt;
+&lt;p&gt;求解方程的根，即$f(x)=0$的数值解等问题，对于经典的二次方程等函数我们可以直接进行求解，但是对于超越方程我们不能用常规方法进行求解。因此我们可以通过使用计算机实现某些求解算法进行计算。&lt;/p&gt;
+&lt;p&gt;选取样例&lt;/p&gt;
+&lt;p&gt;$f(x) =x^3 - x - 2$&lt;/p&gt;
+&lt;p&gt;$\frac{dy}{dx} = 3x^2-1$&lt;/p&gt;
+&lt;p&gt;求解$f(x)$在[1, 2]上的零点&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>迭代法求解线性方程组</title>
+      <link>https://ez4zzw.github.io/p/%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/</link>
+      <pubDate>Sun, 25 Apr 2021 00:38:16 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/</guid>
+      <description>求解线性方程组 在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。
+以线性方程组：
+$ \left[ \begin{matrix} 10 &amp;amp; -1 &amp;amp; -2 \
+-1 &amp;amp; 10 &amp;amp; -2 \
+-1 &amp;amp; -1 &amp;amp; 5 \end{matrix} \right] x = \left[ \begin{matrix} 7.2 \
+8.3 \
+4.2 \end{matrix} \right] $ 为例
+Jacobi迭代法 考虑线性方程组$Ax=b$
+用L和U分别表示严格下三角矩阵和严格上三角矩阵
+可以利用迭代公式
+$x^{k+1}=D^{-1}(b-(L+U)x^{k}))$
+进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。
+迭代法需要给定解列向量的初值，因此初值的选取也很重要。
+import numpy as np def Jacobi(A, B, N, x): # Ax=B N为迭代次数 # 获得对角矩阵的数组 D = np.diag(A) # 获得L+U矩阵，减去对角矩阵即可 # diagflat为D数组转为对角矩阵 R = A - np.</description>
+    </item>
+    
+    <item>
+      <title>常微分方程初值问题求解方法</title>
+      <link>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 23 Apr 2021 23:26:18 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</guid>
+      <description>常微分方程初值问题 常微分方程描述了不同变量之间的变化关系，通过该关系我们可以确定变量之间的具体函数关系，但是微分方程不一定总是可解的，并且有些求解起来相当困难。给出积分曲线初始位置的状态，求解需要预测点的状态，为常微分方程的初值问题，我们可以在求解微分方程即的情况下对结果做出复合精度要求的预测。
+以$f(x) = \sqrt{1+2x}$为例
+有$y&#39;=\frac{dy}{dx}=y-\frac{2x}{y}$
+本文给出几种算法的原理与实现。
+Euler方法及其改进 从初始点开始，根据不同离散点的导数值对曲线进行预测，导数值可以通过对ODE的化简求解，做出一条折线图，最终曲线会逼近预测值。
+该方法有明显的缺点就是在每一步做出抉择时，只考虑了当前的状态，并没有考虑后面的状态，因此必然会造成较大的误差，因此采用下一个结点的导数值进行修正。
+具体流程如下
+选取一定的步长h，一般为区间的n等分
+预测下一个值$\overline{y}_{i+1} = y_i + hf(x_i, y_i)$
+校正预测值$y_{i+1} = y_i + \frac{h}{2}[f(x_i, y_i)+f(x_{i+1}, \overline{y}_{i+1})]$
+改写成平均化形式
+$y_p = y_i +hf(x_i, y_i)$
+$y_c = y_i + hf(x_{i+1}, y_p)$
+$y_{i+1} = \frac{1}{2} (y_p+y_c), i =0,1,2,3,&amp;hellip;,n-1$
+import numpy as np # 常微分方程化简 def ode(x, y): return y - 2 * x / y def f(x): return np.sqrt(1+2*x) def Euler(bound, start): &amp;#39;&amp;#39;&amp;#39; bound : 预测边界值 start : 起始点 &amp;#39;&amp;#39;&amp;#39; h = 0.</description>
+    </item>
+    
+    <item>
+      <title>数值积分方法</title>
+      <link>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Fri, 23 Apr 2021 20:18:59 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</guid>
+      <description>数值积分 应用背景：微积分的基本计算公式为经典的牛顿莱布尼茨公式，但是作为计算机来说，计算原函数等操作过于困难，因此需要其他方法进行优化，代替牛顿莱布尼茨公式进行计算，本文将分享两种求积公式及其代码实现。
+使用语言： Python-Numpy
+使用两种方法计算$f(x)=sin(x)$在[1,2]上的积分
+复化梯形的递推公式 由梯形公式改进，将区间[a, b]等分为n个小区间 $[x_i, x_{i+1}]$
+$\int_{a}^{b}f(x)dx=\sum_{i=0}^{n-1}\int_{x_i}^{x_{i+1}}f(x)dx\approx \frac{h_i}{2}[f(x_i)+f(x_{i+1})]$
+根据梯形公式化简为区间端点值组合
+将求和公式展开，分离出左右端点
+得到最终的化简结果
+$T_n = \frac{h}{2} [f(a)+2\sum_{i=1}^{n-1}f(x_i)+f(b)]$
+但是该方法的步长太小的话会导致计算次数太大，步长太大又难以保证效率
+采用区间不断对分的方法，取$n = 2^k$，反复使用复合求积公式
+$T^{(k)}=\frac{1}{2}T^{(k-1)}+\frac{h_{k-1}}{2}\sum_{i=0}^{2^{k-1}-1}f(a+ih_{k-1} + 0.5h_{k-1})$
+其中$h_{k-1} = \frac{b-a}{2^{k-1}}$
+Code
+import numpy as np def f(x): return np.sin(x) def Calc(): eps = 1e-7 Flag = True l = 1.0 r = 2.0 h = r - l t1 = 1.0*(h/2)*(1+f(r)) t2 = 0.0 while Flag: sum = 0 x = l + h/2 while x &amp;lt; r: sum += f(x) x += h t2 = t1/2 + h*sum/2 h /= 2.</description>
+    </item>
+    
+    <item>
+      <title>三种插值方法及实现</title>
+      <link>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Mon, 19 Apr 2021 22:22:57 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</guid>
+      <description>插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} + y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)+y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] + (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.</description>
+    </item>
+    
+    <item>
+      <title>Luogu3964-松鼠聚会</title>
+      <link>https://ez4zzw.github.io/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/</link>
+      <pubDate>Sun, 11 Oct 2020 19:45:39 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/</guid>
+      <description>&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.luogu.com.cn/problem/P3964&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Luogu3964&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;description&#34;&gt;Description&lt;/h2&gt;
+&lt;p&gt;草原上住着一群小松鼠，每个小松鼠都有一个家。时间长了，大家觉得应该聚一聚。但是草原非常大，松鼠们都很头疼应该在谁家聚会才最合理。
+每个小松鼠的家可以用一个点$(x,y)$表示,两个点的距离定义为点 $(x,y)$ 和它周围的8个点 $(x-1,y)，(x+1,y),(x,y-1)，(x,y+1)$
+$(x−1,y+1),(x-1,y-1),(x+1,y+1),(x+1,y-1)$距离为1。输出一个整数，表示松鼠为了聚会走的路程和最小是多少。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>51nod3143-切比雪夫距离与曼哈顿距离</title>
+      <link>https://ez4zzw.github.io/p/51nod3143-%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%9B%BC%E5%93%88%E9%A1%BF%E8%B7%9D%E7%A6%BB/</link>
+      <pubDate>Sun, 11 Oct 2020 19:45:25 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/51nod3143-%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%9B%BC%E5%93%88%E9%A1%BF%E8%B7%9D%E7%A6%BB/</guid>
+      <description>&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.51nod.com/Challenge/Problem.html#problemId=3143&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;51nod3143&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;description&#34;&gt;Description&lt;/h2&gt;
+&lt;p&gt;n位战士即将奔赴战场，他们每个人都有一个攻击值ai和一个防御值bi，现在你想设计一种装备给这n位战士，如果这件装备的攻击值为A，防御值为B，那么对于第i位战士这件装备的不匹配度为$max(|A−a_i|,|B−b_i|)$
+A，B都是正整数，要让所有战士的不匹配度之和最小，求出最小的不匹配度之和$2\le N \le 100000$&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>GCD-兔八哥与猎人</title>
+      <link>https://ez4zzw.github.io/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/</link>
+      <pubDate>Wed, 07 Oct 2020 22:04:23 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/</guid>
+      <description>Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
+Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
+Code #include&amp;lt;bits/stdc++.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ? a : gcd(b,a%b); } int main() { //freopen(&amp;#34;test.txt&amp;#34;, &amp;#34;r&amp;#34;, stdin); 	ios::sync_with_stdio(false); cin.</description>
+    </item>
+    
+    <item>
+      <title>余数求和-整除分块</title>
+      <link>https://ez4zzw.github.io/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/</link>
+      <pubDate>Wed, 07 Oct 2020 21:47:20 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/</guid>
+      <description>Description 给出整数$n,k$,计算$G(n,k)=\sum\limits_{i=1}^n=k \ mod \ i$,$1&amp;lt;=n,k&amp;lt;=1e9$
+Solution 将k mod i展开可以得到$k - i*\lfloor \frac{k}{i} \rfloor$ 将求和式子展开可以得到$ \sum\limits_{i=1}^n = n*k-\sum\limits_{i=1}^n i * \lfloor\frac{k}{i} \rfloor $ 利用整除分块，可以发现，对于相同的$\lfloor\frac{k}{i} \rfloor$，即每个区间$l 到 r$，每次只需要再对i求和即可 即每次计算$(r-l+1)*\lfloor \frac{k}{i} \rfloor * (l+r)/2$
+Note 在分块的时候误写为r=N/(N/i)导致调试耽误大量时间，而且交了四发才发现
+for (ll l = 1, r; l &amp;lt;= N; l = r + 1) { if (l &amp;gt; K) { break; } r = min(N, K/(K/l)); ans -= (r - l + 1)*(K/l)*(l + r)/2; } Code //https://www.</description>
+    </item>
+    
+    <item>
+      <title>Fibonacci 矩阵快速幂</title>
+      <link>https://ez4zzw.github.io/p/fibonacci-%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/</link>
+      <pubDate>Fri, 13 Dec 2019 18:58:24 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/fibonacci-%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/</guid>
+      <description>Description 请输出$Fib(n) mod 10000$ $n \leq 1000000000$
+Solution 由于$n$的范围在$1e9$直接递推铁TLE，考虑矩阵快速幂 Fibonacci数列有如下性质 通过多次迭代 算是个板子题吧，记得在WUST新生赛做过一道想矩阵快速幂的题，然而正解是找规律QAQ，在此贴个板子。
+Code #include &amp;lt;cstdio&amp;gt;#include &amp;lt;queue&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;iostream&amp;gt;#include &amp;lt;queue&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;string&amp;gt;typedef long long LL; const int MOD = 1e4; using namespace std; struct Matrix{ LL m[2][2]; void print(){ for (int i = 0; i &amp;lt; 2; i++) { for (int j = 0; j &amp;lt; 2; j++) cout &amp;lt;&amp;lt; m[i][j] &amp;lt;&amp;lt; &amp;#39; &amp;#39;; cout &amp;lt;&amp;lt; endl;	} } } base, ans; Matrix times(Matrix a, Matrix b) { Matrix ans; ans.</description>
+    </item>
+    
+    <item>
+      <title>Triangle Fibonacci&#43;二分查找</title>
+      <link>https://ez4zzw.github.io/p/triangle-fibonacci-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</link>
+      <pubDate>Fri, 13 Dec 2019 18:58:14 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/triangle-fibonacci-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</guid>
+      <description>Description 有$n$个木棍，长度为$1,2,3&amp;hellip;n$，现在要从中删掉一些木棍，使得剩下的木棍不能构成三角形，使删掉木棍的数量最少。T组数组，$T \leq 20$ $n \leq 20$
+Solution 由于数据范围很小，可以直接暴力求解，依次选取两个数$a,b(a&amp;lt;b)$相加，要知道不能有任何一个数小于这个值，直接删掉$(a,a+b)$范围中的数即可 如果$n$的范围是$1e9$呢？ 通过找规律发现我们剩下的数是这样的 $1,2,3,5,8,13,21&amp;hellip;$ 这是Fibonacci数列!!!! 所以我们只需要找到$\leq n$的Fibonacci数有几个，减去就是答案 可以直接lower_bound注意处理极限数据！！！即$n==1||n==2$的情况 也可手写二分，但是二分貌似常数有点大，又考虑到第$88$个Fibonacci数就爆掉$1e9$了，所以直接便利也完全没问题
+Code 暴力版本 #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;using namespace std; bool vis[23]; int main() { int T; cin &amp;gt;&amp;gt; T; for (int i = 1; i &amp;lt;= T; i++) { int N, ans = 0; cin &amp;gt;&amp;gt; N; memset(vis, false, sizeof(vis)); for (int j = 1; j &amp;lt;= N - 1; j++) if (!</description>
+    </item>
+    
+    <item>
+      <title>DP? 素数筛&#43;Lucas定理&#43;费马小定理</title>
+      <link>https://ez4zzw.github.io/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</link>
+      <pubDate>Fri, 13 Dec 2019 18:57:13 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</guid>
+      <description>Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &amp;lt; 1e4$
+Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}+C_{n-k+1}^{1}+C_{n-k+2}^{2}+&amp;hellip;+C_{n}^{k}=C_{n+1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k+1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}+C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n+1}^{k}$ 所以答案为$C_{n+1}^{k}+n-k$ 当$k &amp;gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到**费马小定理**
+ 费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
+ 已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
+对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
+可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
+long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; } 有了这些工具之后就可以预处理阶乘和逆元了</description>
+    </item>
+    
+  </channel>
+</rss>

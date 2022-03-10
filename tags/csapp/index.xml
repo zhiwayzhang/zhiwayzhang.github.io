@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CSAPP on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/csapp/</link>
+    <description>Recent content in CSAPP on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 18 Jan 2022 15:27:22 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/csapp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【操作系统】虚拟内存</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
+      <pubDate>Tue, 18 Jan 2022 15:27:22 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
+      <description>&lt;p&gt;虚拟内存提供了三个重要能力：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将主存看做是 存储在磁盘上地址空间的 高速缓存，主存按照需要在磁盘和主存中传递数据&lt;/li&gt;
+&lt;li&gt;每个进程提供一致的地址空间，简化内存管理&lt;/li&gt;
+&lt;li&gt;保护每个进程的地址空间不被其他进程破坏&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】异常控制流</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</link>
+      <pubDate>Fri, 14 Jan 2022 10:12:15 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</guid>
+      <description>&lt;p&gt;异常控制流&lt;/p&gt;
+&lt;p&gt;CSAPP CH-8&lt;/p&gt;
+&lt;p&gt;指令地址间的过度为控制转移，控制转移序列叫做控制流&lt;/p&gt;
+&lt;p&gt;ECF Exceptional Control Flow 异常控制流是系统实现IO，进程和虚拟内存的基本机制&lt;/p&gt;
+&lt;p&gt;ECF用于应用程序和操作系统的交互&lt;/p&gt;
+&lt;p&gt;try catch等语句基于ECF&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】网络编程</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Mon, 03 Jan 2022 13:37:02 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid>
+      <description>&lt;p&gt;承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-11 笔记&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】程序的机器级表示</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</link>
+      <pubDate>Fri, 10 Dec 2021 21:19:54 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</guid>
+      <description>讲解机器代码以及汇编
+TODO了，有个bomb lab</description>
+    </item>
+    
+    <item>
+      <title>【操作系统】信息的表示和处理</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</link>
+      <pubDate>Fri, 10 Dec 2021 13:02:03 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</guid>
+      <description>&lt;p&gt;本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>操作系统</title>
+      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Thu, 09 Dec 2021 19:58:54 +0000</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+      <description>&lt;p&gt;CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 14 Mar 2022 10:22:18 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>并发编程</title>
+      <link>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Mon, 14 Mar 2022 10:22:18 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</guid>
+      <description>三个基本方法：
+ 进程 IO多路复用 线程  </description>
+    </item>
+    
     <item>
       <title>计算机网络自顶向下</title>
       <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
@@ -78,7 +88,25 @@ GBN发送方：
       <pubDate>Mon, 17 Jan 2022 23:16:08 +0000</pubDate>
       
       <guid>https://ez4zzw.github.io/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description></description>
+      <description>基础知识 单进程多线程，线程之间共享内存
+OLTP Online Transaction Processing 在线事务处理
+InnoDB overview 特点：
+ 行级锁 支持外键 支持事务  MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读
+四种隔离级别：
+ REPEATABLE 默认  聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID
+后台线程  Master Thread 缓冲区数据异步更新到磁盘 IO Thread innodb使用异步IO，提高数据库性能，负责接受回调 Purge Thread 事务提交后回收undolog页 Page Cleaner Thread 脏页刷新  主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞
+内存 用页管理记录
+缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池fix，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。
+配置参数innodb_buffer_pool_size
+数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等
+允许有多个缓冲池
+内存管理 LRU List 频繁使用的在列表前，不频繁的在列表后，先释放尾部的页
+页默认大小16KB
+innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。
+Free列表保存空闲页
+MyISAM  表锁 全文索引 不支持事务  缓冲区只缓存索引文件，不缓冲数据
+MYD保存数据，MYI保存索引文件
+myisampack使用Huffman编码压缩MYD，压缩后只读</description>
     </item>
     
     <item>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='超低延迟固态硬盘从内核到固件的服务器存储堆栈
+个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
+blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
+message signaled interrupt (MSI)
+1.摘要 flash share
+在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
+对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
+评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
+1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
+某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
+现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
+为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
+因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
+现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
+但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
+the 99th percentile 是0.8ms（apache）
+但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
+原因：略
+从固件到内核优化堆栈的存储。
+  内核级别的增强：
+两个挑战
+ Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。  对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
+  固件层设计：
+  ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
+ ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。'><title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
+
+<link rel='canonical' href='https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)'>
+<meta property='og:description' content='超低延迟固态硬盘从内核到固件的服务器存储堆栈
+个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
+blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
+message signaled interrupt (MSI)
+1.摘要 flash share
+在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
+对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
+评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
+1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
+某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
+现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
+为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
+因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
+现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
+但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
+the 99th percentile 是0.8ms（apache）
+但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
+原因：略
+从固件到内核优化堆栈的存储。
+  内核级别的增强：
+两个挑战
+ Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。  对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
+  固件层设计：
+  ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
+ ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='Paper' /><meta property='article:published_time' content='2022-08-17T10:30:30&#43;08:00'/><meta property='article:modified_time' content='2022-08-17T10:30:30&#43;08:00'/>
+<meta name="twitter:title" content="Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)">
+<meta name="twitter:description" content="超低延迟固态硬盘从内核到固件的服务器存储堆栈
+个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
+blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
+message signaled interrupt (MSI)
+1.摘要 flash share
+在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
+对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
+评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
+1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
+某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
+现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
+为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
+因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
+现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
+但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
+the 99th percentile 是0.8ms（apache）
+但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
+原因：略
+从固件到内核优化堆栈的存储。
+  内核级别的增强：
+两个挑战
+ Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。  对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
+  固件层设计：
+  ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
+ ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。">
+    </head>
+    <body class="">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.body.dataset.scheme = 'dark';
+        } else {
+            document.body.dataset.scheme = 'light';
+        }
+    })();
+</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
+        <h2 class="site-description">Coding Panda.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        
+            <li id="dark-mode-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                <span>Dark Mode</span>
+            </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://ez4zzw.github.io" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/storage/" >
+                Storage
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/">Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">Aug 17, 2022</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>超低延迟固态硬盘从内核到固件的服务器存储堆栈</p>
+<h1 id="个别名词解释">个别名词解释</h1>
+<p>the 99^th percentile 超过统计数据99%的数是多少</p>
+<p>blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化</p>
+<p><strong>message signaled interrupt (MSI)</strong></p>
+<h1 id="1摘要">1.摘要</h1>
+<p>flash share</p>
+<p>在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。</p>
+<p>对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。</p>
+<p>评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。</p>
+<h1 id="10-intro">1.0 Intro</h1>
+<h2 id="11-现状">1.1 现状</h2>
+<p>网络服务提供商，满足服务级别协议SLA，延迟敏感</p>
+<p>某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA</p>
+<p>现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。</p>
+<p>为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。</p>
+<p>因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。</p>
+<p>现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟</p>
+<p>但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。</p>
+<p>the 99th percentile 是0.8ms（apache）</p>
+<p>但是当服务器同时运行pagerank的时候，延迟会增加228.5%。</p>
+<p>原因：略</p>
+<p>从固件到内核优化堆栈的存储。</p>
+<ul>
+<li>
+<p>内核级别的增强：</p>
+<p>两个挑战</p>
+<ul>
+<li>Linux的blk-mq导致I/O请求队列化，引入延迟</li>
+<li>NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。</li>
+</ul>
+<p>对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。</p>
+</li>
+<li>
+<p>固件层设计：</p>
+</li>
+</ul>
+<p>​		即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。</p>
+<ul>
+<li>ULL SSD的新中断处理服务：</li>
+</ul>
+<p>​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。</p>
+<p>​	通过将NVMe队列和ISR卸载到硬件加速器中来进一步优化NVMe completion routine。</p>
+<p>​	各种仿真实验后效果不错，效率提高了22%和31%。</p>
+<h1 id="20-background">2.0 Background</h1>
+<h2 id="21-存储内核栈">2.1 存储内核栈</h2>
+<p><img src="https://cdn.ipandai.club/image-20220810145032258.png" alt="image-20220810145032258"  /></p>
+<blockquote>
+<p>Linux文件系统IO</p>
+<ul>
+<li>bio</li>
+<li>request</li>
+<li>nvme_rw_command</li>
+</ul>
+</blockquote>
+<p>存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。</p>
+<p>当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。</p>
+<h2 id="22-设备固件栈">2.2 设备固件栈</h2>
+<p><img src="https://cdn.ipandai.club/image-20220810232230437.png" alt="image-20220810232230437"  /></p>
+<ol>
+<li>收到request</li>
+<li>SQ tail++入队</li>
+<li>写入SQ门铃寄存器</li>
+<li>通过DMA读取数据的物理位置</li>
+<li>SQ head++出队</li>
+<li>将请求转发至嵌入式缓存层或者FTL</li>
+<li>当出现缺页或者页面替换时，FTL将目标LBA转换成Z-NAND中相应的物理地址，必要时自行GC</li>
+<li>在完成I/O请求之后，NVMe控制器增加这个CQ的tail，入队</li>
+<li>通过DMA传输数据，并修改phase tag</li>
+<li>主机ISR通过搜索队列中检查phase tag，对于有效的phase tag，ISR清除tag位，并且处理剩余的I/O完成请求程序。</li>
+<li>CQ head++出队，在SQ中移除相应的记录，并且写入CQ的head doorbell</li>
+</ol>
+<h1 id="30-跨层设计">3.0 跨层设计</h1>
+<h2 id="31-快速存储的挑战">3.1 快速存储的挑战</h2>
+<p><img src="https://cdn.ipandai.club/image-20220811110758918.png" alt="image-20220811110758918"  /></p>
+<p>原因是存储栈无法区分来自Apache的I/O请求，及时两个应用需要不同级别I/O的响应。</p>
+<h1 id="32-预知灵敏响应">3.2 预知灵敏响应</h1>
+<p>为了让内核可以区分I/O 请求的优先级和紧迫程度，修改Linux的进程控制快<code>task_struct</code>.</p>
+<p>为了保证有效性，在<code>address_space</code>,<code>bio</code>,<code>request</code>,<code>nvme_rw_command</code></p>
+<p>中都保存工作负载属性，在存储堆栈上打孔。</p>
+<p>FlashShare同时提供了一个可以在服务器上配置这些属性的工具。叫做<code>chworkload_attr</code>。</p>
+<p>可以方便的修改每个应用的属性并绑定到<code>task_struct</code>中</p>
+<p>修改了syscall表<code>arch/x86/entry/syscalls/syscall 64.tbl</code>添加了两个系统调用，可以从<code>task_struct</code>中set/get工作属性。</p>
+<p>在<code>/linux/syscall.h</code>中进行注册，并带有<code>asmlinkage</code>标签。</p>
+<p>用户通过shell给定特定进程，实现于<code>/sched/cores.c</code></p>
+<h2 id="33-内核优化">3.3 内核优化</h2>
+<p>优化文件系统中的blk-mq和NVMe驱动</p>
+<p>blk-mq合并重排请求提高了带宽使用，但是引入了延迟</p>
+<p>跳过所有在线应用的I/O 请求</p>
+<p>如果离线应用程序的 I/O 请求被 blk-mq 调度到后续在线应用程序发出的同一 LBA，则可能发生危险。</p>
+<p>如果两个请求的操作类型不同，blk-mq会将两个请求串联。否则blk-mq会将两个请求合并为一个<code>request</code>并交给NVMe驱动。</p>
+<p>为了防止延迟敏感的I/O 被NVMe控制器杀死：</p>
+<ul>
+<li>为每个核心创建两个SQ队列和一个CQ队列</li>
+</ul>
+<p><img src="https://cdn.ipandai.club/image-20220811173922087.png" alt="image-20220811173922087"  /></p>
+<p>其中一个SQ保存来自在线应用的I/O请求。<strong>NVMe驱动程序通过管理员队列发送消息，通知NVMe控制器选择一种新的队列调度方法，该方法始终优先安排该SQ中的请求。</strong></p>
+<p>未来避免因优先级带来的饥饿，当该队列中的请求数量大于阈值时，或者没有在规定时间内被满足，NVMe驱动会满足所有离线应用I/O 。</p>
+<p>实验表明，队列大小为8或者200us的阈值最好。</p>
+<h1 id="40-io-completion和缓存">4.0 I/O Completion和缓存</h1>
+<p>采用轮询机制时查询I/O Completion时，内核态占用97%。</p>
+<p>带来两个问题：</p>
+<ol>
+<li>没有为处理I/O 响应单独分配核心，对于多进程下低效</li>
+<li>我们要减轻处理I/O轮询的核心开销，进一步降低延迟</li>
+</ol>
+<h2 id="41-中断处理程序">4.1 中断处理程序</h2>
+<p>flash share仅对来自在线应用的I/O 请求使用轮询</p>
+<p>使用信号处理离线应用</p>
+<p><img src="https://cdn.ipandai.club/image-20220811231355037.png" alt="image-20220811231355037"  /></p>
+<ol>
+<li>修改blk-mq中的<code>submit_bio()</code>，将由文件系统或缓存的bio插入到mq</li>
+<li>如果bio是来自离线应用的，则插入队列，as normal</li>
+<li>如果bio是来自在线应用的，blk-mq则调用<code>queue_rq()</code>将请求发送至NVMe驱动。</li>
+<li>NVMe驱动转换I/O 请求为NVMe指令并非插入到响应SQ队列中</li>
+</ol>
+<p>使用Select-ISR，当请求为离线应用时，CPU核心可以通过上下文切换从NVMe驱动中释放。否则，blk-mq调用轮询机制<code>blk-poll()</code>。<code>blk-poll()</code>持续调用<code>nvme_poll()</code>，检查有效的完成记录是否存在于目标NVMe CQ中。如果存在，blk-mq禁用此CQ的IRQ，以至于MSI信号无法再次捕获blk-mq程序。<code>nvme_poll()</code>通过检查CQ中的phase tags查找CQ中的新记录。</p>
+<p>具体来说，<code>nvme poll()</code>搜索一个CQ记录，其请求信息与<code>blk poll()</code>等待完成的标签匹配。一旦检测到这样的新记录，blk-mq就会退出在<code>blk poll()</code>中实现的无限迭代，并将上下文切换到其用户进程。</p>
+<p>提出<code>I/O-stack accelerator</code></p>
+<p>主要目的是将blk-mq的任务迁移到附属于PCIe的加速器中</p>
+<p>可以使得通过上层文件系统生成的bio直接转换成<code>nvm_rw_command</code>。</p>
+<p>通过特殊的tag索引搜索队列中的元素，并且代表CPU合并bio</p>
+<p>该方法可以减少36%的I/O completion时间。</p>
+<h2 id="42-固件层">4.2 固件层</h2>
+<p>创建两个内存分区，一个服务于在线应用，一个服务于离线应用。</p>
+<p>三种模式</p>
+<ol>
+<li>固定拆分缓存</li>
+<li>根据I/O动态划分</li>
+<li>数据可保留</li>
+</ol>
+<p><img src="https://cdn.ipandai.club/image-20220812003132031.png" alt="image-20220812003132031"  /></p>
+<h2 id="43-io-stack-acceleration">4.3 I/O-Stack Acceleration</h2>
+<p>添加了一个barrier logic，简单的MUX，作为硬件仲裁</p>
+<p>引入status bitmap来过滤SQ队列中的记录</p>
+<ul>
+<li>合并逻辑插入一个行的nvme 指令，status bitmap设置为1</li>
+<li>如果监测到ULL SSD从I/O SQ中读取NVMe指令，status bitmap设置为0</li>
+</ul>
+<p>如果状态位图表明CAM中的请求条目（与目标SQ相关联）无效，CAM将跳过对这些条目的搜索。</p>
+<h1 id="50-实验">5.0 实验</h1>
+<h2 id="51-实验步骤">5.1 实验步骤</h2>
+<p>使用gem5系统结构模拟</p>
+<p>64位arm指令集</p>
+<p>Linux 4.9.30</p>
+<p>8核心2GHz</p>
+<p>L1 Cache 64KB</p>
+<p>2GB Memory</p>
+<p><img src="https://cdn.ipandai.club/image-20220812191343849.png" alt="image-20220812191343849"  /></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/file-system/">File System</a>
+        
+            <a href="/tags/ssd/">SSD</a>
+        
+            <a href="/tags/storage/">Storage</a>
+        
+            <a href="/tags/paper/">Paper</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

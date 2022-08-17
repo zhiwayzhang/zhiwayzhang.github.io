@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='DNS 使用UDP 53端口
+多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
 首部只有8个字节，源端口号和目的端口号，长度和check sum
 为什么需要checksum校验和：
@@ -24,13 +25,13 @@ GBN发送方：
 选择重传 避免不必要的重传
 发送方接收方都维护一个窗口
 发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
- 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大'><title>计算机网络自顶向下</title>
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：'><title>计算机网络自顶向下</title>
 
 <link rel='canonical' href='https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='计算机网络自顶向下'>
-<meta property='og:description' content='多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+<meta property='og:description' content='DNS 使用UDP 53端口
+多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
 首部只有8个字节，源端口号和目的端口号，长度和check sum
 为什么需要checksum校验和：
@@ -53,13 +54,13 @@ GBN发送方：
 选择重传 避免不必要的重传
 发送方接收方都维护一个窗口
 发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
- 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大'>
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：'>
 <meta property='og:url' content='https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='计算机网络' /><meta property='article:tag' content='Note' /><meta property='article:published_time' content='2022-03-05T10:32:46&#43;00:00'/><meta property='article:modified_time' content='2022-03-05T10:32:46&#43;00:00'/>
 <meta name="twitter:title" content="计算机网络自顶向下">
-<meta name="twitter:description" content="多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+<meta name="twitter:description" content="DNS 使用UDP 53端口
+多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
 首部只有8个字节，源端口号和目的端口号，长度和check sum
 为什么需要checksum校验和：
@@ -82,8 +83,7 @@ GBN发送方：
 选择重传 避免不必要的重传
 发送方接收方都维护一个窗口
 发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
- 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大">
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：">
     </head>
     <body class="">
     <script>
@@ -285,7 +285,9 @@ GBN发送方：
 </header>
 
     <section class="article-content">
-    <h2 id="多路复用和多路分解">多路复用和多路分解</h2>
+    <h1 id="dns">DNS</h1>
+<p>使用UDP 53端口</p>
+<h2 id="多路复用和多路分解">多路复用和多路分解</h2>
 <h2 id="无连接运输udp">无连接运输UDP</h2>
 <p>UDP无需建立连接，速度快</p>
 <p>无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）</p>
@@ -583,7 +585,8 @@ GBN发送方：
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
     </section>
 </footer>
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">

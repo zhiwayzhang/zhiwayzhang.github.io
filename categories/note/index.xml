@@ -23,7 +23,8 @@
       <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
       
       <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</guid>
-      <description>多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
+      <description>DNS 使用UDP 53端口
+多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
 首部只有8个字节，源端口号和目的端口号，长度和check sum
 为什么需要checksum校验和：
@@ -46,8 +47,7 @@ GBN发送方：
 选择重传 避免不必要的重传
 发送方接收方都维护一个窗口
 发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：
- 接收的分组落在窗口内，返回ack 如果序号不连续，直接缓存 如果分组序号等于rcv_base将从rcv base开始的已缓存分组交付给上层，窗口移动 序号落在窗口之外，[rcv_base-N, rcv_base-1]上一个窗口中，返回ack  窗口长度不能太大</description>
+ 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：</description>
     </item>
     
     <item>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SSD on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/ssd/</link>
+    <description>Recent content in SSD on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Aug 2022 10:30:30 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/ssd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
+      <link>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
+      <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</guid>
+      <description>超低延迟固态硬盘从内核到固件的服务器存储堆栈
+个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
+blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
+message signaled interrupt (MSI)
+1.摘要 flash share
+在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
+对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
+评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
+1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
+某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
+现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
+为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
+因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
+现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
+但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
+the 99th percentile 是0.8ms（apache）
+但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
+原因：略
+从固件到内核优化堆栈的存储。
+  内核级别的增强：
+两个挑战
+ Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。  对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
+  固件层设计：
+  ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
+ ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。</description>
+    </item>
+    
+  </channel>
+</rss>

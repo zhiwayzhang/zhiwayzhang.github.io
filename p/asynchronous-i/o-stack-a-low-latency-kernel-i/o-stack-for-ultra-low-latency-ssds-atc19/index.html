@@ -1,20 +1,53 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。
-'><title>Git学习笔记</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Intro 优化I/O的方法
+ 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
+ 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
+ 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
+ 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+ I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+ Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求'><title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
 
-<link rel='canonical' href='https://ez4zzw.github.io/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<link rel='canonical' href='https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Git学习笔记'>
-<meta property='og:description' content='对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。
-'>
-<meta property='og:url' content='https://ez4zzw.github.io/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)'>
+<meta property='og:description' content='Intro 优化I/O的方法
+ 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
+ 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
+ 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
+ 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+ I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+ Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求'>
+<meta property='og:url' content='https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='git' /><meta property='article:published_time' content='2021-04-02T22:33:25&#43;00:00'/><meta property='article:modified_time' content='2021-04-02T22:33:25&#43;00:00'/>
-<meta name="twitter:title" content="Git学习笔记">
-<meta name="twitter:description" content="对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。
-">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='Paper' /><meta property='article:published_time' content='2022-08-17T10:30:41&#43;08:00'/><meta property='article:modified_time' content='2022-08-17T10:30:41&#43;08:00'/>
+<meta name="twitter:title" content="Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)">
+<meta name="twitter:description" content="Intro 优化I/O的方法
+ 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
+ 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
+ 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
+ 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+ I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+ Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求">
     </head>
     <body class="">
     <script>
@@ -191,15 +224,15 @@
     
     <header class="article-category">
         
-            <a href="/categories/note/" >
-                Note
+            <a href="/categories/storage/" >
+                Storage
             </a>
         
     </header>
     
 
     <h2 class="article-title">
-        <a href="/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Git学习笔记</a>
+        <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</a>
     </h2>
 
     <footer class="article-time">
@@ -211,66 +244,132 @@
 
 
 
-        <time class="article-time--published">Apr 02, 2021</time>
+        <time class="article-time--published">Aug 17, 2022</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。</p>
-<h1 id="about-git">About Git</h1>
-<p><code>git</code>是一个分布式版本控制工具，如果你是一个程序猿，那你必须要学会如何使用<code>git</code>来管理你的代码或者项目。
-可能更多人所熟知的是GitHub，顾名思义，按照英语的命名特点，GitHub就是所有git上传的枢纽，汇聚到一起，你可以开源你的代码，指定一款开源协议共享给所有需要的人，也可以将仓库设为私有，只有自己或者受到邀请的人可见或者进行编辑。
-除了GitHub，世界上还有很多这种代码托管平台，比如国内的gitee,coding等，国外还有gitlab等平台提供代码托管服务。</p>
-<h1 id="setup">Setup</h1>
-<p>在一个目录中，你可以使用<code>git init</code>来初始化这个目录，git会把这个文件夹变为一个git目录，</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">&gt; GitTest git init
-Initialized empty Git repository in /Users/username/GitTest/.git/
-</code></pre></div><p>使用<code>git remote add origin {your repo url}</code>
-即可添加远程的仓库地址。</p>
-<h1 id="commit--push">Commit &amp;&amp; Push</h1>
-<p>对于一个采用迭代式开发或者其他开发模式的项目来说，都避免不了后续对代码进行修改或者添加一些新的文件，对于每一次这样的操作，都要对添加或者修改的文件指定一个commit。
-例如：修改了项目功能中的bug，文件名字为<code>a.cpp</code>
-可以使用</p>
-<pre tabindex="0"><code>git add a.cpp
-git commit -m &quot;fix: the bug in xxx&quot;
-</code></pre><p>这样就可以将此次更改添加到提交的队列中
-如果使用<code>git add .</code>，git将添加所有监控的文件到缓冲区
-再使用<code>git push</code>就可以将修改添加到远程仓库中</p>
-<p>对与一个团队而言，有标准规范的commit格式是很重要的，例如以下格式</p>
-<pre tabindex="0"><code>feat: 新功能feature
-fix: 解决bug
-add: 添加模块
-update: 更新模块
-... 等等
-</code></pre><h1 id="dangerous-pull-ing">Dangerous Pull ing</h1>
-<p>如果是多人协作开发，那么必然会导致本地文件之间存在着不一致，为了解决这个问题，可以使用<code>git pull</code>，执行该命令后将同步仓库中存在并且与本地不同的文件。
-这个操作看似简单，但是有时候如果使用了&ndash;force强制执行的话，会覆盖掉本地的文件，属于非常危险的操作，所以无论在什么时候使用&ndash;force之前都要思考清楚自己在干什么。</p>
-<h1 id="branch">Branch</h1>
-<p>我觉得git很强大的一个功能就是对分支的管理，在不同分支中切换可以让项目的代码得到更有效的管理，例如在main主分支中保存可以稳定运行的版本，在另一个dev分支中保存正在开发的非稳定版，后续改进之后可以将dev分支合并到main分支中去。
-如果更新过后的主分支依然出现问题，也是可以通过回滚的方式回到之前某个稳定的版本。
-分支的创建也非常简单</p>
-<pre tabindex="0"><code>git branch name
-git checkout name
-</code></pre><p>切换后git所有的操作将在新的分支进行</p>
-<h1 id="gitignore">.gitignore</h1>
-<p>顾名思义，肯定是让git去忽略某些项目，比如文件夹，或者是单个文件，添加到gitignore之后git将不在追踪这些文件的变化，因此我们可以将例如npm庞大的node_modules这种文件夹添加到其中，或者是编译器调试产生的临时文件，优化仓库的存储结构。</p>
-<pre tabindex="0"><code>git status
-</code></pre><p>使用该命令看查目前项目的改动</p>
-<pre tabindex="0"><code>On branch dev
-Untracked files:
-  (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
-	b.cpp
+    <h1 id="intro">Intro</h1>
+<p>优化I/O的方法</p>
+<ul>
+<li>用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。</li>
+<li>优化操作系统内核的I/O 栈
+<ul>
+<li>使用轮询来减少上下文切换的开销</li>
+<li>在底层减少一半的中断处理</li>
+<li>分散I/O指令</li>
+<li>I/O block调度机制</li>
+</ul>
+</li>
+</ul>
+<h1 id="related-work">Related Work</h1>
+<p>减少内核的开销</p>
+<ul>
+<li>减少中断处理的后半部分</li>
+<li>是用轮询技术而非中断，减少上下文切换</li>
+<li>混合轮询</li>
+<li>基于SSD的闪存随机读写简化调度策略</li>
+<li>在NVMe固件中进行调度</li>
+<li>对高优先级的任务，提供不同的IO path支持，最小化IO path的开销</li>
+</ul>
+<p>修改存储接口</p>
+<ul>
+<li>分散/分散 IO合并多个IO到一个指令，减少往返次数</li>
+<li>移除doorbell机制和完成信号</li>
+</ul>
+<p>改善fsync</p>
+<ul>
+<li>冲fsync请求发出到收到response，延长数据持久化的时间</li>
+<li>在日志提交记录中使用校验和，有效的重叠日志写入和块写入</li>
+<li>提出<code>写守序系统调用</code>，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行</li>
+</ul>
+<p>用户层直接访问外设，存在隔离、保护等安全问题</p>
+<h1 id="motivation">Motivation</h1>
+<h2 id="背景">背景</h2>
+<p>现状：</p>
+<ul>
+<li>I/O 请求过程中太多的步骤</li>
+<li>页面缓存分配和索引</li>
+<li>DMA，一系列数据结构的创建</li>
+</ul>
+<p>目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化</p>
+<p>本文专注于：</p>
+<ul>
+<li>Linux内核中的<code>read()</code>和<code>write()+fsync()</code></li>
+<li>基于NVMe SSD的Ext4文件系统</li>
+</ul>
+<h2 id="for-read-path">For Read Path</h2>
+<p>研究发现许多剩余的操作不必在设备I/O之前或之后执行</p>
+<p>此类操作可以在设备I/O操作进行时执行</p>
+<p>因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠</p>
+<h2 id="for-write-path">For Write Path</h2>
+<p>缓冲写<code>write()</code>，并不发起IO请求，不能异步处理</p>
+<p>由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求</p>
+<p>由于文件系统带来的三次IO操作</p>
+<ol>
+<li>数据块写</li>
+<li>jbd2发起写入日志Block I/O</li>
+<li>提交Block I/O</li>
+</ol>
+<p>这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。</p>
+<h2 id="for-lightweight-block-layer">For Lightweight Block Layer</h2>
+<p>传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间</p>
+<p>因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低</p>
+<p>简化block layer，针对异步IO stack进行优化</p>
+<h1 id="design">Design</h1>
+<h2 id="轻量化的block-io-layer">轻量化的Block I/O Layer</h2>
+<p>LBIO，为LL NVMe SSD而设计，只支持IO submission/completion和IO指令tagging</p>
+<p>只使用<code>lbio</code>来表示一个block I/O请求，减少了<code>bio-to-request</code>的时间</p>
+<p>每个lbio包括</p>
+<ul>
+<li>LBA</li>
+<li>I/O 长度</li>
+<li>复制的页面</li>
+<li>页面的DMA地址</li>
+</ul>
+<p>使用全局的lbio二位数组来记录</p>
+<p>行的个数为CPU核心数，行成组被分配到一个NVMe队列</p>
+<p>例如8核心，4NVMe队列，每个队列分配2个核心的lbio
+当核心数等于队列数时，可以实现无锁的命令提交</p>
+<p>lbio在全局数组中的索引用作NVMe指令的tag，减少了之前赋tag的过程</p>
+<p>lbio提交后，调用<code>nvme_queue_lbio</code>来提交I/O指令</p>
+<p><strong>LBIO不会合并和调度IO请求</strong></p>
+<h2 id="read-path">Read Path</h2>
+<p>Ext4文件系统中，由extent status tree保存缓存到物理文件block的映射</p>
+<p>预加载映射到内存中，当树太大时，可以只对某个文件预加载</p>
+<h3 id="异步页面申请和dma分配">异步页面申请和DMA分配</h3>
+<p>提前分配空闲页池</p>
+<p>为了减少页面DMA的分配，为每个核维护一个DMA映射空闲页（4KB DMA映射页的链表）</p>
+<p>当空闲页池不够用时，将退化为同步进行（origin）</p>
+<h3 id="缓存页索引">缓存页索引</h3>
+<p>自旋锁防止并发问题，影响效率</p>
+<p>在请求发出，但是页面还没有更新时，可能重复请求更新页面</p>
+<p>解决方案是不限制request，在request completion阶段解决问题</p>
+<p>尽管多个block请求，但是只能有一个页面被索引</p>
+<p>对于其他页面，标记为abandoned，中断发生之后，如果标记为abandoned，则清除已经完成的页面</p>
+<h3 id="dma解除映射">DMA解除映射</h3>
+<p>原本使用中断来处理，改为当系统空闲或等待一个IO请求时处理</p>
+<p>该方式可能会产生漏洞窗口，若不受到恶意访问，不会产生影响，否则用户可以自行选择关闭惰性DMA映射接触</p>
+<h2 id="write--fsync-path">Write &amp;&amp; fsync Path</h2>
+<p>当fsync涉及文件系统中事务时，可以将jbd2日志处理重叠处理</p>
+<h1 id="experiment">Experiment</h1>
+<p>基于Linux内核5.0.5版本</p>
+<p>使用文件描述符<code>O_AIOS</code></p>
+<h1 id="evaluation">Evaluation</h1>
+<h1 id="conclusion">Conclusion</h1>
+<p>提出了AIOS</p>
+<p>LBIO层</p>
+<p>AIOS将I/O路径中的同步操作替换为异步操作，以将与读取和fsync相关的计算与设备I/O访问重叠。</p>
+<p>AIOS在Optane SSD上实现了一位数微秒的I/O延迟。</p>
+<p>此外，AIOS通过Z-SSD和Optane SSD上的模拟实验和实际测试显著降低延迟和性能改进。</p>
+<h1 id="一些启发">一些启发</h1>
+<ol>
+<li>优化I/O可以从CPU的空闲时间分析，需要考虑内核和文件系统的工作流程，最大程度的利用CPU资源，减少空闲。</li>
+<li>硬件设备在发展的同时，软件应该提供必要适配</li>
+<li>减少内核中与I/O相关的结构类型转化，可以有效节省时间开销</li>
+<li>惰性修改会存在安全问题，在保证安全的情况下，可以提高效率</li>
+</ol>
 
-nothing added to commit but untracked files present (use &quot;git add&quot; to track)
-</code></pre><p>git监控到了文件b.cpp的产生，我们将b.cpp添加到.gitignore中</p>
-<pre tabindex="0"><code>On branch dev
-nothing to commit, working tree clean
-</code></pre><p>再次使用git status看查，发现b.cpp已经不再被监控了，在.gitignore中还可以使用文件夹名忽略整个文件夹的项目，或者使用通配忽略包含特定后缀名的文件等。</p>
-<h1 id="end">End</h1>
-<p>随着开发工具的现代化，很多时候我们已经用不到这些git命令了，很多繁琐的命令早已被图形化的界面取代，但不乏还有git爱好者们做出的努力，如<a class="link" href="https://github.com/jesseduffield/lazygit"  target="_blank" rel="noopener"
-    >lazygit</a>等工具。
-当你接收一台崭新的服务器时，这些命令又显得格为重要了。因此，在简便的工具的包裹下，他们背后的原理才是最值得我们去了解的，就如同学习汇编语言一样，给力我们另一种看待程序的方式。
-很早就像总结一下git了，拖了这么久终于写完了，后续还想再添加一些更具体的内容，希望能给初入git的同学一些启发。</p>
 </section>
 
 
@@ -278,7 +377,13 @@ nothing to commit, working tree clean
     
     <section class="article-tags">
         
-            <a href="/tags/git/">git</a>
+            <a href="/tags/file-system/">File System</a>
+        
+            <a href="/tags/ssd/">SSD</a>
+        
+            <a href="/tags/storage/">Storage</a>
+        
+            <a href="/tags/paper/">Paper</a>
         
     </section>
 
@@ -332,60 +437,12 @@ nothing to commit, working tree clean
                 
                     
 <article class="">
-    <a href="/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">
+    <a href="/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">计算机网络自顶向下</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Go语言学习笔记</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Mysql学习笔记</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">图解HTTP读书笔记</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【操作系统】异常控制流</h2>
+            <h2 class="article-title">Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</h2>
         </div>
     </a>
 </article>

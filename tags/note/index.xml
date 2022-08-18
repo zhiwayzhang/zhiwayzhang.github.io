@@ -6,17 +6,7 @@
     <description>Recent content in Note on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 14 Mar 2022 10:22:18 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/note/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>并发编程</title>
-      <link>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
-      <pubDate>Mon, 14 Mar 2022 10:22:18 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</guid>
-      <description>三个基本方法：
- 进程 IO多路复用 线程  </description>
-    </item>
-    
+    <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/note/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>计算机网络自顶向下</title>
       <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
@@ -51,35 +41,12 @@ GBN发送方：
     </item>
     
     <item>
-      <title>Redis设计与实现读书笔记</title>
-      <link>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Tue, 01 Mar 2022 16:11:42 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;redis设计与实现&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Go语言学习笔记</title>
       <link>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
       <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
       
       <guid>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
       <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】虚拟内存</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
-      <pubDate>Tue, 18 Jan 2022 15:27:22 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
-      <description>&lt;p&gt;虚拟内存提供了三个重要能力：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;将主存看做是 存储在磁盘上地址空间的 高速缓存，主存按照需要在磁盘和主存中传递数据&lt;/li&gt;
-&lt;li&gt;每个进程提供一致的地址空间，简化内存管理&lt;/li&gt;
-&lt;li&gt;保护每个进程的地址空间不被其他进程破坏&lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
     
     <item>

@@ -6,7 +6,135 @@
         <description>Recent content on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 17 Aug 2022 10:30:30 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 17 Aug 2022 10:30:41 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
+        <link>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
+        <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
+        
+        <guid>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</guid>
+        <description>&lt;h1 id=&#34;intro&#34;&gt;Intro&lt;/h1&gt;
+&lt;p&gt;优化I/O的方法&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。&lt;/li&gt;
+&lt;li&gt;优化操作系统内核的I/O 栈
+&lt;ul&gt;
+&lt;li&gt;使用轮询来减少上下文切换的开销&lt;/li&gt;
+&lt;li&gt;在底层减少一半的中断处理&lt;/li&gt;
+&lt;li&gt;分散I/O指令&lt;/li&gt;
+&lt;li&gt;I/O block调度机制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;related-work&#34;&gt;Related Work&lt;/h1&gt;
+&lt;p&gt;减少内核的开销&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;减少中断处理的后半部分&lt;/li&gt;
+&lt;li&gt;是用轮询技术而非中断，减少上下文切换&lt;/li&gt;
+&lt;li&gt;混合轮询&lt;/li&gt;
+&lt;li&gt;基于SSD的闪存随机读写简化调度策略&lt;/li&gt;
+&lt;li&gt;在NVMe固件中进行调度&lt;/li&gt;
+&lt;li&gt;对高优先级的任务，提供不同的IO path支持，最小化IO path的开销&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;修改存储接口&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;分散/分散 IO合并多个IO到一个指令，减少往返次数&lt;/li&gt;
+&lt;li&gt;移除doorbell机制和完成信号&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;改善fsync&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;冲fsync请求发出到收到response，延长数据持久化的时间&lt;/li&gt;
+&lt;li&gt;在日志提交记录中使用校验和，有效的重叠日志写入和块写入&lt;/li&gt;
+&lt;li&gt;提出&lt;code&gt;写守序系统调用&lt;/code&gt;，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用户层直接访问外设，存在隔离、保护等安全问题&lt;/p&gt;
+&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;现状：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;I/O 请求过程中太多的步骤&lt;/li&gt;
+&lt;li&gt;页面缓存分配和索引&lt;/li&gt;
+&lt;li&gt;DMA，一系列数据结构的创建&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化&lt;/p&gt;
+&lt;p&gt;本文专注于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux内核中的&lt;code&gt;read()&lt;/code&gt;和&lt;code&gt;write()+fsync()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;基于NVMe SSD的Ext4文件系统&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;for-read-path&#34;&gt;For Read Path&lt;/h2&gt;
+&lt;p&gt;研究发现许多剩余的操作不必在设备I/O之前或之后执行&lt;/p&gt;
+&lt;p&gt;此类操作可以在设备I/O操作进行时执行&lt;/p&gt;
+&lt;p&gt;因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠&lt;/p&gt;
+&lt;h2 id=&#34;for-write-path&#34;&gt;For Write Path&lt;/h2&gt;
+&lt;p&gt;缓冲写&lt;code&gt;write()&lt;/code&gt;，并不发起IO请求，不能异步处理&lt;/p&gt;
+&lt;p&gt;由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求&lt;/p&gt;
+&lt;p&gt;由于文件系统带来的三次IO操作&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;数据块写&lt;/li&gt;
+&lt;li&gt;jbd2发起写入日志Block I/O&lt;/li&gt;
+&lt;li&gt;提交Block I/O&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。&lt;/p&gt;
+&lt;h2 id=&#34;for-lightweight-block-layer&#34;&gt;For Lightweight Block Layer&lt;/h2&gt;
+&lt;p&gt;传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间&lt;/p&gt;
+&lt;p&gt;因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低&lt;/p&gt;
+&lt;p&gt;简化block layer，针对异步IO stack进行优化&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;h2 id=&#34;轻量化的block-io-layer&#34;&gt;轻量化的Block I/O Layer&lt;/h2&gt;
+&lt;p&gt;LBIO，为LL NVMe SSD而设计，只支持IO submission/completion和IO指令tagging&lt;/p&gt;
+&lt;p&gt;只使用&lt;code&gt;lbio&lt;/code&gt;来表示一个block I/O请求，减少了&lt;code&gt;bio-to-request&lt;/code&gt;的时间&lt;/p&gt;
+&lt;p&gt;每个lbio包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LBA&lt;/li&gt;
+&lt;li&gt;I/O 长度&lt;/li&gt;
+&lt;li&gt;复制的页面&lt;/li&gt;
+&lt;li&gt;页面的DMA地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用全局的lbio二位数组来记录&lt;/p&gt;
+&lt;p&gt;行的个数为CPU核心数，行成组被分配到一个NVMe队列&lt;/p&gt;
+&lt;p&gt;例如8核心，4NVMe队列，每个队列分配2个核心的lbio
+当核心数等于队列数时，可以实现无锁的命令提交&lt;/p&gt;
+&lt;p&gt;lbio在全局数组中的索引用作NVMe指令的tag，减少了之前赋tag的过程&lt;/p&gt;
+&lt;p&gt;lbio提交后，调用&lt;code&gt;nvme_queue_lbio&lt;/code&gt;来提交I/O指令&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LBIO不会合并和调度IO请求&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;read-path&#34;&gt;Read Path&lt;/h2&gt;
+&lt;p&gt;Ext4文件系统中，由extent status tree保存缓存到物理文件block的映射&lt;/p&gt;
+&lt;p&gt;预加载映射到内存中，当树太大时，可以只对某个文件预加载&lt;/p&gt;
+&lt;h3 id=&#34;异步页面申请和dma分配&#34;&gt;异步页面申请和DMA分配&lt;/h3&gt;
+&lt;p&gt;提前分配空闲页池&lt;/p&gt;
+&lt;p&gt;为了减少页面DMA的分配，为每个核维护一个DMA映射空闲页（4KB DMA映射页的链表）&lt;/p&gt;
+&lt;p&gt;当空闲页池不够用时，将退化为同步进行（origin）&lt;/p&gt;
+&lt;h3 id=&#34;缓存页索引&#34;&gt;缓存页索引&lt;/h3&gt;
+&lt;p&gt;自旋锁防止并发问题，影响效率&lt;/p&gt;
+&lt;p&gt;在请求发出，但是页面还没有更新时，可能重复请求更新页面&lt;/p&gt;
+&lt;p&gt;解决方案是不限制request，在request completion阶段解决问题&lt;/p&gt;
+&lt;p&gt;尽管多个block请求，但是只能有一个页面被索引&lt;/p&gt;
+&lt;p&gt;对于其他页面，标记为abandoned，中断发生之后，如果标记为abandoned，则清除已经完成的页面&lt;/p&gt;
+&lt;h3 id=&#34;dma解除映射&#34;&gt;DMA解除映射&lt;/h3&gt;
+&lt;p&gt;原本使用中断来处理，改为当系统空闲或等待一个IO请求时处理&lt;/p&gt;
+&lt;p&gt;该方式可能会产生漏洞窗口，若不受到恶意访问，不会产生影响，否则用户可以自行选择关闭惰性DMA映射接触&lt;/p&gt;
+&lt;h2 id=&#34;write--fsync-path&#34;&gt;Write &amp;amp;&amp;amp; fsync Path&lt;/h2&gt;
+&lt;p&gt;当fsync涉及文件系统中事务时，可以将jbd2日志处理重叠处理&lt;/p&gt;
+&lt;h1 id=&#34;experiment&#34;&gt;Experiment&lt;/h1&gt;
+&lt;p&gt;基于Linux内核5.0.5版本&lt;/p&gt;
+&lt;p&gt;使用文件描述符&lt;code&gt;O_AIOS&lt;/code&gt;&lt;/p&gt;
+&lt;h1 id=&#34;evaluation&#34;&gt;Evaluation&lt;/h1&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;提出了AIOS&lt;/p&gt;
+&lt;p&gt;LBIO层&lt;/p&gt;
+&lt;p&gt;AIOS将I/O路径中的同步操作替换为异步操作，以将与读取和fsync相关的计算与设备I/O访问重叠。&lt;/p&gt;
+&lt;p&gt;AIOS在Optane SSD上实现了一位数微秒的I/O延迟。&lt;/p&gt;
+&lt;p&gt;此外，AIOS通过Z-SSD和Optane SSD上的模拟实验和实际测试显著降低延迟和性能改进。&lt;/p&gt;
+&lt;h1 id=&#34;一些启发&#34;&gt;一些启发&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;优化I/O可以从CPU的空闲时间分析，需要考虑内核和文件系统的工作流程，最大程度的利用CPU资源，减少空闲。&lt;/li&gt;
+&lt;li&gt;硬件设备在发展的同时，软件应该提供必要适配&lt;/li&gt;
+&lt;li&gt;减少内核中与I/O相关的结构类型转化，可以有效节省时间开销&lt;/li&gt;
+&lt;li&gt;惰性修改会存在安全问题，在保证安全的情况下，可以提高效率&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
         <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
         <link>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
         <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
@@ -164,20 +292,6 @@
 </description>
         </item>
         <item>
-        <title>并发编程</title>
-        <link>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
-        <pubDate>Mon, 14 Mar 2022 10:22:18 +0800</pubDate>
-        
-        <guid>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</guid>
-        <description>&lt;p&gt;三个基本方法：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;进程&lt;/li&gt;
-&lt;li&gt;IO多路复用&lt;/li&gt;
-&lt;li&gt;线程&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        </item>
-        <item>
         <title>计算机网络自顶向下</title>
         <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
         <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
@@ -299,14 +413,6 @@
 &lt;li&gt;快速恢复&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-        </item>
-        <item>
-        <title>Redis设计与实现读书笔记</title>
-        <link>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-        <pubDate>Tue, 01 Mar 2022 16:11:42 +0000</pubDate>
-        
-        <guid>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-        <description>&lt;p&gt;redis设计与实现&lt;/p&gt;</description>
         </item>
         <item>
         <title>Go语言学习笔记</title>
@@ -499,19 +605,6 @@
 &lt;p&gt;go语言使用栈传递参数和返回值，因此存在性能损失，但是可以支持多返回值，便于维护编译器，不需要考虑寄存器数量和命名。&lt;/p&gt;
 &lt;h2 id=&#34;参数传递方式&#34;&gt;参数传递方式&lt;/h2&gt;
 &lt;p&gt;传值，基本类型，结构体，指针，对参数进行拷贝&lt;/p&gt;</description>
-        </item>
-        <item>
-        <title>【操作系统】虚拟内存</title>
-        <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
-        <pubDate>Tue, 18 Jan 2022 15:27:22 +0000</pubDate>
-        
-        <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
-        <description>&lt;p&gt;虚拟内存提供了三个重要能力：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;将主存看做是 存储在磁盘上地址空间的 高速缓存，主存按照需要在磁盘和主存中传递数据&lt;/li&gt;
-&lt;li&gt;每个进程提供一致的地址空间，简化内存管理&lt;/li&gt;
-&lt;li&gt;保护每个进程的地址空间不被其他进程破坏&lt;/li&gt;
-&lt;/ul&gt;</description>
         </item>
         <item>
         <title>Mysql学习笔记</title>

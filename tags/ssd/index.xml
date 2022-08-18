@@ -6,7 +6,28 @@
     <description>Recent content in SSD on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 17 Aug 2022 10:30:30 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/ssd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 17 Aug 2022 10:30:41 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/ssd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
+      <link>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
+      <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</guid>
+      <description>Intro 优化I/O的方法
+ 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
+ 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
+ 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
+ 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+ I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+ Linux内核中的read()和write()+fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求</description>
+    </item>
+    
     <item>
       <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
       <link>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>

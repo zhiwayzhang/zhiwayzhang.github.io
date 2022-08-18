@@ -6,7 +6,28 @@
     <description>Recent content in Posts on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 17 Aug 2022 10:30:30 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 17 Aug 2022 10:30:41 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
+      <link>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
+      <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</guid>
+      <description>Intro 优化I/O的方法
+ 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
+ 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
+ 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
+ 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+ I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+ Linux内核中的read()和write()+fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求</description>
+    </item>
+    
     <item>
       <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
       <link>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
@@ -38,16 +59,6 @@ the 99th percentile 是0.8ms（apache）
   固件层设计：
   ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
  ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。</description>
-    </item>
-    
-    <item>
-      <title>并发编程</title>
-      <link>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
-      <pubDate>Mon, 14 Mar 2022 10:22:18 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</guid>
-      <description>三个基本方法：
- 进程 IO多路复用 线程  </description>
     </item>
     
     <item>
@@ -84,35 +95,12 @@ GBN发送方：
     </item>
     
     <item>
-      <title>Redis设计与实现读书笔记</title>
-      <link>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Tue, 01 Mar 2022 16:11:42 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/redis%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;redis设计与实现&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Go语言学习笔记</title>
       <link>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
       <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
       
       <guid>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
       <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】虚拟内存</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
-      <pubDate>Tue, 18 Jan 2022 15:27:22 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
-      <description>&lt;p&gt;虚拟内存提供了三个重要能力：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;将主存看做是 存储在磁盘上地址空间的 高速缓存，主存按照需要在磁盘和主存中传递数据&lt;/li&gt;
-&lt;li&gt;每个进程提供一致的地址空间，简化内存管理&lt;/li&gt;
-&lt;li&gt;保护每个进程的地址空间不被其他进程破坏&lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
     
     <item>

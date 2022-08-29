@@ -16,7 +16,7 @@
 &lt;h2 id=&#34;1-对称加密大战公钥同态加密&#34;&gt;1. 对称加密大战公钥同态加密&lt;/h2&gt;
 &lt;p&gt;双方使用相同的key对数据进行加密解密，属于对称加密&lt;/p&gt;
 &lt;p&gt;公钥同态加密（非对称加密）使用两个不同的key，使用公钥来对数据进行加密，使用私钥来对数据进行解密。&lt;/p&gt;
-&lt;p&gt;![image-20220829152536970](/Users/zhiwayzhang/Library/Application Support/typora-user-images/image-20220829152536970.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220829152536970.png&#34; alt=&#34;image-20220829152536970&#34;  /&gt;&lt;/p&gt;
 &lt;p&gt;二者的工作流程对比如上图所示&lt;/p&gt;
 &lt;h2 id=&#34;2-参数与安全性的关系&#34;&gt;2. 参数与安全性的关系&lt;/h2&gt;
 &lt;p&gt;对于同态加密，参数的选取影响着安全性以及明文的类型和可以进行的计算。&lt;/p&gt;
@@ -26,7 +26,7 @@
 &lt;li&gt;密文模数$q$，确定密文中每个整数的大小边界&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;一般来说，安全性随着$n$的增大而升高，随着$q$的增大而降低。&lt;/p&gt;
-&lt;p&gt;![image-20220829153213946](/Users/zhiwayzhang/Library/Application Support/typora-user-images/image-20220829153213946.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220829153213946.png&#34; alt=&#34;image-20220829153213946&#34;  /&gt;&lt;/p&gt;
 &lt;p&gt;$q$越大，在加密之后的密文上则可以执行更复杂的计算。&lt;/p&gt;
 &lt;p&gt;加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。&lt;/p&gt;
 &lt;p&gt;基于格密码的同态加密，理论基础是$Learning  \ with  \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。&lt;/p&gt;

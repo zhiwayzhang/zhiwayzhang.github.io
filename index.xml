@@ -6,7 +6,96 @@
         <description>Recent content on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 17 Aug 2022 10:30:41 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 28 Aug 2022 23:41:33 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Homomorphic Encryption Learning Notes</title>
+        <link>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</link>
+        <pubDate>Sun, 28 Aug 2022 23:41:33 +0800</pubDate>
+        
+        <guid>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</guid>
+        <description>&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
+&lt;h2 id=&#34;1-对称加密大战公钥同态加密&#34;&gt;1. 对称加密大战公钥同态加密&lt;/h2&gt;
+&lt;p&gt;双方使用相同的key对数据进行加密解密，属于对称加密&lt;/p&gt;
+&lt;p&gt;公钥同态加密（非对称加密）使用两个不同的key，使用公钥来对数据进行加密，使用私钥来对数据进行解密。&lt;/p&gt;
+&lt;p&gt;![image-20220829152536970](/Users/zhiwayzhang/Library/Application Support/typora-user-images/image-20220829152536970.png)&lt;/p&gt;
+&lt;p&gt;二者的工作流程对比如上图所示&lt;/p&gt;
+&lt;h2 id=&#34;2-参数与安全性的关系&#34;&gt;2. 参数与安全性的关系&lt;/h2&gt;
+&lt;p&gt;对于同态加密，参数的选取影响着安全性以及明文的类型和可以进行的计算。&lt;/p&gt;
+&lt;p&gt;同态加密目前最重要的两个参数为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;密文空间$n$，大致对应每个密文中整数的数量&lt;/li&gt;
+&lt;li&gt;密文模数$q$，确定密文中每个整数的大小边界&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一般来说，安全性随着$n$的增大而升高，随着$q$的增大而降低。&lt;/p&gt;
+&lt;p&gt;![image-20220829153213946](/Users/zhiwayzhang/Library/Application Support/typora-user-images/image-20220829153213946.png)&lt;/p&gt;
+&lt;p&gt;$q$越大，在加密之后的密文上则可以执行更复杂的计算。&lt;/p&gt;
+&lt;p&gt;加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。&lt;/p&gt;
+&lt;p&gt;基于格密码的同态加密，理论基础是$Learning  \ with  \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。&lt;/p&gt;
+&lt;p&gt;对于参数的选取可以根据所需要的安全性去查阅安全文档。&lt;/p&gt;
+&lt;h1 id=&#34;0x01-bgvbfv加密模式&#34;&gt;0x01 BGV，BFV加密模式&lt;/h1&gt;
+&lt;p&gt;基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。&lt;/p&gt;
+&lt;p&gt;加密包括的参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;明文模数$p$&lt;/li&gt;
+&lt;li&gt;密文模数$q$&lt;/li&gt;
+&lt;li&gt;密文维数$n$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;明文模数$p$决定了明文向量整数的上限，约束加密后的密文计算中的结果。&lt;/p&gt;
+&lt;p&gt;密文模数$q$是决定方案的加密计算能力。BGV或者BFV加密模式的密文包含一个长度为$2n$的整数数组，值为$[0,q-1]$，前文提到过，模数越大，密文可以执行的操作就越多。&lt;/p&gt;
+&lt;p&gt;对于给定的$q$，密文的维数$n$决定了加密等级，越高则安全性越高。同时，还影响明文向量的大小。一般而言明文向量的长度等于$n$。&lt;/p&gt;
+&lt;h2 id=&#34;1--同态操作&#34;&gt;1.  同态操作&lt;/h2&gt;
+&lt;p&gt;密文在操作时保留模数p，输出结果同样为密文。&lt;/p&gt;
+&lt;p&gt;Ciphertext-Plaintext&lt;/p&gt;
+&lt;p&gt;二元操作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ciphertext-Ciphertext Addition&lt;/li&gt;
+&lt;li&gt;Ciphertext-Plaintext Addition&lt;/li&gt;
+&lt;li&gt;Ciphertext-Ciphertext Multiplication&lt;/li&gt;
+&lt;li&gt;Ciphertext-Plaintext Multiplication&lt;/li&gt;
+&lt;li&gt;Ciphertext-Ciphertext Subtraction&lt;/li&gt;
+&lt;li&gt;Ciphertext-Plaintext Subtraction&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一元操作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;向量旋转&lt;/li&gt;
+&lt;li&gt;否定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;2-参数选取&#34;&gt;2. 参数选取&lt;/h2&gt;
+&lt;p&gt;明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。&lt;/p&gt;
+&lt;p&gt;密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。&lt;/p&gt;
+&lt;p&gt;举个例子：&lt;/p&gt;
+&lt;p&gt;对于密文$A,B,C,D$，乘法运算$(A&lt;em&gt;B)&lt;/em&gt;(C&lt;em&gt;D)$优于$A&lt;/em&gt;(B*(C*D))$，前者的乘法深度较小，需要的密文模数小。&lt;/p&gt;
+&lt;p&gt;密文维数$n$：查阅安全性文档中的参数表来选取，选取表格时许啊要了解密钥分发等实现细节。&lt;/p&gt;
+&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;h2 id=&#34;3-bgvbfv-hello-world&#34;&gt;3. BGV/BFV Hello World&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# set parameters&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;31&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;q&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;65537&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;16&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# generate key&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mySecretKey&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;generateBFVkey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;q&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# encrypt data&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# each plaintext is a vector of 8 elements&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;encrypted_a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;11&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;11&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt; 
+&lt;span class=&#34;n&#34;&gt;encrypted_b&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;12&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;14&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;11&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;24&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt; 
+&lt;span class=&#34;n&#34;&gt;excrypted_c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;encrypted_d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addCiphertexts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypted_a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypted_b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# Encryption of vector [17, 18, 16, 11, 21, 5, 11, 4]&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# Maybe we want to multiply the result by the 3rd ciphertext. &lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;encrypted_e&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;multiplyCiphertexts&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypted_c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypted_d&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# Encryption of vector [3, 25, 23, 19, 2, 15, 22, 4]&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# encrypted_c * encrypted_d % p&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# Then rotate by 2 to the right&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;encrypted_f&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rotateBy2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;myPublicKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypted_e&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# To actually see the final result we have to use the key. &lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;decrypted&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;decrypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mySecretKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;encrypted_f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;decrypted&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# This should print [22, 4, 3, 25, 23, 19, 2, 15]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
         <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
         <link>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
         <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
@@ -289,6 +378,13 @@
 &lt;p&gt;L1 Cache 64KB&lt;/p&gt;
 &lt;p&gt;2GB Memory&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812191343849.png&#34; alt=&#34;image-20220812191343849&#34;  /&gt;&lt;/p&gt;
+&lt;h1 id=&#34;related-work&#34;&gt;Related Work&lt;/h1&gt;
+&lt;p&gt;将SSD固件转移到主机上，消除冗余的地址转换&lt;/p&gt;
+&lt;p&gt;根据应用程序特征对缓存进行分区处理，然而不能发挥ULL SSD的作用&lt;/p&gt;
+&lt;p&gt;从文件系统和block IO设备方面优化移动端操作系统，使其提高SQLite的性能，有局限性，应用程序、ULL SSD&lt;/p&gt;
+&lt;p&gt;在内核的多个层对写请求进行调度，容易阻塞读请求和ULL操作&lt;/p&gt;
+&lt;p&gt;根据前台任务和后台任务中的依赖关系，分配优先级，允许后台任务高优先级，IO通常情况下没有依赖关系，效果差，服务器大部分都是多进程&lt;/p&gt;
+&lt;p&gt;考虑对在线应用设置高优先级，但是没有考虑对IO stack中其他部分的影响&lt;/p&gt;
 </description>
         </item>
         <item>

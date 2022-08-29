@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Notes on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/categories/notes/</link>
+    <description>Recent content in Notes on Coding_Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 28 Aug 2022 23:41:33 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/notes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Homomorphic Encryption Learning Notes</title>
+      <link>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</link>
+      <pubDate>Sun, 28 Aug 2022 23:41:33 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</guid>
+      <description>0x00 Intro 1. 对称加密大战公钥同态加密 双方使用相同的key对数据进行加密解密，属于对称加密
+公钥同态加密（非对称加密）使用两个不同的key，使用公钥来对数据进行加密，使用私钥来对数据进行解密。
+![image-20220829152536970](/Users/zhiwayzhang/Library/Application Support/typora-user-images/image-20220829152536970.png)
+二者的工作流程对比如上图所示
+2. 参数与安全性的关系 对于同态加密，参数的选取影响着安全性以及明文的类型和可以进行的计算。
+同态加密目前最重要的两个参数为：
+ 密文空间$n$，大致对应每个密文中整数的数量 密文模数$q$，确定密文中每个整数的大小边界  一般来说，安全性随着$n$的增大而升高，随着$q$的增大而降低。
+![image-20220829153213946](/Users/zhiwayzhang/Library/Application Support/typora-user-images/image-20220829153213946.png)
+$q$越大，在加密之后的密文上则可以执行更复杂的计算。
+加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。
+基于格密码的同态加密，理论基础是$Learning \ with \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。
+对于参数的选取可以根据所需要的安全性去查阅安全文档。
+0x01 BGV，BFV加密模式 基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。
+加密包括的参数：
+ 明文模数$p$ 密文模数$q$ 密文维数$n$  明文模数$p$决定了明文向量整数的上限，约束加密后的密文计算中的结果。
+密文模数$q$是决定方案的加密计算能力。BGV或者BFV加密模式的密文包含一个长度为$2n$的整数数组，值为$[0,q-1]$，前文提到过，模数越大，密文可以执行的操作就越多。
+对于给定的$q$，密文的维数$n$决定了加密等级，越高则安全性越高。同时，还影响明文向量的大小。一般而言明文向量的长度等于$n$。
+1. 同态操作 密文在操作时保留模数p，输出结果同样为密文。
+Ciphertext-Plaintext
+二元操作：
+ Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：
+ 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -434,6 +434,13 @@ the 99th percentile 是0.8ms（apache）
 <p>L1 Cache 64KB</p>
 <p>2GB Memory</p>
 <p><img src="https://cdn.ipandai.club/image-20220812191343849.png" alt="image-20220812191343849"  /></p>
+<h1 id="related-work">Related Work</h1>
+<p>将SSD固件转移到主机上，消除冗余的地址转换</p>
+<p>根据应用程序特征对缓存进行分区处理，然而不能发挥ULL SSD的作用</p>
+<p>从文件系统和block IO设备方面优化移动端操作系统，使其提高SQLite的性能，有局限性，应用程序、ULL SSD</p>
+<p>在内核的多个层对写请求进行调度，容易阻塞读请求和ULL操作</p>
+<p>根据前台任务和后台任务中的依赖关系，分配优先级，允许后台任务高优先级，IO通常情况下没有依赖关系，效果差，服务器大部分都是多进程</p>
+<p>考虑对在线应用设置高优先级，但是没有考虑对IO stack中其他部分的影响</p>
 
 </section>
 

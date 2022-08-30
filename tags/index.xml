@@ -6,7 +6,25 @@
     <description>Recent content in Tags on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 28 Aug 2022 23:41:33 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 30 Aug 2022 09:27:53 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>git</title>
+      <link>https://ez4zzw.github.io/tags/git/</link>
+      <pubDate>Tue, 30 Aug 2022 09:27:53 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/tags/git/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Web</title>
+      <link>https://ez4zzw.github.io/tags/web/</link>
+      <pubDate>Tue, 30 Aug 2022 09:27:53 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/tags/web/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Homomorphic Encryption</title>
       <link>https://ez4zzw.github.io/tags/homomorphic-encryption/</link>
@@ -193,15 +211,6 @@
       <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
       
       <guid>https://ez4zzw.github.io/tags/nodejs/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>git</title>
-      <link>https://ez4zzw.github.io/tags/git/</link>
-      <pubDate>Fri, 02 Apr 2021 22:33:25 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/tags/git/</guid>
       <description></description>
     </item>
     

@@ -6,7 +6,22 @@
     <description>Recent content in Notes on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 28 Aug 2022 23:41:33 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/notes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 30 Aug 2022 09:27:53 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/notes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用GitHub Workflow工作流自动部署静态博客</title>
+      <link>https://ez4zzw.github.io/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</link>
+      <pubDate>Tue, 30 Aug 2022 09:27:53 +0800</pubDate>
+      
+      <guid>https://ez4zzw.github.io/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</guid>
+      <description>Background 自很久以前就开始使用静态博客，并且在GitHub Pages上部署后同时在服务器上进行同步，每次push新的修改后都需要在服务器上手动pull，因此决定探究使用Github Workflow自动化部署静态博客的解决方案。
+Intro Github Workflows 在仓库的目录下，创建.github/workflows目录，目录内存放需要使用的工作流配置文件。
+例如：
+.github └── workflows └── rsync-action.yml Rsync Action Github提供了很全面的Actions操作，包括Hooks功能，支持在对仓库进行push、merge等操作后触发对应的脚本。对于本需求，我们需要使用GitHub的Rsync Action插件。
+插件主页 Rsync Deployments Action
+包含如下参数：
+ switches* - The first is for any initial/required rsync flags, eg: -avzr --delete rsh - Remote shell commands path - The source path. Defaults to GITHUB_WORKSPACE and is relative to it remote_path* - The deployment target path remote_host* - The remote host remote_port - The remote port.</description>
+    </item>
+    
     <item>
       <title>Homomorphic Encryption Learning Notes</title>
       <link>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</link>
@@ -35,7 +50,7 @@ Ciphertext-Plaintext
  向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。
 密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。
 举个例子：
-对于密文$A,B,C,D$，乘法运算$(AB)(CD)$优于$A(B*(C*D))$，前者的乘法深度较小，需要的密文模数小。</description>
+对于密文$A,B,C,D$，乘法运算$(A*B)*(C*D)$优于$A*(B*(C*D))$， 前者的乘法深度较小，需要的密文模数小。</description>
     </item>
     
   </channel>

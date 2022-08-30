@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>git on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/tags/git/</link>
-    <description>Recent content in git on Coding_Panda&#39;s Blog</description>
+    <title>Web on Coding_Panda&#39;s Blog</title>
+    <link>https://ez4zzw.github.io/tags/web/</link>
+    <description>Recent content in Web on Coding_Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 30 Aug 2022 09:27:53 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 30 Aug 2022 09:27:53 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/web/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>使用GitHub Workflow工作流自动部署静态博客</title>
       <link>https://ez4zzw.github.io/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</link>
@@ -20,15 +20,6 @@ Intro Github Workflows 在仓库的目录下，创建.github/workflows目录，�
 插件主页 Rsync Deployments Action
 包含如下参数：
  switches* - The first is for any initial/required rsync flags, eg: -avzr --delete rsh - Remote shell commands path - The source path. Defaults to GITHUB_WORKSPACE and is relative to it remote_path* - The deployment target path remote_host* - The remote host remote_port - The remote port.</description>
-    </item>
-    
-    <item>
-      <title>Git学习笔记</title>
-      <link>https://ez4zzw.github.io/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Fri, 02 Apr 2021 22:33:25 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -38,7 +38,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。
 基于格密码的同态加密，理论基础是$Learning \ with \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。
 对于参数的选取可以根据所需要的安全性去查阅安全文档。
-0x01 BGV，BFV加密模式 基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。
+0x01 BGV，BFV Encryption Scheme 基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。
 加密包括的参数：
  明文模数$p$ 密文模数$q$ 密文维数$n$  明文模数$p$决定了明文向量整数的上限，约束加密后的密文计算中的结果。
 密文模数$q$是决定方案的加密计算能力。BGV或者BFV加密模式的密文包含一个长度为$2n$的整数数组，值为$[0,q-1]$，前文提到过，模数越大，密文可以执行的操作就越多。
@@ -48,9 +48,7 @@ Ciphertext-Plaintext
 二元操作：
  Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：
  向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。
-密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。
-举个例子：
-对于密文$A,B,C,D$，乘法运算$(A*B)*(C*D)$优于$A*(B*(C*D))$， 前者的乘法深度较小，需要的密文模数小。</description>
+密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。</description>
     </item>
     
     <item>

@@ -11,6 +11,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。
 基于格密码的同态加密，理论基础是$Learning \ with \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。
 对于参数的选取可以根据所需要的安全性去查阅安全文档。
+本文主要介绍了几种同态加密的方案以及特点。
 0x01 BGV，BFV Encryption Scheme 基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。
 加密包括的参数：
  明文模数$p$ 密文模数$q$ 密文维数$n$  明文模数$p$决定了明文向量整数的上限，约束加密后的密文计算中的结果。
@@ -20,8 +21,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 Ciphertext-Plaintext
 二元操作：
  Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：
- 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。
-密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。'><title>Homomorphic Encryption Learning Notes</title>
+ 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。'><title>Homomorphic Encryption Learning Notes</title>
 
 <link rel='canonical' href='https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/'>
 
@@ -36,6 +36,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。
 基于格密码的同态加密，理论基础是$Learning \ with \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。
 对于参数的选取可以根据所需要的安全性去查阅安全文档。
+本文主要介绍了几种同态加密的方案以及特点。
 0x01 BGV，BFV Encryption Scheme 基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。
 加密包括的参数：
  明文模数$p$ 密文模数$q$ 密文维数$n$  明文模数$p$决定了明文向量整数的上限，约束加密后的密文计算中的结果。
@@ -45,8 +46,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 Ciphertext-Plaintext
 二元操作：
  Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：
- 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。
-密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。'>
+ 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。'>
 <meta property='og:url' content='https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Homomorphic Encryption' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='Privacy Protection' /><meta property='article:published_time' content='2022-08-28T23:41:33&#43;08:00'/><meta property='article:modified_time' content='2022-08-28T23:41:33&#43;08:00'/>
@@ -61,6 +61,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 加密方法最终都会对数据加噪声，只有当噪声$&amp;lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。
 基于格密码的同态加密，理论基础是$Learning \ with \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。
 对于参数的选取可以根据所需要的安全性去查阅安全文档。
+本文主要介绍了几种同态加密的方案以及特点。
 0x01 BGV，BFV Encryption Scheme 基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。
 加密包括的参数：
  明文模数$p$ 密文模数$q$ 密文维数$n$  明文模数$p$决定了明文向量整数的上限，约束加密后的密文计算中的结果。
@@ -70,8 +71,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 Ciphertext-Plaintext
 二元操作：
  Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：
- 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。
-密文模数$q$：主要由乘法深度决定，更高的深度需要更大的模数，并且运算时间也会增大。">
+ 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。">
     </head>
     <body class="">
     <script>
@@ -292,6 +292,7 @@ Ciphertext-Plaintext
 <p>加密方法最终都会对数据加噪声，只有当噪声$&lt;q$时，才可以被解密。因此更大的q可以让我们执行更多的操作。</p>
 <p>基于格密码的同态加密，理论基础是$Learning  \ with  \ Errors (LWE)$问题难解性或者是他的变种问题$Ring \ Learning-with-Errors (RLWE)$。在适当的参数下，该问题对于经典计算机和量子计算机都很难解。</p>
 <p>对于参数的选取可以根据所需要的安全性去查阅安全文档。</p>
+<p>本文主要介绍了几种同态加密的方案以及特点。</p>
 <h1 id="0x01-bgvbfv-encryption-scheme">0x01 BGV，BFV Encryption Scheme</h1>
 <p>基于RLWE问题的难解性，两种模式都支持明文为整数组成的向量。</p>
 <p>加密包括的参数：</p>
@@ -468,8 +469,127 @@ Ciphertext-Plaintext
 <span class="nb">print</span><span class="p">(</span><span class="n">decrypted</span><span class="p">)</span>
 <span class="c1"># This should print [221.09, 102.58, 36.48, -43.23]</span>
 </code></pre></div><h2 id="4-further-information-1">4. Further Information</h2>
+<h3 id="41-数据编码">4.1 数据编码</h3>
+<p>CKKS的编码会导致一些精度损失，因为明文向量必须首先乘缩放因子（参数由加密方案决定）来保证编码的精度足够。缩放后的向量 被转换为CKKS支持的明文格式。密文隐式存储可能在同态计算时改变的伸缩因子。</p>
+<p>解密后，需要相应的解码器。</p>
+<p>密文模数决定了底层编码明文部分的上限，以保证其正确解密。防止溢出。</p>
+<h3 id="42-维护操作">4.2 维护操作</h3>
+<p>类似上文</p>
+<ul>
+<li>Ciphertext-Ciphertext 乘和循环向量旋转有副作用，需要用一个与操作前不同的密钥去解密结果。被称为key切换操作，存储新密钥到之前的密钥中。又被称为<code>relinearization</code></li>
+<li>Boot strapping，刷新一个密文，并提高其密文模数，来支持更多的操作，这个操作需要巨大的开销，一般不执行。</li>
+</ul>
+<h3 id="43-估价key">4.3 估价Key</h3>
+<p>密钥切换需要要求评估者可以访问特殊的公共评估密钥。评估密钥生成必须由密钥所有者完成。在Ciphertext-Ciphertext乘法的过程中，这些键通常被称为重新线性化键；在旋转的过程中，它们有时被称为旋转或伽罗瓦键。Bootstrapping操作同样需要这样的评估密钥。</p>
+<h3 id="44-ckks相关实现">4.4 CKKS相关实现</h3>
+<ul>
+<li>HEAAN/RNS-HEAAN</li>
+<li>HElib</li>
+<li>Lattigo</li>
+<li>MS SEAL</li>
+<li>PALISADE</li>
+</ul>
 <h1 id="0x03-dmfhew-and-cggitfhe-schemes">0x03 DM(FHEW) And CGGI(TFHE) Schemes</h1>
-
+<h2 id="1-basic">1. Basic</h2>
+<p>基于RLEW问题。</p>
+<p>有两种模式，simple和advanced。simple模式在每个门操作后自动执行bootstrapping操作，提供评估电路的能力。simple模式很容易配置，只需要一个参数，尤其当电路已知时。advanced模式下，用户决定何时执行bootstrapping或者其他维护操作，可以永不执行bootstrapping。</p>
+<p>simple模式易于使用，只需生成或编译与应用程序相对应的小型布尔电路即可，并且在加密输入上对每个门进行评估。advanced模式可以提高性能。</p>
+<p>参数：</p>
+<ul>
+<li>安全位数$\lambda$ (all modes)</li>
+<li>特定于密码文本的计算预算测量（advanced mode）</li>
+</ul>
+<p>安全参数的位数$\lambda$与其他加密方案中的密文模数和密文维数相关。simple模式下，所有参数只能从$\lambda$得出。</p>
+<p>在advanced模式下，计算预算与可以执行的同态操作数量相关，即在执行下一次bootstrapping之前可以执行的次数。</p>
+<h2 id="2-homomorphic-operations">2. Homomorphic Operations</h2>
+<p>Simple模式支持布尔电路，Advanced模式支持布尔电路，整数，定点数。</p>
+<h3 id="simple-模式明文空间和操作">Simple 模式明文空间和操作</h3>
+<p>明文都是布尔变量，主要操作为</p>
+<ul>
+<li>常量
+<ul>
+<li>ZERO/ONE</li>
+</ul>
+</li>
+<li>一元门
+<ul>
+<li>NOT</li>
+</ul>
+</li>
+<li>二元门
+<ul>
+<li>AND/NAND</li>
+<li>OR/NOR</li>
+<li>XOR/XNOR</li>
+<li>ORNOT/ANDNOT</li>
+</ul>
+</li>
+<li>三元门
+<ul>
+<li>MUX 数据选择器</li>
+<li><a class="link" href="" >Majority/Minority</a></li>
+</ul>
+</li>
+</ul>
+<p>以上逻辑门中，输入和输出都只能是密文。</p>
+<h3 id="dmcggi-hello-world-simple-mode">DM/CGGI Hello World Simple Mode</h3>
+<p>lambda</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">lambda</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="c1"># Generate the keys for these parameters </span>
+<span class="n">myPublicKey</span><span class="p">,</span> <span class="n">mySecretKey</span> <span class="o">=</span> <span class="n">generateKeys</span><span class="p">(</span><span class="k">lambda</span><span class="p">)</span>
+<span class="c1"># Encrypt data, each plaintext is a boolean value </span>
+<span class="n">encrypted_a</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">myPublicKey</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+<span class="n">encrypted_b</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">myPublicKey</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+<span class="n">excrypted_c</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">myPublicKey</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># We have three ciphertexts now.</span>
+<span class="c1"># Compute the AND of the first two.</span>
+<span class="n">encrypted_AND</span> <span class="o">=</span> <span class="n">EvalGate</span><span class="p">(</span><span class="err">“</span><span class="n">AND</span><span class="err">”</span><span class="p">,</span> <span class="n">myPublicKey</span><span class="p">,</span> <span class="n">encrypted_a</span><span class="p">,</span> <span class="n">encrypted_b</span><span class="p">)</span> 
+<span class="c1"># Encryption of 1 AND 1 = 1</span>
+<span class="c1"># Maybe we want to compute OR of this with the 3rd ciphertext. </span>
+<span class="n">encrypted_ANDOR</span> <span class="o">=</span> <span class="n">EvalGate</span><span class="p">(</span><span class="err">“</span><span class="n">OR</span><span class="err">”</span><span class="p">,</span> <span class="n">myPublicKey</span><span class="p">,</span> <span class="n">encrypted_AND</span><span class="p">,</span> <span class="n">encrypted_c</span><span class="p">)</span> 
+<span class="c1"># Encryption of (1 AND 1) OR 0 = 1</span>
+<span class="c1"># To actually be able to see the final result we have to use the key.</span>
+<span class="n">decrypted</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">mySecretKey</span><span class="p">,</span> <span class="n">encrypted_ANDOR</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="n">decrypted</span><span class="p">)</span>
+<span class="c1"># This should print 1</span>
+</code></pre></div><h3 id="advanced-mode-明文空间和操作">Advanced Mode 明文空间和操作</h3>
+<p>明文由定点数向量组成，有精度参数$\pm\alpha$</p>
+<p>只支持向量加和一些其他向量运算，不支持向量乘</p>
+<p>误差可以通过还原明文后四舍五入消除。</p>
+<p>主要三种运算：</p>
+<ul>
+<li>addition</li>
+<li>scaling</li>
+<li>rotation</li>
+</ul>
+<p>注意scaling运算中，缩放倍数会影响误差的数量级</p>
+<p>rotation运算时，任何消失在向量右侧的系数都以相反的符号显示在左侧</p>
+<p>支持非线性操作，使用RGSW scheme（RLWE密文向量）</p>
+<h3 id="advanced-mode-cggi-hello-world">Advanced Mode CGGI Hello World</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># set bits of security and noise rate</span>
+<span class="k">lambda</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mi">2</span><span class="n">ˆ</span><span class="o">-</span><span class="mi">15</span>
+<span class="c1"># Generate the keys for these parameters</span>
+<span class="n">myPublicKey</span><span class="p">,</span><span class="n">mySecretKey</span> <span class="o">=</span> <span class="n">generateKeys</span><span class="p">(</span><span class="k">lambda</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="c1"># encrypt each letter with RGSW</span>
+<span class="n">encrypted_x</span> <span class="o">=</span> <span class="p">[</span> <span class="n">encryptRGSW</span><span class="p">(</span><span class="n">myPublicKey</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">encryptRGSW</span><span class="p">(</span><span class="n">myPublicKey</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">encryptRGSW</span><span class="p">(</span><span class="n">myPublicKey</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
+<span class="c1"># the initial state values are trivial RLWE ciphertexts </span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">RLWE</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">RLWE</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">RLWE</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">For</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">3</span> <span class="n">to</span> <span class="mi">1</span>
+	<span class="c1"># evaluate each transition</span>
+	<span class="n">newA</span> <span class="o">=</span> <span class="n">CMux</span><span class="p">(</span><span class="n">encrypted_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> 
+  <span class="n">newB</span> <span class="o">=</span> <span class="n">CMux</span><span class="p">(</span><span class="n">encrypted_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">)</span> 
+  <span class="n">newC</span> <span class="o">=</span> <span class="n">CMux</span><span class="p">(</span><span class="n">encrypted_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">c</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> 
+  <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">newA</span><span class="p">,</span><span class="n">newB</span><span class="p">,</span><span class="n">newC</span><span class="p">)</span>
+<span class="n">EndFor</span>
+<span class="c1"># To actually see the final result, we have to use the key. </span>
+<span class="n">decrypted</span> <span class="o">=</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">mySecretKey</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<span class="n">Return</span> <span class="n">decrypted</span>
+</code></pre></div>
 </section>
 
 

@@ -99,6 +99,7 @@
         
         <guid>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</guid>
         <description>&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;Protecting Privacy through Homomorphic Encryption Part I&lt;/code&gt;读书笔记&lt;/p&gt;
 &lt;h2 id=&#34;1-对称加密大战公钥同态加密&#34;&gt;1. 对称加密大战公钥同态加密&lt;/h2&gt;
 &lt;p&gt;双方使用相同的key对数据进行加密解密，属于对称加密&lt;/p&gt;
 &lt;p&gt;公钥同态加密（非对称加密）使用两个不同的key，使用公钥来对数据进行加密，使用私钥来对数据进行解密。&lt;/p&gt;
@@ -390,6 +391,20 @@
 &lt;p&gt;注意scaling运算中，缩放倍数会影响误差的数量级&lt;/p&gt;
 &lt;p&gt;rotation运算时，任何消失在向量右侧的系数都以相反的符号显示在左侧&lt;/p&gt;
 &lt;p&gt;支持非线性操作，使用RGSW scheme（RLWE密文向量）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;外积&lt;/p&gt;
+&lt;p&gt;给定加密线性变换$f$的RGSW密文和加密向量$x$的RLWE密文，获得$f(x)$的加密。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Blind Rotation&lt;/p&gt;
+&lt;p&gt;给定RGSW加密$rot_k$和RLWE加密$x$的密文，得到$rot_k(x)$的RLWE加密，$k$依然是密文&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Private Selection（CMUX）&lt;/p&gt;
+&lt;p&gt;给定加密了$c=0/1$的RGSW密文，两个加密了$x$和$y$的RLWE密文，获得RLWE加密的$c?x:y$，三目运算符。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;advanced-mode-cggi-hello-world&#34;&gt;Advanced Mode CGGI Hello World&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# set bits of security and noise rate&lt;/span&gt;
 &lt;span class=&#34;k&#34;&gt;lambda&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;128&lt;/span&gt;
@@ -406,7 +421,7 @@
 &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RLWE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;For&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;to&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
 	&lt;span class=&#34;c1&#34;&gt;# evaluate each transition&lt;/span&gt;
-	&lt;span class=&#34;n&#34;&gt;newA&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CMux&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;encrypted_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; 
+  &lt;span class=&#34;n&#34;&gt;newA&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CMux&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;encrypted_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; 
   &lt;span class=&#34;n&#34;&gt;newB&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CMux&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;encrypted_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; 
   &lt;span class=&#34;n&#34;&gt;newC&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CMux&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;encrypted_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; 
   &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;newA&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;newB&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;newC&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
@@ -414,7 +429,26 @@
 &lt;span class=&#34;c1&#34;&gt;# To actually see the final result, we have to use the key. &lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;decrypted&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;decrypt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mySecretKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;Return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;decrypted&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;3-further-infomation&#34;&gt;3. Further Infomation&lt;/h2&gt;
+&lt;h3 id=&#34;scheme-switching&#34;&gt;scheme switching&lt;/h3&gt;
+&lt;p&gt;在一些框架的实现中，CGGI支持不同加密方案的切换&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220901145321222.png&#34; alt=&#34;image-20220901145321222&#34;  /&gt;&lt;/p&gt;
+&lt;h3 id=&#34;difference-between-dm-and-cggi&#34;&gt;difference between DM and CGGI&lt;/h3&gt;
+&lt;p&gt;CGGI支持simple和advanced模式，DM只支持simple模式&lt;/p&gt;
+&lt;p&gt;simple模式中的主要区别是在bootstrapping中&lt;/p&gt;
+&lt;h3 id=&#34;implementation&#34;&gt;implementation&lt;/h3&gt;
+&lt;p&gt;基于CPU&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TFHE&lt;/li&gt;
+&lt;li&gt;FHEW&lt;/li&gt;
+&lt;li&gt;PALISADE&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;基于GPU&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;cuFHE&lt;/li&gt;
+&lt;li&gt;nuFHE&lt;/li&gt;
+&lt;/ul&gt;
+</description>
         </item>
         <item>
         <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>

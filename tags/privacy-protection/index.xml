@@ -13,7 +13,8 @@
       <pubDate>Sun, 28 Aug 2022 23:41:33 +0800</pubDate>
       
       <guid>https://ez4zzw.github.io/p/homomorphic-encryption-learning-notes/</guid>
-      <description>0x00 Intro 1. 对称加密大战公钥同态加密 双方使用相同的key对数据进行加密解密，属于对称加密
+      <description>0x00 Intro Protecting Privacy through Homomorphic Encryption Part I读书笔记
+1. 对称加密大战公钥同态加密 双方使用相同的key对数据进行加密解密，属于对称加密
 公钥同态加密（非对称加密）使用两个不同的key，使用公钥来对数据进行加密，使用私钥来对数据进行解密。
 二者的工作流程对比如上图所示
 2. 参数与安全性的关系 对于同态加密，参数的选取影响着安全性以及明文的类型和可以进行的计算。
@@ -32,8 +33,7 @@ $q$越大，在加密之后的密文上则可以执行更复杂的计算。
 1. 同态操作 密文在操作时保留模数p，输出结果同样为密文。
 Ciphertext-Plaintext
 二元操作：
- Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：
- 向量旋转 否定  2. 参数选取 明文模数$p$：决定明文数据的宽度，要保证在应用范围内足够大，不发生溢出，有些场景下需要溢出。</description>
+ Ciphertext-Ciphertext Addition Ciphertext-Plaintext Addition Ciphertext-Ciphertext Multiplication Ciphertext-Plaintext Multiplication Ciphertext-Ciphertext Subtraction Ciphertext-Plaintext Subtraction  一元操作：</description>
     </item>
     
   </channel>

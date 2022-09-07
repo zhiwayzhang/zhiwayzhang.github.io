@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
 Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
@@ -7,17 +7,17 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。
 '><title>Bilibili视频网站排行榜评分的线性回归分析</title>
 
-<link rel='canonical' href='https://ez4zzw.github.io/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Bilibili视频网站排行榜评分的线性回归分析'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Bilibili视频网站排行榜评分的线性回归分析'>
 <meta property='og:description' content='Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
 Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
 本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
 完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。
 '>
-<meta property='og:url' content='https://ez4zzw.github.io/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/'>
+<meta property='og:url' content='https://blog.ipandai.club/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='线性回归' /><meta property='article:published_time' content='2021-07-02T14:05:48&#43;00:00'/><meta property='article:modified_time' content='2021-07-02T14:05:48&#43;00:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='线性回归' /><meta property='article:tag' content='数学建模' /><meta property='article:published_time' content='2021-07-02T14:05:48&#43;00:00'/><meta property='article:modified_time' content='2021-07-02T14:05:48&#43;00:00'/>
 <meta name="twitter:title" content="Bilibili视频网站排行榜评分的线性回归分析">
 <meta name="twitter:description" content="Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
 Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
@@ -25,7 +25,9 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。
 ">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -42,22 +44,24 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.body.dataset.scheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.body.dataset.scheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
-</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
-            <aside class="sidebar left-sidebar sticky">
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
+            
             <figure class="site-avatar">
+                <a href="/">
                 
                     
                     
@@ -67,23 +71,48 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
-
+                </a>
                 
                     <span class="emoji">🐼</span>
                 
             </figure>
+            
         
-        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
-        <h2 class="site-description">Coding Panda.</h2>
-    </header>
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/EZ4ZZW'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
 
-    <ol class="menu" id="main-menu">
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
         
         
         
 
         <li >
-            <a href='/'>
+            <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -102,7 +131,9 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
         
 
         <li >
-            <a href='/about/'>
+            <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -120,7 +151,9 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
         
 
         <li >
-            <a href='/archives/'>
+            <a href='/archives/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -139,7 +172,31 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
         
 
         <li >
-            <a href='/search/'>
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -155,9 +212,32 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
         </li>
         
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://blog.ipandai.club/" selected>English</option>
+                        
+                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -165,7 +245,7 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -173,26 +253,13 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
     </ol>
 </aside>
-
-            <main class="main full-width">
-    <div id="article-toolbar">
-        <a href="https://ez4zzw.github.io" class="back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="15 6 9 12 15 18" />
-</svg>
-
-
-
-            <span>Back</span>
-        </a>
-    </div>
-
+<main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
@@ -200,19 +267,41 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
     
     <header class="article-category">
         
-            <a href="/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" >
-                数学建模
+            <a href="/categories/notes/" >
+                Notes
             </a>
         
     </header>
     
 
-    <h2 class="article-title">
-        <a href="/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/">Bilibili视频网站排行榜评分的线性回归分析</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/">Bilibili视频网站排行榜评分的线性回归分析</a>
+        </h2>
+    
+        
+    </div>
 
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 02, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="12" cy="12" r="9" />
   <polyline points="12 7 12 12 15 15" />
@@ -220,11 +309,21 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 
 
 
-        <time class="article-time--published">Jul 02, 2021</time>
-    </footer></div>
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
 </header>
 
     <section class="article-content">
+    
+    
     <p>Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。</p>
 <p>Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。</p>
 <p>本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。</p>
@@ -240,7 +339,69 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 <p>返回格式为json格式，json中的data字段为视频信息数组。</p>
 <p>为了防止请求次数过多增加服务器压力，导致本机IP禁止访问哔哩哔哩，先将请求的response保存到data.txt文件中。</p>
 <p>使用python的json包进行解析</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
 <span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
 <span class="nt">&#34;videos&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
 <span class="nt">&#34;tid&#34;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
@@ -298,9 +459,79 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 <span class="nt">&#34;bvid&#34;</span><span class="p">:</span> <span class="s2">&#34;BV1jo4y117Vf&#34;</span><span class="p">,</span>
 <span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">2446535</span>
 <span class="p">}</span>
-</code></pre></div><p>通过解析json格式文件并整理得到bilibili.csv</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过解析json格式文件并整理得到bilibili.csv</p>
 <p>数据处理的代码如下</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
@@ -364,9 +595,37 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 <span class="n">outfile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&#34;title&#34;</span><span class="p">:</span> <span class="n">title</span> <span class="p">,</span><span class="s2">&#34;author&#34;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span> <span class="s2">&#34;rank&#34;</span><span class="p">:</span> <span class="n">rank</span><span class="p">,</span> <span class="s2">&#34;score&#34;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&#34;view&#34;</span><span class="p">:</span> <span class="n">view</span><span class="p">,</span> <span class="s2">&#34;coins&#34;</span><span class="p">:</span> <span class="n">coins</span><span class="p">,</span> <span class="s2">&#34;favorite&#34;</span><span class="p">:</span> <span class="n">favor</span><span class="p">,</span> <span class="s2">&#34;reply&#34;</span><span class="p">:</span> <span class="n">reply</span><span class="p">,</span> <span class="s2">&#34;danmu&#34;</span><span class="p">:</span> <span class="n">danmu</span><span class="p">})</span>
 <span class="n">outfile</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&#34;bilibili2.csv&#34;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 
-</code></pre></div><h1 id="数据分析">数据分析</h1>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="数据分析">数据分析</h1>
 <p>数据加载</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># csv文件读写分析</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># csv文件读写分析</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># 线性代数</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># 制图</span>
 
@@ -388,23 +647,97 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 <span class="n">danmu</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;danmu&#39;</span><span class="p">]</span>
 <span class="c1"># 分享次数</span>
 <span class="n">share</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">]</span>
-</code></pre></div><p>绘制图像，观察数据之前的关系
+</code></pre></td></tr></table>
+</div>
+</div><p>绘制图像，观察数据之前的关系
 <a class="link" href="https://imgtu.com/i/R2qfcn"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qfcn.png" alt="R2qfcn.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qfcn.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qfcn.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qW1s"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qW1s.png" alt="R2qW1s.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qW1s.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qW1s.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qhXq"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qhXq.png" alt="R2qhXq.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qhXq.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qhXq.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qRpj"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qRpj.png" alt="R2qRpj.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qRpj.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qRpj.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qghQ"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qghQ.png" alt="R2qghQ.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qghQ.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qghQ.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2q5n0"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2q5n0.png" alt="R2q5n0.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2q5n0.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2q5n0.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qIBV"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qIBV.png" alt="R2qIBV.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qIBV.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qIBV.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qo7T"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qo7T.png" alt="R2qo7T.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qo7T.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qo7T.png"
+	
+	
+></a>
 由图像可以得出，b站综合打分的评分和各个数据之前有一定的相关性，主要为正相关。</p>
 <h1 id="多元线性回归">多元线性回归</h1>
 <p>我们的目的是得到
@@ -412,23 +745,67 @@ $f(x_i) = w^{T} x_i + b $
 类似的，使用最小二乘法估计w和b</p>
 <p>利用求解公式
 $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 计算系数矩阵w-hat</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 计算系数矩阵w-hat</span>
 <span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
 <span class="c1"># 获取b矩阵</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="c1"># 获取w系数矩阵</span>
 <span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</code></pre></div><p>看查w的值</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span> <span class="mf">0.53588246</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>看查w的值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span> <span class="mf">0.53588246</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">2.01063732</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">5.79443124</span><span class="p">]</span>
  <span class="p">[</span><span class="o">-</span><span class="mf">4.91889223</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">17.51523907</span><span class="p">]</span>
  <span class="p">[</span><span class="o">-</span><span class="mf">3.73019387</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">0.89537493</span><span class="p">]]</span>
-</code></pre></div><p>这里发现w系数矩阵中出现了负值，经检查发现该项目对应的自变量为like和reply，即视频的点赞次数和评论数，这与实际情况是不符的，猜测是因为该自变量对结果的影响过小，导致预测出现了偏差，同时发现弹幕数量对视频评分的影响过大，远超于其他参数，显然与实际生活不符，并且作为对视频质量的估计，弹幕数也的确不能作为一个重要的参数。</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里发现w系数矩阵中出现了负值，经检查发现该项目对应的自变量为like和reply，即视频的点赞次数和评论数，这与实际情况是不符的，猜测是因为该自变量对结果的影响过小，导致预测出现了偏差，同时发现弹幕数量对视频评分的影响过大，远超于其他参数，显然与实际生活不符，并且作为对视频质量的估计，弹幕数也的确不能作为一个重要的参数。</p>
 <p>因此我们对弹幕数进行剔除重新进行拟合。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 获取自变量矩阵，剔除弹幕数</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 获取自变量矩阵，剔除弹幕数</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># 获取因变量矩阵</span>
 <span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -443,15 +820,50 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 <span class="c1"># 获取w系数矩阵</span>
 <span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-</code></pre></div><p>得到w的值为</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span> <span class="mf">0.60269881</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>得到w的值为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span> <span class="mf">0.60269881</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">2.82157809</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">5.35461617</span><span class="p">]</span>
  <span class="p">[</span> <span class="mf">3.04630747</span><span class="p">]</span>
  <span class="p">[</span><span class="o">-</span><span class="mf">3.9125348</span> <span class="p">]</span>
  <span class="p">[</span> <span class="mf">0.33063835</span><span class="p">]]</span>
-</code></pre></div><p>观察发现此时各项参数对于评分的影响已经较为接近正常水平。但是share，视频分享数对于评分的影响仍为负值，依然根据上述猜测，share对于总分的影响过小，导致拟合的结果差，因此再次剔除share字段。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 获取自变量矩阵，剔除弹幕数，分享数</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>观察发现此时各项参数对于评分的影响已经较为接近正常水平。但是share，视频分享数对于评分的影响仍为负值，依然根据上述猜测，share对于总分的影响过小，导致拟合的结果差，因此再次剔除share字段。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 获取自变量矩阵，剔除弹幕数，分享数</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
 <span class="c1"># 获取因变量矩阵</span>
 <span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -468,27 +880,78 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 
 <span class="n">X_test</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
 <span class="n">Y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
-</code></pre></div><p>得到w矩阵为</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span><span class="mf">0.59149795</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>得到w矩阵为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span><span class="mf">0.59149795</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]]</span>
-</code></pre></div><p>绘制预测值与实际值图像
+</code></pre></td></tr></table>
+</div>
+</div><p>绘制预测值与实际值图像
 <a class="link" href="https://imgtu.com/i/R2q7AU"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2q7AU.png" alt="R2q7AU.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2q7AU.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2q7AU.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qHNF"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qHNF.png" alt="R2qHNF.png"  /></a>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qHNF.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qHNF.png"
+	
+	
+></a>
 <a class="link" href="https://imgtu.com/i/R2qbh4"  target="_blank" rel="noopener"
-    ><img src="https://z3.ax1x.com/2021/07/03/R2qbh4.png" alt="R2qbh4.png"  /></a></p>
+    ><img src="https://z3.ax1x.com/2021/07/03/R2qbh4.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="R2qbh4.png"
+	
+	
+></a></p>
 <p>观察预测值与实际值的差距，发现拟合的趋势基本吻合，但仍有较大的误差</p>
 <p>分析得出，该线性模型的拟合误差较为集中，集中在[0, 181348.81788162683]即平均误差之间。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[</span><span class="mf">0.59149795</span><span class="p">]</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[</span><span class="mf">0.59149795</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
  <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]</span>
-</code></pre></div><p>根据权重分析各个数据对总分的影响，可以发现，收藏对于视频总评分的影响占比最高，其次是硬币数，播放数，说明哔哩哔哩对与视频的质量高低评判有一定的综合考量，播放量属于可以由视频制作人通过其他方式刷取，但是收藏量是由用户对于视频质量的高低做出的决定，因而更具代表性，更有说服力。反观实际观看体验中，有些视频制作人会以视频收藏满几万后，更新下一期视频，因为该项对视频的收益影响最大，更能给视频制作人带来实际收益。</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>根据权重分析各个数据对总分的影响，可以发现，收藏对于视频总评分的影响占比最高，其次是硬币数，播放数，说明哔哩哔哩对与视频的质量高低评判有一定的综合考量，播放量属于可以由视频制作人通过其他方式刷取，但是收藏量是由用户对于视频质量的高低做出的决定，因而更具代表性，更有说服力。反观实际观看体验中，有些视频制作人会以视频收藏满几万后，更新下一期视频，因为该项对视频的收益影响最大，更能给视频制作人带来实际收益。</p>
 <p>本次线性回归的拟合可以较为准确的判断出各各数据对于视频评分的影响，但是对于视频评分的预测误差较大，但是仍能较准确的判断出视频评分所影响的视频排名，认为有如下原因：</p>
 <ul>
 <li>数据量过少，导致拟合程度不足</li>
@@ -504,6 +967,8 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
     <section class="article-tags">
         
             <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">线性回归</a>
+        
+            <a href="/tags/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/">数学建模</a>
         
     </section>
 
@@ -522,17 +987,18 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
     </section>
     </footer>
 
+
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
                 >
             </script><script>
     window.addEventListener("DOMContentLoaded", () => {
@@ -548,12 +1014,85 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/homomorphic-encryption-security-standard/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Homomorphic Encryption Security Standard</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">使用GitHub Workflow工作流自动部署静态博客</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/homomorphic-encryption-learning-notes/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Homomorphic Encryption Learning Notes</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【操作系统】异常控制流</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
 </aside>
 
-
+     
     
         
     <div class="disqus-container">
@@ -590,7 +1129,7 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (DISQUS) {
+        if (typeof DISQUS == 'object') {
             DISQUS.reset({
                 reload: true
             });
@@ -611,10 +1150,12 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+         <br/>
     </section>
 </footer>
+
+    
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
     
@@ -678,24 +1219,27 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
+
             </main>
+    
+
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>
 <script>

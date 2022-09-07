@@ -1,27 +1,173 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Shell on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/tags/shell/</link>
-    <description>Recent content in Shell on Coding_Panda&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 30 Mar 2021 12:23:42 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/shell/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>记录一次Go项目的部署</title>
-      <link>https://ez4zzw.github.io/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</link>
-      <pubDate>Tue, 30 Mar 2021 12:23:42 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
-      <description>最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
-系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
-几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
-git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
-ps ps命令为 process status,可以查看系统当前的进程状态
-例如
-~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:
-ps -e 列出所有进程 ps -f 显示进程的全部信息 grep grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称， 还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。</description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>Shell on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/shell/</link>
+        <description>Recent content in Shell on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 30 Mar 2021 12:23:42 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/shell/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>记录一次Go项目的部署</title>
+        <link>https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</link>
+        <pubDate>Tue, 30 Mar 2021 12:23:42 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
+        <description>&lt;p&gt;最近写了一个go项目，需要部署到服务器进行测试，如果只是&lt;code&gt;go run main.go&lt;/code&gt;难免也太麻烦了点，于是学习了项目部署的相关知识。
+项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h1 id=&#34;系统信息&#34;&gt;系统信息&lt;/h1&gt;
+&lt;p&gt;系统信息: &lt;code&gt;CentOS Linux release 8.3.2011 x86_64&lt;/code&gt;
+Go version: &lt;code&gt;go version go1.14.12 linux/amd64&lt;/code&gt;&lt;/p&gt;
+&lt;h1 id=&#34;几条命令的介绍&#34;&gt;几条命令的介绍&lt;/h1&gt;
+&lt;h2 id=&#34;nohup&#34;&gt;nohup&lt;/h2&gt;
+&lt;p&gt;nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。
+语法格式：
+&lt;code&gt;nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp;&lt;/code&gt;
+解释：
+&lt;code&gt;&amp;gt; xxx.log&lt;/code&gt;表示将输出重定向至该文件，可以记录运行时的日志
+&lt;code&gt;2&amp;gt;&amp;amp;1&lt;/code&gt;将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件&lt;/p&gt;
+&lt;h2 id=&#34;git-pull&#34;&gt;git pull&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;git pull origin dev&lt;/code&gt;
+为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。&lt;/p&gt;
+&lt;h2 id=&#34;ps&#34;&gt;ps&lt;/h2&gt;
+&lt;p&gt;ps命令为 process status,可以查看系统当前的进程状态&lt;/p&gt;
+&lt;p&gt;例如&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;~&amp;gt; ps
+    PID TTY          TIME CMD
+ &lt;span class=&#34;m&#34;&gt;255873&lt;/span&gt; pts/0    00:00:02 zsh
+ &lt;span class=&#34;m&#34;&gt;258517&lt;/span&gt; pts/0    00:00:00 sh
+ &lt;span class=&#34;m&#34;&gt;258519&lt;/span&gt; pts/0    00:00:00 OnlineJudge
+ &lt;span class=&#34;m&#34;&gt;263021&lt;/span&gt; pts/0    00:00:00 ps
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;我们将用ps命令与grep等命令筛选出项目的pid
+ps命令有很多参数选择，这里介绍一下用到的两条命令:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;ps -e  列出所有进程
+ps -f  显示进程的全部信息
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;grep&#34;&gt;grep&lt;/h2&gt;
+&lt;p&gt;grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称，
+还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。&lt;/p&gt;
+&lt;h2 id=&#34;awk&#34;&gt;awk&lt;/h2&gt;
+&lt;p&gt;用于处理文本提取信息，将使用grep查询到的进程信息提取出pid
+查询到的结果为
+&lt;code&gt;root      263948  263946  0 12:49 pts/0    00:00:00 ./OnlineJudge&lt;/code&gt;
+我们只需要第二项的pid，使用
+&lt;code&gt;awk {print $2}&lt;/code&gt;
+即可提取出进程的pid 263948&lt;/p&gt;
+&lt;h2 id=&#34;kill&#34;&gt;kill&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;kill pid&lt;/code&gt;杀死进程&lt;/p&gt;
+&lt;h1 id=&#34;shell脚本&#34;&gt;Shell脚本&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -e &lt;span class=&#34;s2&#34;&gt;&amp;#34;*** Online_Judge ***\n&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -e &lt;span class=&#34;s2&#34;&gt;&amp;#34;*** 检查上游代码中 ***\n&amp;#34;&lt;/span&gt;
+
+git pull origin dev
+
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -e &lt;span class=&#34;s2&#34;&gt;&amp;#34;*** 编译中 ***\n&amp;#34;&lt;/span&gt;
+go build
+chmod -R &lt;span class=&#34;m&#34;&gt;777&lt;/span&gt; OnlineJudge
+&lt;span class=&#34;nv&#34;&gt;pid&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;ps -ef&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;grep OnlineJudge&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;grep -v grep&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;awk &lt;span class=&#34;s1&#34;&gt;&amp;#39;{print $2}&amp;#39;&lt;/span&gt;&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -e &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$pid&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;\n&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;kill&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$pid&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; nohup ./OnlineJudge &amp;gt; OnlineJudge.log 2&amp;gt;&lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;
+
+&lt;span class=&#34;nv&#34;&gt;pid2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;ps -ef&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;grep OnlineJudge&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;grep -v grep&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;awk &lt;span class=&#34;s1&#34;&gt;&amp;#39;{print $2}&amp;#39;&lt;/span&gt;&lt;span class=&#34;sb&#34;&gt;`&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; -e &lt;span class=&#34;s2&#34;&gt;&amp;#34;项目部署成功***进程ID为:&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$pid2&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;将脚本保存至项目目录，赋予执行权限
+&lt;code&gt;chmod +x setup.sh&lt;/code&gt;
+执行脚本&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;➜ git:&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;dev&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; ✗ ./setup.sh         
+*** Online_Judge ***
+
+
+*** 检查上游代码中 ***
+From url
+ * branch            dev        -&amp;gt; FETCH_HEAD
+Already up to date.
+*** 编译中 ***
+
+*** 添加权限 ***
+
+添加权限成功
+
+*** kill进程 ***
+
+&lt;span class=&#34;m&#34;&gt;258519&lt;/span&gt;
+
+./setup.sh: line 18: &lt;span class=&#34;m&#34;&gt;258519&lt;/span&gt; Terminated              nohup ./OnlineJudge &amp;gt; OnlineJudge.log 2&amp;gt;&lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+项目部署成功***进程ID为:263948
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;至此项目即可部署成功
+上述shell中的视个人情况而修改&lt;/p&gt;
+&lt;h1 id=&#34;reference&#34;&gt;Reference&lt;/h1&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.runoob.com/linux/linux-command-manual.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Linux命令大全&lt;/a&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/w425772719/article/details/115241722&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;如何优雅的通过Shell脚本一键部署GO项目到服务器？
+&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
 </rss>

@@ -1,128 +1,99 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Categories on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/categories/</link>
-    <description>Recent content in Categories on Coding_Panda&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 30 Aug 2022 09:27:53 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Notes</title>
-      <link>https://ez4zzw.github.io/categories/notes/</link>
-      <pubDate>Tue, 30 Aug 2022 09:27:53 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/notes/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Storage</title>
-      <link>https://ez4zzw.github.io/categories/storage/</link>
-      <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/storage/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Note</title>
-      <link>https://ez4zzw.github.io/categories/note/</link>
-      <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/note/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>algorithm</title>
-      <link>https://ez4zzw.github.io/categories/algorithm/</link>
-      <pubDate>Fri, 10 Dec 2021 12:46:33 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/algorithm/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tech</title>
-      <link>https://ez4zzw.github.io/categories/tech/</link>
-      <pubDate>Mon, 26 Jul 2021 22:23:38 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/tech/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>数学建模</title>
-      <link>https://ez4zzw.github.io/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/</link>
-      <pubDate>Fri, 02 Jul 2021 14:05:48 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Math</title>
-      <link>https://ez4zzw.github.io/categories/math/</link>
-      <pubDate>Sun, 25 Apr 2021 13:04:57 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/math/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Web</title>
-      <link>https://ez4zzw.github.io/categories/web/</link>
-      <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/web/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Course Note</title>
-      <link>https://ez4zzw.github.io/categories/course-note/</link>
-      <pubDate>Mon, 15 Mar 2021 19:53:04 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/course-note/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>博客</title>
-      <link>https://ez4zzw.github.io/categories/%E5%8D%9A%E5%AE%A2/</link>
-      <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/%E5%8D%9A%E5%AE%A2/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>折腾</title>
-      <link>https://ez4zzw.github.io/categories/%E6%8A%98%E8%85%BE/</link>
-      <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/%E6%8A%98%E8%85%BE/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ACM</title>
-      <link>https://ez4zzw.github.io/categories/acm/</link>
-      <pubDate>Sun, 11 Oct 2020 19:45:39 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/acm/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>数论</title>
-      <link>https://ez4zzw.github.io/categories/%E6%95%B0%E8%AE%BA/</link>
-      <pubDate>Fri, 13 Dec 2019 18:57:13 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/categories/%E6%95%B0%E8%AE%BA/</guid>
-      <description></description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>Categories on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/categories/</link>
+        <description>Recent content in Categories on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sun, 04 Sep 2022 14:11:46 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Notes</title>
+        <link>https://blog.ipandai.club/categories/notes/</link>
+        <pubDate>Sun, 04 Sep 2022 14:11:46 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/notes/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Storage</title>
+        <link>https://blog.ipandai.club/categories/storage/</link>
+        <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/storage/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Note</title>
+        <link>https://blog.ipandai.club/categories/note/</link>
+        <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/note/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>algorithm</title>
+        <link>https://blog.ipandai.club/categories/algorithm/</link>
+        <pubDate>Fri, 10 Dec 2021 12:46:33 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/algorithm/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Tech</title>
+        <link>https://blog.ipandai.club/categories/tech/</link>
+        <pubDate>Mon, 26 Jul 2021 22:23:38 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/tech/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Math</title>
+        <link>https://blog.ipandai.club/categories/math/</link>
+        <pubDate>Sun, 25 Apr 2021 13:04:57 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/math/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Web</title>
+        <link>https://blog.ipandai.club/categories/web/</link>
+        <pubDate>Tue, 30 Mar 2021 12:23:42 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/web/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>博客</title>
+        <link>https://blog.ipandai.club/categories/%E5%8D%9A%E5%AE%A2/</link>
+        <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/%E5%8D%9A%E5%AE%A2/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>折腾</title>
+        <link>https://blog.ipandai.club/categories/%E6%8A%98%E8%85%BE/</link>
+        <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/%E6%8A%98%E8%85%BE/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>ACM</title>
+        <link>https://blog.ipandai.club/categories/acm/</link>
+        <pubDate>Sun, 11 Oct 2020 19:45:39 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/acm/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>数论</title>
+        <link>https://blog.ipandai.club/categories/%E6%95%B0%E8%AE%BA/</link>
+        <pubDate>Fri, 13 Dec 2019 18:57:13 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/%E6%95%B0%E8%AE%BA/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
 </rss>

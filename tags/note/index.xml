@@ -1,254 +1,2354 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Note on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/tags/note/</link>
-    <description>Recent content in Note on Coding_Panda&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/note/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>计算机网络自顶向下</title>
-      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
-      <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</guid>
-      <description>DNS 使用UDP 53端口
-多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
-无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
-首部只有8个字节，源端口号和目的端口号，长度和check sum
-为什么需要checksum校验和：
- 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
-端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
-UDP只能检查错误，不能纠错
-DNS服务采用UDP
-何时UDP，何时TCP？
- 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
-接收方反馈：
- ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
-重传，收方发现差错，发送方重传
-序号，检测哪个数据包出错进行重传
-数据包可靠传输：
- 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
- 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
- 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
-GBN发送方：
- 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
-选择重传 避免不必要的重传
-发送方接收方都维护一个窗口
-发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：</description>
-    </item>
-    
-    <item>
-      <title>Go语言学习笔记</title>
-      <link>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Mysql学习笔记</title>
-      <link>https://ez4zzw.github.io/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Mon, 17 Jan 2022 23:16:08 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>基础知识 单进程多线程，线程之间共享内存
-OLTP Online Transaction Processing 在线事务处理
-InnoDB overview 特点：
- 行级锁 支持外键 支持事务  MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读
-四种隔离级别：
- REPEATABLE 默认  聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID
-后台线程  Master Thread 缓冲区数据异步更新到磁盘 IO Thread innodb使用异步IO，提高数据库性能，负责接受回调 Purge Thread 事务提交后回收undolog页 Page Cleaner Thread 脏页刷新  主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞
-内存 用页管理记录
-缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池fix，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。
-配置参数innodb_buffer_pool_size
-数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等
-允许有多个缓冲池
-内存管理 LRU List 频繁使用的在列表前，不频繁的在列表后，先释放尾部的页
-页默认大小16KB
-innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。
-Free列表保存空闲页
-MyISAM  表锁 全文索引 不支持事务  缓冲区只缓存索引文件，不缓冲数据
-MYD保存数据，MYI保存索引文件
-myisampack使用Huffman编码压缩MYD，压缩后只读</description>
-    </item>
-    
-    <item>
-      <title>图解HTTP读书笔记</title>
-      <link>https://ez4zzw.github.io/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sun, 16 Jan 2022 22:25:00 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;图解HTTP读书笔记&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】异常控制流</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</link>
-      <pubDate>Fri, 14 Jan 2022 10:12:15 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</guid>
-      <description>&lt;p&gt;异常控制流&lt;/p&gt;
+    <channel>
+        <title>Note on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/note/</link>
+        <description>Recent content in Note on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sat, 05 Mar 2022 10:32:46 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/note/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>计算机网络自顶向下</title>
+        <link>https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</link>
+        <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</guid>
+        <description>&lt;h1 id=&#34;dns&#34;&gt;DNS&lt;/h1&gt;
+&lt;p&gt;使用UDP 53端口&lt;/p&gt;
+&lt;h2 id=&#34;多路复用和多路分解&#34;&gt;多路复用和多路分解&lt;/h2&gt;
+&lt;h2 id=&#34;无连接运输udp&#34;&gt;无连接运输UDP&lt;/h2&gt;
+&lt;p&gt;UDP无需建立连接，速度快&lt;/p&gt;
+&lt;p&gt;无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）&lt;/p&gt;
+&lt;p&gt;首部只有8个字节，源端口号和目的端口号，长度和check sum&lt;/p&gt;
+&lt;p&gt;为什么需要checksum校验和：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在路由器内存中可能有bit差错&lt;/li&gt;
+&lt;li&gt;链路传输不可靠&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;checksum最终为1111111&amp;hellip;则可能无差错&lt;/p&gt;
+&lt;p&gt;端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余&lt;/p&gt;
+&lt;p&gt;UDP只能检查错误，不能纠错&lt;/p&gt;
+&lt;p&gt;DNS服务采用UDP&lt;/p&gt;
+&lt;p&gt;何时UDP，何时TCP？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;可靠数据传输&#34;&gt;可靠数据传输&lt;/h2&gt;
+&lt;p&gt;差错检测&lt;/p&gt;
+&lt;p&gt;接收方反馈：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ACK肯定确认&lt;/li&gt;
+&lt;li&gt;NAK否定确认&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ACK 0接收成功，ACK 1接收失败&lt;/p&gt;
+&lt;p&gt;重传，收方发现差错，发送方重传&lt;/p&gt;
+&lt;p&gt;序号，检测哪个数据包出错进行重传&lt;/p&gt;
+&lt;p&gt;数据包可靠传输：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在没有ack的情况下，等待一定的时间后进行重传&lt;/li&gt;
+&lt;li&gt;序号可以保证传输不冗余（接收方检测是否冗余）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;发送方需要实现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;没发送或者重传一个分组，启动定时器countdown timer&lt;/li&gt;
+&lt;li&gt;定时器过期后响应&lt;/li&gt;
+&lt;li&gt;终止定时器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;流水线可靠传输协议：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;采用极小的数据包，接收方收到最后一bit立即ack&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;gbn协议回退n步滑动窗口协议&#34;&gt;GBN协议（回退N步），滑动窗口协议&lt;/h2&gt;
+&lt;p&gt;限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。&lt;/p&gt;
+&lt;p&gt;GBN发送方：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;发送数据包时，检查发送窗口，未满则返回未发送的分组&lt;/li&gt;
+&lt;li&gt;收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，&lt;code&gt;[0, N]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;超时，发送方重传所有未被确认的分组&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传&lt;/p&gt;
+&lt;h2 id=&#34;选择重传&#34;&gt;选择重传&lt;/h2&gt;
+&lt;p&gt;避免不必要的重传&lt;/p&gt;
+&lt;p&gt;发送方接收方都维护一个窗口&lt;/p&gt;
+&lt;p&gt;发送方：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;收到send base后窗口右移到第一个没确认的分组处&lt;/li&gt;
+&lt;li&gt;接收ack将窗口内分组标记为ack&lt;/li&gt;
+&lt;li&gt;定时器防止分组丢失&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接收方：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;接收的分组落在窗口内，返回ack&lt;/li&gt;
+&lt;li&gt;如果序号不连续，直接缓存&lt;/li&gt;
+&lt;li&gt;如果分组序号等于&lt;code&gt;rcv_base&lt;/code&gt;将从rcv base开始的已缓存分组交付给上层，窗口移动&lt;/li&gt;
+&lt;li&gt;序号落在窗口之外，&lt;code&gt;[rcv_base-N, rcv_base-1]&lt;/code&gt;上一个窗口中，返回ack&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;窗口长度不能太大&lt;/p&gt;
+&lt;h2 id=&#34;tcp&#34;&gt;TCP&lt;/h2&gt;
+&lt;p&gt;运行与端系统中，路由器等视角下看到的是数据报&lt;/p&gt;
+&lt;p&gt;全双工&lt;/p&gt;
+&lt;p&gt;socket是对tcp协议的封装&lt;/p&gt;
+&lt;h3 id=&#34;流量控制&#34;&gt;流量控制&lt;/h3&gt;
+&lt;p&gt;每一方都设置接收缓存，数据先放在缓存中，应用程序从缓存中读取数据。&lt;/p&gt;
+&lt;p&gt;目的是消除发送方使接收方缓存溢出的可能。匹配发送方和接收方的读写速率。&lt;/p&gt;
+&lt;p&gt;收发各自维护接收窗口。保存接收方还有多少缓存空间rwnd。&lt;/p&gt;
+&lt;p&gt;发送方维持为确认的数据量在rwnd之内。&lt;/p&gt;
+&lt;p&gt;如果剩余空间为0，发送方发送只有一个字节的报文。&lt;/p&gt;
+&lt;p&gt;UDP没有流量控制，因此可能会出现缓冲区溢出。&lt;/p&gt;
+&lt;h3 id=&#34;三次握手&#34;&gt;三次握手&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端发送SYN=1，随机选择一个序列号seq=x&lt;/li&gt;
+&lt;li&gt;服务器读取该报文，为tcp连接分配资源，对客户端发送SYN=1，ack=x+1，seq=y（随机选取）&lt;/li&gt;
+&lt;li&gt;客户端为该连接分配资源（缓存和变量），发送SYN=0，ack=y+1，seq=x+1&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为什么三次？
+确保双方的收发能力都是正常的最小次数。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;握手能不能携带数据？
+第一二次握手不能携带数据，第三次握手可以携带数据&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;四次挥手&#34;&gt;四次挥手&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端发送FIN=1&lt;/li&gt;
+&lt;li&gt;服务器响应ACK&lt;/li&gt;
+&lt;li&gt;服务器发送FIN=1&lt;/li&gt;
+&lt;li&gt;客户端发挥ACK&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;拥塞控制&#34;&gt;拥塞控制&lt;/h3&gt;
+&lt;p&gt;丢包的原因？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;网络堵塞后，路由器缓存溢出&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;慢启动&lt;/li&gt;
+&lt;li&gt;快速重传&lt;/li&gt;
+&lt;li&gt;拥塞避免&lt;/li&gt;
+&lt;li&gt;快速恢复&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Go语言学习笔记</title>
+        <link>https://blog.ipandai.club/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;
+&lt;h1 id=&#34;go的编译&#34;&gt;Go的编译&lt;/h1&gt;
+&lt;h1 id=&#34;数据结构&#34;&gt;数据结构&lt;/h1&gt;
+&lt;h2 id=&#34;数组&#34;&gt;数组&lt;/h2&gt;
+&lt;p&gt;声明&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;语法糖&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;第二种编译器会进行转换成第一种&lt;/p&gt;
+&lt;p&gt;上限推导&lt;/p&gt;
+&lt;p&gt;语句转换&lt;/p&gt;
+&lt;p&gt;由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;元素数量&lt;code&gt;&amp;lt;=&lt;/code&gt;4，元素放在栈上&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;gt;&lt;/code&gt;4时，元素保存在静态区，运行时取出&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;元素数量&lt;code&gt;&amp;lt;=&lt;/code&gt;4时，简化为赋值表达式&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;review&#34;&gt;review&lt;/h3&gt;
+&lt;p&gt;编译之后的二进制文件包含：栈，堆，数据段，代码段&lt;/p&gt;
+&lt;p&gt;堆栈为动态区域，数据段和代码段为静态区域&lt;/p&gt;
+&lt;p&gt;栈：编译器自动分配释放，存放参数值，局部变量等&lt;/p&gt;
+&lt;p&gt;堆：程序动态申请的内存，malloc，用链表实现&lt;/p&gt;
+&lt;p&gt;代码区：函数体的二进制代码&lt;/p&gt;
+&lt;p&gt;数据段：包含&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;只读数据段 const&lt;/li&gt;
+&lt;li&gt;已初始化的读写数据段 初始化的全局变量，初始化的静态局部变量static&lt;/li&gt;
+&lt;li&gt;未初始化段 未初始化的全局变量和静态变量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;当数组元素个数大于四个时&lt;/p&gt;
+&lt;p&gt;获取一个唯一的staticname，在静态存储区进行初始化，之后再拷贝到栈上&lt;/p&gt;
+&lt;p&gt;访问和赋值&lt;/p&gt;
+&lt;p&gt;编译器的静态类型检查时检测数组越界，索引是否为非负整数，索引越界&lt;/p&gt;
+&lt;p&gt;使用变量作为索引时，无法编译检查，需要&lt;strong&gt;运行时&lt;/strong&gt;阻止，出发panic&lt;/p&gt;
+&lt;p&gt;发现数组切片字符串越界时通过运行时的&lt;code&gt;runtime.panicIndex&lt;/code&gt;和&lt;code&gt;runtime.goPanicIndex&lt;/code&gt;触发panic&lt;/p&gt;
+&lt;p&gt;下标没有越界时，编译器获取数组的内存地址和访问下标，计算出目标地址，使用Load将元素加载到内存中&lt;/p&gt;
+&lt;p&gt;编译时插入运行时越界检查函数&lt;/p&gt;
+&lt;p&gt;赋值时先确定目标元素地址，使用Store指令将数据存入地址，在编译阶段而不是运行时&lt;/p&gt;
+&lt;h1 id=&#34;切片&#34;&gt;切片&lt;/h1&gt;
+&lt;p&gt;编译时确定类型，存储在Extra字段&lt;/p&gt;
+&lt;p&gt;数据结构&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;Data&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;Len&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;Cap&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;切片只在运行时确定内容&lt;/p&gt;
+&lt;h2 id=&#34;初始化&#34;&gt;初始化&lt;/h2&gt;
+&lt;h3 id=&#34;切片slicelr&#34;&gt;切片&lt;code&gt;slice[l:r]&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;调用SliceMake函数，参数为 元素类型，数组指针，切片大小和容量&lt;/p&gt;
+&lt;p&gt;这样初始化的切片创建了指向原切片的结构体&lt;/p&gt;
+&lt;h3 id=&#34;字面量&#34;&gt;字面量&lt;/h3&gt;
+&lt;p&gt;编译时：&lt;/p&gt;
+&lt;p&gt;对字面量数组做大小推断，初始化为数组&lt;/p&gt;
+&lt;p&gt;创建一个数组指针，指向静态数组&lt;/p&gt;
+&lt;p&gt;使用&lt;code&gt;[:]&lt;/code&gt;通过指针创建切片&lt;/p&gt;
+&lt;h3 id=&#34;make&#34;&gt;make&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;make([]int, len, cap)&lt;/code&gt;
+会做参数校验，&lt;code&gt;cap &amp;gt;= len&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;判断切片大小和容量是否足够&lt;/li&gt;
+&lt;li&gt;切片是否发生了逃逸，最终在堆上初始化&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;切片太大时也会在堆上初始化，使用运行时makeslice&lt;/p&gt;
+&lt;p&gt;makeslice会在堆上申请连续的内存&lt;/p&gt;
+&lt;p&gt;可能的运行时错误：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;内存空间大小发生了溢出&lt;/li&gt;
+&lt;li&gt;申请内存大于最大可分配内存&lt;/li&gt;
+&lt;li&gt;传入的&lt;code&gt;len&amp;lt;0 or len &amp;gt; cap&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;访问&#34;&gt;访问&lt;/h3&gt;
+&lt;p&gt;对len和cap的访问会在编译时替换为常量&lt;/p&gt;
+&lt;p&gt;使用index获取元素会直接转换为对地址的访问&lt;/p&gt;
+&lt;h3 id=&#34;append和扩容&#34;&gt;append和扩容&lt;/h3&gt;
+&lt;p&gt;如果append之后&lt;strong&gt;不需要&lt;/strong&gt;赋值给原有变量：&lt;/p&gt;
+&lt;p&gt;判断append之后的大小和容量触发扩容&lt;/p&gt;
+&lt;p&gt;如果append之后&lt;strong&gt;需要&lt;/strong&gt;赋值给原有变量：&lt;/p&gt;
+&lt;p&gt;append后的切片覆盖原切片，编译器优化为不发生拷贝，直接操作原切片&lt;/p&gt;
+&lt;h4 id=&#34;growslice&#34;&gt;growslice&lt;/h4&gt;
+&lt;p&gt;先确定新切片容量，扩容策略：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果期望容量大于当前的两倍，就会使用期望容量&lt;/li&gt;
+&lt;li&gt;当前切片长度小于1024会将容量翻倍&lt;/li&gt;
+&lt;li&gt;如果当前的切片长度大于1024每次增加25%的容量，直到新容量大于期望容量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;扩容之后进行内存对齐，提高内存分配效率，减少碎片&lt;/p&gt;
+&lt;p&gt;使用预制的内存大小数组向上取整，然后通过该内存大小重新计算cap&lt;/p&gt;
+&lt;p&gt;对于非指针切片，将原数组内容拷贝至新内存&lt;/p&gt;
+&lt;p&gt;growslice返回的是一个新的切片，都是新的 slice(p, len, newcap)&lt;/p&gt;
+&lt;h2 id=&#34;copy&#34;&gt;copy&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;copy(a,b)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;编译时会直接使用memmove拷贝到内存&lt;/p&gt;
+&lt;p&gt;运行时会直接进行合法性检查&lt;/p&gt;
+&lt;p&gt;大切片性能开销比较大&lt;/p&gt;
+&lt;h1 id=&#34;哈希&#34;&gt;哈希&lt;/h1&gt;
+&lt;h2 id=&#34;解决冲突&#34;&gt;解决冲突&lt;/h2&gt;
+&lt;h3 id=&#34;开放寻址&#34;&gt;开放寻址&lt;/h3&gt;
+&lt;p&gt;从index处向后寻找空闲位置，读取会从index处向后匹配相等元素&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;装载因子=元素数量/数组大小&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;装载因子增大，线性探测法的平均用时增加，最坏到On&lt;/p&gt;
+&lt;h3 id=&#34;拉链法&#34;&gt;拉链法&lt;/h3&gt;
+&lt;p&gt;使用链表数组，每个数组是一个桶，通过index访问&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;装载因子=元素数量/桶数量&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;一般情况下不超过1，装载因子太大会触发扩容&lt;/p&gt;
+&lt;h2 id=&#34;struct&#34;&gt;struct&lt;/h2&gt;
+&lt;p&gt;runtime hmap&lt;/p&gt;
+&lt;p&gt;保存对数，桶的数量都是2的倍数&lt;/p&gt;
+&lt;p&gt;包含runtime bmap，能存储8个键值对，超过8个时会使用extra.nextOverflow中的溢出桶存&lt;/p&gt;
+&lt;p&gt;bmap中存储key哈希的高八位tophash uint8&lt;/p&gt;
+&lt;h2 id=&#34;初始化-1&#34;&gt;初始化&lt;/h2&gt;
+&lt;h3 id=&#34;字面量-1&#34;&gt;字面量&lt;/h3&gt;
+&lt;p&gt;当哈希表的元素&lt;code&gt;&amp;lt;=25&lt;/code&gt;个时，将初始化转化为&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;to&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;make&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;超过时会转换为两个切片循环加入hash&lt;/p&gt;
+&lt;h3 id=&#34;运行时&#34;&gt;运行时&lt;/h3&gt;
+&lt;p&gt;当桶的数量小于$2^4$，不创建溢出桶&lt;/p&gt;
+&lt;p&gt;否则创建$2^{B-4}$个溢出桶&lt;/p&gt;
+&lt;h2 id=&#34;读写&#34;&gt;读写&lt;/h2&gt;
+&lt;p&gt;遍历使用for range&lt;/p&gt;
+&lt;p&gt;删除&lt;code&gt;delete(hash, key)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;bmap的实际存储是tophash为一个连续的空间，keys，values 。。。&lt;/p&gt;
+&lt;p&gt;访问时限获取哈希值，再获取哈希的高8位&lt;/p&gt;
+&lt;p&gt;通过哈希的最低几位获取桶序号&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这里因为哈希计算出来并不在桶范围内，在二进制中体现出来是取高几位和低几位，低几位就是取模之后的值，因此可以有效避免桶中有大量重复tophash&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在bmap中先比较哈希高8位，加速访问&lt;/p&gt;
+&lt;p&gt;匹配成功会根据指针和偏移量获取key进行比较，匹配成功再获取value&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;尽量使用双值接收结果，防止实际的value是nil&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;写入时会遍历正常桶和溢出桶，溢出桶也包含tophash&lt;/p&gt;
+&lt;p&gt;如果桶满，创建新的桶护着在溢出桶中保存&lt;/p&gt;
+&lt;p&gt;获取存储地址后，将值拷贝到内存&lt;/p&gt;
+&lt;h3 id=&#34;扩容&#34;&gt;扩容&lt;/h3&gt;
+&lt;p&gt;在写入时，触发扩容&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;装载因子超过6.5&lt;/li&gt;
+&lt;li&gt;哈希使用了太多溢出桶，容易产生内存泄露&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;扩容非原子过程，扩容前判断是否正在扩容&lt;/p&gt;
+&lt;p&gt;溢出桶太多触发等量扩容，新桶保存数据，回收旧桶（大量的写入删除操作）&lt;/p&gt;
+&lt;p&gt;翻倍扩容，随着写操作增量进行，不会产生性能的巨大抖动，创建一组新桶和溢出桶，将原来的桶组设置到oldbuckets，溢出桶也设置到oldoverflow上&lt;/p&gt;
+&lt;p&gt;数据迁移发生在运行时 evacuate，对传入桶的元素再分配，每个旧桶元素分流到两个新桶&lt;/p&gt;
+&lt;p&gt;分流逻辑：原来通过取模得到的桶掩码为&lt;code&gt;0b11&lt;/code&gt;，扩容翻倍之后将变为&lt;code&gt;0b111&lt;/code&gt;，因此该数据被分流到3号和7号桶&lt;/p&gt;
+&lt;p&gt;当旧桶完全被分流后清除oldbuckets和oldoverflow，通过计数器控制&lt;/p&gt;
+&lt;p&gt;扩容期间访问时，若oldbuckets存在，并且旧桶没有被分流时会先去旧桶寻找&lt;/p&gt;
+&lt;p&gt;扩容期间写入赋值时，会触发增量拷贝，向新桶分流&lt;/p&gt;
+&lt;h2 id=&#34;删除&#34;&gt;删除&lt;/h2&gt;
+&lt;p&gt;扩容期间删除，会分流桶中的元素，然后找到桶中的目标键值对删除&lt;/p&gt;
+&lt;p&gt;与写入类似&lt;/p&gt;
+&lt;p&gt;访问，写入删除都是运行时处理&lt;/p&gt;
+&lt;h1 id=&#34;字符串&#34;&gt;字符串&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;只读&lt;/strong&gt;的字节数组，使用连续空间&lt;/p&gt;
+&lt;p&gt;data和len&lt;/p&gt;
+&lt;p&gt;分配在只读的内存空间，修改需要和&lt;code&gt;[]byte&lt;/code&gt;相互转换&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;拷贝内存到栈或者堆&lt;/li&gt;
+&lt;li&gt;将变量修改为&lt;code&gt;[]byte&lt;/code&gt;然后修改字节数据&lt;/li&gt;
+&lt;li&gt;修改字节数组转回&lt;code&gt;string&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;str&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello\&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;str&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;`
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;{
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;    &amp;#34;name&amp;#34; : &amp;#34;panda&amp;#34;,
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;    &amp;#34;tags&amp;#34; : [&amp;#34;panda&amp;#34;]
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;}
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;赋值时使用scanner解析字符串成token流&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;strconv.Unquote&lt;/code&gt;去除引号&lt;/p&gt;
+&lt;p&gt;使用+拼接，拼接字符串的数量小于等于五个时，使用concatstring{2,3,4,5}，否则使用runtime.concatstrings，传入数组切片，最终通过运行时过滤空字符串计算拼接后长度，如果非空字符串数量为1，并且不在栈上，则直接返回&lt;/p&gt;
+&lt;p&gt;拷贝到目标地址空间&lt;/p&gt;
+&lt;p&gt;类型转换有性能损失，需要拷贝数据&lt;/p&gt;
+&lt;h1 id=&#34;函数调用&#34;&gt;函数调用&lt;/h1&gt;
+&lt;p&gt;c语言使用寄存器传参数，小于等于六个时使用寄存器，大于6个的参数使用栈传递，使用寄存器传递返回值，并且只使用一个寄存器，因此只能有一个返回值。&lt;/p&gt;
+&lt;p&gt;go语言使用栈传递参数和返回值，因此存在性能损失，但是可以支持多返回值，便于维护编译器，不需要考虑寄存器数量和命名。&lt;/p&gt;
+&lt;h2 id=&#34;参数传递方式&#34;&gt;参数传递方式&lt;/h2&gt;
+&lt;p&gt;传值，基本类型，结构体，指针，对参数进行拷贝&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>Mysql学习笔记</title>
+        <link>https://blog.ipandai.club/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Mon, 17 Jan 2022 23:16:08 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;h1 id=&#34;基础知识&#34;&gt;基础知识&lt;/h1&gt;
+&lt;p&gt;单进程多线程，线程之间共享内存&lt;/p&gt;
+&lt;p&gt;OLTP Online Transaction Processing 在线事务处理&lt;/p&gt;
+&lt;h1 id=&#34;innodb&#34;&gt;InnoDB&lt;/h1&gt;
+&lt;h2 id=&#34;overview&#34;&gt;overview&lt;/h2&gt;
+&lt;p&gt;特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;行级锁&lt;/li&gt;
+&lt;li&gt;支持外键&lt;/li&gt;
+&lt;li&gt;支持事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读&lt;/p&gt;
+&lt;p&gt;四种隔离级别：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;REPEATABLE 默认&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID&lt;/p&gt;
+&lt;h2 id=&#34;后台线程&#34;&gt;后台线程&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Master Thread 缓冲区数据异步更新到磁盘&lt;/li&gt;
+&lt;li&gt;IO Thread innodb使用异步IO，提高数据库性能，负责接受回调&lt;/li&gt;
+&lt;li&gt;Purge Thread 事务提交后回收undolog页&lt;/li&gt;
+&lt;li&gt;Page Cleaner Thread 脏页刷新&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞&lt;/p&gt;
+&lt;h2 id=&#34;内存&#34;&gt;内存&lt;/h2&gt;
+&lt;p&gt;用页管理记录&lt;/p&gt;
+&lt;p&gt;缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池&lt;code&gt;fix&lt;/code&gt;，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。&lt;/p&gt;
+&lt;p&gt;配置参数&lt;code&gt;innodb_buffer_pool_size&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等&lt;/p&gt;
+&lt;p&gt;允许有多个缓冲池&lt;/p&gt;
+&lt;h3 id=&#34;内存管理&#34;&gt;内存管理&lt;/h3&gt;
+&lt;h4 id=&#34;lru-list&#34;&gt;LRU List&lt;/h4&gt;
+&lt;p&gt;频繁使用的在列表前，不频繁的在列表后，先释放尾部的页&lt;/p&gt;
+&lt;p&gt;页默认大小16KB&lt;/p&gt;
+&lt;p&gt;innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。&lt;/p&gt;
+&lt;p&gt;Free列表保存空闲页&lt;/p&gt;
+&lt;h1 id=&#34;myisam&#34;&gt;MyISAM&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;表锁&lt;/li&gt;
+&lt;li&gt;全文索引&lt;/li&gt;
+&lt;li&gt;不支持事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;缓冲区只缓存索引文件，不缓冲数据&lt;/p&gt;
+&lt;p&gt;MYD保存数据，MYI保存索引文件&lt;/p&gt;
+&lt;p&gt;myisampack使用Huffman编码压缩MYD，压缩后只读&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>图解HTTP读书笔记</title>
+        <link>https://blog.ipandai.club/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Sun, 16 Jan 2022 22:25:00 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;p&gt;图解HTTP读书笔记&lt;/p&gt;
+&lt;h1 id=&#34;web及网络基础&#34;&gt;Web及网络基础&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;HTTP/0.9&lt;/code&gt; 不是http的正式标准，临时版本&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;HTTP/1.0&lt;/code&gt; RFC1945&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;HTTP/1.1&lt;/code&gt; 目前应用较广 RFC2616&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;HTTP/2.0&lt;/code&gt; 大幅提高了web性能&lt;/p&gt;
+&lt;h2 id=&#34;tcpip&#34;&gt;TCP/IP&lt;/h2&gt;
+&lt;p&gt;互联网运行与TCP IP协议族之上，HTTP包含于其中&lt;/p&gt;
+&lt;p&gt;ip，dns，udp，ftp，http，tcp。。。&lt;/p&gt;
+&lt;p&gt;TCP/IP的分层管理&lt;/p&gt;
+&lt;p&gt;应用层：决定了向用户提供服务时通信的活动，ftp，dns，http&lt;/p&gt;
+&lt;p&gt;传输层：对应用层提供连接的两台计算机的数据传输，TCP Transmission Control Protocol传输控制协议和UDP User Data Protocol用户数据报协议&lt;/p&gt;
+&lt;p&gt;网络层：处理网络上的数据包，数据包是网络传输的最小数据单位，规定如何传输路线，传输数据包&lt;/p&gt;
+&lt;p&gt;数据链路层：处理连接网络的硬件，网络适配器NIC网卡&lt;/p&gt;
+&lt;p&gt;物理层&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;层次化好处：1.设计好接口，每个层次内部的设计可以自由改动 2.使设计变得更简单，应用层上的应用不需要考虑接收方的地理位置等&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;iptcpdns&#34;&gt;IP、TCP、DNS&lt;/h2&gt;
+&lt;h3 id=&#34;ip&#34;&gt;IP&lt;/h3&gt;
+&lt;p&gt;IP协议位于网络层&lt;/p&gt;
+&lt;p&gt;mac地址为网卡的固定地址，使用ARP协议（address resolution Protocol地址解析协议）凭借mac地址进行通信，解析ip到mac地址&lt;/p&gt;
+&lt;p&gt;选择传输路线叫做路由选择&lt;/p&gt;
+&lt;h3 id=&#34;tcp协议的可靠性&#34;&gt;TCP协议的可靠性&lt;/h3&gt;
+&lt;p&gt;位于传输层&lt;/p&gt;
+&lt;p&gt;将大数据块分割为报文段segment确保传输准确可靠&lt;/p&gt;
+&lt;p&gt;将请求报文按照序号分为多个报文段，将每个报文段可靠的传输，收到后再根据序列号重组报文&lt;/p&gt;
+&lt;p&gt;确保数据可到达：&lt;/p&gt;
+&lt;p&gt;三次握手three way handshaking&lt;/p&gt;
+&lt;p&gt;TCP标志 SYN synchronize和ACK acknowledgement&lt;/p&gt;
+&lt;p&gt;具体过程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;发送端发送一个带有SYN标志的数据包&lt;/li&gt;
+&lt;li&gt;接收端收到后回传带有SYN/ACK标志的数据包&lt;/li&gt;
+&lt;li&gt;发送端传回带有ACK标志的数据包，握手结束&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果握手中的某个阶段中断，TCP协议会再次发送相同的数据包&lt;/p&gt;
+&lt;h3 id=&#34;dns&#34;&gt;DNS&lt;/h3&gt;
+&lt;p&gt;域名解析&lt;/p&gt;
+&lt;h2 id=&#34;uri和url&#34;&gt;URI和URL&lt;/h2&gt;
+&lt;p&gt;URL是URI的子集&lt;/p&gt;
+&lt;h1 id=&#34;http协议&#34;&gt;HTTP协议&lt;/h1&gt;
+&lt;p&gt;http是无状态协议&lt;/p&gt;
+&lt;p&gt;使用cookie管理状态&lt;/p&gt;
+&lt;p&gt;使用URI定位资源&lt;/p&gt;
+&lt;p&gt;持久连接：任意一端未提出断开，则保持tcp连接状态，减少tcp连接重复建立和断开的开销&lt;/p&gt;
+&lt;p&gt;HTTP 1.1中，所有连接默认为持久连接&lt;/p&gt;
+&lt;p&gt;pipeline技术：连续发送请求，不必等待上一个请求返回&lt;/p&gt;
+&lt;h2 id=&#34;cookie&#34;&gt;Cookie&lt;/h2&gt;
+&lt;p&gt;服务器响应报文中Set-Cookie header字段，告知客户端保存&lt;/p&gt;
+&lt;p&gt;客户端再次请求时自动在header中加入cookie&lt;/p&gt;
+&lt;h1 id=&#34;http报文&#34;&gt;HTTP报文&lt;/h1&gt;
+&lt;p&gt;换行符CR+LF，CR回车符&lt;code&gt;0x0d&lt;/code&gt;，LF换行符&lt;code&gt;0x0a&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;header + CR+LF + Body&lt;/p&gt;
+&lt;p&gt;报文message是通信基本单位，8位组字节流&lt;/p&gt;
+&lt;p&gt;实体entity 请求或响应的在和，包含实体header和实体body&lt;/p&gt;
+&lt;p&gt;传输过程中可以对实体进行压缩&lt;/p&gt;
+&lt;p&gt;实体可以分割传输&lt;/p&gt;
+&lt;h2 id=&#34;获取部分内容的请求&#34;&gt;获取部分内容的请求&lt;/h2&gt;
+&lt;p&gt;传输中断的恢复机制&lt;/p&gt;
+&lt;p&gt;在header中加Range&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Range: bytes= 1-5000&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;断点续传&lt;/p&gt;
+&lt;h1 id=&#34;http状态码&#34;&gt;HTTP状态码&lt;/h1&gt;
+&lt;p&gt;1XX，正在处理 信息性状态
+2XX，处理完毕 成功
+3XX，重定向状态码
+4XX，客户端错误状态码
+5XX，服务器错误状态码&lt;/p&gt;
+&lt;p&gt;200 OK&lt;/p&gt;
+&lt;p&gt;HEAD方法不会返回body&lt;/p&gt;
+&lt;p&gt;204 No Content 处理成功，但是response中不包含实体&lt;/p&gt;
+&lt;p&gt;206 Partial Content 客户端进行了范围请求&lt;/p&gt;
+&lt;p&gt;301 Moved Permanently 永久重定向，资源分配了新的URI&lt;/p&gt;
+&lt;p&gt;302 Found 临时重定向&lt;/p&gt;
+&lt;p&gt;303 See Other 客户端用GET，临时重定向（比如POST访问时返回303，需要改GET方法重定向到另一个URI）&lt;/p&gt;
+&lt;p&gt;304 Not modified 我有你要的资源但是不让你访问&lt;/p&gt;
+&lt;p&gt;307 Temporary Redirect 临时重定向&lt;/p&gt;
+&lt;p&gt;400 Bad request&lt;/p&gt;
+&lt;p&gt;401 Unauthorized&lt;/p&gt;
+&lt;p&gt;403 Forbidden 不允许访问&lt;/p&gt;
+&lt;p&gt;404 Not Found 找不到资源&lt;/p&gt;
+&lt;p&gt;500 Internal Server Error 内部错误&lt;/p&gt;
+&lt;p&gt;503 Service Unavailable 服务器超负荷&lt;/p&gt;
+&lt;h1 id=&#34;web服务器&#34;&gt;Web服务器&lt;/h1&gt;
+&lt;h2 id=&#34;虚拟主机&#34;&gt;虚拟主机&lt;/h2&gt;
+&lt;p&gt;一台服务器可以绑定多个域名&lt;/p&gt;
+&lt;p&gt;通过dns解析&lt;/p&gt;
+&lt;h2 id=&#34;代理-网关-隧道&#34;&gt;代理 网关 隧道&lt;/h2&gt;
+&lt;h3 id=&#34;代理&#34;&gt;代理&lt;/h3&gt;
+&lt;p&gt;转发中间人&lt;/p&gt;
+&lt;p&gt;每次转发会追加写入via首部&lt;/p&gt;
+&lt;p&gt;代理服务功能：缓存技术，访问控制，获取日志&lt;/p&gt;
+&lt;p&gt;缓存代理：将资源缓存在代理服务器上，不从原服务器获取（有点像redis&lt;/p&gt;
+&lt;p&gt;透明代理：转发请求和响应，不添加其他内容&lt;/p&gt;
+&lt;h3 id=&#34;网关&#34;&gt;网关&lt;/h3&gt;
+&lt;p&gt;转发客户端请求到实际程序&lt;/p&gt;
+&lt;p&gt;网关与服务器使用非http通信&lt;/p&gt;
+&lt;h3 id=&#34;隧道&#34;&gt;隧道&lt;/h3&gt;
+&lt;p&gt;在客户端和服务器直接中转，保持双方的通信连接&lt;/p&gt;
+&lt;p&gt;本身不解析http请求，只传输&lt;/p&gt;
+&lt;h2 id=&#34;缓存&#34;&gt;缓存&lt;/h2&gt;
+&lt;p&gt;客户端缓存和服务器缓存&lt;/p&gt;
+&lt;p&gt;客户端缓存存储在浏览器&lt;/p&gt;
+&lt;p&gt;各种header的作用&lt;/p&gt;
+&lt;h2 id=&#34;cookie相关header&#34;&gt;Cookie相关header&lt;/h2&gt;
+&lt;p&gt;Set-Cookie: 后跟name=value的序列&lt;/p&gt;
+&lt;p&gt;Cookie: 发送cookie&lt;/p&gt;
+&lt;h1 id=&#34;https&#34;&gt;HTTPS&lt;/h1&gt;
+&lt;p&gt;http缺点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;明文被窃听&lt;/li&gt;
+&lt;li&gt;不验证双方身份，可伪装&lt;/li&gt;
+&lt;li&gt;无法验证完整性，可以篡改&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用SSL secure socket layer或TLS transport layer security安全层传输协议&lt;/p&gt;
+&lt;p&gt;SSL使用证书确定身份&lt;/p&gt;
+&lt;p&gt;防止篡改：使用md5或sha-1等校验方法校验报文完整性&lt;/p&gt;
+&lt;p&gt;HTTP+通信加密+证书+完整性保护&lt;/p&gt;
+&lt;p&gt;通信接口部分用ssl和tls协议代替&lt;/p&gt;
+&lt;p&gt;http先和ssl通信，ssl再和tcp通信&lt;/p&gt;
+&lt;p&gt;非对称加密 公钥进行加密，私钥进行解密&lt;/p&gt;
+&lt;h2 id=&#34;通信步骤&#34;&gt;通信步骤&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端发送client hello开始ssl通信&lt;/li&gt;
+&lt;li&gt;服务器响应server hello&lt;/li&gt;
+&lt;li&gt;服务器发送certificate报文，包含公钥证书&lt;/li&gt;
+&lt;li&gt;服务器发送server hello done&lt;/li&gt;
+&lt;li&gt;客户端发送client key exchange报文响应，ssl握手部分结束&lt;/li&gt;
+&lt;li&gt;客户端发送change cipher spec&lt;/li&gt;
+&lt;li&gt;客户端发送finished&lt;/li&gt;
+&lt;li&gt;服务器发送change cipher spec&lt;/li&gt;
+&lt;li&gt;ssl连接建立成功，开始进行http请求&lt;/li&gt;
+&lt;/ol&gt;</description>
+        </item>
+        <item>
+        <title>【操作系统】异常控制流</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</link>
+        <pubDate>Fri, 14 Jan 2022 10:12:15 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81/</guid>
+        <description>&lt;p&gt;异常控制流&lt;/p&gt;
 &lt;p&gt;CSAPP CH-8&lt;/p&gt;
 &lt;p&gt;指令地址间的过度为控制转移，控制转移序列叫做控制流&lt;/p&gt;
 &lt;p&gt;ECF Exceptional Control Flow 异常控制流是系统实现IO，进程和虚拟内存的基本机制&lt;/p&gt;
 &lt;p&gt;ECF用于应用程序和操作系统的交互&lt;/p&gt;
-&lt;p&gt;try catch等语句基于ECF&lt;/p&gt;</description>
-    </item>
+&lt;p&gt;try catch等语句基于ECF&lt;/p&gt;
+&lt;h1 id=&#34;异常&#34;&gt;异常&lt;/h1&gt;
+&lt;p&gt;硬件实现，操作系统实现&lt;/p&gt;
+&lt;p&gt;异常是控制流中的突变&lt;/p&gt;
+&lt;p&gt;比如虚拟内存缺页， 算术溢出， 除以0&lt;/p&gt;
+&lt;p&gt;事件：处理器状态变化&lt;/p&gt;
+&lt;p&gt;处理器检测到事件发生，通过异常表的跳转表，进行间接过程调用，由异常处理程序处理异常，根据异常事件类型，进行：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将控制返回给当前指令I-curr&lt;/li&gt;
+&lt;li&gt;控制返回给I-next，则没有发生异常，执行下一条指令&lt;/li&gt;
+&lt;li&gt;终止被中断的程序&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;异常处理&#34;&gt;异常处理&lt;/h2&gt;
+&lt;p&gt;每种异常分配一个异常号，是异常表中的索引&lt;/p&gt;
+&lt;p&gt;系统启动时操作系统预处理一张异常表，第k个元素包含异常k的处理程序的地址&lt;/p&gt;
+&lt;p&gt;异常表基地址寄存器存放异常表的起始地址&lt;/p&gt;
+&lt;p&gt;过程调用和异常的区别：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;过程调用，跳转回处理程序前，处理器将返回地址入栈；异常为根据异常以及处理结果进行跳转&lt;/li&gt;
+&lt;li&gt;处理器会将额外处理器状态入栈&lt;/li&gt;
+&lt;li&gt;控制从用户程序转移到内核，都被压入内核栈&lt;/li&gt;
+&lt;li&gt;异常处理运行在内核模式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;硬件触发异常，异常处理程序在软件中完成&lt;/p&gt;
+&lt;h2 id=&#34;异常类型&#34;&gt;异常类型&lt;/h2&gt;
+&lt;p&gt;中断 interrupt 来自IO设备 异步 返回到下一条指令&lt;/p&gt;
+&lt;p&gt;陷阱 trap 有意异常 同步 返回到下一条指令&lt;/p&gt;
+&lt;p&gt;故障 fault 潜在的可恢复错误 同步 可能返回当前指令&lt;/p&gt;
+&lt;p&gt;终止 abort 不可恢复错误 同步 不会返回&lt;/p&gt;
+&lt;h3 id=&#34;中断&#34;&gt;中断&lt;/h3&gt;
+&lt;p&gt;异步发生，来自处理器外部的IO设备&lt;/p&gt;
+&lt;p&gt;异步的含义：中断不是由一个专门指令造成的&lt;/p&gt;
+&lt;p&gt;异常由中断处理程序处理&lt;/p&gt;
+&lt;h3 id=&#34;trap和系统调用&#34;&gt;trap和系统调用&lt;/h3&gt;
+&lt;p&gt;trap是指向指令的结果，用于在用户程序和内核之间提供一个接口，叫做系统调用&lt;/p&gt;
+&lt;p&gt;读文件，创建进程fork，加载程序&lt;/p&gt;
+&lt;h3 id=&#34;故障&#34;&gt;故障&lt;/h3&gt;
+&lt;p&gt;由错误情况引起，被故障处理程序修正，控制返回到引起故障的指令，从而重新执行，否则返回到内核的abort，将引起故障的程序终止。&lt;/p&gt;
+&lt;h3 id=&#34;终止&#34;&gt;终止&lt;/h3&gt;
+&lt;p&gt;硬件错误，dram或者sram损坏 会返回abort然后终止应用程序&lt;/p&gt;
+&lt;h2 id=&#34;linux-x86-64系统中的异常&#34;&gt;Linux x86-64系统中的异常&lt;/h2&gt;
+&lt;p&gt;故障号和cpu架构有关&lt;/p&gt;
+&lt;h3 id=&#34;linux中的故障和终止&#34;&gt;Linux中的故障和终止&lt;/h3&gt;
+&lt;p&gt;除法错误：除以0，Unix会直接终止程序 floating exception&lt;/p&gt;
+&lt;p&gt;一般故障保护：神秘的错误，如程序引用了未定义的虚拟内存地址，或者访问只读的文本，也就是段错误segmentation fault&lt;/p&gt;
+&lt;p&gt;缺页：会从新执行产生故障的指令，将磁盘上的虚拟内存的一个页面映射到物理内存的一个页面，然后重新执行这条指令&lt;/p&gt;
+&lt;p&gt;机器检查：是在导致故障的指令执行中检测到致命的硬件错误时发生的&lt;/p&gt;
+&lt;h3 id=&#34;系统调用&#34;&gt;系统调用&lt;/h3&gt;
+&lt;p&gt;请求内核的服务&lt;/p&gt;
+&lt;p&gt;每个系统调用有一个编号，对应内核中跳转表的偏移量&lt;/p&gt;
+&lt;p&gt;c语言中syscall函数，c一般封装了系统调用库函数，带着参数陷入内核，将系统调用的执行状态返回&lt;/p&gt;
+&lt;p&gt;Linux系统调用的参数通过寄存器传递&lt;/p&gt;
+&lt;h1 id=&#34;进程&#34;&gt;进程&lt;/h1&gt;
+&lt;p&gt;执行中程序的实例，每个程序运行在某个进程的上下文context中&lt;/p&gt;
+&lt;p&gt;上下文包括内存中程序的代码和数据，栈，通用目的寄存器，程序计数器，环境变量，文件描述符集合&lt;/p&gt;
+&lt;p&gt;提供抽象：独立的逻辑控制流，假象程序独占处理器；私有地址空间，假象程序独占内存&lt;/p&gt;
+&lt;p&gt;逻辑控制流是交错的，进程轮流使用处理器，每个进程执行流的一部分&lt;/p&gt;
+&lt;h1 id=&#34;并发流&#34;&gt;并发流&lt;/h1&gt;
+&lt;p&gt;逻辑流可以是进程、线程等&lt;/p&gt;
+&lt;p&gt;并发：多个流并发的执行&lt;/p&gt;
+&lt;p&gt;运行在同一个处理器上&lt;/p&gt;
+&lt;p&gt;并行：运行在不同处理器核上&lt;/p&gt;
+&lt;p&gt;每个控制流中的一部分是时间片&lt;/p&gt;
+&lt;h1 id=&#34;私有地址空间&#34;&gt;私有地址空间&lt;/h1&gt;
+&lt;p&gt;进程为每个程序提供假象，n位地址机器，地址空间&lt;code&gt;2^n&lt;/code&gt;，&lt;/p&gt;
+&lt;p&gt;底部用于用户程序：包括代码，数据，堆，栈&lt;/p&gt;
+&lt;p&gt;顶部给内核&lt;/p&gt;
+&lt;h1 id=&#34;用户模式和内核模式&#34;&gt;用户模式和内核模式&lt;/h1&gt;
+&lt;p&gt;通过模式位寄存器控制&lt;/p&gt;
+&lt;p&gt;/proc文件系统，包含系统属性，如内核数，cpu类型，某进程使用的内存段地址&lt;/p&gt;
+&lt;h1 id=&#34;上下文切换&#34;&gt;上下文切换&lt;/h1&gt;
+&lt;p&gt;实现多任务&lt;/p&gt;
+&lt;p&gt;内核为每个进程维护一个上下文，包含重新启动一个进程所需的状态&lt;/p&gt;
+&lt;p&gt;包含通用目的寄存器，浮点寄存器，程序计数器，用户栈，状态寄存器，内核栈，内核数据结构（描述地址空间的页表、当前进程信息的进程表、已打开文件的文件表）&lt;/p&gt;
+&lt;p&gt;内核可以通过调度决定执行哪个进程&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;保存当前进程上下文&lt;/li&gt;
+&lt;li&gt;恢复先前被抢占进程的上下文&lt;/li&gt;
+&lt;li&gt;控制传递给新恢复的进程&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;错误处理&#34;&gt;错误处理&lt;/h1&gt;
+&lt;p&gt;全局变量 errno，strerror(errno)&lt;/p&gt;
+&lt;h1 id=&#34;进程控制&#34;&gt;进程控制&lt;/h1&gt;
+&lt;h2 id=&#34;获取进程id&#34;&gt;获取进程id&lt;/h2&gt;
+&lt;p&gt;pid&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>redis实战读书笔记</title>
+        <link>https://blog.ipandai.club/p/redis%E5%AE%9E%E6%88%98%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Mon, 03 Jan 2022 16:22:27 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/redis%E5%AE%9E%E6%88%98%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;p&gt;redis基础知识以及一些应用场景总结&lt;/p&gt;
+&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;
+&lt;p&gt;内存数据库&lt;/p&gt;
+&lt;p&gt;优于memcached，速度上功能上&lt;/p&gt;
+&lt;p&gt;基础数据结构：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;String，List，Set，Hash，ZSet&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://redis.io/commands&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;redis命令手册&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;string&#34;&gt;String&lt;/h2&gt;
+&lt;p&gt;key-value&lt;/p&gt;
+&lt;p&gt;指令GET，SET，DEL&lt;/p&gt;
+&lt;h2 id=&#34;list&#34;&gt;LIST&lt;/h2&gt;
+&lt;p&gt;key-list&lt;/p&gt;
+&lt;p&gt;指令&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LPUSH，RPUSH 推入列表的左端和右端
+LPUSH listname item
+返回值为列表长度&lt;/li&gt;
+&lt;li&gt;LPOP，RPOP，从左端和右端删除元素&lt;/li&gt;
+&lt;li&gt;LINDEX，获取列表指定位置的元素
+LINDEX listname 1&lt;/li&gt;
+&lt;li&gt;LRANGE，获取给定范围内的所有元素
+LRANGE listname 0 -1
+0为开始索引，-1位结束索引&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;set&#34;&gt;SET&lt;/h2&gt;
+&lt;p&gt;key-set&lt;/p&gt;
+&lt;p&gt;SADD, SMEMBERS, SISMEMBER, SREM&lt;/p&gt;
+&lt;h2 id=&#34;hash&#34;&gt;HASH&lt;/h2&gt;
+&lt;p&gt;key-hash table&lt;/p&gt;
+&lt;p&gt;内部也是key-value&lt;/p&gt;
+&lt;p&gt;HSET, HGET, HGETALL, HDEL&lt;/p&gt;
+&lt;h2 id=&#34;zset&#34;&gt;ZSET&lt;/h2&gt;
+&lt;p&gt;key-zset&lt;/p&gt;
+&lt;p&gt;ZADD, ZRANGE, ZRANGEBYSCORE, ZREM&lt;/p&gt;
+&lt;h2 id=&#34;一个文章投票系统的设计&#34;&gt;一个文章投票系统的设计&lt;/h2&gt;
+&lt;h3 id=&#34;基础功能设计&#34;&gt;基础功能设计&lt;/h3&gt;
+&lt;p&gt;根据文章的发布时间和投票数量计算一个评分，根据该评分来排序和展示文章&lt;/p&gt;
+&lt;p&gt;要求：如果有一篇文章符合有趣文章的要求（支持票至少200张），放在排行榜前100位至少一天&lt;/p&gt;
+&lt;p&gt;构造分数&lt;/p&gt;
+&lt;p&gt;$
+score = up\ vote\ *C + post\ time
+$&lt;/p&gt;
+&lt;p&gt;常量C可以选择432&lt;/p&gt;
+&lt;p&gt;分析：一天的秒数为86400，文章达到有趣需要200票，可以利用86400/200=432来作为每个投票对得分的贡献&lt;/p&gt;
+&lt;p&gt;保存评分以及存储文章信息&lt;/p&gt;
+&lt;p&gt;使用hash结构存储文章的标题，文章的url，发布文章的用户，发布时间，得票数量等信息&lt;/p&gt;
+&lt;p&gt;关于key的设置，可以使用任意字符作为分隔符，如&lt;code&gt;article:ID&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;使用两个zset，其中一个成员为文章id，分值为文章的发布时间，另一个成员为文章id，分值为文章的评分，使得网站可以按照发布时间和评分两种方式展示文章&lt;/p&gt;
+&lt;p&gt;防止用户重复投票，建立已投票用户名单，使用set结构，key为&lt;code&gt;voted:article_id&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;需要用到的一些指令：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ZSCORE 获取文章发布时间的有序集合，判断发布时间是否在一周内&lt;/li&gt;
+&lt;li&gt;SADD 若可投票，将用户添加到已投票的set中，操作成功则说明用户未向该文章投过票&lt;/li&gt;
+&lt;li&gt;ZINCRBY 将文章的评分增加432&lt;/li&gt;
+&lt;li&gt;HINCRBY 对hash结构中的文章投票数量进行更新&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;发布获取文章&#34;&gt;发布获取文章&lt;/h3&gt;
+&lt;p&gt;发布文章需要新增id，使用计数器，执行incr指令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;incr keyname
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;可以得到计数器++之后的值&lt;/p&gt;
+&lt;p&gt;使用sadd将发布者id添加到文章投票的用户集合中（避免自己给自己投票）&lt;/p&gt;
+&lt;p&gt;集合的过期时间为一周，一周后自动释放expire&lt;/p&gt;
+&lt;p&gt;HMSET存储文章相关信息&lt;/p&gt;
+&lt;p&gt;执行zadd添加文章初始评分到保存评分的zset&lt;/p&gt;
+&lt;p&gt;执行zadd添加文章发布时间到保存时间的zset&lt;/p&gt;
+&lt;p&gt;使用HGETALL获取存储在hash中的文章结构&lt;/p&gt;
+&lt;p&gt;使用ZREVRANGE取出评分最高的文章和最新发布的文章：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用ZREVRANGE获取文章的id&lt;/li&gt;
+&lt;li&gt;使用HGETALL获取详细内容&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;文章分组&#34;&gt;文章分组&lt;/h3&gt;
+&lt;p&gt;TODO&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>【操作系统】网络编程</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+        <pubDate>Mon, 03 Jan 2022 13:37:02 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid>
+        <description>&lt;p&gt;承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-11 笔记&lt;/p&gt;
+&lt;h2 id=&#34;cs编程模型&#34;&gt;CS编程模型&lt;/h2&gt;
+&lt;p&gt;客户端服务器模型&lt;/p&gt;
+&lt;p&gt;一个服务器进程，多个客户端进程&lt;/p&gt;
+&lt;p&gt;基本操作是事务transaction&lt;/p&gt;
+&lt;p&gt;有四步&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端向服务器发送请求，发起一个事务&lt;/li&gt;
+&lt;li&gt;服务器解释请求，用响应的方式操作资源&lt;/li&gt;
+&lt;li&gt;服务器返回响应，等待下一个请求&lt;/li&gt;
+&lt;li&gt;客户端接受响应并处理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;网络&#34;&gt;网络&lt;/h2&gt;
+&lt;p&gt;网络是一种IO设备，是数据源和数据接收方&lt;/p&gt;
+&lt;p&gt;网络数据接收后经IO和内存总线复制到内存，双向传输&lt;/p&gt;
+&lt;p&gt;以太网Ethernet是局域网技术&lt;/p&gt;
+&lt;p&gt;电缆链接主机和集线器，集线器广播每个端口的信息到所有主机&lt;/p&gt;
+&lt;p&gt;主机发送帧frame开头的信息，包括header，随后是有效载荷，payload，网内每个主机都可以见，只有目的主机读取&lt;/p&gt;
+&lt;p&gt;桥接以太网，主机&amp;hellip;-集线器-桥-桥-集线器-&amp;hellip;主机，网桥会根据通信需要来选择是否转发帧到其他网桥&lt;/p&gt;
+&lt;p&gt;连接多个局域网使用路由器&lt;/p&gt;
+&lt;p&gt;协议解决网络传输中的差异，提供命名机制（网络地址）和传输机制（包头+有效载荷）&lt;/p&gt;
+&lt;p&gt;数据发送过程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;主机A通过系统调用从虚存加载数据到内核缓冲区&lt;/li&gt;
+&lt;li&gt;主机A上的协议软件添加互联网包头和接口帧头，互联网包头指向主机B，接口帧头指向主机LAN1。是封装关系。
+帧头的包数据为互联网包头以及数据，帧头为其自己的互联网包头&lt;/li&gt;
+&lt;li&gt;LAN1适配器复制数据到网络&lt;/li&gt;
+&lt;li&gt;路由器读取数据猴传送到协议软件&lt;/li&gt;
+&lt;li&gt;协议软件读取目标互联网地址，作为路由表的索引转发到对应的LAN2适配器&lt;/li&gt;
+&lt;li&gt;LAN2适配器复制帧到网络&lt;/li&gt;
+&lt;li&gt;到达主机B，从适配器读取帧，传输到协议软件&lt;/li&gt;
+&lt;li&gt;协议软件去除包头和帧头，读取数据，主机B通过系统调用拷贝数据到虚拟地址空间&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;全球ip&#34;&gt;全球IP&lt;/h2&gt;
+&lt;p&gt;客户端（用户）-【socket接口系统调用】-TCP/IP（内核）-【硬件接口，中断】-网络适配器（硬件）-全局IP因特网&lt;/p&gt;
+&lt;p&gt;使用socket接口函数和Unix IO函数通信，socket函数为系统调用，调用内核的TCP/IP函数&lt;/p&gt;
+&lt;p&gt;TCP/IP是一个协议族，IP协议提供命名方法和传递机制，数据报&lt;/p&gt;
+&lt;p&gt;IP机制不可靠，数据报丢失不会自动恢复&lt;/p&gt;
+&lt;p&gt;UDP UNreliable datagram protocol，不可靠数据报协议对其进行了扩展，包可以在进程之间传递，而不是主机之间&lt;/p&gt;
+&lt;p&gt;TCP是基于IP的协议，进程间可靠的全双工连接&lt;/p&gt;
+&lt;p&gt;因特网的特性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主机集合映射到32位ip地址&lt;/li&gt;
+&lt;li&gt;ip地址映射为一组域名&lt;/li&gt;
+&lt;li&gt;主机上的进程能够通过连接其他主机的进程通信&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ipv4和ipv6：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;version 4：32位地址&lt;/li&gt;
+&lt;li&gt;version 6：128位地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;ip地址&#34;&gt;ip地址&lt;/h3&gt;
+&lt;p&gt;32位无符号整数，8*4&lt;/p&gt;
+&lt;p&gt;TCP/IP统一了字节顺序，大端法&lt;/p&gt;
+&lt;p&gt;使用点分十进制表示，Linux查看主机地址&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;hostname -i
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;域名&#34;&gt;域名&lt;/h3&gt;
+&lt;p&gt;一级域名mil，edu，gov，com，cn&lt;/p&gt;
+&lt;p&gt;二级域名whut.edu&lt;/p&gt;
+&lt;p&gt;hosts文件手工维护ip和域名的映射&lt;/p&gt;
+&lt;p&gt;DNS，domain name system&lt;/p&gt;
+&lt;p&gt;Linux使用nslookup查看域名ip&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;nslookup baidu.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;通常域名和ip一一对应，多个域名也可以对应同一ip，泛域名cs.whut.edu, ee.whut.edu&lt;/p&gt;
+&lt;p&gt;多个域名可以映射到同一组的多个ip，如www.twitter.com和twitter.com映射到199.16.156.*&lt;/p&gt;
+&lt;h3 id=&#34;因特网连接&#34;&gt;因特网连接&lt;/h3&gt;
+&lt;p&gt;客户端和服务器在连接上发送和接收字节流来通信，点对点，全双工，可以同时双向流动&lt;/p&gt;
+&lt;p&gt;socket是连接的端点，每个socket都有socket地址，由&lt;code&gt;地址:端口&lt;/code&gt;构成，十六位端口号0-65535&lt;/p&gt;
+&lt;p&gt;客户端发起请求时，客户端socket地址端口由内核自动分配，临时端口；服务器的为默认端口&lt;/p&gt;
+&lt;p&gt;web使用80（http），电子邮件地址使用25（SMTP）&lt;/p&gt;
+&lt;p&gt;可以通过&lt;code&gt;/etc/services&lt;/code&gt;看查&lt;strong&gt;知名&lt;/strong&gt;服务默认端口&lt;/p&gt;
+&lt;p&gt;一个连接两端的socket地址是唯一确定的，socket pair，格式&lt;code&gt;(cliaddr:cliport, servaddr:servport)&lt;/code&gt;，即&lt;code&gt;(客户端IP:客户端端口,服务器IP:服务器端口)&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;socket接口&#34;&gt;socket接口&lt;/h2&gt;
+&lt;p&gt;一组函数实现，和Unix IO配合创建网络应用&lt;/p&gt;
+&lt;p&gt;流程：&lt;/p&gt;
+&lt;p&gt;客户端getaddrinfo-&amp;gt;socket-&amp;gt;connect发送连接请求-&amp;gt;rio_writen-&amp;gt;rio_readlineb-&amp;gt;close发送EOF&lt;/p&gt;
+&lt;p&gt;服务器getaddrinfo-&amp;gt;socket-&amp;gt;bind-&amp;gt;listen-&amp;gt;accept接受请求-&amp;gt;rio_readlineb读客户端的write-&amp;gt;rio_writen写入response-&amp;gt;rio_readlineb读取EOF-close&lt;/p&gt;
+&lt;h3 id=&#34;socket地址结构&#34;&gt;socket地址结构&lt;/h3&gt;
+&lt;p&gt;对于Linux内核，socket就是一个有描述符的打开文件&lt;/p&gt;
+&lt;p&gt;socket地址存放与&lt;code&gt;sockaddr_in&lt;/code&gt;，包含&lt;code&gt;AF_INET&lt;/code&gt;，&lt;code&gt;sin_port&lt;/code&gt;为16位端口号，&lt;code&gt;sin_addr&lt;/code&gt;为32位ip地址，都是以大端法存放&lt;/p&gt;
+&lt;h3 id=&#34;socket函数&#34;&gt;socket函数&lt;/h3&gt;
+&lt;p&gt;客户端和服务器使用socket函数创建socket描述符&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;n&#34;&gt;clientfd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Socket&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;AF_INET&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SOCK_STREAM&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;AF_INET&lt;/code&gt;表示使用32位IP地址，&lt;code&gt;SOCK_STREAM&lt;/code&gt;表示该socket为连接端点&lt;/p&gt;
+&lt;p&gt;该函数返回的描述符为部分打开的，不能读写，将有客户端完成打开socket的工作&lt;/p&gt;
+&lt;h3 id=&#34;connect函数&#34;&gt;connect函数&lt;/h3&gt;
+&lt;p&gt;客户端调用connect函数建立和服务器连接&lt;/p&gt;
+&lt;p&gt;connect函数会阻塞一直到连接成功建立或者错误，成功后clientfd为可读写状态&lt;/p&gt;
+&lt;p&gt;由getaddrinfo函数获取connect的参数&lt;/p&gt;
+&lt;h3 id=&#34;bind函数&#34;&gt;bind函数&lt;/h3&gt;
+&lt;p&gt;bind函数通知内核将addr中的服务器socket地址和socket描述符socketfd联系到一起&lt;/p&gt;
+&lt;p&gt;由getaddrinfo函数获取bind的参数&lt;/p&gt;
+&lt;h3 id=&#34;listen函数&#34;&gt;listen函数&lt;/h3&gt;
+&lt;p&gt;客户端是发起请求的主动实体，服务器是被动实体&lt;/p&gt;
+&lt;p&gt;默认，内核认为socket函数创建的描述符为主动socket，服务器通过listen函数通知内核描述符是被服务器使用而不是客户端&lt;/p&gt;
+&lt;p&gt;将socketfd从主动socket转化为监听socket，监听socket可以接受客户端的连接请求&lt;/p&gt;
+&lt;p&gt;参数backlog为队列中未完成的请求数量，一般设置较大的数&lt;/p&gt;
+&lt;h3 id=&#34;accept函数&#34;&gt;accept函数&lt;/h3&gt;
+&lt;p&gt;服务器使用accept函数等待客户端的连接请求&lt;/p&gt;
+&lt;p&gt;已经获得监听描述符connfd，listenfd，返回一个已连接描述符，该描述符可以被Unix IO读写，可以和客户端通信，将connfd返回给客户端&lt;/p&gt;
+&lt;p&gt;与监听描述符不太，监听描述符是客户端连接请求的端点，只创建一次，存在于服务器的整个生命周期&lt;/p&gt;
+&lt;p&gt;已连接描述符为客户端和服务器直接已经建立连接的端点，服务器每次接受请求都会创建&lt;/p&gt;
+&lt;p&gt;可以理解为后端程序当前已经监听系统的某个端口，此时客户端请求后后端在该基础上创建一个线程去处理该请求&lt;/p&gt;
+&lt;h3 id=&#34;主机和服务的转换&#34;&gt;主机和服务的转换&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;getaddrinfo&lt;/code&gt;
+将主机名、主机地址、服务名端口号转为socket地址结构
+返回result为一个addrinfo链表，每个结构对应一个host和service的socket地址结构
+客户端调用之后，遍历链表，尝试每个地址，直到socket和connect成功，建立连接
+服务器会遍历每个地址，直到socket和bind成功
+避免内存泄露，最后调用freeaddrinfo释放链表
+参数讲解跳了&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;getnameinfo&lt;/code&gt;
+将socket地址转换为主机和服务名字符串&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;socket接口辅助函数&#34;&gt;socket接口辅助函数&lt;/h3&gt;
+&lt;p&gt;以上接口的整合封装&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;open_clientfd
+&lt;code&gt;int open_clientfd(char *hostname, char *port)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;open_clientfd建立和服务器的连接，返回描述符，可以直接用于Unix IO函数读写&lt;/p&gt;
+&lt;p&gt;流程：getaddrinfo，返回addrinfo链表，遍历链表尝试建立连接，失败则关闭描述符，成功后释放链表将描述符（connfd）返回给客户端&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;open_listenfd
+服务器创建监听描述符&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;int open_listenfd(char *port)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;遍历链表直到调用socket和bind成功&lt;/p&gt;
+&lt;h3 id=&#34;echo实例&#34;&gt;echo实例&lt;/h3&gt;
+&lt;p&gt;简单的单线程处理服务器&lt;/p&gt;
+&lt;p&gt;EOF概念，并不是字符，而是内核检测的一个条件，read函数返回0时，程序检测到EOF条件。磁盘文件读写，文件位置超出长度，判断EOF。网络连接，进程关闭连接其中一端，触发EOF。尝试读取通信中字节流的最后一个字节之后的字节，触发EOF。&lt;/p&gt;
+&lt;h2 id=&#34;web服务器&#34;&gt;Web服务器&lt;/h2&gt;
+&lt;h3 id=&#34;web基础&#34;&gt;Web基础&lt;/h3&gt;
+&lt;p&gt;HTTP协议，Hypertext Transfer Protocol超文本传输协议&lt;/p&gt;
+&lt;h3 id=&#34;web内容&#34;&gt;Web内容&lt;/h3&gt;
+&lt;p&gt;内容是MIME，多用途的网际邮件扩充协议，类型相关的字节序列&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;读取一个磁盘文件，将内容返回给客户端，磁盘文件为静态内容&lt;/li&gt;
+&lt;li&gt;运行可执行文件，将输出返回&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用URL标识每个文件&lt;/p&gt;
+&lt;p&gt;根据目录指定返回规则&lt;/p&gt;
+&lt;p&gt;根目录为网页静态内容的根目录&lt;/p&gt;
+&lt;p&gt;后缀为&lt;code&gt;/&lt;/code&gt;时服务器自动补全默认文件名&lt;/p&gt;
+&lt;h3 id=&#34;http事务&#34;&gt;HTTP事务&lt;/h3&gt;
+&lt;p&gt;使用Linux的Telnet和任何web服务器执行事务&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;telnet url port
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;HTTP请求&lt;/p&gt;
+&lt;p&gt;请求行&lt;code&gt;method URI version&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;0个或多个请求报头&lt;/p&gt;
+&lt;p&gt;一个空的文本行终止报头列表&lt;/p&gt;
+&lt;p&gt;body&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;GET / HTTP/1.1  
+Host: www.baidu.com
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;请求方法GET、POST、OPTIONS、HEAD、PUT、DELETE、TRACE&lt;/p&gt;
+&lt;p&gt;URI是相应URL的后缀，包括文件名和参数&lt;/p&gt;
+&lt;p&gt;version为http版本&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/zh-CN/docs/Glossary/Request_header&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Mozilla文档&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;header可以存放多种信息，比如cookie等&lt;/p&gt;
+&lt;p&gt;host请求头在HTTP 1.1位必须，1.0中不必须。代理缓存proxy cache会使用host报头，理解为反向代理？&lt;/p&gt;
+&lt;p&gt;客户端和服务器直接可以由代理，&lt;code&gt;代理链&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;HTTP响应组成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;响应行
+0个或多个响应头
+终止报头的空行
+响应主体body
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;响应行格式&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;version status-code status-message&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;version对于HTTP版本，code为&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;1**
+200
+301 
+400
+403
+404
+501
+505
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;更多状态码&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;响应头中应有Content-Type，告知客户端主体内容的MIME类型，Content-Length，告知主体的字节大小&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;传递参数&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;URI或者请求主体
+2. 服务器传递参数给子进程&lt;/p&gt;
+&lt;p&gt;fork一个子进程，调用execve在子进程上下文中执行对应的程序，通过环境变量，如QUERY_STRING, REQUEST_METHOD等信息，程序做出对应的处理&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;子进程的输出到哪里？
+CGI程序（通用网关接口Common Gateway Interface），将内容发送到标准输出，在子进程调用CGI程序之前，使用Linux dup2函数将标准输出重定向到和客户端相连的已连接描述符，CGI程序写入到标准输出的内容都会直接到达客户端&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;实现一个web服务器&#34;&gt;实现一个Web服务器&lt;/h1&gt;
+&lt;p&gt;使用c配合CSAPP提供的封装搭建一个简易的web服务器&lt;/p&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结&lt;/h1&gt;
+&lt;p&gt;本章主要了解了Unix如何建立一个网络连接，以及数据传输的具体过程，socket的设计巧妙之处，以及Linux一切皆文件的进一步理解。&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>【操作系统】系统级IO</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</link>
+        <pubDate>Mon, 03 Jan 2022 10:31:33 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</guid>
+        <description>&lt;p&gt;高级别的IO程序，如c中的printf和scanf，c++中的&lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;和&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt;，都依赖Unix 系统级IO&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-10 笔记&lt;/p&gt;
+&lt;h2 id=&#34;unix-io&#34;&gt;Unix IO&lt;/h2&gt;
+&lt;p&gt;Linux文件即是m个字节的序列$B_0, B_1, &amp;hellip;, B_k, &amp;hellip;, B_{m-1}$&lt;/p&gt;
+&lt;p&gt;所有的IO设备（网络，磁盘，终端）被抽象为文件，输入和输出被作为相应文件的读和写进行，Linux内核只需要暴露一个简单低级的应用接口&lt;/p&gt;
+&lt;p&gt;输入和输出的统一方式:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;打开文件：应用程序请求IO设备，内核返回描述符&lt;/li&gt;
+&lt;li&gt;Linux Shell创建的进程开始时有三个文件：标准输入0，标准输出1，标准错误2&lt;/li&gt;
+&lt;li&gt;改变当前的文件位置：内核存储文件位置k，初始为0，通过seek改变这个偏移量&lt;/li&gt;
+&lt;li&gt;读写文件：读为复制字节到内存，当k&amp;gt;=m时，会触发EOF条件；写为复制字节到一个文件中，从当前位置k开始，然后更新k&lt;/li&gt;
+&lt;li&gt;关闭文件：通知内核，内核释放文件打开时创建的数据结构，释放描述符，进程终止时内核会释放打开的文件以及内存&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;文件&#34;&gt;文件&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;普通文件：文本文件：ASCII或Unicode字符文件，其他的都是二进制文件，对内核而言无区别，换行符&lt;code&gt;\n&lt;/code&gt;对应ASCII LF&lt;/li&gt;
+&lt;li&gt;目录：包含一组链接的文件，链接将文件名映射到一个文件&lt;/li&gt;
+&lt;li&gt;套接字socket：与另一个进程进行跨网络通信的文件&lt;/li&gt;
+&lt;li&gt;命名通道named pipe，符号链接，字符和块设备&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;绝对路径：以斜杠开始&lt;code&gt;/home/test&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;相对路径：以文件名开始,&lt;code&gt;../test&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;打开和关闭文件&#34;&gt;打开和关闭文件&lt;/h2&gt;
+&lt;p&gt;open函数打开或创建文件&lt;/p&gt;
+&lt;p&gt;返回一个文件描述符，在进程中没有打开的最小描述符
+几种控制参数flags&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_RDONLY&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;只读&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;O_WRONLY&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;只写&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;O_RDWR&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;可读可写&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;O_CREAT&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;文件不存在则创建空文件&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;O_TRUNC&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;存在则截断，清空&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;O_APPEND&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;追加写入&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;mode参数控制读写权限&lt;/p&gt;
+&lt;p&gt;每个进程都有umask&lt;/p&gt;
+&lt;p&gt;访问权限为&lt;code&gt;mode &amp;amp; ~umask&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;close(int fd)关闭文件，成功返回0，失败-1&lt;/p&gt;
+&lt;h2 id=&#34;读写文件&#34;&gt;读写文件&lt;/h2&gt;
+&lt;p&gt;read和write&lt;/p&gt;
+&lt;p&gt;输入的size为unsigned long类型，ssize_t为long类型，因为read和write函数需要返回-1&lt;/p&gt;
+&lt;p&gt;read和write读写遇到不足的情况：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;读取时遇到EOF&lt;/li&gt;
+&lt;li&gt;从终端读文本行&lt;/li&gt;
+&lt;li&gt;读写socket：网络延迟导致read和write返回值不足&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;rio包-robust-io&#34;&gt;RIO包 Robust IO&lt;/h2&gt;
+&lt;h2 id=&#34;读取文件元数据&#34;&gt;读取文件元数据&lt;/h2&gt;
+&lt;p&gt;stat和fstat函数，读取文件信息&lt;/p&gt;
+&lt;h2 id=&#34;读取目录内容&#34;&gt;读取目录内容&lt;/h2&gt;
+&lt;p&gt;opendir函数&lt;/p&gt;
+&lt;h2 id=&#34;共享文件&#34;&gt;共享文件&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;描述符表，每个进程之间独立&lt;/li&gt;
+&lt;li&gt;文件表，打开文件的集合，所有进程共享，包含文件位置，引用计数，指向vnode表的指针，当引用计数为0时，操作系统删除表项&lt;/li&gt;
+&lt;li&gt;v-node，进程间共享，包含stat中的信息，st mode，st size&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;io重定向&#34;&gt;IO重定向&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;标准输出&lt;/strong&gt;重定向到磁盘文件&lt;/p&gt;
+&lt;p&gt;覆盖写入文件之前的内容&lt;/p&gt;
+&lt;p&gt;使用dup2函数，将终端的输出关闭，改为磁盘文件，磁盘文件引用次数+1&lt;/p&gt;
+&lt;h2 id=&#34;标准io&#34;&gt;标准IO&lt;/h2&gt;
+&lt;p&gt;标准IO将打开的文件模型化为一个流，减少系统级IO操作的调用&lt;/p&gt;
+&lt;p&gt;第一次getc调用IO read函数读取到缓冲区，之后调用将缓冲区第一个字节返回给应用程序&lt;/p&gt;
+&lt;h2 id=&#34;选取io函数问题&#34;&gt;选取IO函数问题&lt;/h2&gt;
+&lt;p&gt;socket中不要使用标准IO，可能会导致崩溃，使用RIO函数/Unix IO&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>编译原理笔记</title>
+        <link>https://blog.ipandai.club/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Sun, 02 Jan 2022 10:33:48 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;p&gt;编译原理笔记，词法语法分析&lt;/p&gt;
+&lt;h1 id=&#34;词法分析&#34;&gt;词法分析&lt;/h1&gt;
+&lt;h2 id=&#34;有穷自动机-dfa&#34;&gt;有穷自动机 DFA&lt;/h2&gt;
+&lt;p&gt;$f: K \times \sum \to K$是一个单值函数，任何输入符号都唯一的确定了下一个状态&lt;/p&gt;
+&lt;h2 id=&#34;不确定的有穷自动机-nfa&#34;&gt;不确定的有穷自动机 NFA&lt;/h2&gt;
+&lt;p&gt;至少一个初态节点，若干个终态节点
+DFA是NFA的特例&lt;/p&gt;
+&lt;h2 id=&#34;子集法-nfa转换为dfa&#34;&gt;子集法 NFA转换为DFA&lt;/h2&gt;
+&lt;p&gt;对于状态集合$I$，定义两个运算&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;集合$I$的$\epsilon-Closure(I)$，是一个状态集$I$中的任何状态经过任意条$\epsilon$弧能到达的状态集合
+因为当输入符号为空时，则自动机停留在原来的位置上，所以有关系$\forall S \in I \ \ , S \in \epsilon-Closure(I)$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;状态集合$I$的$a$弧转换，表示为$move(I,a)$，定义为状态集合J，其中$J$是所有那些可以从$I$中的某一状态经过一条$a$弧而到达的状态的全体
+有关系$\forall S_i \in I \ \ , move(I,a)=f(S_1,a)\bigcup f(S_2,a) \bigcup f(S_3,a)&amp;hellip;$
+算法流程：&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;n&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;save&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Status&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Set&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;K_0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;epsilon&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Closure&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;epsilon&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Closure&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;K_0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;have&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;set&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;not&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;visit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;n&#34;&gt;visit&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;true&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Set&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;nl&#34;&gt;U&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;epsilon&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Closure&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Move&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;U&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;not&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;n&#34;&gt;C&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;U&lt;/span&gt;
+		&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;经过状态重新命名可以得到DFA&lt;/p&gt;
+&lt;h2 id=&#34;dfa的化简&#34;&gt;DFA的化简&lt;/h2&gt;
+&lt;p&gt;化简 的DFA：没有多余状态，没有两个状态是互相等价的。
+DFA可以通过消除无用状态和合并等价状态二转换成一个与之等价的最小状态的DFA&lt;/p&gt;
+&lt;p&gt;无用状态：从开始状态触发，任何输入串都无法到达
+或者从这个状态没有通路到达终态
+![[Pasted image 20211230203930.png]]
+如s4，s6，s8，可以直接消除&lt;/p&gt;
+&lt;p&gt;DFA中的状态等价条件：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;一致性条件-状态s和t必须同时为可接受状态或不可接受状态&lt;/li&gt;
+&lt;li&gt;蔓延性条件-对于所有输入符号，状态s和t必须转换到等价的状态&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;分割法分解DFA状态：
+步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先将终态和非终态分割，作为两个子集，作为一个划分&lt;/li&gt;
+&lt;li&gt;在划分中对每个子集加上可输入字符，将可区别的状态拆分，得到新的划分&lt;/li&gt;
+&lt;li&gt;重复直到划分不可以再分割&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;化简后的DFA便于在计算机上实现&lt;/p&gt;
+&lt;h2 id=&#34;由dfa化简为正规式&#34;&gt;由DFA化简为正规式&lt;/h2&gt;
+&lt;p&gt;很简单
+缩缩缩&lt;/p&gt;
+&lt;h2 id=&#34;由正规式生成nfa&#34;&gt;由正规式生成NFA&lt;/h2&gt;
+&lt;p&gt;$L(G)$表示文法G产生的语言的集合
+$L(G1) = L(G2)$ 则两个文法等价
+反正就是构造一个等价的$\mathbb{NFA}$&lt;/p&gt;
+&lt;h3 id=&#34;语法制导&#34;&gt;语法制导&lt;/h3&gt;
+&lt;p&gt;按照语法结构构造
+将正规式分解为子表达式
+ 
+闭包：终态输入epsilon到达初态
+分解方式不唯一
+可以从头开始，也可以分部进行&lt;/p&gt;
+&lt;p&gt;处理步骤：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如$r_1 r_2$，顺序拼接两个NFA&lt;/li&gt;
+&lt;li&gt;如$r1^*$处理闭包，终态输入epsilon链接到初态&lt;/li&gt;
+&lt;li&gt;如$r_1|r_2$，由初态输入epsilon到两个NFA，由两个NFA输入epsilon到达终态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;语法分析&#34;&gt;语法分析&lt;/h1&gt;
+&lt;h2 id=&#34;自顶向下&#34;&gt;自顶向下&lt;/h2&gt;
+&lt;p&gt;文法特点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;每个产生式右部都由终结符号开始&lt;/li&gt;
+&lt;li&gt;若两个产生式都由相同的左部，右部都由不同的终结符开始
+分析过程是唯一的&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;FIRST集
+$FIRST(\alpha)={以\alpha为左部的，产生式右部的第一个非终结符集合}$
+为a的开始符号集&lt;/p&gt;
+&lt;p&gt;FOLLOW集
+对于上下文无关文法，S是开始符号
+$FOLLOW(A)={状态A后跟符号}$
+若A可以引导终止epsilon ，则加入#到FOLLOW集&lt;/p&gt;
+&lt;h4 id=&#34;构造算法&#34;&gt;构造算法&lt;/h4&gt;
+&lt;p&gt;对文法中每一非终结符A，构造FOLLOW(A)的算法如下：反复使用如下规则，直至FOLLOW集不再增大为止。
+⑴若A是文法的开始符号,则把输入结束符＃加入FOLLOW(A)中；
+⑵若B→αAaβ,a是终结符,则把a加入FOLLOW(A)中；
+⑶若B→αAXβ,X是非终结符,则把FIRST(Xβ)加入FOLLOW(A)中；
+⑷若B→αA或B→αAβ,且β可以推导至ε，则把FOLLOW(B)加入FOLLOW(A)中。&lt;/p&gt;
+&lt;p&gt;SELECT集
+$SELECT(A  \to a)=(FIRST(a)-{\epsilon})\bigcup FOLLOW(A)$&lt;/p&gt;
+&lt;p&gt;LL(1)文法：第一个L表示自顶向下分析是从左到右扫描输入串，第二个L表明分析过程中将用最左推导，1表明只需要向右看一个符号便可以决定如何推导。
+充要条件:
+对于每个非终结符A，的两个不同产生式
+$SELECT(A \to \alpha)\bigcap SELECT(A \to \beta)=\varnothing$&lt;/p&gt;
+&lt;h2 id=&#34;非ll1文法到ll1文法的等价转换&#34;&gt;非LL(1)文法到LL(1)文法的等价转换&lt;/h2&gt;
+&lt;p&gt;LL(1)文法的性质：
+① LL(1)文法是无二义性的；
+② LL(1)文法不含左递归；
+③ LL(1)文法没有公共左因子。&lt;/p&gt;
+&lt;p&gt;消除左递归
+消除回溯：提取左公因子
+改造成LL1文法&lt;/p&gt;
+&lt;h3 id=&#34;消除直接左递归&#34;&gt;消除直接左递归：&lt;/h3&gt;
+&lt;p&gt;例如：
+A→Aα|β
+对A引入一个新的非终结符A′，把上式改写为：
+A →βA′        &lt;br&gt;
+A′→αA′|ε
+例2：
+E→E +T | T
+T→T * F | F
+F→i |（E）
+改造为
+E→TE′
+E′→+T E′|ε
+T→FT ′
+T′→* FT′|ε
+F→i |（E）&lt;/p&gt;
+&lt;h3 id=&#34;消除间接左递归&#34;&gt;消除间接左递归&lt;/h3&gt;
+&lt;p&gt;把式子带入，然后按照消除直接左递归的方法去消除
+S → Aα|β      ⑴
+A → Sγ           ⑵
+得到
+S → Sγα|β     ⑶
+消除左递归
+S → βS′
+S ′→γαS′|ε&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>【操作系统】程序的机器级表示</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</link>
+        <pubDate>Fri, 10 Dec 2021 21:19:54 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</guid>
+        <description>&lt;p&gt;讲解机器代码以及汇编&lt;/p&gt;
+&lt;p&gt;TODO了，有个bomb lab&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>【操作系统】信息的表示和处理</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</link>
+        <pubDate>Fri, 10 Dec 2021 13:02:03 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</guid>
+        <description>&lt;p&gt;本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式&lt;/p&gt;
+&lt;h1 id=&#34;信息存储&#34;&gt;信息存储&lt;/h1&gt;
+&lt;p&gt;最小可寻址内存单位 -字节byte 一般为8位的块&lt;/p&gt;
+&lt;p&gt;内存被视为一个很大的字节数组，也就是虚拟内存，每个字节用地址标识&lt;/p&gt;
+&lt;p&gt;地址的集合为虚拟地址空间&lt;/p&gt;
+&lt;p&gt;虚拟内存中包含程序的数据，指令，控制信息&lt;/p&gt;
+&lt;h2 id=&#34;十六进制表示&#34;&gt;十六进制表示&lt;/h2&gt;
+&lt;p&gt;跳&lt;/p&gt;
+&lt;h2 id=&#34;字数据大小&#34;&gt;字数据大小&lt;/h2&gt;
+&lt;p&gt;字长为数据标称大小&lt;/p&gt;
+&lt;p&gt;字长决定了虚拟地址空间的最大大小，字长为w的机器虚拟地址范围是[0, $2^w-1$]&lt;/p&gt;
+&lt;p&gt;最多访问$2^w$个字节&lt;/p&gt;
+&lt;p&gt;32位和64位&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;gcc -m32&lt;/code&gt;可以编译32位程序&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;gcc -m64&lt;/code&gt;可以编译64位程序&lt;/p&gt;
+&lt;h2 id=&#34;寻址和字节顺序&#34;&gt;寻址和字节顺序&lt;/h2&gt;
+&lt;p&gt;最低有效字节在前-小端法&lt;/p&gt;
+&lt;p&gt;最高有效字节在前-大端法&lt;/p&gt;
+&lt;p&gt;部分cpu支持双端法 ，但是操作系统只支持小端模式（iOS &amp;amp; Android）&lt;/p&gt;
+&lt;h3 id=&#34;大小端的影响&#34;&gt;大小端的影响&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;网络收发统一顺序&lt;/li&gt;
+&lt;li&gt;汇编阅读字节顺序&lt;/li&gt;
+&lt;li&gt;按字节打印&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;字符串表示&#34;&gt;字符串表示&lt;/h2&gt;
+&lt;p&gt;以null结尾的字符数组&lt;/p&gt;
+&lt;p&gt;每个字符使用ASCII码，在各个系统都相同，因此文本数据的表示有更高的平台独立性（than二进制数据）&lt;/p&gt;
+&lt;p&gt;终止字符&lt;code&gt;0x00&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;UTF-8，每个字符使用一个字节来编码&lt;/p&gt;
+&lt;h2 id=&#34;布尔代数&#34;&gt;布尔代数&lt;/h2&gt;
+&lt;p&gt;null&lt;/p&gt;
+&lt;h2 id=&#34;位运算&#34;&gt;位运算&lt;/h2&gt;
+&lt;p&gt;掩码运算&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;掩码：表示从一个字中选出来位的集合&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&#34;整数表示&#34;&gt;整数表示&lt;/h1&gt;
+&lt;p&gt;跳&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>操作系统</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+        <pubDate>Thu, 09 Dec 2021 19:58:54 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+        <description>&lt;p&gt;CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读&lt;/p&gt;
+&lt;h1 id=&#34;ch1&#34;&gt;Ch1&lt;/h1&gt;
+&lt;p&gt;源程序 -&amp;gt; 预处理器 (cpp) &amp;mdash;hello.i&amp;mdash;&amp;gt; 编译器(ccl) &amp;mdash;&amp;ndash;hello.s&amp;mdash;&amp;ndash;&amp;gt; 汇编器(as) &amp;mdash;-hello.o(binary) with printf.o&amp;mdash;&amp;gt; 连接器 &amp;mdash;&amp;mdash;-&amp;gt; 可执行二进制文件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;主存：临时存储设备 DRAM组成&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;进程：并发执行多个进程-上下文切换&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;进程运行所需的所有状态信息 &lt;strong&gt;上下文&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;例如：PC和寄存器文件的当前值，主存的内容&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;并发执行 ：一个进程的指令和另一个进程的指令交错执行&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;线程：进程是由多个线程的执行单元组成 ，运行在进程的上下文中，共享同样的代码和全局数据&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;多线程共享数据比多进程容易&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;虚拟内存：对于进程，提供虚拟地址空间&lt;/p&gt;
+&lt;p&gt;包含 程序代码和数据，堆malloc 和free，共享库so，栈，内核虚拟内存为内核保留，不允许应用程序读写这个区域&lt;/p&gt;
+&lt;p&gt;基本思想：一个进程虚拟内存的内容存储在磁盘，利用主存座位磁盘的高速缓存&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;并发和并行：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;并发：同时具有多个活动的系统&lt;/li&gt;
+&lt;li&gt;并行：用并发是一个系统运行的更快&lt;/li&gt;
+&lt;li&gt;线程级并发：在一个进程中执行多个控制流&lt;/li&gt;
+&lt;li&gt;指令级并行：流水线技术&lt;/li&gt;
+&lt;li&gt;单指令，多数据并行 SIMD并行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;操作系统的抽象：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文件是对I/O设备的抽象&lt;/li&gt;
+&lt;li&gt;虚拟内存是对主存和磁盘的抽象&lt;/li&gt;
+&lt;li&gt;进程是对处理器，主存和IO设备的抽象&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;网络可以看做一种IO设备&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description>
+        </item>
+        <item>
+        <title>常微分方程初值问题求解方法</title>
+        <link>https://blog.ipandai.club/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</link>
+        <pubDate>Fri, 23 Apr 2021 23:26:18 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</guid>
+        <description>&lt;h1 id=&#34;常微分方程初值问题&#34;&gt;常微分方程初值问题&lt;/h1&gt;
+&lt;p&gt;常微分方程描述了不同变量之间的变化关系，通过该关系我们可以确定变量之间的具体函数关系，但是微分方程不一定总是可解的，并且有些求解起来相当困难。给出积分曲线初始位置的状态，求解需要预测点的状态，为常微分方程的初值问题，我们可以在求解微分方程即的情况下对结果做出复合精度要求的预测。&lt;/p&gt;
+&lt;p&gt;以$f(x) = \sqrt{1+2x}$为例&lt;/p&gt;
+&lt;p&gt;有$y&#39;=\frac{dy}{dx}=y-\frac{2x}{y}$&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;本文给出几种算法的原理与实现。&lt;/p&gt;
+&lt;h1 id=&#34;euler方法及其改进&#34;&gt;Euler方法及其改进&lt;/h1&gt;
+&lt;p&gt;从初始点开始，根据不同离散点的导数值对曲线进行预测，导数值可以通过对ODE的化简求解，做出一条折线图，最终曲线会逼近预测值。&lt;/p&gt;
+&lt;p&gt;该方法有明显的缺点就是在每一步做出抉择时，只考虑了当前的状态，并没有考虑后面的状态，因此必然会造成较大的误差，因此采用下一个结点的导数值进行修正。&lt;/p&gt;
+&lt;p&gt;具体流程如下&lt;/p&gt;
+&lt;p&gt;选取一定的步长h，一般为区间的n等分&lt;/p&gt;
+&lt;p&gt;预测下一个值$\overline{y}_{i+1} = y_i + hf(x_i, y_i)$&lt;/p&gt;
+&lt;p&gt;校正预测值$y_{i+1} = y_i + \frac{h}{2}[f(x_i, y_i)+f(x_{i+1}, \overline{y}_{i+1})]$&lt;/p&gt;
+&lt;p&gt;改写成平均化形式&lt;/p&gt;
+&lt;p&gt;$y_p = y_i +hf(x_i, y_i)$&lt;/p&gt;
+&lt;p&gt;$y_c = y_i + hf(x_{i+1}, y_p)$&lt;/p&gt;
+&lt;p&gt;$y_{i+1} = \frac{1}{2} (y_p+y_c), i =0,1,2,3,&amp;hellip;,n-1$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 常微分方程化简&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sqrt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;Euler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bound&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    bound : 预测边界值
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    start : 起始点
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.1&lt;/span&gt;
+    &lt;span class=&#34;c1&#34;&gt;# 对步长h等分&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bound&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 获取均分后的所有点&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 生成标准值做对比&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 预测值&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;yp&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;yc&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;yp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 使用预测值求加权平均值&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;yp&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;yc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2.0&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Euler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;运行结果：&lt;/p&gt;
+&lt;p&gt;标准值&lt;/p&gt;
+&lt;p&gt;[1.         1.09544512 1.18321596 1.26491106 1.34164079 1.41421356
+1.4832397  1.54919334 1.61245155 1.67332005 1.73205081 1.78885438
+1.84390889 1.8973666  1.94935887 2.         2.04939015 2.0976177
+2.14476106 2.19089023]&lt;/p&gt;
+&lt;p&gt;预测值&lt;/p&gt;
+&lt;p&gt;[1.         1.09590909 1.18409657 1.26620136 1.34336015 1.41640193
+1.4859556  1.55251409 1.61647478 1.67816636 1.7378674  1.79581974
+1.8522386  1.90732042 1.96124939 2.01420304 2.06635728 2.11789132
+2.16899248 2.21986124]&lt;/p&gt;
+&lt;h1 id=&#34;runge-kuta法&#34;&gt;Runge-Kuta法&lt;/h1&gt;
+&lt;p&gt;Runge-Kuta法在思想上与之前的方法大致相同，都是通过若干个斜率的加权平均值来做出下一步选择。此处只给出常用的四阶Runge-Kuta的处理方式。&lt;/p&gt;
+&lt;p&gt;$K_1=f(x_i,y_i)$&lt;/p&gt;
+&lt;p&gt;$K_2 =f(x_i + \frac{h}{2}, y_i + \frac{h}{2}K_1)$&lt;/p&gt;
+&lt;p&gt;$K_3=f(x_i + \frac{h}{2}, y_i + \frac{h}{2}K_2)$&lt;/p&gt;
+&lt;p&gt;$K_4=f(x_i + h, y_i + hK_3)$&lt;/p&gt;
+&lt;p&gt;$y_{i+1}= y_i + \frac{h}{6}(K_1+K_2+K_3+K_4)$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;matplotlib&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pyplot&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;plt&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sqrt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;RungeKutta&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bound&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    bound : 计算边界
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    start : 初始值f(0)
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.1&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bound&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;start&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 求各个点的斜率&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;k1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;k2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;k3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;k4&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 对斜率求平均值并进行预测&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
     
-    <item>
-      <title>redis实战读书笔记</title>
-      <link>https://ez4zzw.github.io/p/redis%E5%AE%9E%E6%88%98%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Mon, 03 Jan 2022 16:22:27 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/redis%E5%AE%9E%E6%88%98%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;redis基础知识以及一些应用场景总结&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】网络编程</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
-      <pubDate>Mon, 03 Jan 2022 13:37:02 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid>
-      <description>&lt;p&gt;承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习&lt;/p&gt;
-&lt;p&gt;CSAPP Ch-11 笔记&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】系统级IO</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</link>
-      <pubDate>Mon, 03 Jan 2022 10:31:33 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</guid>
-      <description>&lt;p&gt;高级别的IO程序，如c中的printf和scanf，c++中的&lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;和&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt;，都依赖Unix 系统级IO&lt;/p&gt;
-&lt;p&gt;CSAPP Ch-10 笔记&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>编译原理笔记</title>
-      <link>https://ez4zzw.github.io/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Sun, 02 Jan 2022 10:33:48 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;编译原理笔记，词法语法分析&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】程序的机器级表示</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</link>
-      <pubDate>Fri, 10 Dec 2021 21:19:54 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</guid>
-      <description>讲解机器代码以及汇编
-TODO了，有个bomb lab</description>
-    </item>
-    
-    <item>
-      <title>【操作系统】信息的表示和处理</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</link>
-      <pubDate>Fri, 10 Dec 2021 13:02:03 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86/</guid>
-      <description>&lt;p&gt;本章为CSAPP Ch-2的读书笔记，复习了数据的存储方式&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>操作系统</title>
-      <link>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
-      <pubDate>Thu, 09 Dec 2021 19:58:54 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
-      <description>&lt;p&gt;CSAPP读书笔记 Ch-1 宏观看一看操作系统，很多知识之前确实没了解到，值得一读&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>常微分方程初值问题求解方法</title>
-      <link>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</link>
-      <pubDate>Fri, 23 Apr 2021 23:26:18 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/</guid>
-      <description>常微分方程初值问题 常微分方程描述了不同变量之间的变化关系，通过该关系我们可以确定变量之间的具体函数关系，但是微分方程不一定总是可解的，并且有些求解起来相当困难。给出积分曲线初始位置的状态，求解需要预测点的状态，为常微分方程的初值问题，我们可以在求解微分方程即的情况下对结果做出复合精度要求的预测。
-以$f(x) = \sqrt{1+2x}$为例
-有$y&#39;=\frac{dy}{dx}=y-\frac{2x}{y}$
-本文给出几种算法的原理与实现。
-Euler方法及其改进 从初始点开始，根据不同离散点的导数值对曲线进行预测，导数值可以通过对ODE的化简求解，做出一条折线图，最终曲线会逼近预测值。
-该方法有明显的缺点就是在每一步做出抉择时，只考虑了当前的状态，并没有考虑后面的状态，因此必然会造成较大的误差，因此采用下一个结点的导数值进行修正。
-具体流程如下
-选取一定的步长h，一般为区间的n等分
-预测下一个值$\overline{y}_{i+1} = y_i + hf(x_i, y_i)$
-校正预测值$y_{i+1} = y_i + \frac{h}{2}[f(x_i, y_i)+f(x_{i+1}, \overline{y}_{i+1})]$
-改写成平均化形式
-$y_p = y_i +hf(x_i, y_i)$
-$y_c = y_i + hf(x_{i+1}, y_p)$
-$y_{i+1} = \frac{1}{2} (y_p+y_c), i =0,1,2,3,&amp;hellip;,n-1$
-import numpy as np # 常微分方程化简 def ode(x, y): return y - 2 * x / y def f(x): return np.sqrt(1+2*x) def Euler(bound, start): &amp;#39;&amp;#39;&amp;#39; bound : 预测边界值 start : 起始点 &amp;#39;&amp;#39;&amp;#39; h = 0.</description>
-    </item>
-    
-    <item>
-      <title>数值积分方法</title>
-      <link>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</link>
-      <pubDate>Fri, 23 Apr 2021 20:18:59 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</guid>
-      <description>数值积分 应用背景：微积分的基本计算公式为经典的牛顿莱布尼茨公式，但是作为计算机来说，计算原函数等操作过于困难，因此需要其他方法进行优化，代替牛顿莱布尼茨公式进行计算，本文将分享两种求积公式及其代码实现。
-使用语言： Python-Numpy
-使用两种方法计算$f(x)=sin(x)$在[1,2]上的积分
-复化梯形的递推公式 由梯形公式改进，将区间[a, b]等分为n个小区间 $[x_i, x_{i+1}]$
-$\int_{a}^{b}f(x)dx=\sum_{i=0}^{n-1}\int_{x_i}^{x_{i+1}}f(x)dx\approx \frac{h_i}{2}[f(x_i)+f(x_{i+1})]$
-根据梯形公式化简为区间端点值组合
-将求和公式展开，分离出左右端点
-得到最终的化简结果
-$T_n = \frac{h}{2} [f(a)+2\sum_{i=1}^{n-1}f(x_i)+f(b)]$
-但是该方法的步长太小的话会导致计算次数太大，步长太大又难以保证效率
-采用区间不断对分的方法，取$n = 2^k$，反复使用复合求积公式
-$T^{(k)}=\frac{1}{2}T^{(k-1)}+\frac{h_{k-1}}{2}\sum_{i=0}^{2^{k-1}-1}f(a+ih_{k-1} + 0.5h_{k-1})$
-其中$h_{k-1} = \frac{b-a}{2^{k-1}}$
-Code
-import numpy as np def f(x): return np.sin(x) def Calc(): eps = 1e-7 Flag = True l = 1.0 r = 2.0 h = r - l t1 = 1.0*(h/2)*(1+f(r)) t2 = 0.0 while Flag: sum = 0 x = l + h/2 while x &amp;lt; r: sum += f(x) x += h t2 = t1/2 + h*sum/2 h /= 2.</description>
-    </item>
-    
-    <item>
-      <title>三种插值方法及实现</title>
-      <link>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</link>
-      <pubDate>Mon, 19 Apr 2021 22:22:57 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</guid>
-      <description>插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
-常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
-使用语言: Python
-使用下面的数据，预测函数在x=1处的值
-x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
-$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
-$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} + y_1 \frac{x- x_0}{x_1 - x_0}$
-我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
-将其线性组合之后即为
-$p(x)=y_0 l_0(x)+y_1 l_1(x)$
-是Lagrange插值的特殊形式
-此处给出线性插值的代码实现：
-import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] + (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.</description>
-    </item>
-    
-    <item>
-      <title>OJ部署debug记录</title>
-      <link>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</link>
-      <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</guid>
-      <description>&lt;p&gt;学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>计算机组成原理笔记</title>
-      <link>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Mon, 15 Mar 2021 19:53:04 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;本文随机更新机组笔记&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
+    &lt;span class=&#34;n&#34;&gt;plt&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;show&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RungeKutta&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sample&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;运行结果 ：
+预测值&lt;/p&gt;
+&lt;p&gt;[1.         1.09544553 1.18321675 1.26491223 1.34164235 1.41421558
+1.48324222 1.54919645 1.61245535 1.67332466 1.73205637 1.78886107
+1.84391692 1.89737622 1.9493704  2.00001382 2.0494067  2.09763752
+2.14478481 2.1909187 ]&lt;/p&gt;
+&lt;p&gt;标准值&lt;/p&gt;
+&lt;p&gt;[1.         1.09544512 1.18321596 1.26491106 1.34164079 1.41421356
+1.4832397  1.54919334 1.61245155 1.67332005 1.73205081 1.78885438
+1.84390889 1.8973666  1.94935887 2.         2.04939015 2.0976177
+2.14476106 2.19089023]&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>数值积分方法</title>
+        <link>https://blog.ipandai.club/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</link>
+        <pubDate>Fri, 23 Apr 2021 20:18:59 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/</guid>
+        <description>&lt;h1 id=&#34;数值积分&#34;&gt;数值积分&lt;/h1&gt;
+&lt;p&gt;应用背景：微积分的基本计算公式为经典的牛顿莱布尼茨公式，但是作为计算机来说，计算原函数等操作过于困难，因此需要其他方法进行优化，代替牛顿莱布尼茨公式进行计算，本文将分享两种求积公式及其代码实现。&lt;/p&gt;
+&lt;p&gt;使用语言： Python-Numpy&lt;/p&gt;
+&lt;p&gt;使用两种方法计算$f(x)=sin(x)$在[1,2]上的积分&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h1 id=&#34;复化梯形的递推公式&#34;&gt;复化梯形的递推公式&lt;/h1&gt;
+&lt;p&gt;由梯形公式改进，将区间[a, b]等分为n个小区间
+$[x_i, x_{i+1}]$&lt;/p&gt;
+&lt;p&gt;$\int_{a}^{b}f(x)dx=\sum_{i=0}^{n-1}\int_{x_i}^{x_{i+1}}f(x)dx\approx \frac{h_i}{2}[f(x_i)+f(x_{i+1})]$&lt;/p&gt;
+&lt;p&gt;根据梯形公式化简为区间端点值组合&lt;/p&gt;
+&lt;p&gt;将求和公式展开，分离出左右端点&lt;/p&gt;
+&lt;p&gt;得到最终的化简结果&lt;/p&gt;
+&lt;p&gt;$T_n = \frac{h}{2} [f(a)+2\sum_{i=1}^{n-1}f(x_i)+f(b)]$&lt;/p&gt;
+&lt;p&gt;但是该方法的步长太小的话会导致计算次数太大，步长太大又难以保证效率&lt;/p&gt;
+&lt;p&gt;采用区间不断对分的方法，取$n = 2^k$，反复使用复合求积公式&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;$T^{(k)}=\frac{1}{2}T^{(k-1)}+\frac{h_{k-1}}{2}\sum_{i=0}^{2^{k-1}-1}f(a+ih_{k-1} + 0.5h_{k-1})$&lt;/p&gt;
+&lt;p&gt;其中$h_{k-1} = \frac{b-a}{2^{k-1}}$&lt;/p&gt;
+&lt;p&gt;Code&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;Calc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;():&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;eps&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1e-7&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Flag&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;l&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1.0&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;r&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;2.0&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;r&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;l&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1.0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;t2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.0&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Flag&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+        &lt;span class=&#34;nb&#34;&gt;sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;l&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+            &lt;span class=&#34;nb&#34;&gt;sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;t2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;2.0&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;abs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;abs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;eps&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;Flag&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;False&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;t1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t2&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;t2&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Calc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;0.9564492180077249&lt;/p&gt;
+&lt;h1 id=&#34;romberg-算法&#34;&gt;Romberg 算法&lt;/h1&gt;
+&lt;p&gt;基于梯形递推公式，将上一级递推公式的结果进行线性组合，得到Simpson公式，再对Simpson公式结果进行线性组合得出Cotes公式结果，最后对Cotes公式线性组合得出Romberg算法的递推公式&lt;/p&gt;
+&lt;p&gt;该方法为Richardson外推法&lt;/p&gt;
+&lt;p&gt;$T_{m}^{(k)}=\frac{4^m T_{m-1}^{(k+1)} - T_{m-1}^{(k)}}{4^m - 1}$&lt;/p&gt;
+&lt;p&gt;k为Romberg算法的阶数，Romberg算法具有收敛性，一般情况下我们取四阶 k = 3进行计算就可以满足精度要求&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 计算梯形公式的结果&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;trapezcomp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;l&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;l&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;l&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;Sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Sum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;romberg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    x : 积分下限
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    y : 积分上限
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    n : Romberg算法求解的阶数
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;I&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 获得梯形公式的结果&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;trapezcomp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+            &lt;span class=&#34;c1&#34;&gt;# 使用加速递推公式计算&lt;/span&gt;
+            &lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;c1&#34;&gt;# 返回4阶Romberg算法的递推值       &lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;romberg&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;1.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;2.0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;运行结果：
+0.9564491426149814&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>三种插值方法及实现</title>
+        <link>https://blog.ipandai.club/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Mon, 19 Apr 2021 22:22:57 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;h1 id=&#34;插值方法&#34;&gt;插值方法&lt;/h1&gt;
+&lt;p&gt;插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。&lt;/p&gt;
+&lt;p&gt;常用的插值方法有很多，本文章给出三种常见的插值方法的实现。&lt;/p&gt;
+&lt;p&gt;使用语言: Python&lt;/p&gt;
+&lt;p&gt;使用下面的数据，预测函数在x=1处的值&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.6931&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5108&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.9163&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.3567&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;!-- raw HTML omitted --&gt;
+&lt;h1 id=&#34;线性插值&#34;&gt;线性插值&lt;/h1&gt;
+&lt;p&gt;线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$
+可以根据点斜式方程求解
+即&lt;/p&gt;
+&lt;p&gt;$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$
+还可以将公式整理成如下形式&lt;/p&gt;
+&lt;p&gt;$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} + y_1 \frac{x- x_0}{x_1 - x_0}$&lt;/p&gt;
+&lt;p&gt;我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$&lt;/p&gt;
+&lt;p&gt;将其线性组合之后即为&lt;/p&gt;
+&lt;p&gt;$p(x)=y_0 l_0(x)+y_1 l_1(x)$&lt;/p&gt;
+&lt;p&gt;是Lagrange插值的特殊形式&lt;/p&gt;
+&lt;p&gt;此处给出线性插值的代码实现：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;linear&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    x : 为横坐标数组
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    y : 为纵坐标数组
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    x0: 为需要预测点的横坐标
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    res: 预测结果
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 根据公式计算结果&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.6931&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5108&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.9163&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.3567&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;linear&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;around&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 保留四位小数&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id=&#34;largrange插值&#34;&gt;Largrange插值&lt;/h1&gt;
+&lt;p&gt;根据Lagrange插值基函数$l_k(x)$，其满足如下性质
+当$i=k,l_k(x_i)=1$&lt;/p&gt;
+&lt;p&gt;当$i\not ={k}, l_k(x_i) = 0$&lt;/p&gt;
+&lt;p&gt;其中$l_k(x) = \prod_{i=0,i \not ={k}}^{n} \frac{x-x_i}{x_k-x_i}$&lt;/p&gt;
+&lt;p&gt;可以得到$p(x)=y_0 l_0(x) + y_1 l_1(x) + &amp;hellip; + y_n l_n(x)$&lt;/p&gt;
+&lt;p&gt;$p(x)$满足$p(x_i)=y_i, i = 0,1,&amp;hellip;,n$&lt;/p&gt;
+&lt;p&gt;即根据插值结点确定的方程，可以使得$p(x_i)=y_i$，是一种可行的插值方法，极大的提高了插值精度。&lt;/p&gt;
+&lt;p&gt;并且当只有两个插值结点时，Lagrange插值就退化成了线性插值，当有三个结点时，退化成抛物线插值。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;matplotlib&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pyplot&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;plt&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;largrange&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    x : x数组
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    y : y数组
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    x0: 预测点横坐标
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    res: 预测结果
+&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;    &amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;param&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;append&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):])&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 获得除去xi的所有横坐标&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;numerator&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;param&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prod&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;     &lt;span class=&#34;c1&#34;&gt;# 分子，使用prod求出矩阵中所有元素的积&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;denominator&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;param&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prod&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 计算分母&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;numerator&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;denominator&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;# 根据公式计算当前步骤对答案的贡献&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.6931&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5108&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.9163&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.3567&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;largrange&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;around&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;运行结果：
+0.0634&lt;/p&gt;
+&lt;h1 id=&#34;newton插值&#34;&gt;Newton插值&lt;/h1&gt;
+&lt;p&gt;我们引入差商的概念，
+设有函数$f(x), x_0,&amp;hellip;,x_n$&lt;/p&gt;
+&lt;p&gt;$f[x_i, x_j] = \frac{f(x_j)-f(x_i)}{x_j - x_i}$&lt;/p&gt;
+&lt;p&gt;称为$f(x)$关于点$x_i, x_j$的一阶差商&lt;/p&gt;
+&lt;p&gt;$f[x_i, x_j, x_k] = \frac{f[x_j, x_k] - f[x_i, x_j]}{x_k - x_i}$&lt;/p&gt;
+&lt;p&gt;称为$f(x)$关于点$x_i， x_j， x_k$二阶差商&lt;/p&gt;
+&lt;p&gt;我们可以得到差商的一般定义，对于k阶差商&lt;/p&gt;
+&lt;p&gt;$f[x_0, x_1, &amp;hellip;, x_k] = \frac{f[x_1, &amp;hellip;, x_k] - f[x_0, &amp;hellip;, x_{k-1}]}{x_k - x_0}$
+计算差商可以通过差商表来计算&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;$x_i$&lt;/th&gt;
+&lt;th&gt;$f(x_i)$&lt;/th&gt;
+&lt;th&gt;一阶差商&lt;/th&gt;
+&lt;th&gt;二阶差商&lt;/th&gt;
+&lt;th&gt;三阶差商&lt;/th&gt;
+&lt;th&gt;&amp;hellip;&lt;/th&gt;
+&lt;th&gt;n阶差商&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;$x_0$&lt;/td&gt;
+&lt;td&gt;$f(x_0)$&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$x_1$&lt;/td&gt;
+&lt;td&gt;$f(x_1)$&lt;/td&gt;
+&lt;td&gt;$f[x_0, x_1]$&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$x_2$&lt;/td&gt;
+&lt;td&gt;$f(x_2)$&lt;/td&gt;
+&lt;td&gt;$f[x_1, x_2]$&lt;/td&gt;
+&lt;td&gt;$f[x_0, x_1, x_2]$&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$x_3$&lt;/td&gt;
+&lt;td&gt;$f(x_3)$&lt;/td&gt;
+&lt;td&gt;$f[x_2, x_3]$&lt;/td&gt;
+&lt;td&gt;$f[x_1, x_2, x_3]$&lt;/td&gt;
+&lt;td&gt;$f[x_0, x_1, x_2, x_3]$&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;hellip;&lt;/td&gt;
+&lt;td&gt;&amp;hellip;&lt;/td&gt;
+&lt;td&gt;&amp;hellip;&lt;/td&gt;
+&lt;td&gt;&amp;hellip;&lt;/td&gt;
+&lt;td&gt;&amp;hellip;&lt;/td&gt;
+&lt;td&gt;&amp;hellip;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$x_n$&lt;/td&gt;
+&lt;td&gt;$f(x_n)$&lt;/td&gt;
+&lt;td&gt;$f[x_{n-1}, x_{n}]$&lt;/td&gt;
+&lt;td&gt;$f[x_{n-2}, x_{n-1}, x_{n}]$&lt;/td&gt;
+&lt;td&gt;$f[x_{n-3}, x_{n-2}, x_{n-1}, x_{n}]$&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;$f[x_0, x_1, &amp;hellip;, x_n]$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;将对角线上的差商值用来构造插值函数&lt;/p&gt;
+&lt;p&gt;$f(x) =  f(x_0) + f[x_0, x_1](x- x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + &amp;hellip; + f[x_0, &amp;hellip;, x_n](x - x_0)&amp;hellip;(x - x_{n-1}) + f[x,x_0,x_1,x_2,&amp;hellip;,x_n](x - x_0)&amp;hellip;(x - x_{n})$&lt;/p&gt;
+&lt;p&gt;其中$R(x) = f[x,x_0,x_1,x_2,&amp;hellip;,x_n](x - x_0)&amp;hellip;(x - x_{n})$为插值余项&lt;/p&gt;
+&lt;p&gt;综上，牛顿插值的最终表达式为&lt;/p&gt;
+&lt;p&gt;$R(x) = N(x)+R(x)$&lt;/p&gt;
+&lt;p&gt;牛顿插值的插值基函数有可继承的特点，可以优化计算方法&lt;/p&gt;
+&lt;p&gt;直接利用上一次的计算结果增量更新&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;numpy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;np&lt;/span&gt;
+
+
+&lt;span class=&#34;c1&#34;&gt;# 计算差商表第j列的元素&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;GetColumRes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;colum&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;colum&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;colum&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 计算差商&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;CalculateDividedDiffernces&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;zeros&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 获得差商表第i列的元素&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[:,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;GetColumRes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;arr&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;newton&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;factor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;DD&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CalculateDividedDiffernces&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;range&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;):&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# factor因数迭乘&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;factor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+        &lt;span class=&#34;c1&#34;&gt;# 取出对角线上的元素进行计算&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DD&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;factor&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;res&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.6931&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.5108&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.9163&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.3567&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;newton&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;np&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;around&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;answer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;运行结果：&lt;/p&gt;
+&lt;p&gt;差商表&lt;/p&gt;
+&lt;p&gt;[ 0.5        -0.6931      0.          0.          0.        ]&lt;/p&gt;
+&lt;p&gt;[ 0.6        -0.5108      1.823       0.          0.        ]&lt;/p&gt;
+&lt;p&gt;[ 0.4        -0.9163      2.0275     -2.045       0.        ]&lt;/p&gt;
+&lt;p&gt;[ 0.7        -0.3567      1.86533333 -1.62166667  2.11666667]&lt;/p&gt;
+&lt;p&gt;运行结果
+0.0634&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>OJ部署debug记录</title>
+        <link>https://blog.ipandai.club/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</link>
+        <pubDate>Sat, 03 Apr 2021 22:22:14 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/oj%E9%83%A8%E7%BD%B2debug%E8%AE%B0%E5%BD%95/</guid>
+        <description>&lt;p&gt;学校重构之后的OJ终于进入了前后端对接的阶段，经过了一周的紧张对接环境，项目依然是(正在稳定推进的阶段)，和前端对接口的一周里，我感觉到自己之前工作的不足，在此做出反思，以后要改掉这些错误。同时在和运维一起部署的过程中，也发现了许许多多的问题，在此一并记录一下。&lt;/p&gt;
+&lt;h1 id=&#34;access-to-judger-ana-in-docker&#34;&gt;Access to Judger Ana In Docker&lt;/h1&gt;
+&lt;p&gt;因为OJ要防止恶意代码的提交，解决办法就是使用docker，为了让评测机稳定于是又要在docker里跑一个docker。
+直接docker run评测机，用了一下judge_test的模块，发现返回的结果全是AC，这就非常奇怪了。问了一下hr发现ana是用grpc通信的，好，没有学过，于是开始看怎么测试grpc是否正常，初步定位问题是没接上。也去docker里配了一下环境，加了工作目录，放行端口，发现还是不行。当hr进入服务器的时候，才发现真正的问题所在。直接docker pull的时候是跑的master分支的镜像，而新评测机接口是在另一个分支的。于是把锅甩给了嘎嘎豪。&lt;/p&gt;
+&lt;h1 id=&#34;npm-throw-error&#34;&gt;NPM throw error&lt;/h1&gt;
+&lt;p&gt;后端采用了go语言的gin+gorm框架搭建，直接go build然后丢到后台守护进程，前端使用了vue框架，要先用npm build一下，但是我本意是想直接npm run serve的，无奈npm一直疯狂报错。最初我也是打算现在本地run serve然后只测试后台的，但是npm先是依赖问题没有解决，最后重装了全局的依赖之后发现报错有个字段为darwin-arm64，看到这个我就感觉不对劲，可能是M1芯片没有合适的包可以下载，于是才决定丢到服务器上。在服务器上也是遇到了依赖的问题，直接尝试删除所有包，包括全局包，发现一个报错，大概就是说npm要没钱了，快来funding，好家伙，我直接&lt;code&gt;npm uninstall * --no-fund&lt;/code&gt;删除了所有依赖，然后重新npm install，跑完之后在此run serve，显然还是不行，问了王哥之后他给出了一个解决办法，先build然后用nginx反代到build之后生成的dist文件夹中。于是开始build，很不错，这回没有报错。于是开始了nginx反代。&lt;/p&gt;
+&lt;h1 id=&#34;nginx&#34;&gt;Nginx&lt;/h1&gt;
+&lt;p&gt;服务器没有绑定域名，因此直接将服务器的某个端口直接映射到前端渲染出来的dist文件夹中去，需要现在安全组放行端口，这里就不得不提一下宝塔界面了，最初接触服务器的时候感觉宝塔确实很方便，今天运维也吐槽了一下，有些地方宝塔反而做复杂了，我就感觉上传或者下载文件比较方便，懒得用ftp。还不得不提yum包管理器是我用过最难用的，不如pacman，也没apt包全，但是总不能在服务器上跑arch吧 Orz。
+在宝塔上装了Nginx，开始做反代。
+先是监听一下888端口,并反代/请求到dist文件夹,设置首页为index.html&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-nginx&#34; data-lang=&#34;nginx&#34;&gt;&lt;span class=&#34;k&#34;&gt;server&lt;/span&gt; 
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kn&#34;&gt;listen&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;888&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kn&#34;&gt;index&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;index.html&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;index.htm&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;index.php&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kn&#34;&gt;root&lt;/span&gt;   &lt;span class=&#34;s&#34;&gt;/root/dev/OnlineJudge/front_end/dist&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;好，重载一下nginx的配。
+咦，发现403 forbidden，运维猜测是nginx没有权限访问那个目录。
+这就开始打算直接chmod 777了，仔细一看发现，没改nginx配置里的user。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-nginx&#34; data-lang=&#34;nginx&#34;&gt;&lt;span class=&#34;k&#34;&gt;user&lt;/span&gt;  &lt;span class=&#34;s&#34;&gt;root&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;root&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;正常情况下建议分一个用户单独给nginx。
+然后发现访问首页是空白内容，打开F12看看，发现是js和css的请求全阻塞了，又去看了一眼nginx的配置，发现正则匹配的js和css文件目录不对。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-nginx&#34; data-lang=&#34;nginx&#34;&gt; &lt;span class=&#34;k&#34;&gt;location&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;~&lt;/span&gt; &lt;span class=&#34;sr&#34;&gt;.*\.js?$&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kn&#34;&gt;root&lt;/span&gt;   &lt;span class=&#34;s&#34;&gt;/root/dev/OnlineJudge/front_end/dist&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;location&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;~&lt;/span&gt; &lt;span class=&#34;sr&#34;&gt;.*\.css?$&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kn&#34;&gt;root&lt;/span&gt;   &lt;span class=&#34;s&#34;&gt;/root/dev/OnlineJudge/front_end/dist&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里要注意，一开始我是分别代理到/dist/js和/dist/css文件夹的，这样是不对的，因为请求的uri里是带有js和css字段的，于是就造成了路径不对，成了/js/js/**。
+至此，首页可以成功进入了。
+开始测试喜闻乐见的登录环节，发现请求没发出去，前端的请求之前是发送到远程服务器的，现在应该是访问本机localhost，于是进行代理转发请求&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-nginx&#34; data-lang=&#34;nginx&#34;&gt;&lt;span class=&#34;k&#34;&gt;location&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;/api&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kn&#34;&gt;proxy_pass&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;http://127.0.0.1:5000&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;终于可以登录了。到了八点多，感觉要下班了，又发现后台登录不进去了，又发现是只有我自己的chrome登录不进去，看日志的报错是interface提取的时候出问题了，uint和int之间产生了冲突，但是感觉事情没有那么简单，定位到出错的代码之后，发现异常是用&lt;code&gt;_&lt;/code&gt;接收的，于是又对id打了log，再次运行。
+这个id怎么这么熟悉。原来是前端的session里的id，看来是因为前台后台共用了session，导致id混用了。&lt;/p&gt;
+&lt;h1 id=&#34;end&#34;&gt;End&lt;/h1&gt;
+&lt;p&gt;此时已经到了晚上八点多了，看似已经解决了不少bug，但是很多问题都是和OJ无关的配置问题，真正的debug才刚刚开始。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;项目正在稳定的向前推进。&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+        </item>
+        <item>
+        <title>计算机组成原理笔记</title>
+        <link>https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Mon, 15 Mar 2021 19:53:04 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;p&gt;本文随机更新机组笔记&lt;/p&gt;
+&lt;h1 id=&#34;ch2数据表示&#34;&gt;CH2数据表示&lt;/h1&gt;
+&lt;h2 id=&#34;定点数与浮点数&#34;&gt;定点数与浮点数&lt;/h2&gt;
+&lt;h3 id=&#34;定点数&#34;&gt;定点数&lt;/h3&gt;
+&lt;p&gt;小数点的位置固定不变，有两种形式，定点小数和定点整数.
+定点整数要求小数点在数据最低有效数位之后。
+$00101001.$
+定点小数要求小数点在数据最高有效数位之前。
+$0.1111111$&lt;/p&gt;
+&lt;h3 id=&#34;浮点数&#34;&gt;浮点数&lt;/h3&gt;
+&lt;p&gt;基数为2的数F，浮点表示为
+$F = M \times 2^E$
+其中M为尾数，E为阶码。尾数为带符号的纯小数，阶码为带符号的纯整数。按照上式表示的数字既可以是纯整数，也可以是纯小数，因此小数点位置不固定，所以称为浮点数。&lt;/p&gt;
+&lt;p&gt;在计算机中，常用的一种浮点数表示方法为&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;数符&lt;/th&gt;
+&lt;th&gt;阶符&lt;/th&gt;
+&lt;th&gt;阶码数值部分&lt;/th&gt;
+&lt;th&gt;尾数数值部分&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;k&lt;/td&gt;
+&lt;td&gt;n&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;阶码和尾数的数值范围为&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶码与尾数&lt;/th&gt;
+&lt;th&gt;数值&lt;/th&gt;
+&lt;th&gt;阶码与尾数&lt;/th&gt;
+&lt;th&gt;数值&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;阶码最小值&lt;/td&gt;
+&lt;td&gt;$-2^k$&lt;/td&gt;
+&lt;td&gt;阶码最大值&lt;/td&gt;
+&lt;td&gt;$2^k-1$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;尾数最小负值&lt;/td&gt;
+&lt;td&gt;$-1$&lt;/td&gt;
+&lt;td&gt;尾数最大负值&lt;/td&gt;
+&lt;td&gt;$-2^{-n}$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;尾数最小正值&lt;/td&gt;
+&lt;td&gt;$+2^{-n}$&lt;/td&gt;
+&lt;td&gt;尾数最大正值&lt;/td&gt;
+&lt;td&gt;$+(1-2^{-n})$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;因此可以得到浮点数表示的数值范围：
+最小负数:$-2^{2^k-1}=-2^{阶码最大值}$&lt;/p&gt;
+&lt;p&gt;最大负数:$-2$&lt;/p&gt;
+&lt;p&gt;因此浮点数编码位数位
+$m=(n+1)+(k+1)$&lt;/p&gt;
+&lt;h3 id=&#34;补码&#34;&gt;补码&lt;/h3&gt;
+&lt;p&gt;补码的特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;n位补码表示的整数数值范围为$[-2^{n-1},2^{n-1}-1]$&lt;/p&gt;
+&lt;p&gt;n位补码表示的小数数值范围为$[-1,1-2^{-n+1}]$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在补码中0的表示是唯一的&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;变形码，当模数为4时，可以形成双符号位补码，11表示负，00表示正，当两个符号位不同时表示运算溢出，又叫做变形补码。&lt;strong&gt;待更&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;求补运算&lt;/strong&gt;，处理器中有求补指令，其功能是对操作数取负数(所有位变反+1)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;简化加减法
+$[X+Y]_补=&lt;input checked=&#34;&#34; disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; _补+[Y]_补$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;移码&#34;&gt;移码&lt;/h3&gt;
+&lt;p&gt;当一个数字的正数所对的二进制与负数所对的二进制直接比较大小时，会出现负数所对的二进制更大的情况。例如对于十进制数31&lt;/p&gt;
+&lt;p&gt;$10011111_{-31} &amp;gt; 01100001_{31}$&lt;/p&gt;
+&lt;p&gt;如果对负数补码上加上一个偏移量，再进行比较即可反应实际情况。&lt;/p&gt;
+&lt;p&gt;定义为:
+对于包括符号位在内的n位字长，在其真值上加上$2^{n-1}$
+$[X]_移 =2^{n-1}+X$&lt;/p&gt;
+&lt;p&gt;特点：
+$[X]_移&amp;lt;符号为取反&amp;gt;[X]_补$&lt;/p&gt;
+&lt;h3 id=&#34;纠错码&#34;&gt;纠错码&lt;/h3&gt;
+&lt;p&gt;若有n位数据，添加k位校验位，共有n+k位编码&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;海明距离：
+$d = |x-y|=\sum_{i=0}^{m-1}|x_i-y_i|$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;可以使用位运算异或求解，获得海明距离&lt;/p&gt;
+&lt;h3 id=&#34;奇偶校验码&#34;&gt;奇偶校验码&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;奇校验：设
+$X = x_0x_1x_2x_3x_4&amp;hellip;x_{n-1}$
+是一个n位字，在最高位添加一位奇校验c使得
+$X&#39;=cx_0x_1x_2x_3x_4&amp;hellip;x_{n-1}$
+有
+$c \oplus x_1\oplus &amp;hellip; \oplus x_{n-1} = 1$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;偶校验则相反，只能判断是否出错，无法纠错&lt;/p&gt;
+&lt;h3 id=&#34;海明校验码&#34;&gt;海明校验码&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对于16位数据，用
+$D_{16}-D_{0}$
+分别表示高位到低位，要使其拥有1位纠错功能，则需要在有效信息中添加5个校验位，H4～H0
+此时海明码的码长为
+$m=n+k=16+5=21$&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;循环冗余校验码&#34;&gt;循环冗余校验码&lt;/h3&gt;
+&lt;p&gt;大概就是用一个性能比较好的生成多项式构造一个编码，利用模2除法的余数进行校验，而且纠错性能不是100%，先Pass&lt;/p&gt;
+&lt;h2 id=&#34;运算方法和运算器&#34;&gt;运算方法和运算器&lt;/h2&gt;
+&lt;h3 id=&#34;加减运算&#34;&gt;加减运算&lt;/h3&gt;
+&lt;p&gt;利用补码的性质，可以将运算转化为补码的加法。&lt;/p&gt;
+&lt;p&gt;$[X+Y]_补=[X]_补+[Y]_补$&lt;/p&gt;
+&lt;p&gt;这里有一个需要区分的概念，求补运算和求补码的区别&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;求补：对一个正数求补，令其包括符号位在内的各位取反再加1，即可得到该数的负数，若对该负数再求补，可以得到原来的正数。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;$[[X]_补]_求=[-X]_补$&lt;/p&gt;
+&lt;p&gt;同理有&lt;/p&gt;
+&lt;p&gt;$[[-X]_补]_求=[X]_补$&lt;/p&gt;
+&lt;p&gt;可以总结出补码减法的运算法则为&lt;/p&gt;
+&lt;p&gt;$[X-Y]_补 = [X]_补+[-Y]_补 =[X]_补+[[Y]_补]_求$&lt;/p&gt;
+&lt;p&gt;因此可以将减法转化为加法运算&lt;/p&gt;
+&lt;h3 id=&#34;溢出判断&#34;&gt;溢出判断&lt;/h3&gt;
+&lt;p&gt;只有两个符号相同的数字相加，或者符号相异的数相减才有可能发生溢出。
+若分别用xyz表示三个数字的符号位，可得标准最小项
+$\overline{x} \cdot \overline{y} \cdot z+x\cdot y\cdot \overline{z}$
+只有该式为真时，将发生溢出。&lt;/p&gt;
+&lt;h4 id=&#34;双符号位判定&#34;&gt;双符号位判定&lt;/h4&gt;
+&lt;p&gt;每个数字有两个符号位，其中00表示正数，11表示负数
+令OF OverflowFlag表示溢出符号
+$S_1,S_2$
+分别表示运算结果的两符号， 有
+$OF = S_1 \oplus S_2$&lt;/p&gt;
+&lt;h4 id=&#34;进位符号判定&#34;&gt;进位符号判定&lt;/h4&gt;
+&lt;p&gt;$令 C_{n-1}表示最高数值位产生的进位，C_n表示符号位产生的进位$
+即有
+$OF = C_{n-1}\oplus C_n$&lt;/p&gt;
+&lt;h3 id=&#34;一位全加器&#34;&gt;一位全加器&lt;/h3&gt;
+&lt;p&gt;计算每一位逻辑
+$Z_i=X_i\oplus Y_i \oplus C_i$
+进位信号通过递推产生
+可以设计出简单的行波式进位加法器，从最低位开始传递进位信号，是异步时序电路，因此运算速度比较慢。&lt;/p&gt;
+&lt;p&gt;在位数已知的情况下，可以设计电路一次性计算出所有的进位信号，比较理想的情况是以四个位数为一组，该电路增长量级太大，如果需要更多位数可以利用多个该电路组合使用，组成组内并行组间串行进位加法器。&lt;/p&gt;</description>
+        </item>
+        
+    </channel>
 </rss>

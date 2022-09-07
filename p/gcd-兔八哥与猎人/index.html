@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
 Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
-Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ? a : gcd(b,a%b); } int main() { //freopen(&amp;#34;test.txt&amp;#34;, &amp;#34;r&amp;#34;, stdin); 	ios::sync_with_stdio(false); cin.'><title>GCD-兔八哥与猎人</title>
+Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ?'><title>GCD-兔八哥与猎人</title>
 
-<link rel='canonical' href='https://ez4zzw.github.io/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='GCD-兔八哥与猎人'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='GCD-兔八哥与猎人'>
 <meta property='og:description' content='Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
 Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
-Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ? a : gcd(b,a%b); } int main() { //freopen(&amp;#34;test.txt&amp;#34;, &amp;#34;r&amp;#34;, stdin); 	ios::sync_with_stdio(false); cin.'>
-<meta property='og:url' content='https://ez4zzw.github.io/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/'>
+Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ?'>
+<meta property='og:url' content='https://blog.ipandai.club/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='ACM' /><meta property='article:published_time' content='2020-10-07T22:04:23&#43;00:00'/><meta property='article:modified_time' content='2020-10-07T22:04:23&#43;00:00'/>
 <meta name="twitter:title" content="GCD-兔八哥与猎人">
 <meta name="twitter:description" content="Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
 Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
-Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ? a : gcd(b,a%b); } int main() { //freopen(&amp;#34;test.txt&amp;#34;, &amp;#34;r&amp;#34;, stdin); 	ios::sync_with_stdio(false); cin.">
+Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ?">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -36,22 +38,24 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.body.dataset.scheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.body.dataset.scheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
-</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
-            <aside class="sidebar left-sidebar sticky">
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
+            
             <figure class="site-avatar">
+                <a href="/">
                 
                     
                     
@@ -61,23 +65,48 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
-
+                </a>
                 
                     <span class="emoji">🐼</span>
                 
             </figure>
+            
         
-        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
-        <h2 class="site-description">Coding Panda.</h2>
-    </header>
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/EZ4ZZW'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
 
-    <ol class="menu" id="main-menu">
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
         
         
         
 
         <li >
-            <a href='/'>
+            <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -96,7 +125,9 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         
 
         <li >
-            <a href='/about/'>
+            <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -114,7 +145,9 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         
 
         <li >
-            <a href='/archives/'>
+            <a href='/archives/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -133,7 +166,31 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         
 
         <li >
-            <a href='/search/'>
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -149,9 +206,32 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         </li>
         
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://blog.ipandai.club/" selected>English</option>
+                        
+                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -159,7 +239,7 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -167,26 +247,13 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
     </ol>
 </aside>
-
-            <main class="main full-width">
-    <div id="article-toolbar">
-        <a href="https://ez4zzw.github.io" class="back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="15 6 9 12 15 18" />
-</svg>
-
-
-
-            <span>Back</span>
-        </a>
-    </div>
-
+<main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
@@ -201,12 +268,34 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
     </header>
     
 
-    <h2 class="article-title">
-        <a href="/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/">GCD-兔八哥与猎人</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/">GCD-兔八哥与猎人</a>
+        </h2>
+    
+        
+    </div>
 
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 07, 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="12" cy="12" r="9" />
   <polyline points="12 7 12 12 15 15" />
@@ -214,11 +303,21 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 
 
 
-        <time class="article-time--published">Oct 07, 2020</time>
-    </footer></div>
+                <time class="article-time--reading">
+                    1 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
 </header>
 
     <section class="article-content">
+    
+    
     <h1 id="description">Description</h1>
 <p>兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。
 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。
@@ -230,7 +329,42 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 <h1 id="solution">Solution</h1>
 <p>容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$</p>
 <h1 id="code">Code</h1>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span><span class="cp">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span><span class="cp">
 </span><span class="cp">#define mem(a,b) memset(a,b,sizeof(a))
 </span><span class="cp"></span><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">ll</span><span class="p">;</span>
 <span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">ull</span><span class="p">;</span>
@@ -261,7 +395,9 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 
-</code></pre></div>
+</code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 
@@ -290,17 +426,18 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
     </section>
     </footer>
 
+
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
                 >
             </script><script>
     window.addEventListener("DOMContentLoaded", () => {
@@ -316,14 +453,16 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
 <article class="">
     <a href="/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/">
         
@@ -334,8 +473,9 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/51nod3143-%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%9B%BC%E5%93%88%E9%A1%BF%E8%B7%9D%E7%A6%BB/">
         
@@ -346,20 +486,9 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         </div>
     </a>
 </article>
-                
-                    
-<article class="">
-    <a href="/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">
-        
-        
 
-        <div class="article-details">
-            <h2 class="article-title">余数求和-整除分块</h2>
-        </div>
-    </a>
-</article>
+            
                 
-                    
 <article class="">
     <a href="/p/fibonacci-%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82/">
         
@@ -370,8 +499,9 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/triangle-fibonacci-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">
         
@@ -382,13 +512,26 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
         </div>
     </a>
 </article>
+
+            
                 
-            </div>
+<article class="">
+    <a href="/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">DP? 素数筛&#43;Lucas定理&#43;费马小定理</h2>
         </div>
-    
+    </a>
+</article>
+
+            
+        </div>
+    </div>
 </aside>
 
-
+     
     
         
     <div class="disqus-container">
@@ -425,7 +568,7 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (DISQUS) {
+        if (typeof DISQUS == 'object') {
             DISQUS.reset({
                 reload: true
             });
@@ -446,10 +589,12 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+         <br/>
     </section>
 </footer>
+
+    
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
     
@@ -513,24 +658,27 @@ Code #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,si
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
+
             </main>
+    
+
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>
 <script>

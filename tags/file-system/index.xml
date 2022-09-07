@@ -1,65 +1,366 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>File System on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/tags/file-system/</link>
-    <description>Recent content in File System on Coding_Panda&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 17 Aug 2022 10:30:41 +0800</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/file-system/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
-      <link>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
-      <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</guid>
-      <description>Intro 优化I/O的方法
- 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
- 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
- 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
- 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
-Motivation 背景 现状：
- I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
-本文专注于：
- Linux内核中的read()和write()+fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
-此类操作可以在设备I/O操作进行时执行
-因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
-For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
-由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求</description>
-    </item>
-    
-    <item>
-      <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
-      <link>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
-      <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</guid>
-      <description>超低延迟固态硬盘从内核到固件的服务器存储堆栈
-个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
-blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
-message signaled interrupt (MSI)
-1.摘要 flash share
-在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
-对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
-评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
-1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
-某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
-现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
-为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
-因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
-现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
-但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
-the 99th percentile 是0.8ms（apache）
-但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
-原因：略
-从固件到内核优化堆栈的存储。
-  内核级别的增强：
-两个挑战
- Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。  对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
-  固件层设计：
-  ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
- ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。</description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>File System on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/file-system/</link>
+        <description>Recent content in File System on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Wed, 17 Aug 2022 10:30:41 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/file-system/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
+        <link>https://blog.ipandai.club/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
+        <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</guid>
+        <description>&lt;h1 id=&#34;intro&#34;&gt;Intro&lt;/h1&gt;
+&lt;p&gt;优化I/O的方法&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。&lt;/li&gt;
+&lt;li&gt;优化操作系统内核的I/O 栈
+&lt;ul&gt;
+&lt;li&gt;使用轮询来减少上下文切换的开销&lt;/li&gt;
+&lt;li&gt;在底层减少一半的中断处理&lt;/li&gt;
+&lt;li&gt;分散I/O指令&lt;/li&gt;
+&lt;li&gt;I/O block调度机制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;related-work&#34;&gt;Related Work&lt;/h1&gt;
+&lt;p&gt;减少内核的开销&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;减少中断处理的后半部分&lt;/li&gt;
+&lt;li&gt;是用轮询技术而非中断，减少上下文切换&lt;/li&gt;
+&lt;li&gt;混合轮询&lt;/li&gt;
+&lt;li&gt;基于SSD的闪存随机读写简化调度策略&lt;/li&gt;
+&lt;li&gt;在NVMe固件中进行调度&lt;/li&gt;
+&lt;li&gt;对高优先级的任务，提供不同的IO path支持，最小化IO path的开销&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;修改存储接口&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;分散/分散 IO合并多个IO到一个指令，减少往返次数&lt;/li&gt;
+&lt;li&gt;移除doorbell机制和完成信号&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;改善fsync&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;冲fsync请求发出到收到response，延长数据持久化的时间&lt;/li&gt;
+&lt;li&gt;在日志提交记录中使用校验和，有效的重叠日志写入和块写入&lt;/li&gt;
+&lt;li&gt;提出&lt;code&gt;写守序系统调用&lt;/code&gt;，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用户层直接访问外设，存在隔离、保护等安全问题&lt;/p&gt;
+&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;现状：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;I/O 请求过程中太多的步骤&lt;/li&gt;
+&lt;li&gt;页面缓存分配和索引&lt;/li&gt;
+&lt;li&gt;DMA，一系列数据结构的创建&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化&lt;/p&gt;
+&lt;p&gt;本文专注于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux内核中的&lt;code&gt;read()&lt;/code&gt;和&lt;code&gt;write()+fsync()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;基于NVMe SSD的Ext4文件系统&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;for-read-path&#34;&gt;For Read Path&lt;/h2&gt;
+&lt;p&gt;研究发现许多剩余的操作不必在设备I/O之前或之后执行&lt;/p&gt;
+&lt;p&gt;此类操作可以在设备I/O操作进行时执行&lt;/p&gt;
+&lt;p&gt;因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠&lt;/p&gt;
+&lt;h2 id=&#34;for-write-path&#34;&gt;For Write Path&lt;/h2&gt;
+&lt;p&gt;缓冲写&lt;code&gt;write()&lt;/code&gt;，并不发起IO请求，不能异步处理&lt;/p&gt;
+&lt;p&gt;由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求&lt;/p&gt;
+&lt;p&gt;由于文件系统带来的三次IO操作&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;数据块写&lt;/li&gt;
+&lt;li&gt;jbd2发起写入日志Block I/O&lt;/li&gt;
+&lt;li&gt;提交Block I/O&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。&lt;/p&gt;
+&lt;h2 id=&#34;for-lightweight-block-layer&#34;&gt;For Lightweight Block Layer&lt;/h2&gt;
+&lt;p&gt;传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间&lt;/p&gt;
+&lt;p&gt;因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低&lt;/p&gt;
+&lt;p&gt;简化block layer，针对异步IO stack进行优化&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;h2 id=&#34;轻量化的block-io-layer&#34;&gt;轻量化的Block I/O Layer&lt;/h2&gt;
+&lt;p&gt;LBIO，为LL NVMe SSD而设计，只支持IO submission/completion和IO指令tagging&lt;/p&gt;
+&lt;p&gt;只使用&lt;code&gt;lbio&lt;/code&gt;来表示一个block I/O请求，减少了&lt;code&gt;bio-to-request&lt;/code&gt;的时间&lt;/p&gt;
+&lt;p&gt;每个lbio包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LBA&lt;/li&gt;
+&lt;li&gt;I/O 长度&lt;/li&gt;
+&lt;li&gt;复制的页面&lt;/li&gt;
+&lt;li&gt;页面的DMA地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用全局的lbio二位数组来记录&lt;/p&gt;
+&lt;p&gt;行的个数为CPU核心数，行成组被分配到一个NVMe队列&lt;/p&gt;
+&lt;p&gt;例如8核心，4NVMe队列，每个队列分配2个核心的lbio
+当核心数等于队列数时，可以实现无锁的命令提交&lt;/p&gt;
+&lt;p&gt;lbio在全局数组中的索引用作NVMe指令的tag，减少了之前赋tag的过程&lt;/p&gt;
+&lt;p&gt;lbio提交后，调用&lt;code&gt;nvme_queue_lbio&lt;/code&gt;来提交I/O指令&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LBIO不会合并和调度IO请求&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;read-path&#34;&gt;Read Path&lt;/h2&gt;
+&lt;p&gt;Ext4文件系统中，由extent status tree保存缓存到物理文件block的映射&lt;/p&gt;
+&lt;p&gt;预加载映射到内存中，当树太大时，可以只对某个文件预加载&lt;/p&gt;
+&lt;h3 id=&#34;异步页面申请和dma分配&#34;&gt;异步页面申请和DMA分配&lt;/h3&gt;
+&lt;p&gt;提前分配空闲页池&lt;/p&gt;
+&lt;p&gt;为了减少页面DMA的分配，为每个核维护一个DMA映射空闲页（4KB DMA映射页的链表）&lt;/p&gt;
+&lt;p&gt;当空闲页池不够用时，将退化为同步进行（origin）&lt;/p&gt;
+&lt;h3 id=&#34;缓存页索引&#34;&gt;缓存页索引&lt;/h3&gt;
+&lt;p&gt;自旋锁防止并发问题，影响效率&lt;/p&gt;
+&lt;p&gt;在请求发出，但是页面还没有更新时，可能重复请求更新页面&lt;/p&gt;
+&lt;p&gt;解决方案是不限制request，在request completion阶段解决问题&lt;/p&gt;
+&lt;p&gt;尽管多个block请求，但是只能有一个页面被索引&lt;/p&gt;
+&lt;p&gt;对于其他页面，标记为abandoned，中断发生之后，如果标记为abandoned，则清除已经完成的页面&lt;/p&gt;
+&lt;h3 id=&#34;dma解除映射&#34;&gt;DMA解除映射&lt;/h3&gt;
+&lt;p&gt;原本使用中断来处理，改为当系统空闲或等待一个IO请求时处理&lt;/p&gt;
+&lt;p&gt;该方式可能会产生漏洞窗口，若不受到恶意访问，不会产生影响，否则用户可以自行选择关闭惰性DMA映射接触&lt;/p&gt;
+&lt;h2 id=&#34;write--fsync-path&#34;&gt;Write &amp;amp;&amp;amp; fsync Path&lt;/h2&gt;
+&lt;p&gt;当fsync涉及文件系统中事务时，可以将jbd2日志处理重叠处理&lt;/p&gt;
+&lt;h1 id=&#34;experiment&#34;&gt;Experiment&lt;/h1&gt;
+&lt;p&gt;基于Linux内核5.0.5版本&lt;/p&gt;
+&lt;p&gt;使用文件描述符&lt;code&gt;O_AIOS&lt;/code&gt;&lt;/p&gt;
+&lt;h1 id=&#34;evaluation&#34;&gt;Evaluation&lt;/h1&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;提出了AIOS&lt;/p&gt;
+&lt;p&gt;LBIO层&lt;/p&gt;
+&lt;p&gt;AIOS将I/O路径中的同步操作替换为异步操作，以将与读取和fsync相关的计算与设备I/O访问重叠。&lt;/p&gt;
+&lt;p&gt;AIOS在Optane SSD上实现了一位数微秒的I/O延迟。&lt;/p&gt;
+&lt;p&gt;此外，AIOS通过Z-SSD和Optane SSD上的模拟实验和实际测试显著降低延迟和性能改进。&lt;/p&gt;
+&lt;h1 id=&#34;一些启发&#34;&gt;一些启发&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;优化I/O可以从CPU的空闲时间分析，需要考虑内核和文件系统的工作流程，最大程度的利用CPU资源，减少空闲。&lt;/li&gt;
+&lt;li&gt;硬件设备在发展的同时，软件应该提供必要适配&lt;/li&gt;
+&lt;li&gt;减少内核中与I/O相关的结构类型转化，可以有效节省时间开销&lt;/li&gt;
+&lt;li&gt;惰性修改会存在安全问题，在保证安全的情况下，可以提高效率&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
+        <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
+        <link>https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
+        <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</guid>
+        <description>&lt;p&gt;超低延迟固态硬盘从内核到固件的服务器存储堆栈&lt;/p&gt;
+&lt;h1 id=&#34;个别名词解释&#34;&gt;个别名词解释&lt;/h1&gt;
+&lt;p&gt;the 99^th percentile 超过统计数据99%的数是多少&lt;/p&gt;
+&lt;p&gt;blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;message signaled interrupt (MSI)&lt;/strong&gt;&lt;/p&gt;
+&lt;h1 id=&#34;1摘要&#34;&gt;1.摘要&lt;/h1&gt;
+&lt;p&gt;flash share&lt;/p&gt;
+&lt;p&gt;在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。&lt;/p&gt;
+&lt;p&gt;对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。&lt;/p&gt;
+&lt;p&gt;评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。&lt;/p&gt;
+&lt;h1 id=&#34;10-intro&#34;&gt;1.0 Intro&lt;/h1&gt;
+&lt;h2 id=&#34;11-现状&#34;&gt;1.1 现状&lt;/h2&gt;
+&lt;p&gt;网络服务提供商，满足服务级别协议SLA，延迟敏感&lt;/p&gt;
+&lt;p&gt;某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA&lt;/p&gt;
+&lt;p&gt;现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。&lt;/p&gt;
+&lt;p&gt;为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。&lt;/p&gt;
+&lt;p&gt;因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。&lt;/p&gt;
+&lt;p&gt;现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟&lt;/p&gt;
+&lt;p&gt;但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。&lt;/p&gt;
+&lt;p&gt;the 99th percentile 是0.8ms（apache）&lt;/p&gt;
+&lt;p&gt;但是当服务器同时运行pagerank的时候，延迟会增加228.5%。&lt;/p&gt;
+&lt;p&gt;原因：略&lt;/p&gt;
+&lt;p&gt;从固件到内核优化堆栈的存储。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;内核级别的增强：&lt;/p&gt;
+&lt;p&gt;两个挑战&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux的blk-mq导致I/O请求队列化，引入延迟&lt;/li&gt;
+&lt;li&gt;NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;固件层设计：&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;​		即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ULL SSD的新中断处理服务：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。&lt;/p&gt;
+&lt;p&gt;​	通过将NVMe队列和ISR卸载到硬件加速器中来进一步优化NVMe completion routine。&lt;/p&gt;
+&lt;p&gt;​	各种仿真实验后效果不错，效率提高了22%和31%。&lt;/p&gt;
+&lt;h1 id=&#34;20-background&#34;&gt;2.0 Background&lt;/h1&gt;
+&lt;h2 id=&#34;21-存储内核栈&#34;&gt;2.1 存储内核栈&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220810145032258.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220810145032258&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Linux文件系统IO&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;bio&lt;/li&gt;
+&lt;li&gt;request&lt;/li&gt;
+&lt;li&gt;nvme_rw_command&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。&lt;/p&gt;
+&lt;p&gt;当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。&lt;/p&gt;
+&lt;h2 id=&#34;22-设备固件栈&#34;&gt;2.2 设备固件栈&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220810232230437.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220810232230437&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;收到request&lt;/li&gt;
+&lt;li&gt;SQ tail++入队&lt;/li&gt;
+&lt;li&gt;写入SQ门铃寄存器&lt;/li&gt;
+&lt;li&gt;通过DMA读取数据的物理位置&lt;/li&gt;
+&lt;li&gt;SQ head++出队&lt;/li&gt;
+&lt;li&gt;将请求转发至嵌入式缓存层或者FTL&lt;/li&gt;
+&lt;li&gt;当出现缺页或者页面替换时，FTL将目标LBA转换成Z-NAND中相应的物理地址，必要时自行GC&lt;/li&gt;
+&lt;li&gt;在完成I/O请求之后，NVMe控制器增加这个CQ的tail，入队&lt;/li&gt;
+&lt;li&gt;通过DMA传输数据，并修改phase tag&lt;/li&gt;
+&lt;li&gt;主机ISR通过搜索队列中检查phase tag，对于有效的phase tag，ISR清除tag位，并且处理剩余的I/O完成请求程序。&lt;/li&gt;
+&lt;li&gt;CQ head++出队，在SQ中移除相应的记录，并且写入CQ的head doorbell&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;30-跨层设计&#34;&gt;3.0 跨层设计&lt;/h1&gt;
+&lt;h2 id=&#34;31-快速存储的挑战&#34;&gt;3.1 快速存储的挑战&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811110758918.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220811110758918&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;原因是存储栈无法区分来自Apache的I/O请求，及时两个应用需要不同级别I/O的响应。&lt;/p&gt;
+&lt;h1 id=&#34;32-预知灵敏响应&#34;&gt;3.2 预知灵敏响应&lt;/h1&gt;
+&lt;p&gt;为了让内核可以区分I/O 请求的优先级和紧迫程度，修改Linux的进程控制快&lt;code&gt;task_struct&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;为了保证有效性，在&lt;code&gt;address_space&lt;/code&gt;,&lt;code&gt;bio&lt;/code&gt;,&lt;code&gt;request&lt;/code&gt;,&lt;code&gt;nvme_rw_command&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;中都保存工作负载属性，在存储堆栈上打孔。&lt;/p&gt;
+&lt;p&gt;FlashShare同时提供了一个可以在服务器上配置这些属性的工具。叫做&lt;code&gt;chworkload_attr&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;可以方便的修改每个应用的属性并绑定到&lt;code&gt;task_struct&lt;/code&gt;中&lt;/p&gt;
+&lt;p&gt;修改了syscall表&lt;code&gt;arch/x86/entry/syscalls/syscall 64.tbl&lt;/code&gt;添加了两个系统调用，可以从&lt;code&gt;task_struct&lt;/code&gt;中set/get工作属性。&lt;/p&gt;
+&lt;p&gt;在&lt;code&gt;/linux/syscall.h&lt;/code&gt;中进行注册，并带有&lt;code&gt;asmlinkage&lt;/code&gt;标签。&lt;/p&gt;
+&lt;p&gt;用户通过shell给定特定进程，实现于&lt;code&gt;/sched/cores.c&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;33-内核优化&#34;&gt;3.3 内核优化&lt;/h2&gt;
+&lt;p&gt;优化文件系统中的blk-mq和NVMe驱动&lt;/p&gt;
+&lt;p&gt;blk-mq合并重排请求提高了带宽使用，但是引入了延迟&lt;/p&gt;
+&lt;p&gt;跳过所有在线应用的I/O 请求&lt;/p&gt;
+&lt;p&gt;如果离线应用程序的 I/O 请求被 blk-mq 调度到后续在线应用程序发出的同一 LBA，则可能发生危险。&lt;/p&gt;
+&lt;p&gt;如果两个请求的操作类型不同，blk-mq会将两个请求串联。否则blk-mq会将两个请求合并为一个&lt;code&gt;request&lt;/code&gt;并交给NVMe驱动。&lt;/p&gt;
+&lt;p&gt;为了防止延迟敏感的I/O 被NVMe控制器杀死：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;为每个核心创建两个SQ队列和一个CQ队列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811173922087.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220811173922087&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;其中一个SQ保存来自在线应用的I/O请求。&lt;strong&gt;NVMe驱动程序通过管理员队列发送消息，通知NVMe控制器选择一种新的队列调度方法，该方法始终优先安排该SQ中的请求。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;未来避免因优先级带来的饥饿，当该队列中的请求数量大于阈值时，或者没有在规定时间内被满足，NVMe驱动会满足所有离线应用I/O 。&lt;/p&gt;
+&lt;p&gt;实验表明，队列大小为8或者200us的阈值最好。&lt;/p&gt;
+&lt;h1 id=&#34;40-io-completion和缓存&#34;&gt;4.0 I/O Completion和缓存&lt;/h1&gt;
+&lt;p&gt;采用轮询机制时查询I/O Completion时，内核态占用97%。&lt;/p&gt;
+&lt;p&gt;带来两个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;没有为处理I/O 响应单独分配核心，对于多进程下低效&lt;/li&gt;
+&lt;li&gt;我们要减轻处理I/O轮询的核心开销，进一步降低延迟&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;41-中断处理程序&#34;&gt;4.1 中断处理程序&lt;/h2&gt;
+&lt;p&gt;flash share仅对来自在线应用的I/O 请求使用轮询&lt;/p&gt;
+&lt;p&gt;使用信号处理离线应用&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811231355037.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220811231355037&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;修改blk-mq中的&lt;code&gt;submit_bio()&lt;/code&gt;，将由文件系统或缓存的bio插入到mq&lt;/li&gt;
+&lt;li&gt;如果bio是来自离线应用的，则插入队列，as normal&lt;/li&gt;
+&lt;li&gt;如果bio是来自在线应用的，blk-mq则调用&lt;code&gt;queue_rq()&lt;/code&gt;将请求发送至NVMe驱动。&lt;/li&gt;
+&lt;li&gt;NVMe驱动转换I/O 请求为NVMe指令并非插入到响应SQ队列中&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;使用Select-ISR，当请求为离线应用时，CPU核心可以通过上下文切换从NVMe驱动中释放。否则，blk-mq调用轮询机制&lt;code&gt;blk-poll()&lt;/code&gt;。&lt;code&gt;blk-poll()&lt;/code&gt;持续调用&lt;code&gt;nvme_poll()&lt;/code&gt;，检查有效的完成记录是否存在于目标NVMe CQ中。如果存在，blk-mq禁用此CQ的IRQ，以至于MSI信号无法再次捕获blk-mq程序。&lt;code&gt;nvme_poll()&lt;/code&gt;通过检查CQ中的phase tags查找CQ中的新记录。&lt;/p&gt;
+&lt;p&gt;具体来说，&lt;code&gt;nvme poll()&lt;/code&gt;搜索一个CQ记录，其请求信息与&lt;code&gt;blk poll()&lt;/code&gt;等待完成的标签匹配。一旦检测到这样的新记录，blk-mq就会退出在&lt;code&gt;blk poll()&lt;/code&gt;中实现的无限迭代，并将上下文切换到其用户进程。&lt;/p&gt;
+&lt;p&gt;提出&lt;code&gt;I/O-stack accelerator&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;主要目的是将blk-mq的任务迁移到附属于PCIe的加速器中&lt;/p&gt;
+&lt;p&gt;可以使得通过上层文件系统生成的bio直接转换成&lt;code&gt;nvm_rw_command&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;通过特殊的tag索引搜索队列中的元素，并且代表CPU合并bio&lt;/p&gt;
+&lt;p&gt;该方法可以减少36%的I/O completion时间。&lt;/p&gt;
+&lt;h2 id=&#34;42-固件层&#34;&gt;4.2 固件层&lt;/h2&gt;
+&lt;p&gt;创建两个内存分区，一个服务于在线应用，一个服务于离线应用。&lt;/p&gt;
+&lt;p&gt;三种模式&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;固定拆分缓存&lt;/li&gt;
+&lt;li&gt;根据I/O动态划分&lt;/li&gt;
+&lt;li&gt;数据可保留&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812003132031.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220812003132031&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;43-io-stack-acceleration&#34;&gt;4.3 I/O-Stack Acceleration&lt;/h2&gt;
+&lt;p&gt;添加了一个barrier logic，简单的MUX，作为硬件仲裁&lt;/p&gt;
+&lt;p&gt;引入status bitmap来过滤SQ队列中的记录&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;合并逻辑插入一个行的nvme 指令，status bitmap设置为1&lt;/li&gt;
+&lt;li&gt;如果监测到ULL SSD从I/O SQ中读取NVMe指令，status bitmap设置为0&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果状态位图表明CAM中的请求条目（与目标SQ相关联）无效，CAM将跳过对这些条目的搜索。&lt;/p&gt;
+&lt;h1 id=&#34;50-实验&#34;&gt;5.0 实验&lt;/h1&gt;
+&lt;h2 id=&#34;51-实验步骤&#34;&gt;5.1 实验步骤&lt;/h2&gt;
+&lt;p&gt;使用gem5系统结构模拟&lt;/p&gt;
+&lt;p&gt;64位arm指令集&lt;/p&gt;
+&lt;p&gt;Linux 4.9.30&lt;/p&gt;
+&lt;p&gt;8核心2GHz&lt;/p&gt;
+&lt;p&gt;L1 Cache 64KB&lt;/p&gt;
+&lt;p&gt;2GB Memory&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812191343849.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220812191343849&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;related-work&#34;&gt;Related Work&lt;/h1&gt;
+&lt;p&gt;将SSD固件转移到主机上，消除冗余的地址转换&lt;/p&gt;
+&lt;p&gt;根据应用程序特征对缓存进行分区处理，然而不能发挥ULL SSD的作用&lt;/p&gt;
+&lt;p&gt;从文件系统和block IO设备方面优化移动端操作系统，使其提高SQLite的性能，有局限性，应用程序、ULL SSD&lt;/p&gt;
+&lt;p&gt;在内核的多个层对写请求进行调度，容易阻塞读请求和ULL操作&lt;/p&gt;
+&lt;p&gt;根据前台任务和后台任务中的依赖关系，分配优先级，允许后台任务高优先级，IO通常情况下没有依赖关系，效果差，服务器大部分都是多进程&lt;/p&gt;
+&lt;p&gt;考虑对在线应用设置高优先级，但是没有考虑对IO stack中其他部分的影响&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
 </rss>

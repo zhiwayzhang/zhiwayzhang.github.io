@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 小兔的叔叔从外面旅游回来给她带来了一个礼物，小兔高兴地跑回自己的房间，拆开一看是一个棋盘，小兔有所失望。不过没过几天发现了棋盘的好玩之处。从起点$(0，0)$走到终点$(n,n)$的最短路径数是$C_{2n}^{n}$,现在小兔又想如果不穿越对角线(但可接触对角线上的格点)，这样的路径数有多少?小兔想了很长时间都没想出来，现在想请你帮助小兔解决这个问题，对于你来说应该不难吧! $n \leq 35$
 Solution 由于规定不能超过对角线，可用分治的思想，只考虑沿对角线分隔开的三角形的情况，对于一个三角形中，求从$(0，0)$走到终点$(n,n)$的最短路径，观察发现无论怎么走，设到达某一点时向上走了$i$步，向右走了$j$步，都有$i \leq j$这也能通过线性规划相关知识证明。不难发现只是一个类括号匹配问题，可用$Catalan$数求解，计算$C(n)$后即是在一个三角形中的解，答案是$2C(n)$
 $C(n) = \sum_{i=0}^{n-1} C(i) \cdot C(n-i-1)$ 通项公式$C(n)=\frac{C_{2n}^{n}}{n&#43;1}$
 预处理$C(n)$即可
-Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i&#43;&#43;) { LL t = 0; for (int j = 0; j &amp;lt; i; j&#43;&#43;) t &#43;= C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt&#43;&#43; &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; } '><title>小兔的棋盘 组合数学</title>
+Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26  #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i&#43;&#43;) { LL t = 0; for (int j = 0; j &amp;lt; i; j&#43;&#43;) t &#43;= C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt&#43;&#43; &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; }   '><title>小兔的棋盘 组合数学</title>
 
-<link rel='canonical' href='https://ez4zzw.github.io/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='小兔的棋盘 组合数学'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='小兔的棋盘 组合数学'>
 <meta property='og:description' content='Description 小兔的叔叔从外面旅游回来给她带来了一个礼物，小兔高兴地跑回自己的房间，拆开一看是一个棋盘，小兔有所失望。不过没过几天发现了棋盘的好玩之处。从起点$(0，0)$走到终点$(n,n)$的最短路径数是$C_{2n}^{n}$,现在小兔又想如果不穿越对角线(但可接触对角线上的格点)，这样的路径数有多少?小兔想了很长时间都没想出来，现在想请你帮助小兔解决这个问题，对于你来说应该不难吧! $n \leq 35$
 Solution 由于规定不能超过对角线，可用分治的思想，只考虑沿对角线分隔开的三角形的情况，对于一个三角形中，求从$(0，0)$走到终点$(n,n)$的最短路径，观察发现无论怎么走，设到达某一点时向上走了$i$步，向右走了$j$步，都有$i \leq j$这也能通过线性规划相关知识证明。不难发现只是一个类括号匹配问题，可用$Catalan$数求解，计算$C(n)$后即是在一个三角形中的解，答案是$2C(n)$
 $C(n) = \sum_{i=0}^{n-1} C(i) \cdot C(n-i-1)$ 通项公式$C(n)=\frac{C_{2n}^{n}}{n&#43;1}$
 预处理$C(n)$即可
-Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i&#43;&#43;) { LL t = 0; for (int j = 0; j &amp;lt; i; j&#43;&#43;) t &#43;= C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt&#43;&#43; &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; } '>
-<meta property='og:url' content='https://ez4zzw.github.io/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/'>
+Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26  #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i&#43;&#43;) { LL t = 0; for (int j = 0; j &amp;lt; i; j&#43;&#43;) t &#43;= C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt&#43;&#43; &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; }   '>
+<meta property='og:url' content='https://blog.ipandai.club/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='数论' /><meta property='article:tag' content='ACM' /><meta property='article:published_time' content='2019-12-13T18:56:57&#43;00:00'/><meta property='article:modified_time' content='2019-12-13T18:56:57&#43;00:00'/>
 <meta name="twitter:title" content="小兔的棋盘 组合数学">
@@ -23,9 +23,11 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 Solution 由于规定不能超过对角线，可用分治的思想，只考虑沿对角线分隔开的三角形的情况，对于一个三角形中，求从$(0，0)$走到终点$(n,n)$的最短路径，观察发现无论怎么走，设到达某一点时向上走了$i$步，向右走了$j$步，都有$i \leq j$这也能通过线性规划相关知识证明。不难发现只是一个类括号匹配问题，可用$Catalan$数求解，计算$C(n)$后即是在一个三角形中的解，答案是$2C(n)$
 $C(n) = \sum_{i=0}^{n-1} C(i) \cdot C(n-i-1)$ 通项公式$C(n)=\frac{C_{2n}^{n}}{n&#43;1}$
 预处理$C(n)$即可
-Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i&#43;&#43;) { LL t = 0; for (int j = 0; j &amp;lt; i; j&#43;&#43;) t &#43;= C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt&#43;&#43; &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; } ">
+Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26  #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &amp;lt;algorithm&amp;gt;#include &amp;lt;string&amp;gt;#include &amp;lt;cstring&amp;gt;#include &amp;lt;queue&amp;gt;typedef long long LL; using namespace std; LL C[100]; int main() { C[0] = 1; C[1] = 1; for (int i = 2; i &amp;lt;= 80; i&#43;&#43;) { LL t = 0; for (int j = 0; j &amp;lt; i; j&#43;&#43;) t &#43;= C[j]*C[i - j - 1]; C[i] = t; } LL N; int cnt = 1; while (cin &amp;gt;&amp;gt; N) { if (N == -1) break; cout &amp;lt;&amp;lt; cnt&#43;&#43; &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; N &amp;lt;&amp;lt; &amp;#34; &amp;#34; &amp;lt;&amp;lt; C[N]*2 &amp;lt;&amp;lt; endl; } return 0; }   ">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -42,22 +44,24 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.body.dataset.scheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.body.dataset.scheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
-</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
-            <aside class="sidebar left-sidebar sticky">
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
+            
             <figure class="site-avatar">
+                <a href="/">
                 
                     
                     
@@ -67,23 +71,48 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
-
+                </a>
                 
                     <span class="emoji">🐼</span>
                 
             </figure>
+            
         
-        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
-        <h2 class="site-description">Coding Panda.</h2>
-    </header>
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/EZ4ZZW'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
 
-    <ol class="menu" id="main-menu">
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
         
         
         
 
         <li >
-            <a href='/'>
+            <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -102,7 +131,9 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
         
 
         <li >
-            <a href='/about/'>
+            <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -120,7 +151,9 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
         
 
         <li >
-            <a href='/archives/'>
+            <a href='/archives/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -139,7 +172,31 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
         
 
         <li >
-            <a href='/search/'>
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -155,9 +212,32 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
         </li>
         
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://blog.ipandai.club/" selected>English</option>
+                        
+                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -165,7 +245,7 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -173,26 +253,13 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
     </ol>
 </aside>
-
-            <main class="main full-width">
-    <div id="article-toolbar">
-        <a href="https://ez4zzw.github.io" class="back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="15 6 9 12 15 18" />
-</svg>
-
-
-
-            <span>Back</span>
-        </a>
-    </div>
-
+<main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
@@ -200,19 +267,41 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
     
     <header class="article-category">
         
-            <a href="/categories/acm/" >
-                ACM
+            <a href="/categories/notes/" >
+                Notes
             </a>
         
     </header>
     
 
-    <h2 class="article-title">
-        <a href="/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/">小兔的棋盘 组合数学</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/">小兔的棋盘 组合数学</a>
+        </h2>
+    
+        
+    </div>
 
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 13, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="12" cy="12" r="9" />
   <polyline points="12 7 12 12 15 15" />
@@ -220,11 +309,21 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 
 
 
-        <time class="article-time--published">Dec 13, 2019</time>
-    </footer></div>
+                <time class="article-time--reading">
+                    1 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
 </header>
 
     <section class="article-content">
+    
+    
     <h1 id="description">Description</h1>
 <p>小兔的叔叔从外面旅游回来给她带来了一个礼物，小兔高兴地跑回自己的房间，拆开一看是一个棋盘，小兔有所失望。不过没过几天发现了棋盘的好玩之处。从起点$(0，0)$走到终点$(n,n)$的最短路径数是$C_{2n}^{n}$,现在小兔又想如果不穿越对角线(但可接触对角线上的格点)，这样的路径数有多少?小兔想了很长时间都没想出来，现在想请你帮助小兔解决这个问题，对于你来说应该不难吧! $n \leq 35$</p>
 <!-- raw HTML omitted -->
@@ -234,7 +333,37 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 通项公式$C(n)=\frac{C_{2n}^{n}}{n+1}$</p>
 <p>预处理$C(n)$即可</p>
 <h1 id="code">Code</h1>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
@@ -260,7 +389,9 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
-</code></pre></div>
+</code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 
@@ -289,17 +420,18 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
     </section>
     </footer>
 
+
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
                 >
             </script><script>
     window.addEventListener("DOMContentLoaded", () => {
@@ -315,62 +447,16 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
-                
-                    
-<article class="">
-    <a href="/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/">
-        
-        
 
-        <div class="article-details">
-            <h2 class="article-title">Luogu3964-松鼠聚会</h2>
-        </div>
-    </a>
-</article>
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
-<article class="">
-    <a href="/p/51nod3143-%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%9B%BC%E5%93%88%E9%A1%BF%E8%B7%9D%E7%A6%BB/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">51nod3143-切比雪夫距离与曼哈顿距离</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/%E8%8E%AB%E9%98%9F-%E5%B0%8Fb%E7%9A%84%E8%AF%A2%E9%97%AE%E6%B4%9B%E8%B0%B7p2709/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">莫队-小B的询问洛谷P2709</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="">
-    <a href="/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">GCD-兔八哥与猎人</h2>
-        </div>
-    </a>
-</article>
-                
-                    
 <article class="">
     <a href="/p/%E7%BB%9F%E8%AE%A1%E7%A1%AC%E5%B8%81-%E9%80%92%E6%8E%A8/dp/">
         
@@ -381,13 +467,65 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
         </div>
     </a>
 </article>
+
+            
                 
-            </div>
+<article class="">
+    <a href="/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">余数求和-整除分块</h2>
         </div>
-    
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/homomorphic-encryption-security-standard/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Homomorphic Encryption Security Standard</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">使用GitHub Workflow工作流自动部署静态博客</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/homomorphic-encryption-learning-notes/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Homomorphic Encryption Learning Notes</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
 </aside>
 
-
+     
     
         
     <div class="disqus-container">
@@ -424,7 +562,7 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (DISQUS) {
+        if (typeof DISQUS == 'object') {
             DISQUS.reset({
                 reload: true
             });
@@ -445,10 +583,12 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+         <br/>
     </section>
 </footer>
+
+    
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
     
@@ -512,24 +652,27 @@ Code #include &amp;lt;iostream&amp;gt;#include &amp;lt;cstdio&amp;gt;#include &a
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
+
             </main>
+    
+
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>
 <script>

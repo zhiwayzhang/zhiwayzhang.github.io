@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='超低延迟固态硬盘从内核到固件的服务器存储堆栈
 个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
@@ -27,9 +27,9 @@ the 99th percentile 是0.8ms（apache）
   ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
  ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。'><title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
 
-<link rel='canonical' href='https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)'>
 <meta property='og:description' content='超低延迟固态硬盘从内核到固件的服务器存储堆栈
 个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
 blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
@@ -55,7 +55,7 @@ the 99th percentile 是0.8ms（apache）
   固件层设计：
   ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
  ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。'>
-<meta property='og:url' content='https://ez4zzw.github.io/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/'>
+<meta property='og:url' content='https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='Paper' /><meta property='article:published_time' content='2022-08-17T10:30:30&#43;08:00'/><meta property='article:modified_time' content='2022-08-17T10:30:30&#43;08:00'/>
 <meta name="twitter:title" content="Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)">
@@ -85,7 +85,9 @@ the 99th percentile 是0.8ms（apache）
   ​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
  ULL SSD的新中断处理服务：  ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -102,22 +104,24 @@ the 99th percentile 是0.8ms（apache）
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.body.dataset.scheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.body.dataset.scheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
-</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
-            <aside class="sidebar left-sidebar sticky">
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
+            
             <figure class="site-avatar">
+                <a href="/">
                 
                     
                     
@@ -127,23 +131,48 @@ the 99th percentile 是0.8ms（apache）
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
-
+                </a>
                 
                     <span class="emoji">🐼</span>
                 
             </figure>
+            
         
-        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
-        <h2 class="site-description">Coding Panda.</h2>
-    </header>
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/EZ4ZZW'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
 
-    <ol class="menu" id="main-menu">
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
         
         
         
 
         <li >
-            <a href='/'>
+            <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -162,7 +191,9 @@ the 99th percentile 是0.8ms（apache）
         
 
         <li >
-            <a href='/about/'>
+            <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -180,7 +211,9 @@ the 99th percentile 是0.8ms（apache）
         
 
         <li >
-            <a href='/archives/'>
+            <a href='/archives/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -199,7 +232,31 @@ the 99th percentile 是0.8ms（apache）
         
 
         <li >
-            <a href='/search/'>
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -215,9 +272,32 @@ the 99th percentile 是0.8ms（apache）
         </li>
         
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://blog.ipandai.club/" selected>English</option>
+                        
+                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -225,7 +305,7 @@ the 99th percentile 是0.8ms（apache）
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -233,26 +313,13 @@ the 99th percentile 是0.8ms（apache）
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
     </ol>
 </aside>
-
-            <main class="main full-width">
-    <div id="article-toolbar">
-        <a href="https://ez4zzw.github.io" class="back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="15 6 9 12 15 18" />
-</svg>
-
-
-
-            <span>Back</span>
-        </a>
-    </div>
-
+<main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
@@ -267,12 +334,34 @@ the 99th percentile 是0.8ms（apache）
     </header>
     
 
-    <h2 class="article-title">
-        <a href="/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/">Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/">Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</a>
+        </h2>
+    
+        
+    </div>
 
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 17, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="12" cy="12" r="9" />
   <polyline points="12 7 12 12 15 15" />
@@ -280,11 +369,21 @@ the 99th percentile 是0.8ms（apache）
 
 
 
-        <time class="article-time--published">Aug 17, 2022</time>
-    </footer></div>
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
 </header>
 
     <section class="article-content">
+    
+    
     <p>超低延迟固态硬盘从内核到固件的服务器存储堆栈</p>
 <h1 id="个别名词解释">个别名词解释</h1>
 <p>the 99^th percentile 超过统计数据99%的数是多少</p>
@@ -331,7 +430,16 @@ the 99th percentile 是0.8ms（apache）
 <p>​	各种仿真实验后效果不错，效率提高了22%和31%。</p>
 <h1 id="20-background">2.0 Background</h1>
 <h2 id="21-存储内核栈">2.1 存储内核栈</h2>
-<p><img src="https://cdn.ipandai.club/image-20220810145032258.png" alt="image-20220810145032258"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220810145032258.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220810145032258"
+	
+	
+></p>
 <blockquote>
 <p>Linux文件系统IO</p>
 <ul>
@@ -343,7 +451,16 @@ the 99th percentile 是0.8ms（apache）
 <p>存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。</p>
 <p>当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。</p>
 <h2 id="22-设备固件栈">2.2 设备固件栈</h2>
-<p><img src="https://cdn.ipandai.club/image-20220810232230437.png" alt="image-20220810232230437"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220810232230437.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220810232230437"
+	
+	
+></p>
 <ol>
 <li>收到request</li>
 <li>SQ tail++入队</li>
@@ -359,7 +476,16 @@ the 99th percentile 是0.8ms（apache）
 </ol>
 <h1 id="30-跨层设计">3.0 跨层设计</h1>
 <h2 id="31-快速存储的挑战">3.1 快速存储的挑战</h2>
-<p><img src="https://cdn.ipandai.club/image-20220811110758918.png" alt="image-20220811110758918"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220811110758918.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220811110758918"
+	
+	
+></p>
 <p>原因是存储栈无法区分来自Apache的I/O请求，及时两个应用需要不同级别I/O的响应。</p>
 <h1 id="32-预知灵敏响应">3.2 预知灵敏响应</h1>
 <p>为了让内核可以区分I/O 请求的优先级和紧迫程度，修改Linux的进程控制快<code>task_struct</code>.</p>
@@ -380,7 +506,16 @@ the 99th percentile 是0.8ms（apache）
 <ul>
 <li>为每个核心创建两个SQ队列和一个CQ队列</li>
 </ul>
-<p><img src="https://cdn.ipandai.club/image-20220811173922087.png" alt="image-20220811173922087"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220811173922087.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220811173922087"
+	
+	
+></p>
 <p>其中一个SQ保存来自在线应用的I/O请求。<strong>NVMe驱动程序通过管理员队列发送消息，通知NVMe控制器选择一种新的队列调度方法，该方法始终优先安排该SQ中的请求。</strong></p>
 <p>未来避免因优先级带来的饥饿，当该队列中的请求数量大于阈值时，或者没有在规定时间内被满足，NVMe驱动会满足所有离线应用I/O 。</p>
 <p>实验表明，队列大小为8或者200us的阈值最好。</p>
@@ -394,7 +529,16 @@ the 99th percentile 是0.8ms（apache）
 <h2 id="41-中断处理程序">4.1 中断处理程序</h2>
 <p>flash share仅对来自在线应用的I/O 请求使用轮询</p>
 <p>使用信号处理离线应用</p>
-<p><img src="https://cdn.ipandai.club/image-20220811231355037.png" alt="image-20220811231355037"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220811231355037.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220811231355037"
+	
+	
+></p>
 <ol>
 <li>修改blk-mq中的<code>submit_bio()</code>，将由文件系统或缓存的bio插入到mq</li>
 <li>如果bio是来自离线应用的，则插入队列，as normal</li>
@@ -416,7 +560,16 @@ the 99th percentile 是0.8ms（apache）
 <li>根据I/O动态划分</li>
 <li>数据可保留</li>
 </ol>
-<p><img src="https://cdn.ipandai.club/image-20220812003132031.png" alt="image-20220812003132031"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220812003132031.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220812003132031"
+	
+	
+></p>
 <h2 id="43-io-stack-acceleration">4.3 I/O-Stack Acceleration</h2>
 <p>添加了一个barrier logic，简单的MUX，作为硬件仲裁</p>
 <p>引入status bitmap来过滤SQ队列中的记录</p>
@@ -433,7 +586,16 @@ the 99th percentile 是0.8ms（apache）
 <p>8核心2GHz</p>
 <p>L1 Cache 64KB</p>
 <p>2GB Memory</p>
-<p><img src="https://cdn.ipandai.club/image-20220812191343849.png" alt="image-20220812191343849"  /></p>
+<p><img src="https://cdn.ipandai.club/image-20220812191343849.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220812191343849"
+	
+	
+></p>
 <h1 id="related-work">Related Work</h1>
 <p>将SSD固件转移到主机上，消除冗余的地址转换</p>
 <p>根据应用程序特征对缓存进行分区处理，然而不能发挥ULL SSD的作用</p>
@@ -474,17 +636,18 @@ the 99th percentile 是0.8ms（apache）
     </section>
     </footer>
 
+
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
                 >
             </script><script>
     window.addEventListener("DOMContentLoaded", () => {
@@ -500,14 +663,16 @@ the 99th percentile 是0.8ms（apache）
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
 <article class="">
     <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">
         
@@ -518,13 +683,13 @@ the 99th percentile 是0.8ms（apache）
         </div>
     </a>
 </article>
-                
-            </div>
+
+            
         </div>
-    
+    </div>
 </aside>
 
-
+     
     
         
     <div class="disqus-container">
@@ -561,7 +726,7 @@ the 99th percentile 是0.8ms（apache）
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (DISQUS) {
+        if (typeof DISQUS == 'object') {
             DISQUS.reset({
                 reload: true
             });
@@ -582,10 +747,12 @@ the 99th percentile 是0.8ms（apache）
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+         <br/>
     </section>
 </footer>
+
+    
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
     
@@ -649,24 +816,81 @@ the 99th percentile 是0.8ms（apache）
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
+
             </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#11-现状">1.1 现状</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#21-存储内核栈">2.1 存储内核栈</a></li>
+    <li><a href="#22-设备固件栈">2.2 设备固件栈</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#31-快速存储的挑战">3.1 快速存储的挑战</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#33-内核优化">3.3 内核优化</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#41-中断处理程序">4.1 中断处理程序</a></li>
+    <li><a href="#42-固件层">4.2 固件层</a></li>
+    <li><a href="#43-io-stack-acceleration">4.3 I/O-Stack Acceleration</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#51-实验步骤">5.1 实验步骤</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>
 <script>

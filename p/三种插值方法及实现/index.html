@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
 常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
 使用语言: Python
 使用下面的数据，预测函数在x=1处的值
-x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+1 2  x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567])   线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
 $p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
 $p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
 我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
@@ -13,16 +13,16 @@ $p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
 $p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
 是Lagrange插值的特殊形式
 此处给出线性插值的代码实现：
-import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.'><title>三种插值方法及实现</title>
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.'><title>三种插值方法及实现</title>
 
-<link rel='canonical' href='https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='三种插值方法及实现'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='三种插值方法及实现'>
 <meta property='og:description' content='插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
 常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
 使用语言: Python
 使用下面的数据，预测函数在x=1处的值
-x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+1 2  x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567])   线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
 $p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
 $p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
 我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
@@ -30,8 +30,8 @@ $p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
 $p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
 是Lagrange插值的特殊形式
 此处给出线性插值的代码实现：
-import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.'>
-<meta property='og:url' content='https://ez4zzw.github.io/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/'>
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.'>
+<meta property='og:url' content='https://blog.ipandai.club/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='Note' /><meta property='article:tag' content='Numpy' /><meta property='article:published_time' content='2021-04-19T22:22:57&#43;00:00'/><meta property='article:modified_time' content='2021-04-19T22:22:57&#43;00:00'/>
 <meta name="twitter:title" content="三种插值方法及实现">
@@ -39,7 +39,7 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
 使用语言: Python
 使用下面的数据，预测函数在x=1处的值
-x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+1 2  x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567])   线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
 $p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
 $p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
 我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
@@ -47,9 +47,11 @@ $p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
 $p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
 是Lagrange插值的特殊形式
 此处给出线性插值的代码实现：
-import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.">
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &amp;#39;&amp;#39;&amp;#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np.">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -66,22 +68,24 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.body.dataset.scheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.body.dataset.scheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
-</script><div class="container main-container flex on-phone--column extended article-page with-toolbar">
-            <aside class="sidebar left-sidebar sticky">
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
+            
             <figure class="site-avatar">
+                <a href="/">
                 
                     
                     
@@ -91,23 +95,48 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
-
+                </a>
                 
                     <span class="emoji">🐼</span>
                 
             </figure>
+            
         
-        <h1 class="site-name"><a href="https://ez4zzw.github.io">Coding_Panda&#39;s Blog</a></h1>
-        <h2 class="site-description">Coding Panda.</h2>
-    </header>
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/EZ4ZZW'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
 
-    <ol class="menu" id="main-menu">
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
         
         
         
 
         <li >
-            <a href='/'>
+            <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -126,7 +155,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         
 
         <li >
-            <a href='/about/'>
+            <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -144,7 +175,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         
 
         <li >
-            <a href='/archives/'>
+            <a href='/archives/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -163,7 +196,31 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         
 
         <li >
-            <a href='/search/'>
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -179,9 +236,32 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         </li>
         
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://blog.ipandai.club/" selected>English</option>
+                        
+                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -189,7 +269,7 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -197,26 +277,13 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
     </ol>
 </aside>
-
-            <main class="main full-width">
-    <div id="article-toolbar">
-        <a href="https://ez4zzw.github.io" class="back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="15 6 9 12 15 18" />
-</svg>
-
-
-
-            <span>Back</span>
-        </a>
-    </div>
-
+<main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
@@ -231,12 +298,34 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
     </header>
     
 
-    <h2 class="article-title">
-        <a href="/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/">三种插值方法及实现</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%B8%89%E7%A7%8D%E6%8F%92%E5%80%BC%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/">三种插值方法及实现</a>
+        </h2>
+    
+        
+    </div>
 
+    
     <footer class="article-time">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 19, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="12" cy="12" r="9" />
   <polyline points="12 7 12 12 15 15" />
@@ -244,19 +333,37 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 
 
 
-        <time class="article-time--published">Apr 19, 2021</time>
-    </footer></div>
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
 </header>
 
     <section class="article-content">
+    
+    
     <h1 id="插值方法">插值方法</h1>
 <p>插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。</p>
 <p>常用的插值方法有很多，本文章给出三种常见的插值方法的实现。</p>
 <p>使用语言: Python</p>
 <p>使用下面的数据，预测函数在x=1处的值</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span>
-</code></pre></div><!-- raw HTML omitted -->
+</code></pre></td></tr></table>
+</div>
+</div><!-- raw HTML omitted -->
 <h1 id="线性插值">线性插值</h1>
 <p>线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$
 可以根据点斜式方程求解
@@ -269,7 +376,28 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <p>$p(x)=y_0 l_0(x)+y_1 l_1(x)$</p>
 <p>是Lagrange插值的特殊形式</p>
 <p>此处给出线性插值的代码实现：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
     <span class="s1">&#39;&#39;&#39;
@@ -286,7 +414,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span>
 <span class="n">answer</span> <span class="o">=</span> <span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="c1"># 保留四位小数</span>
-</code></pre></div><h1 id="largrange插值">Largrange插值</h1>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="largrange插值">Largrange插值</h1>
 <p>根据Lagrange插值基函数$l_k(x)$，其满足如下性质
 当$i=k,l_k(x_i)=1$</p>
 <p>当$i\not ={k}, l_k(x_i) = 0$</p>
@@ -295,7 +425,36 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <p>$p(x)$满足$p(x_i)=y_i, i = 0,1,&hellip;,n$</p>
 <p>即根据插值结点确定的方程，可以使得$p(x_i)=y_i$，是一种可行的插值方法，极大的提高了插值精度。</p>
 <p>并且当只有两个插值结点时，Lagrange插值就退化成了线性插值，当有三个结点时，退化成抛物线插值。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="k">def</span> <span class="nf">largrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
@@ -320,7 +479,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <span class="n">answer</span> <span class="o">=</span> <span class="n">largrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-</code></pre></div><p>运行结果：
+</code></pre></td></tr></table>
+</div>
+</div><p>运行结果：
 0.0634</p>
 <h1 id="newton插值">Newton插值</h1>
 <p>我们引入差商的概念，
@@ -332,7 +493,7 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <p>我们可以得到差商的一般定义，对于k阶差商</p>
 <p>$f[x_0, x_1, &hellip;, x_k] = \frac{f[x_1, &hellip;, x_k] - f[x_0, &hellip;, x_{k-1}]}{x_k - x_0}$
 计算差商可以通过差商表来计算</p>
-<table>
+<div class="table-wrapper"><table>
 <thead>
 <tr>
 <th>$x_i$</th>
@@ -400,7 +561,7 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <td>$f[x_0, x_1, &hellip;, x_n]$</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>将对角线上的差商值用来构造插值函数</p>
 <p>$f(x) =  f(x_0) + f[x_0, x_1](x- x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + &hellip; + f[x_0, &hellip;, x_n](x - x_0)&hellip;(x - x_{n-1}) + f[x,x_0,x_1,x_2,&hellip;,x_n](x - x_0)&hellip;(x - x_{n})$</p>
 <p>其中$R(x) = f[x,x_0,x_1,x_2,&hellip;,x_n](x - x_0)&hellip;(x - x_{n})$为插值余项</p>
@@ -408,7 +569,50 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <p>$R(x) = N(x)+R(x)$</p>
 <p>牛顿插值的插值基函数有可继承的特点，可以优化计算方法</p>
 <p>直接利用上一次的计算结果增量更新</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
 <span class="c1"># 计算差商表第j列的元素</span>
@@ -447,7 +651,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span>
 <span class="n">answer</span> <span class="o">=</span> <span class="n">newton</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-</code></pre></div><p>运行结果：</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>运行结果：</p>
 <p>差商表</p>
 <p>[ 0.5        -0.6931      0.          0.          0.        ]</p>
 <p>[ 0.6        -0.5108      1.823       0.          0.        ]</p>
@@ -486,17 +692,18 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
     </section>
     </footer>
 
+
     
         <link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
             ><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
                 >
             </script><script 
-                src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"crossorigin="anonymous"
-                defer="true"
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
                 >
             </script><script>
     window.addEventListener("DOMContentLoaded", () => {
@@ -512,14 +719,16 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
 <article class="">
     <a href="/p/%E5%B8%B8%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95/">
         
@@ -530,8 +739,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/%E6%95%B0%E5%80%BC%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">
         
@@ -542,8 +752,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/%E6%96%B9%E7%A8%8B%E6%B1%82%E6%A0%B9%E7%9A%84%E8%BF%AD%E4%BB%A3%E6%B3%95/">
         
@@ -554,8 +765,9 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/%E8%BF%AD%E4%BB%A3%E6%B3%95%E6%B1%82%E8%A7%A3%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/">
         
@@ -566,13 +778,13 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
         </div>
     </a>
 </article>
-                
-            </div>
+
+            
         </div>
-    
+    </div>
 </aside>
 
-
+     
     
         
     <div class="disqus-container">
@@ -609,7 +821,7 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 
 <script>
     window.addEventListener('onColorSchemeChange', (e) => {
-        if (DISQUS) {
+        if (typeof DISQUS == 'object') {
             DISQUS.reset({
                 reload: true
             });
@@ -630,10 +842,12 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="2.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
+         <br/>
     </section>
 </footer>
+
+    
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
     
@@ -697,24 +911,27 @@ import numpy as np def linear(x, y, x0): &amp;#39;&amp;#39;&amp;#39; x : 为横�
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
+
             </main>
+    
+
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
             </script><script type="text/javascript" src="/ts/main.js" defer></script>
 <script>

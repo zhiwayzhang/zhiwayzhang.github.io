@@ -1,20 +1,257 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Go on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/tags/go/</link>
-    <description>Recent content in Go on Coding_Panda&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 25 Jan 2022 20:14:16 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Go语言学习笔记</title>
-      <link>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>Go on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/go/</link>
+        <description>Recent content in Go on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 25 Jan 2022 20:14:16 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/go/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Go语言学习笔记</title>
+        <link>https://blog.ipandai.club/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;p&gt;Go语言源码阅读与原理分析&lt;/p&gt;
+&lt;h1 id=&#34;go的编译&#34;&gt;Go的编译&lt;/h1&gt;
+&lt;h1 id=&#34;数据结构&#34;&gt;数据结构&lt;/h1&gt;
+&lt;h2 id=&#34;数组&#34;&gt;数组&lt;/h2&gt;
+&lt;p&gt;声明&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]{&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;语法糖&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;第二种编译器会进行转换成第一种&lt;/p&gt;
+&lt;p&gt;上限推导&lt;/p&gt;
+&lt;p&gt;语句转换&lt;/p&gt;
+&lt;p&gt;由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;元素数量&lt;code&gt;&amp;lt;=&lt;/code&gt;4，元素放在栈上&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;gt;&lt;/code&gt;4时，元素保存在静态区，运行时取出&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;元素数量&lt;code&gt;&amp;lt;=&lt;/code&gt;4时，简化为赋值表达式&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;arr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;review&#34;&gt;review&lt;/h3&gt;
+&lt;p&gt;编译之后的二进制文件包含：栈，堆，数据段，代码段&lt;/p&gt;
+&lt;p&gt;堆栈为动态区域，数据段和代码段为静态区域&lt;/p&gt;
+&lt;p&gt;栈：编译器自动分配释放，存放参数值，局部变量等&lt;/p&gt;
+&lt;p&gt;堆：程序动态申请的内存，malloc，用链表实现&lt;/p&gt;
+&lt;p&gt;代码区：函数体的二进制代码&lt;/p&gt;
+&lt;p&gt;数据段：包含&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;只读数据段 const&lt;/li&gt;
+&lt;li&gt;已初始化的读写数据段 初始化的全局变量，初始化的静态局部变量static&lt;/li&gt;
+&lt;li&gt;未初始化段 未初始化的全局变量和静态变量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;当数组元素个数大于四个时&lt;/p&gt;
+&lt;p&gt;获取一个唯一的staticname，在静态存储区进行初始化，之后再拷贝到栈上&lt;/p&gt;
+&lt;p&gt;访问和赋值&lt;/p&gt;
+&lt;p&gt;编译器的静态类型检查时检测数组越界，索引是否为非负整数，索引越界&lt;/p&gt;
+&lt;p&gt;使用变量作为索引时，无法编译检查，需要&lt;strong&gt;运行时&lt;/strong&gt;阻止，出发panic&lt;/p&gt;
+&lt;p&gt;发现数组切片字符串越界时通过运行时的&lt;code&gt;runtime.panicIndex&lt;/code&gt;和&lt;code&gt;runtime.goPanicIndex&lt;/code&gt;触发panic&lt;/p&gt;
+&lt;p&gt;下标没有越界时，编译器获取数组的内存地址和访问下标，计算出目标地址，使用Load将元素加载到内存中&lt;/p&gt;
+&lt;p&gt;编译时插入运行时越界检查函数&lt;/p&gt;
+&lt;p&gt;赋值时先确定目标元素地址，使用Store指令将数据存入地址，在编译阶段而不是运行时&lt;/p&gt;
+&lt;h1 id=&#34;切片&#34;&gt;切片&lt;/h1&gt;
+&lt;p&gt;编译时确定类型，存储在Extra字段&lt;/p&gt;
+&lt;p&gt;数据结构&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;Data&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;Len&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;Cap&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;切片只在运行时确定内容&lt;/p&gt;
+&lt;h2 id=&#34;初始化&#34;&gt;初始化&lt;/h2&gt;
+&lt;h3 id=&#34;切片slicelr&#34;&gt;切片&lt;code&gt;slice[l:r]&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;调用SliceMake函数，参数为 元素类型，数组指针，切片大小和容量&lt;/p&gt;
+&lt;p&gt;这样初始化的切片创建了指向原切片的结构体&lt;/p&gt;
+&lt;h3 id=&#34;字面量&#34;&gt;字面量&lt;/h3&gt;
+&lt;p&gt;编译时：&lt;/p&gt;
+&lt;p&gt;对字面量数组做大小推断，初始化为数组&lt;/p&gt;
+&lt;p&gt;创建一个数组指针，指向静态数组&lt;/p&gt;
+&lt;p&gt;使用&lt;code&gt;[:]&lt;/code&gt;通过指针创建切片&lt;/p&gt;
+&lt;h3 id=&#34;make&#34;&gt;make&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;make([]int, len, cap)&lt;/code&gt;
+会做参数校验，&lt;code&gt;cap &amp;gt;= len&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;判断切片大小和容量是否足够&lt;/li&gt;
+&lt;li&gt;切片是否发生了逃逸，最终在堆上初始化&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;切片太大时也会在堆上初始化，使用运行时makeslice&lt;/p&gt;
+&lt;p&gt;makeslice会在堆上申请连续的内存&lt;/p&gt;
+&lt;p&gt;可能的运行时错误：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;内存空间大小发生了溢出&lt;/li&gt;
+&lt;li&gt;申请内存大于最大可分配内存&lt;/li&gt;
+&lt;li&gt;传入的&lt;code&gt;len&amp;lt;0 or len &amp;gt; cap&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;访问&#34;&gt;访问&lt;/h3&gt;
+&lt;p&gt;对len和cap的访问会在编译时替换为常量&lt;/p&gt;
+&lt;p&gt;使用index获取元素会直接转换为对地址的访问&lt;/p&gt;
+&lt;h3 id=&#34;append和扩容&#34;&gt;append和扩容&lt;/h3&gt;
+&lt;p&gt;如果append之后&lt;strong&gt;不需要&lt;/strong&gt;赋值给原有变量：&lt;/p&gt;
+&lt;p&gt;判断append之后的大小和容量触发扩容&lt;/p&gt;
+&lt;p&gt;如果append之后&lt;strong&gt;需要&lt;/strong&gt;赋值给原有变量：&lt;/p&gt;
+&lt;p&gt;append后的切片覆盖原切片，编译器优化为不发生拷贝，直接操作原切片&lt;/p&gt;
+&lt;h4 id=&#34;growslice&#34;&gt;growslice&lt;/h4&gt;
+&lt;p&gt;先确定新切片容量，扩容策略：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果期望容量大于当前的两倍，就会使用期望容量&lt;/li&gt;
+&lt;li&gt;当前切片长度小于1024会将容量翻倍&lt;/li&gt;
+&lt;li&gt;如果当前的切片长度大于1024每次增加25%的容量，直到新容量大于期望容量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;扩容之后进行内存对齐，提高内存分配效率，减少碎片&lt;/p&gt;
+&lt;p&gt;使用预制的内存大小数组向上取整，然后通过该内存大小重新计算cap&lt;/p&gt;
+&lt;p&gt;对于非指针切片，将原数组内容拷贝至新内存&lt;/p&gt;
+&lt;p&gt;growslice返回的是一个新的切片，都是新的 slice(p, len, newcap)&lt;/p&gt;
+&lt;h2 id=&#34;copy&#34;&gt;copy&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;copy(a,b)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;编译时会直接使用memmove拷贝到内存&lt;/p&gt;
+&lt;p&gt;运行时会直接进行合法性检查&lt;/p&gt;
+&lt;p&gt;大切片性能开销比较大&lt;/p&gt;
+&lt;h1 id=&#34;哈希&#34;&gt;哈希&lt;/h1&gt;
+&lt;h2 id=&#34;解决冲突&#34;&gt;解决冲突&lt;/h2&gt;
+&lt;h3 id=&#34;开放寻址&#34;&gt;开放寻址&lt;/h3&gt;
+&lt;p&gt;从index处向后寻找空闲位置，读取会从index处向后匹配相等元素&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;装载因子=元素数量/数组大小&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;装载因子增大，线性探测法的平均用时增加，最坏到On&lt;/p&gt;
+&lt;h3 id=&#34;拉链法&#34;&gt;拉链法&lt;/h3&gt;
+&lt;p&gt;使用链表数组，每个数组是一个桶，通过index访问&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;装载因子=元素数量/桶数量&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;一般情况下不超过1，装载因子太大会触发扩容&lt;/p&gt;
+&lt;h2 id=&#34;struct&#34;&gt;struct&lt;/h2&gt;
+&lt;p&gt;runtime hmap&lt;/p&gt;
+&lt;p&gt;保存对数，桶的数量都是2的倍数&lt;/p&gt;
+&lt;p&gt;包含runtime bmap，能存储8个键值对，超过8个时会使用extra.nextOverflow中的溢出桶存&lt;/p&gt;
+&lt;p&gt;bmap中存储key哈希的高八位tophash uint8&lt;/p&gt;
+&lt;h2 id=&#34;初始化-1&#34;&gt;初始化&lt;/h2&gt;
+&lt;h3 id=&#34;字面量-1&#34;&gt;字面量&lt;/h3&gt;
+&lt;p&gt;当哈希表的元素&lt;code&gt;&amp;lt;=25&lt;/code&gt;个时，将初始化转化为&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;s&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;to&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;make&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;hash&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;超过时会转换为两个切片循环加入hash&lt;/p&gt;
+&lt;h3 id=&#34;运行时&#34;&gt;运行时&lt;/h3&gt;
+&lt;p&gt;当桶的数量小于$2^4$，不创建溢出桶&lt;/p&gt;
+&lt;p&gt;否则创建$2^{B-4}$个溢出桶&lt;/p&gt;
+&lt;h2 id=&#34;读写&#34;&gt;读写&lt;/h2&gt;
+&lt;p&gt;遍历使用for range&lt;/p&gt;
+&lt;p&gt;删除&lt;code&gt;delete(hash, key)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;bmap的实际存储是tophash为一个连续的空间，keys，values 。。。&lt;/p&gt;
+&lt;p&gt;访问时限获取哈希值，再获取哈希的高8位&lt;/p&gt;
+&lt;p&gt;通过哈希的最低几位获取桶序号&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这里因为哈希计算出来并不在桶范围内，在二进制中体现出来是取高几位和低几位，低几位就是取模之后的值，因此可以有效避免桶中有大量重复tophash&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在bmap中先比较哈希高8位，加速访问&lt;/p&gt;
+&lt;p&gt;匹配成功会根据指针和偏移量获取key进行比较，匹配成功再获取value&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;尽量使用双值接收结果，防止实际的value是nil&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;写入时会遍历正常桶和溢出桶，溢出桶也包含tophash&lt;/p&gt;
+&lt;p&gt;如果桶满，创建新的桶护着在溢出桶中保存&lt;/p&gt;
+&lt;p&gt;获取存储地址后，将值拷贝到内存&lt;/p&gt;
+&lt;h3 id=&#34;扩容&#34;&gt;扩容&lt;/h3&gt;
+&lt;p&gt;在写入时，触发扩容&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;装载因子超过6.5&lt;/li&gt;
+&lt;li&gt;哈希使用了太多溢出桶，容易产生内存泄露&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;扩容非原子过程，扩容前判断是否正在扩容&lt;/p&gt;
+&lt;p&gt;溢出桶太多触发等量扩容，新桶保存数据，回收旧桶（大量的写入删除操作）&lt;/p&gt;
+&lt;p&gt;翻倍扩容，随着写操作增量进行，不会产生性能的巨大抖动，创建一组新桶和溢出桶，将原来的桶组设置到oldbuckets，溢出桶也设置到oldoverflow上&lt;/p&gt;
+&lt;p&gt;数据迁移发生在运行时 evacuate，对传入桶的元素再分配，每个旧桶元素分流到两个新桶&lt;/p&gt;
+&lt;p&gt;分流逻辑：原来通过取模得到的桶掩码为&lt;code&gt;0b11&lt;/code&gt;，扩容翻倍之后将变为&lt;code&gt;0b111&lt;/code&gt;，因此该数据被分流到3号和7号桶&lt;/p&gt;
+&lt;p&gt;当旧桶完全被分流后清除oldbuckets和oldoverflow，通过计数器控制&lt;/p&gt;
+&lt;p&gt;扩容期间访问时，若oldbuckets存在，并且旧桶没有被分流时会先去旧桶寻找&lt;/p&gt;
+&lt;p&gt;扩容期间写入赋值时，会触发增量拷贝，向新桶分流&lt;/p&gt;
+&lt;h2 id=&#34;删除&#34;&gt;删除&lt;/h2&gt;
+&lt;p&gt;扩容期间删除，会分流桶中的元素，然后找到桶中的目标键值对删除&lt;/p&gt;
+&lt;p&gt;与写入类似&lt;/p&gt;
+&lt;p&gt;访问，写入删除都是运行时处理&lt;/p&gt;
+&lt;h1 id=&#34;字符串&#34;&gt;字符串&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;只读&lt;/strong&gt;的字节数组，使用连续空间&lt;/p&gt;
+&lt;p&gt;data和len&lt;/p&gt;
+&lt;p&gt;分配在只读的内存空间，修改需要和&lt;code&gt;[]byte&lt;/code&gt;相互转换&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;拷贝内存到栈或者堆&lt;/li&gt;
+&lt;li&gt;将变量修改为&lt;code&gt;[]byte&lt;/code&gt;然后修改字节数据&lt;/li&gt;
+&lt;li&gt;修改字节数组转回&lt;code&gt;string&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;str&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello\&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;str&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;`
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;{
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;    &amp;#34;name&amp;#34; : &amp;#34;panda&amp;#34;,
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;    &amp;#34;tags&amp;#34; : [&amp;#34;panda&amp;#34;]
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;}
+&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;赋值时使用scanner解析字符串成token流&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;strconv.Unquote&lt;/code&gt;去除引号&lt;/p&gt;
+&lt;p&gt;使用+拼接，拼接字符串的数量小于等于五个时，使用concatstring{2,3,4,5}，否则使用runtime.concatstrings，传入数组切片，最终通过运行时过滤空字符串计算拼接后长度，如果非空字符串数量为1，并且不在栈上，则直接返回&lt;/p&gt;
+&lt;p&gt;拷贝到目标地址空间&lt;/p&gt;
+&lt;p&gt;类型转换有性能损失，需要拷贝数据&lt;/p&gt;
+&lt;h1 id=&#34;函数调用&#34;&gt;函数调用&lt;/h1&gt;
+&lt;p&gt;c语言使用寄存器传参数，小于等于六个时使用寄存器，大于6个的参数使用栈传递，使用寄存器传递返回值，并且只使用一个寄存器，因此只能有一个返回值。&lt;/p&gt;
+&lt;p&gt;go语言使用栈传递参数和返回值，因此存在性能损失，但是可以支持多返回值，便于维护编译器，不需要考虑寄存器数量和命名。&lt;/p&gt;
+&lt;h2 id=&#34;参数传递方式&#34;&gt;参数传递方式&lt;/h2&gt;
+&lt;p&gt;传值，基本类型，结构体，指针，对参数进行拷贝&lt;/p&gt;</description>
+        </item>
+        
+    </channel>
 </rss>

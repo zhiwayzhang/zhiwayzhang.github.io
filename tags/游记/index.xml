@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>游记 on Coding_Panda&#39;s Blog</title>
-    <link>https://ez4zzw.github.io/tags/%E6%B8%B8%E8%AE%B0/</link>
-    <description>Recent content in 游记 on Coding_Panda&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sat, 16 Nov 2019 21:48:04 +0000</lastBuildDate><atom:link href="https://ez4zzw.github.io/tags/%E6%B8%B8%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>WHUT新生赛&#34;游记&#34;</title>
-      <link>https://ez4zzw.github.io/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</link>
-      <pubDate>Sat, 16 Nov 2019 21:48:04 +0000</pubDate>
-      
-      <guid>https://ez4zzw.github.io/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</guid>
-      <description>&lt;h1 id=&#34;day--n&#34;&gt;Day -N&lt;/h1&gt;
-&lt;p&gt;快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
+    <channel>
+        <title>游记 on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/%E6%B8%B8%E8%AE%B0/</link>
+        <description>Recent content in 游记 on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sat, 16 Nov 2019 21:48:04 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/%E6%B8%B8%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>WHUT新生赛&#34;游记&#34;</title>
+        <link>https://blog.ipandai.club/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</link>
+        <pubDate>Sat, 16 Nov 2019 21:48:04 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</guid>
+        <description>&lt;h1 id=&#34;day--n&#34;&gt;Day -N&lt;/h1&gt;
+&lt;p&gt;快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。&lt;/p&gt;
+&lt;h1 id=&#34;day-1&#34;&gt;Day 1&lt;/h1&gt;
+&lt;p&gt;嗯，就只有Day1.
+早上起的很晚，八点半才从床上爬起来，起来之后第一件事是看我的USB-HUB发货没有!!!都好几天了，一个USB接口坏了，机械键盘没法用啊，想去买usb转type-c线的想了想还是再等等吧ε=ε=ε=┏(゜ロ゜;)┛
+下楼去堕落一条街吃了早饭。
+中午吃完饭回来买了杯奶茶丫丫精，发现喝完了有点撑得慌~~~~然后就等12.30了。
+比赛开始赶紧去找签到题。&lt;/p&gt;
+&lt;h2 id=&#34;a题&#34;&gt;A题&lt;/h2&gt;
+&lt;p&gt;emmmmm像是的数学题，递推，一看数据范围感觉不可做。&lt;/p&gt;
+&lt;h2 id=&#34;b题&#34;&gt;B题&lt;/h2&gt;
+&lt;p&gt;这题面稍微有点问题啊。室友就以为是按顺序组合起来的，虽然感觉仔细想想也想出来是求和的，直接DFS走了？？？不存在的，这里有个老年人sum没重置，debug一万年啊，最后才发现sum每次没有赋初值ε=ε=ε=┏(゜ロ゜;)┛&lt;/p&gt;
+&lt;h2 id=&#34;c题&#34;&gt;C题&lt;/h2&gt;
+&lt;p&gt;签到题&lt;/p&gt;
+&lt;h2 id=&#34;d题&#34;&gt;D题&lt;/h2&gt;
+&lt;p&gt;一开始没看清题意，直接while求Σa*0.1一直到不影响答案为止，算到了1e-5，第一发不知道咋WA了，两发才过。&lt;/p&gt;
+&lt;h2 id=&#34;e题&#34;&gt;E题&lt;/h2&gt;
+&lt;p&gt;博弈论，不可做&lt;/p&gt;
+&lt;h2 id=&#34;f题&#34;&gt;F题&lt;/h2&gt;
+&lt;p&gt;并查集。但是！！老年人在这里又拉胯了！！！要输出没有感染的人，我输出了一万年感染的人，交了五六发？？？&lt;/p&gt;
+&lt;h2 id=&#34;j题&#34;&gt;J题&lt;/h2&gt;
+&lt;p&gt;模拟题。&lt;/p&gt;
+&lt;h2 id=&#34;ｈ题&#34;&gt;Ｈ题&lt;/h2&gt;
+&lt;p&gt;贪心交了一发没过，分类讨论情况可能会很多，没敢用搜索。&lt;/p&gt;
+&lt;h2 id=&#34;i题&#34;&gt;I题&lt;/h2&gt;
+&lt;p&gt;博弈论sg==就会三种博弈的蒟蒻枯了。听WHU的巨巨说记忆化搜索也能过。&lt;/p&gt;
+&lt;h2 id=&#34;j题-1&#34;&gt;J题&lt;/h2&gt;
+&lt;p&gt;计算几何。我认输。在线处理当成直线做的，没考虑到路程是个线段，debug一万年，最后还有半个小时封板的时候放弃了QAQ&lt;/p&gt;
+&lt;h2 id=&#34;k题&#34;&gt;K题&lt;/h2&gt;
+&lt;p&gt;模拟题，我充分意识到半个小时可能写不出来了，想去debug一下J题吧&lt;/p&gt;
+&lt;h2 id=&#34;后记&#34;&gt;后记&lt;/h2&gt;
+&lt;p&gt;最后五题榜19。校内 榜二。WHU和HUST的巨巨们霸榜啊orz。&lt;/p&gt;
+&lt;p&gt;进队了orz&lt;/p&gt;
+&lt;p&gt;其实感觉中间耽误了好多时间啊，低级错误，不然可能会在开出两题，just可能。orz&lt;/p&gt;
+&lt;p&gt;J题一大遗憾。也是给自己个教训吧。&lt;/p&gt;
+&lt;p&gt;至此
+成为WHUTer之后，又成为了ToKener，又成为了ACMer。
+专心训练和学习啦。
+逃ε=ε=ε=┏(゜ロ゜;)┛：蒟蒻 蒟蒻 蒟蒻&lt;/p&gt;</description>
+        </item>
+        
+    </channel>
 </rss>

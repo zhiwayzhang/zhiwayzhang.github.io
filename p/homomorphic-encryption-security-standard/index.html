@@ -9,7 +9,7 @@
  (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间message space MS
   $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
     ${\rm PubKeygen(Params)\to SK,PK,EK}$
-  ​	生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
+生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
   ${\rm SecKeygen(Params)\to SK,EK}$
 生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
   ${\rm PubEncrypt(PK,M)\to C}$
@@ -27,7 +27,7 @@
  (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间message space MS
   $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
     ${\rm PubKeygen(Params)\to SK,PK,EK}$
-  ​	生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
+生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
   ${\rm SecKeygen(Params)\to SK,EK}$
 生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
   ${\rm PubEncrypt(PK,M)\to C}$
@@ -45,7 +45,7 @@
  (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间message space MS
   $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
     ${\rm PubKeygen(Params)\to SK,PK,EK}$
-  ​	生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
+生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
   ${\rm SecKeygen(Params)\to SK,EK}$
 生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
   ${\rm PubEncrypt(PK,M)\to C}$
@@ -350,7 +350,7 @@
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    2 minute read
                 </time>
             </div>
         
@@ -392,10 +392,8 @@
 </li>
 <li>
 <p>${\rm PubKeygen(Params)\to SK,PK,EK}$</p>
+<p>生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。</p>
 </li>
-</ul>
-<p>​		生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。</p>
-<ul>
 <li>
 <p>${\rm SecKeygen(Params)\to SK,EK}$</p>
 <p>生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。</p>
@@ -437,7 +435,56 @@
 </li>
 </ul>
 <h2 id="2-defines-the-security-properties">2. Defines the security properties</h2>
+<h3 id="安全性">安全性</h3>
+<p>得益于算法的随机性，同一消息的密文并不相同，即使攻击者拥有参数，EK，PK，可以计算加密出来的密文，在对密文进行对比的过程中有显著大于$\frac{1}{2}$的概率猜测失败，由同态加密的安全性来保证。因为密文中没有显示有关消息的信息。</p>
+<h3 id="compactness">Compactness</h3>
+<p>保证密文上的同态操作不会扩大密文的长度</p>
+<h3 id="efficient-decryption">Efficient Decryption</h3>
+<p>同态加密方案的解密运行时间不依赖于密文对应的计算函数</p>
 <h2 id="3-describes-the-bgv--bfv-scheme">3. Describes the BGV &amp;&amp; BFV scheme</h2>
+<h3 id="a-bgv">(a) BGV</h3>
+<ul>
+<li>
+<p>${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$</p>
+<p>lambda是安全参数</p>
+<p>K是整数数组的长度</p>
+<p>PT是明文空间类型MI/EX</p>
+<p>参数B表示同态计算可以执行的最大乘法深度</p>
+</li>
+<li>
+<p>${\rm PubKeygen(Params)\to SK,PK,EK}$</p>
+</li>
+<li>
+<p>${\rm SecKeygen(Params)\to SK,EK}$</p>
+</li>
+<li>
+<p>${\rm PubEncrypt(PK,M)\to C}$</p>
+</li>
+<li>
+<p>${\rm SecEncrypt(SK, M)\to C}$</p>
+</li>
+<li>
+<p>${\rm Decrypt(SK, C)\to M}$</p>
+</li>
+<li>
+<p>${\rm EvalAdd(Params,EK, C1,C2)\to C3}$</p>
+</li>
+<li>
+<p>${\rm EvalAddConst(Params, EK, C1, M2)\to C3}$</p>
+</li>
+<li>
+<p>${\rm EvalMult(Params, EK, C1,C2)\to C3}$</p>
+</li>
+<li>
+<p>${\rm EvalMultConst(Params, EK, C1,M2)\to C3}$</p>
+</li>
+<li>
+<p>${\rm Refresh(Params,flag,EK,C1)\to C2}$</p>
+</li>
+<li>
+<p>${\rm ValidityCheck(Params, EK, [C], COMP) \to flag}$</p>
+</li>
+</ul>
 <h2 id="4-describes-the-gsw-scheme">4. Describes the GSW scheme</h2>
 <h2 id="5-some-alternative-schemes">5. Some alternative schemes</h2>
 <h2 id="6-describes-additional-features">6. Describes additional features</h2>
@@ -749,8 +796,18 @@
             <nav id="TableOfContents">
   <ol>
     <li><a href="#1-notation-and-definition">1. Notation and definition</a></li>
-    <li><a href="#2-defines-the-security-properties">2. Defines the security properties</a></li>
-    <li><a href="#3-describes-the-bgv--bfv-scheme">3. Describes the BGV &amp;&amp; BFV scheme</a></li>
+    <li><a href="#2-defines-the-security-properties">2. Defines the security properties</a>
+      <ol>
+        <li><a href="#安全性">安全性</a></li>
+        <li><a href="#compactness">Compactness</a></li>
+        <li><a href="#efficient-decryption">Efficient Decryption</a></li>
+      </ol>
+    </li>
+    <li><a href="#3-describes-the-bgv--bfv-scheme">3. Describes the BGV &amp;&amp; BFV scheme</a>
+      <ol>
+        <li><a href="#a-bgv">(a) BGV</a></li>
+      </ol>
+    </li>
     <li><a href="#4-describes-the-gsw-scheme">4. Describes the GSW scheme</a></li>
     <li><a href="#5-some-alternative-schemes">5. Some alternative schemes</a></li>
     <li><a href="#6-describes-additional-features">6. Describes additional features</a></li>

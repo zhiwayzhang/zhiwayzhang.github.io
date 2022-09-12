@@ -118,24 +118,33 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;${\rm Decrypt(SK, C)\to M}$&lt;/p&gt;
+&lt;p&gt;通过同态评估，密文可能有更多的环元素，此时需要调整解密算法去处理相应的密文&lt;/p&gt;
+&lt;p&gt;解密时先计算$R/qR$上的环元素$c_0s+c_1$，并将其称为环R中的元素$c^\prime$，然后再mod p的到结果&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;${\rm EvalAdd(Params,EK, C1,C2)\to C3}$&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;${\rm EvalAddConst(Params, EK, C1, M2)\to C3}$&lt;/p&gt;
+&lt;p&gt;在环$R/qR$中完成add&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;${\rm EvalMult(Params, EK, C1,C2)\to C3}$&lt;/p&gt;
+&lt;p&gt;在环$R/qR$中完成mult&lt;/p&gt;
+&lt;p&gt;有密文$C1=(c_{1,0},c_{1,1})$，$C2=(c_{2,0},c_{2,1})$&lt;/p&gt;
+&lt;p&gt;output：
+$$
+C3=(c_{1,0}c_{2,0},c_{1,0}c_{2,1}+c_{1,1}c_{2,0},c_{1,1}c_{2,1})
+$$&lt;/p&gt;
 &lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Comment&lt;/p&gt;
+&lt;p&gt;还有一种加密的编码格式，二者之间可以进行无损转换，要求明文模数p和密文模数q互质&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;${\rm EvalMultConst(Params, EK, C1,M2)\to C3}$&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;${\rm Refresh(Params,flag,EK,C1)\to C2}$&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;${\rm ValidityCheck(Params, EK, [C], COMP) \to flag}$&lt;/p&gt;
+&lt;p&gt;Full BGV&lt;/p&gt;
+&lt;p&gt;在基本的BGV中，密文会在执行Mult之后增加一个环元素，度数为d的多项式，Mult之后度数为d+1。&lt;/p&gt;
+&lt;p&gt;在Full BGV中，增加了两个过程来缓解，&lt;code&gt;Key Switching&lt;/code&gt;或&lt;code&gt;Relinearization&lt;/code&gt;。通过flag=KeySwitch调用Refresh 子程序；另一个过程是模数切换，Modulus Switching or Modulus Reduction，通过flag=ModSwitch调用Refresh。支持这两个操作还需要加强密钥生成算法。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;4-describes-the-gsw-scheme&#34;&gt;4. Describes the GSW scheme&lt;/h2&gt;

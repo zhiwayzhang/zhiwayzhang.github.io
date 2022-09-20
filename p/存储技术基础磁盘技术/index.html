@@ -1,56 +1,53 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此篇搁置了好几天了，网挑复赛耽误了一段时间
-0x00 Standardize 1. Notation and definition   ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$
-​	将参数实例化
-  $\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性
-  $PT$表示明文空间，目前指定了两种参数明文空间
- (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS
-  $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
-    ${\rm PubKeygen(Params)\to SK,PK,EK}$
-生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
-  ${\rm SecKeygen(Params)\to SK,EK}$
-生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
-  ${\rm PubEncrypt(PK,M)\to C}$
-通过公钥加密信息，生成密文。通常使用随机性保证安全性。
-  ${\rm SecEncrypt(SK, M)\to C}$'><title>Homomorphic Encryption Security Standard</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本讲内容HDD好弟弟：
+ 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法  推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+ Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  '><title>【存储技术基础】磁盘技术</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/homomorphic-encryption-security-standard/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/'>
 
-<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Homomorphic Encryption Security Standard'>
-<meta property='og:description' content='此篇搁置了好几天了，网挑复赛耽误了一段时间
-0x00 Standardize 1. Notation and definition   ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$
-​	将参数实例化
-  $\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性
-  $PT$表示明文空间，目前指定了两种参数明文空间
- (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS
-  $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
-    ${\rm PubKeygen(Params)\to SK,PK,EK}$
-生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
-  ${\rm SecKeygen(Params)\to SK,EK}$
-生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
-  ${\rm PubEncrypt(PK,M)\to C}$
-通过公钥加密信息，生成密文。通常使用随机性保证安全性。
-  ${\rm SecEncrypt(SK, M)\to C}$'>
-<meta property='og:url' content='https://blog.ipandai.club/p/homomorphic-encryption-security-standard/'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='【存储技术基础】磁盘技术'>
+<meta property='og:description' content='本讲内容HDD好弟弟：
+ 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法  推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+ Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  '>
+<meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Homomorphic Encryption' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='Privacy Protection' /><meta property='article:published_time' content='2022-09-04T14:11:46&#43;08:00'/><meta property='article:modified_time' content='2022-09-04T14:11:46&#43;08:00'/>
-<meta name="twitter:title" content="Homomorphic Encryption Security Standard">
-<meta name="twitter:description" content="此篇搁置了好几天了，网挑复赛耽误了一段时间
-0x00 Standardize 1. Notation and definition   ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$
-​	将参数实例化
-  $\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性
-  $PT$表示明文空间，目前指定了两种参数明文空间
- (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS
-  $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
-    ${\rm PubKeygen(Params)\to SK,PK,EK}$
-生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
-  ${\rm SecKeygen(Params)\to SK,EK}$
-生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
-  ${\rm PubEncrypt(PK,M)\to C}$
-通过公钥加密信息，生成密文。通常使用随机性保证安全性。
-  ${\rm SecEncrypt(SK, M)\to C}$">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:published_time' content='2022-09-20T16:13:29&#43;08:00'/><meta property='article:modified_time' content='2022-09-20T16:13:29&#43;08:00'/>
+<meta name="twitter:title" content="【存储技术基础】磁盘技术">
+<meta name="twitter:description" content="本讲内容HDD好弟弟：
+ 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法  推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+ Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  ">
     </head>
     <body class="
     article-page
@@ -316,7 +313,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/homomorphic-encryption-security-standard/">Homomorphic Encryption Security Standard</a>
+            <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/">【存储技术基础】磁盘技术</a>
         </h2>
     
         
@@ -335,7 +332,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Sep 04, 2022</time>
+                <time class="article-time--published">Sep 20, 2022</time>
             </div>
         
 
@@ -350,7 +347,7 @@
 
 
                 <time class="article-time--reading">
-                    2 minute read
+                    1 minute read
                 </time>
             </div>
         
@@ -364,173 +361,47 @@
     <section class="article-content">
     
     
-    <p>此篇搁置了好几天了，网挑复赛耽误了一段时间</p>
-<h1 id="0x00-standardize">0x00 Standardize</h1>
-<h2 id="1-notation-and-definition">1. Notation and definition</h2>
+    <p>本讲内容HDD好弟弟：</p>
 <ul>
-<li>
-<p>${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$</p>
-<p>​	将参数实例化</p>
+<li>磁盘的构成和各个部分的功能</li>
+<li>磁盘的性能和评估方式</li>
+<li>磁盘固件的功能，固件算法</li>
+</ul>
+<p>推荐阅读：<a class="link" href="https://github.com/KevinOfNeu/ebooks/blob/master/Memory%20systems%20Cache%20DRAM%20Disk.pdf"  target="_blank" rel="noopener"
+    >Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang</a></p>
+<h1 id="0x00-组成">0x00 组成</h1>
+<p>转轴，盘片，磁头</p>
+<p>track 磁道，每个盘片的正面和背面的同心圆</p>
+<p>对于盘片每个面是surface，每个track磁道分为多个sector（扇区）</p>
+<p>所有盘片上同一个位置的track是一个cylinder（柱面）</p>
+<h2 id="寻址">寻址</h2>
+<p>物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置</p>
+<p>根据柱面-磁头-扇区来访问</p>
+<p>右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构</p>
+<p><!-- raw HTML omitted --></p>
+<h1 id="0x01-性能评估">0x01 性能评估</h1>
 <ul>
-<li>
-<p>$\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性</p>
-</li>
-<li>
-<p>$PT$表示明文空间，目前指定了两种参数明文空间</p>
+<li>电子设备
 <ul>
-<li>(MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。</li>
-<li>(EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$</li>
+<li>电路驱动</li>
 </ul>
 </li>
-<li>
-<p>$K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&hellip;,V_K)+(V_1^\prime,&hellip;,V_K^\prime)=(V_1+V_1^\prime,&hellip;,V_K+V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&lsquo;ge space MS</p>
-</li>
-<li>
-<p>$B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序</p>
-</li>
-</ul>
-</li>
-<li>
-<p>${\rm PubKeygen(Params)\to SK,PK,EK}$</p>
-<p>生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。</p>
-</li>
-<li>
-<p>${\rm SecKeygen(Params)\to SK,EK}$</p>
-<p>生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。</p>
-</li>
-<li>
-<p>${\rm PubEncrypt(PK,M)\to C}$</p>
-<p>通过公钥加密信息，生成密文。通常使用随机性保证安全性。</p>
-</li>
-<li>
-<p>${\rm SecEncrypt(SK, M)\to C}$</p>
-<p>通过私钥加密信息，生成密文。通常使用随机性保证安全性。</p>
-</li>
-<li>
-<p>${\rm Decrypt(SK, C)\to M}$</p>
-<p>通过私钥对密文进行解密，如果解密不能恢复消息可能会遇到<code>FAIL</code>失败输出。</p>
-</li>
-<li>
-<p>${\rm EvalAdd(Params,EK, C1,C2)\to C3}$</p>
-<p>有随机性，结合输入的EK，将密文C1、C2相加，输出密文C3</p>
-<p>保证有$(C1+C2)<em>{decryption}=C3</em>{decryption}=M1+M2$</p>
-</li>
-<li>
-<p>${\rm EvalAddConst(Params, EK, C1, M2)\to C3}$</p>
-<p>同理</p>
-</li>
-<li>
-<p>${\rm EvalMult(Params, EK, C1,C2)\to C3}$</p>
-</li>
-<li>
-<p>${\rm EvalMultConst(Params, EK, C1,M2)\to C3}$</p>
-</li>
-<li>
-<p>${\rm Refresh(Params,flag,EK,C1)\to C2}$</p>
-<p>flag is one of <code>(Relinearize, ModSwitch, Bootstrap)</code>，C1和C2都是同一个Message的密文，将同一消息的复杂密文转变为简单密文；Bootstrapping是将高噪声的密文转换为低噪声的密文；KeySwitch就是将A密钥的密文转换到B密钥</p>
-</li>
-<li>
-<p>${\rm ValidityCheck(Params, EK, [C], COMP) \to flag}$</p>
-<p>密文数组<code>[C]</code>，同态计算的程序被编码为完全串行执行的程序COMP，并输出一个布尔标志。当执行COMP所对应的同态计算输出的密文结果符合正确结果时，flag为1。</p>
-</li>
-</ul>
-<h2 id="2-defines-the-security-properties">2. Defines the security properties</h2>
-<h3 id="安全性">安全性</h3>
-<p>得益于算法的随机性，同一消息的密文并不相同，即使攻击者拥有参数，EK，PK，可以计算加密出来的密文，在对密文进行对比的过程中有显著大于$\frac{1}{2}$的概率猜测失败，由同态加密的安全性来保证。因为密文中没有显示有关消息的信息。</p>
-<h3 id="compactness">Compactness</h3>
-<p>保证密文上的同态操作不会扩大密文的长度</p>
-<h3 id="efficient-decryption">Efficient Decryption</h3>
-<p>同态加密方案的解密运行时间不依赖于密文对应的计算函数</p>
-<h2 id="3-describes-the-bgv--bfv-scheme">3. Describes the BGV &amp;&amp; BFV scheme</h2>
-<h3 id="a-bgv">(a) BGV</h3>
+<li>机械设备
 <ul>
-<li>
-<p>${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$</p>
-<p>lambda是安全参数</p>
-<p>K是整数数组的长度</p>
-<p>PT是明文空间类型MI/EX</p>
-<p>参数B表示同态计算可以执行的最大乘法深度</p>
-<p>在基础的BGV中，Params包括密文模数q和环$R=\frac{Z[x]}{f(x)}$，相应的明文环$\frac{R}{pR}$，参数还确定了R上的key分布$D_1$和误差分布$D_2$。</p>
-</li>
-<li>
-<p>${\rm PubKeygen(Params)\to SK,PK,EK}$</p>
-<p>首先运行SecKeygen，从环$\frac{R}{qR}$中选取一个元素$a$并输出一组环元素组成的公钥PK，$(pk_0,pk_1)=(-a,as+pe)$，e是从误差分布$D_2$中选取的。</p>
-</li>
-<li>
-<p>${\rm SecKeygen(Params)\to SK,EK}$</p>
-<p>BGV中，SK是从分布$D_1$选取的环R中的一个元素</p>
-</li>
-<li>
-<p>${\rm PubEncrypt(PK,M)\to C}$</p>
-<p>先将从明文空间的M映射到环$R/pR$上的元素$\hat{M}$，公钥PK是一组元素$(pk_0,pk_1)$。从分布D1中采样三个元素u并从误差分布D2中采样两个元素e1和e2，输出一组环元素$(c_0,c_1)=(pk_0u+pe_1,pk_1u+pe_2+\hat{M})$</p>
-</li>
-<li>
-<p>${\rm SecEncrypt(SK, M)\to C}$</p>
-<p>首先将明文信息M映射到环$R/pR$上的元素$\hat{M}$，随后在环$R/qR$上采样一个随机均匀的元素$a$，并输出一组环元素$(c_0,c_1)=(-a,as+pe+\hat{M})$，e从误差分布D2种选取。</p>
-</li>
-<li>
-<p>${\rm Decrypt(SK, C)\to M}$</p>
-<p>通过同态评估，密文可能有更多的环元素，此时需要调整解密算法去处理相应的密文</p>
-<p>解密时先计算$R/qR$上的环元素$c_0s+c_1$，并将其称为环R中的元素$c^\prime$，然后再mod p的到结果</p>
-</li>
-<li>
-<p>${\rm EvalAdd(Params,EK, C1,C2)\to C3}$</p>
-<p>在环$R/qR$中完成add</p>
-</li>
-<li>
-<p>${\rm EvalMult(Params, EK, C1,C2)\to C3}$</p>
-<p>在环$R/qR$中完成mult</p>
-<p>有密文$C1=(c_{1,0},c_{1,1})$，$C2=(c_{2,0},c_{2,1})$</p>
-<p>output：
-$$
-C3=(c_{1,0}c_{2,0},c_{1,0}c_{2,1}+c_{1,1}c_{2,0},c_{1,1}c_{2,1})
-$$</p>
-</li>
-<li></li>
-</ul>
-<blockquote>
-<p>Comment</p>
-<p>还有一种加密的编码格式，二者之间可以进行无损转换，要求明文模数p和密文模数q互质</p>
-</blockquote>
-<ul>
-<li>
-<p>Full BGV</p>
-<p>在基本的BGV中，密文会在执行Mult之后增加一个环元素，度数为d的多项式，Mult之后度数为d+1。</p>
-<p>在Full BGV中，增加了两个过程来缓解，<code>Key Switching</code>或<code>Relinearization</code>。通过flag=KeySwitch调用Refresh 子程序；另一个过程是模数切换，Modulus Switching or Modulus Reduction，通过flag=ModSwitch调用Refresh。支持这两个操作还需要加强密钥生成算法。</p>
-</li>
-</ul>
-<h3 id="b-bfv">(b) B/FV</h3>
-<ul>
-<li>
-<p>${\rm ParamGen(\lambda, PT, K, B) \to Params}$</p>
-<p>与BGV类似的参数包括</p>
-<ul>
-<li>Key和误差分布D1，D2</li>
-<li>环R和相应的整数模数q</li>
-<li>明文整数模数p</li>
-</ul>
-<p>BFV独有的参数包括</p>
-<ul>
-<li>整数T，和$L=\log_Tq$，T是位分解模数</li>
-<li>整数$W=\lfloor q/p\rfloor$</li>
+<li>seek time 磁头运动速度</li>
+<li>rotational latency 转轴旋转速度</li>
+<li>data transfer rate 数据传输速率</li>
 </ul>
 </li>
-<li>
-<p>${\rm SecKeygen(Params) \to SK, EK}$</p>
-<p>SK是在分布D1种随机选取的，EK由L LWE样本组成，以特定的形式编码密钥</p>
-<p>对于$for \ i  \in {1, &hellip;, L},a_i \ from \ R/qR, e_i \ from \ D_2$，可以计算得到
-$$
-EK_i=(-(a_is+e_i)+T^is^2,a_i)
-$$
-并使得
-$$
-EK=(EK_1,&hellip;,EK_L)
-$$</p>
-</li>
-<li>
-<p>${\rm PubKeygen(Params) \to SK,PK,EK}$</p>
-<p>私钥SK是分布D1中的一个随机元素，公钥是随机LWE样本with secret s。</p>
-</li>
+</ul>
+<p>$磁盘访问时间=磁头运动速度+转轴旋转速度+数据传输速度$</p>
+<h2 id="seek-time">Seek time</h2>
+<p>inner和outter track中进行移动，到达对应的track所消耗的时间</p>
+<p>评价方法：</p>
+<ul>
+<li>Full stroke 里圈到外圈</li>
+<li>Average 移动到中间所花费的时间</li>
+<li>Track-to-track 两个磁道间的移动时间</li>
 </ul>
 
 </section>
@@ -540,11 +411,7 @@ $$</p>
     
     <section class="article-tags">
         
-            <a href="/tags/homomorphic-encryption/">Homomorphic Encryption</a>
-        
-            <a href="/tags/math/">Math</a>
-        
-            <a href="/tags/privacy-protection/">Privacy Protection</a>
+            <a href="/tags/storage/">Storage</a>
         
     </section>
 
@@ -601,45 +468,6 @@ $$</p>
             
                 
 <article class="">
-    <a href="/p/homomorphic-encryption-learning-notes/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Homomorphic Encryption Learning Notes</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">余数求和-整除分块</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【存储技术基础】磁盘技术</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
     <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/">
         
         
@@ -653,12 +481,51 @@ $$</p>
             
                 
 <article class="">
+    <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/homomorphic-encryption-security-standard/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Homomorphic Encryption Security Standard</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
     <a href="/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/">
         
         
 
         <div class="article-details">
             <h2 class="article-title">使用GitHub Workflow工作流自动部署静态博客</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/homomorphic-encryption-learning-notes/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Homomorphic Encryption Learning Notes</h2>
         </div>
     </a>
 </article>
@@ -833,20 +700,11 @@ $$</p>
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#1-notation-and-definition">1. Notation and definition</a></li>
-    <li><a href="#2-defines-the-security-properties">2. Defines the security properties</a>
-      <ol>
-        <li><a href="#安全性">安全性</a></li>
-        <li><a href="#compactness">Compactness</a></li>
-        <li><a href="#efficient-decryption">Efficient Decryption</a></li>
-      </ol>
-    </li>
-    <li><a href="#3-describes-the-bgv--bfv-scheme">3. Describes the BGV &amp;&amp; BFV scheme</a>
-      <ol>
-        <li><a href="#a-bgv">(a) BGV</a></li>
-        <li><a href="#b-bfv">(b) B/FV</a></li>
-      </ol>
-    </li>
+    <li><a href="#寻址">寻址</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#seek-time">Seek time</a></li>
   </ol>
 </nav>
         </div>

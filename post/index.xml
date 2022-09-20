@@ -6,7 +6,120 @@
         <description>Recent content in Posts on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sun, 04 Sep 2022 14:11:46 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 20 Sep 2022 16:13:29 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>【存储技术基础】磁盘技术</title>
+        <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/</link>
+        <pubDate>Tue, 20 Sep 2022 16:13:29 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/</guid>
+        <description>&lt;p&gt;本讲内容HDD好弟弟：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;磁盘的构成和各个部分的功能&lt;/li&gt;
+&lt;li&gt;磁盘的性能和评估方式&lt;/li&gt;
+&lt;li&gt;磁盘固件的功能，固件算法&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;推荐阅读：&lt;a class=&#34;link&#34; href=&#34;https://github.com/KevinOfNeu/ebooks/blob/master/Memory%20systems%20Cache%20DRAM%20Disk.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;0x00-组成&#34;&gt;0x00 组成&lt;/h1&gt;
+&lt;p&gt;转轴，盘片，磁头&lt;/p&gt;
+&lt;p&gt;track 磁道，每个盘片的正面和背面的同心圆&lt;/p&gt;
+&lt;p&gt;对于盘片每个面是surface，每个track磁道分为多个sector（扇区）&lt;/p&gt;
+&lt;p&gt;所有盘片上同一个位置的track是一个cylinder（柱面）&lt;/p&gt;
+&lt;h2 id=&#34;寻址&#34;&gt;寻址&lt;/h2&gt;
+&lt;p&gt;物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置&lt;/p&gt;
+&lt;p&gt;根据柱面-磁头-扇区来访问&lt;/p&gt;
+&lt;p&gt;右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构&lt;/p&gt;
+&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;h1 id=&#34;0x01-性能评估&#34;&gt;0x01 性能评估&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;电子设备
+&lt;ul&gt;
+&lt;li&gt;电路驱动&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;机械设备
+&lt;ul&gt;
+&lt;li&gt;seek time 磁头运动速度&lt;/li&gt;
+&lt;li&gt;rotational latency 转轴旋转速度&lt;/li&gt;
+&lt;li&gt;data transfer rate 数据传输速率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$磁盘访问时间=磁头运动速度+转轴旋转速度+数据传输速度$&lt;/p&gt;
+&lt;h2 id=&#34;seek-time&#34;&gt;Seek time&lt;/h2&gt;
+&lt;p&gt;inner和outter track中进行移动，到达对应的track所消耗的时间&lt;/p&gt;
+&lt;p&gt;评价方法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Full stroke 里圈到外圈&lt;/li&gt;
+&lt;li&gt;Average 移动到中间所花费的时间&lt;/li&gt;
+&lt;li&gt;Track-to-track 两个磁道间的移动时间&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>【存储技术基础】概述</title>
+        <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/</link>
+        <pubDate>Tue, 20 Sep 2022 14:41:57 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/</guid>
+        <description>&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
+&lt;p&gt;对于场景制定存储方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;存储结构&lt;/li&gt;
+&lt;li&gt;存储大小&lt;/li&gt;
+&lt;li&gt;可靠性和容错&lt;/li&gt;
+&lt;li&gt;文件访问类型，读/写频率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;要学习硬件的选择和文件系统设计&lt;/p&gt;
+&lt;h1 id=&#34;0x01-现状&#34;&gt;0x01 现状&lt;/h1&gt;
+&lt;h2 id=&#34;存储的挑战&#34;&gt;存储的挑战&lt;/h2&gt;
+&lt;p&gt;数据量激增&lt;/p&gt;
+&lt;h2 id=&#34;存储是什么&#34;&gt;存储是什么&lt;/h2&gt;
+&lt;p&gt;分层的存储架构&lt;/p&gt;
+&lt;p&gt;L0-L1-L2-DRAM-Disk&lt;/p&gt;
+&lt;h2 id=&#34;存储的特性&#34;&gt;存储的特性&lt;/h2&gt;
+&lt;p&gt;可靠性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;多副本&lt;/li&gt;
+&lt;li&gt;纠删码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一致性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;原子+持久化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;数据保护 容灾和备份：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;解决单点故障&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;0x02-存储历史与发展&#34;&gt;0x02 存储历史与发展&lt;/h1&gt;
+&lt;h2 id=&#34;硬件上的发展&#34;&gt;硬件上的发展&lt;/h2&gt;
+&lt;p&gt;1956&amp;ndash;HDD&lt;/p&gt;
+&lt;p&gt;1984&amp;ndash;Flash Memory 早期用于嵌入式&lt;/p&gt;
+&lt;p&gt;2010s&amp;ndash;Persistent Memory 3D-Point Intel&lt;/p&gt;
+&lt;p&gt;SSD NAND Flash：&lt;/p&gt;
+&lt;p&gt;SLC，MLC，TLC，QLC存储单元中电平的等级&lt;/p&gt;
+&lt;p&gt;对比HDD和SSD：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;对于NAND，需要先擦出，再写&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;NAND Flash有擦除，HDD只能覆盖写&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SSD多个颗粒可以并行I/O，总体上速度快&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;软件上的发展&#34;&gt;软件上的发展&lt;/h2&gt;
+&lt;p&gt;网络存储 远程挂载目录NAS&lt;/p&gt;
+&lt;p&gt;分布式文件系统GFS，Hadoop HDFS&lt;/p&gt;
+&lt;p&gt;键值存储Key-Value&lt;/p&gt;
+&lt;p&gt;云存储 数据存在远端，商业化，软件协作Office&lt;/p&gt;
+&lt;h1 id=&#34;assignment&#34;&gt;Assignment&lt;/h1&gt;
+&lt;p&gt;有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Homomorphic Encryption Security Standard</title>
         <link>https://blog.ipandai.club/p/homomorphic-encryption-security-standard/</link>
         <pubDate>Sun, 04 Sep 2022 14:11:46 +0800</pubDate>
@@ -31,7 +144,7 @@
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;$K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)+(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1+V_1^\prime,&amp;hellip;,V_K+V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间message space MS&lt;/p&gt;
+&lt;p&gt;$K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)+(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1+V_1^\prime,&amp;hellip;,V_K+V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;$B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序&lt;/p&gt;
@@ -147,15 +260,39 @@ $$&lt;/p&gt;
 &lt;p&gt;在Full BGV中，增加了两个过程来缓解，&lt;code&gt;Key Switching&lt;/code&gt;或&lt;code&gt;Relinearization&lt;/code&gt;。通过flag=KeySwitch调用Refresh 子程序；另一个过程是模数切换，Modulus Switching or Modulus Reduction，通过flag=ModSwitch调用Refresh。支持这两个操作还需要加强密钥生成算法。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;4-describes-the-gsw-scheme&#34;&gt;4. Describes the GSW scheme&lt;/h2&gt;
-&lt;h2 id=&#34;5-some-alternative-schemes&#34;&gt;5. Some alternative schemes&lt;/h2&gt;
-&lt;h2 id=&#34;6-describes-additional-features&#34;&gt;6. Describes additional features&lt;/h2&gt;
-&lt;h1 id=&#34;0x01-recommends-parameter-choices-to-achieve-security&#34;&gt;0x01 Recommends parameter choices to achieve Security&lt;/h1&gt;
-&lt;h2 id=&#34;1-hard-problem-the-lwe-and-rlwe-assumptions&#34;&gt;1. Hard Problem: the LWE and RLWE assumptions&lt;/h2&gt;
-&lt;h2 id=&#34;2-lattice-attacks--estimated-running-times&#34;&gt;2. Lattice Attacks &amp;amp;&amp;amp; Estimated running times&lt;/h2&gt;
-&lt;h2 id=&#34;3-the-arora-ge-attack-on-lwe&#34;&gt;3. The Arora-Ge attack on LWE&lt;/h2&gt;
-&lt;h2 id=&#34;4-algebraic-on-rlwe&#34;&gt;4. Algebraic on RLWE&lt;/h2&gt;
-&lt;h2 id=&#34;5-recommends-concrete-parameters-to-achieve-various-security-levels&#34;&gt;5. Recommends concrete parameters to achieve various security levels&lt;/h2&gt;
+&lt;h3 id=&#34;b-bfv&#34;&gt;(b) B/FV&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;${\rm ParamGen(\lambda, PT, K, B) \to Params}$&lt;/p&gt;
+&lt;p&gt;与BGV类似的参数包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Key和误差分布D1，D2&lt;/li&gt;
+&lt;li&gt;环R和相应的整数模数q&lt;/li&gt;
+&lt;li&gt;明文整数模数p&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;BFV独有的参数包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;整数T，和$L=\log_Tq$，T是位分解模数&lt;/li&gt;
+&lt;li&gt;整数$W=\lfloor q/p\rfloor$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;${\rm SecKeygen(Params) \to SK, EK}$&lt;/p&gt;
+&lt;p&gt;SK是在分布D1种随机选取的，EK由L LWE样本组成，以特定的形式编码密钥&lt;/p&gt;
+&lt;p&gt;对于$for \ i  \in {1, &amp;hellip;, L},a_i \ from \ R/qR, e_i \ from \ D_2$，可以计算得到
+$$
+EK_i=(-(a_is+e_i)+T^is^2,a_i)
+$$
+并使得
+$$
+EK=(EK_1,&amp;hellip;,EK_L)
+$$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;${\rm PubKeygen(Params) \to SK,PK,EK}$&lt;/p&gt;
+&lt;p&gt;私钥SK是分布D1中的一个随机元素，公钥是随机LWE样本with secret s。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         <item>

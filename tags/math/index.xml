@@ -31,7 +31,7 @@
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;$K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)+(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1+V_1^\prime,&amp;hellip;,V_K+V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间message space MS&lt;/p&gt;
+&lt;p&gt;$K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)+(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1+V_1^\prime,&amp;hellip;,V_K+V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;$B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序&lt;/p&gt;
@@ -147,15 +147,39 @@ $$&lt;/p&gt;
 &lt;p&gt;在Full BGV中，增加了两个过程来缓解，&lt;code&gt;Key Switching&lt;/code&gt;或&lt;code&gt;Relinearization&lt;/code&gt;。通过flag=KeySwitch调用Refresh 子程序；另一个过程是模数切换，Modulus Switching or Modulus Reduction，通过flag=ModSwitch调用Refresh。支持这两个操作还需要加强密钥生成算法。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;4-describes-the-gsw-scheme&#34;&gt;4. Describes the GSW scheme&lt;/h2&gt;
-&lt;h2 id=&#34;5-some-alternative-schemes&#34;&gt;5. Some alternative schemes&lt;/h2&gt;
-&lt;h2 id=&#34;6-describes-additional-features&#34;&gt;6. Describes additional features&lt;/h2&gt;
-&lt;h1 id=&#34;0x01-recommends-parameter-choices-to-achieve-security&#34;&gt;0x01 Recommends parameter choices to achieve Security&lt;/h1&gt;
-&lt;h2 id=&#34;1-hard-problem-the-lwe-and-rlwe-assumptions&#34;&gt;1. Hard Problem: the LWE and RLWE assumptions&lt;/h2&gt;
-&lt;h2 id=&#34;2-lattice-attacks--estimated-running-times&#34;&gt;2. Lattice Attacks &amp;amp;&amp;amp; Estimated running times&lt;/h2&gt;
-&lt;h2 id=&#34;3-the-arora-ge-attack-on-lwe&#34;&gt;3. The Arora-Ge attack on LWE&lt;/h2&gt;
-&lt;h2 id=&#34;4-algebraic-on-rlwe&#34;&gt;4. Algebraic on RLWE&lt;/h2&gt;
-&lt;h2 id=&#34;5-recommends-concrete-parameters-to-achieve-various-security-levels&#34;&gt;5. Recommends concrete parameters to achieve various security levels&lt;/h2&gt;
+&lt;h3 id=&#34;b-bfv&#34;&gt;(b) B/FV&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;${\rm ParamGen(\lambda, PT, K, B) \to Params}$&lt;/p&gt;
+&lt;p&gt;与BGV类似的参数包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Key和误差分布D1，D2&lt;/li&gt;
+&lt;li&gt;环R和相应的整数模数q&lt;/li&gt;
+&lt;li&gt;明文整数模数p&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;BFV独有的参数包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;整数T，和$L=\log_Tq$，T是位分解模数&lt;/li&gt;
+&lt;li&gt;整数$W=\lfloor q/p\rfloor$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;${\rm SecKeygen(Params) \to SK, EK}$&lt;/p&gt;
+&lt;p&gt;SK是在分布D1种随机选取的，EK由L LWE样本组成，以特定的形式编码密钥&lt;/p&gt;
+&lt;p&gt;对于$for \ i  \in {1, &amp;hellip;, L},a_i \ from \ R/qR, e_i \ from \ D_2$，可以计算得到
+$$
+EK_i=(-(a_is+e_i)+T^is^2,a_i)
+$$
+并使得
+$$
+EK=(EK_1,&amp;hellip;,EK_L)
+$$&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;${\rm PubKeygen(Params) \to SK,PK,EK}$&lt;/p&gt;
+&lt;p&gt;私钥SK是分布D1中的一个随机元素，公钥是随机LWE样本with secret s。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         <item>

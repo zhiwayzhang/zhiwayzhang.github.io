@@ -116,7 +116,40 @@ $$
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;data-rate-inner-vs-outer-tracks&#34;&gt;Data Rate: Inner vs. Outer Tracks&lt;/h2&gt;
-&lt;p&gt;磁盘在里圈和外圈的传输速率不同，&lt;/p&gt;
+&lt;p&gt;磁盘在里圈和外圈的传输速率不同，外圈数据密度小，磁盘转速恒定（角速度相同），外圈的线速度大，外部磁道有更大的数据速率&lt;/p&gt;
+&lt;p&gt;在操作系统视角来说，内外圈速率相同，实际外圈要快，是里圈的1.7倍&lt;/p&gt;
+&lt;h1 id=&#34;0x02-磁盘固件和调度&#34;&gt;0x02 磁盘固件和调度&lt;/h1&gt;
+&lt;p&gt;ASIC：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;信号处理&lt;/li&gt;
+&lt;li&gt;容错&lt;/li&gt;
+&lt;li&gt;驱动处理&lt;/li&gt;
+&lt;li&gt;马达控制&lt;/li&gt;
+&lt;li&gt;缓存控制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;firmware：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;请求处理&lt;/li&gt;
+&lt;li&gt;请求排队和调度&lt;/li&gt;
+&lt;li&gt;LBN-to-PBN 逻辑地址到物理地址的映射&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;映射逻辑地址到sector&#34;&gt;映射逻辑地址到sector&lt;/h2&gt;
+&lt;p&gt;一般块大小为512bytes或4KB，块的数量为容量/块大小&lt;/p&gt;
+&lt;p&gt;磁盘上的数据编址如图所示，以sector为基础，在track内连续，减少rotational latency&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921164047132.png&#34; alt=&#34;image-20220921164047132&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;不同盘面上的编址分为正面和背面，都会进行编址，还有以柱面为基准的编址，减少seek time。&lt;/p&gt;
+&lt;p&gt;一般情况下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;盘片为1-5个，2-10个盘面&lt;/li&gt;
+&lt;li&gt;每个面磁道数为10s - 100s，1000s&lt;/li&gt;
+&lt;li&gt;每个磁道上的扇区有500-4000个，每个磁道大小为250KB-2MB&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;LBN寻址：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;柱面号=LBN/每个柱面的磁道数&lt;/li&gt;
+&lt;li&gt;盘面号=(LBN对每个柱面的磁道数取模)/每个磁道的扇区数&lt;/li&gt;
+&lt;li&gt;扇区号=LBN对每个磁道的扇区数取模&lt;/li&gt;
+&lt;/ol&gt;
 </description>
         </item>
         <item>

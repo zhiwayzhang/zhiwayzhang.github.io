@@ -54,6 +54,55 @@
 &lt;li&gt;Average 移动到中间所花费的时间&lt;/li&gt;
 &lt;li&gt;Track-to-track 两个磁道间的移动时间&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h2 id=&#34;rotational-latency&#34;&gt;Rotational Latency&lt;/h2&gt;
+&lt;p&gt;平均旋转速度：转半圈的时间&lt;/p&gt;
+&lt;p&gt;厂商使用转速来标称&lt;/p&gt;
+&lt;p&gt;rpm: round per min
+$$
+{\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}}
+$$&lt;/p&gt;
+&lt;h2 id=&#34;data-transfer-time&#34;&gt;Data Transfer Time&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921135256805.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220921135256805&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;分为内部传输和外部传输&lt;/p&gt;
+&lt;p&gt;内部传输是磁介质到Buffer&lt;/p&gt;
+&lt;p&gt;外部传输是从接口到主机，例如SATA接口
+$$
+{\rm Transfer\ time=\frac{Block\ size}{Transfer\ rate(带宽)}}
+$$
+还有电子控制部件延迟，一般而言可以忽略，以上都是毫秒量级&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921135704097.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220921135704097&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;大部分时间开销在Seek Time，接近60%&lt;/p&gt;
+&lt;p&gt;I/O Controller利用率越高，会导致平均的延迟升高&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921140754758.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220921140754758&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;data-rate-inner-vs-outer-tracks&#34;&gt;Data Rate: Inner vs. Outer Tracks&lt;/h2&gt;
+&lt;p&gt;磁盘在里圈和外圈的传输速率不同，&lt;/p&gt;
 </description>
         </item>
         <item>

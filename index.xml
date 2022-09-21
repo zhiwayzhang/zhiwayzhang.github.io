@@ -6,7 +6,21 @@
         <description>Recent content on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 20 Sep 2022 16:13:29 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 21 Sep 2022 15:27:25 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>中奖</title>
+        <link>https://blog.ipandai.club/p/%E4%B8%AD%E5%A5%96/</link>
+        <pubDate>Wed, 21 Sep 2022 15:27:25 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E4%B8%AD%E5%A5%96/</guid>
+        <description>&lt;p&gt;中奖&lt;/p&gt;
+&lt;p&gt;我人生中几乎很少有过中奖，印象中甚至是没有，抛开小时候5毛钱买的那种，今天在去图书馆的路上看到了这个画面，让我想起了三年前大一刚入学发生的事。&lt;/p&gt;
+&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;当时还是在余家头，正值跨年，学校举办了一个跨年晚会，其中有一个抽奖的活动，也是在图书馆前搭了舞台。我当时刚从食堂吃完饭，回寝室的路上看到了类似的扫码抽奖，毫不犹豫地拿起手机扫了码参与抽奖，只见大屏幕上的头像开始滚动，3！2！1！屏幕上的头像停止了滚动，只剩下一个获奖的熊猫头，下面写着&lt;code&gt;Coding_Panda&lt;/code&gt;字样，是什么小爱学习机，我反应过来是我中奖了，于是飞快的跑到舞台上想找工作人员领奖，但是这是工作人员却对我说：“恭喜你啊同学，但是我们现在在彩排，希望你晚上也有同样的好运气！”。刚才的兴奋瞬间转变为了失望，当然不是什么大事，也是因为自己没搞清楚状况。&lt;/p&gt;
+&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;之后可能还搞过什么转发抽奖，当然也从来没中过，再之后我也从来没参加过什么抽奖了。抽奖可能也并不是为了去中奖才去参与的，但是中奖的那一刻确实会有一种喜悦的感觉，我自认是一个有点倒霉的人，有时候又会很走运，远远比中奖开心的事情也有很多，不如把精力放在无限的学习之中。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>【存储技术基础】磁盘技术</title>
         <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/</link>
         <pubDate>Tue, 20 Sep 2022 16:13:29 +0800</pubDate>
@@ -54,6 +68,55 @@
 &lt;li&gt;Average 移动到中间所花费的时间&lt;/li&gt;
 &lt;li&gt;Track-to-track 两个磁道间的移动时间&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h2 id=&#34;rotational-latency&#34;&gt;Rotational Latency&lt;/h2&gt;
+&lt;p&gt;平均旋转速度：转半圈的时间&lt;/p&gt;
+&lt;p&gt;厂商使用转速来标称&lt;/p&gt;
+&lt;p&gt;rpm: round per min
+$$
+{\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}}
+$$&lt;/p&gt;
+&lt;h2 id=&#34;data-transfer-time&#34;&gt;Data Transfer Time&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921135256805.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220921135256805&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;分为内部传输和外部传输&lt;/p&gt;
+&lt;p&gt;内部传输是磁介质到Buffer&lt;/p&gt;
+&lt;p&gt;外部传输是从接口到主机，例如SATA接口
+$$
+{\rm Transfer\ time=\frac{Block\ size}{Transfer\ rate(带宽)}}
+$$
+还有电子控制部件延迟，一般而言可以忽略，以上都是毫秒量级&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921135704097.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220921135704097&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;大部分时间开销在Seek Time，接近60%&lt;/p&gt;
+&lt;p&gt;I/O Controller利用率越高，会导致平均的延迟升高&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220921140754758.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220921140754758&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;data-rate-inner-vs-outer-tracks&#34;&gt;Data Rate: Inner vs. Outer Tracks&lt;/h2&gt;
+&lt;p&gt;磁盘在里圈和外圈的传输速率不同，&lt;/p&gt;
 </description>
         </item>
         <item>

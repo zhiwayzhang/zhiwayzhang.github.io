@@ -13,7 +13,8 @@ track 磁道，每个盘片的正面和背面的同心圆
 0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
 Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
 评价方法：
- Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  '><title>【存储技术基础】磁盘技术</title>
+ Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称'><title>【存储技术基础】磁盘技术</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/'>
 
@@ -30,7 +31,8 @@ track 磁道，每个盘片的正面和背面的同心圆
 0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
 Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
 评价方法：
- Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  '>
+ Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:published_time' content='2022-09-20T16:13:29&#43;08:00'/><meta property='article:modified_time' content='2022-09-20T16:13:29&#43;08:00'/>
@@ -47,7 +49,8 @@ track 磁道，每个盘片的正面和背面的同心圆
 0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
 Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
 评价方法：
- Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  ">
+ Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称">
     </head>
     <body class="
     article-page
@@ -403,6 +406,55 @@ Seek time inner和outter track中进行移动，到达对应的track所消耗的
 <li>Average 移动到中间所花费的时间</li>
 <li>Track-to-track 两个磁道间的移动时间</li>
 </ul>
+<h2 id="rotational-latency">Rotational Latency</h2>
+<p>平均旋转速度：转半圈的时间</p>
+<p>厂商使用转速来标称</p>
+<p>rpm: round per min
+$$
+{\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}}
+$$</p>
+<h2 id="data-transfer-time">Data Transfer Time</h2>
+<p><img src="https://cdn.ipandai.club/image-20220921135256805.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220921135256805"
+	
+	
+></p>
+<p>分为内部传输和外部传输</p>
+<p>内部传输是磁介质到Buffer</p>
+<p>外部传输是从接口到主机，例如SATA接口
+$$
+{\rm Transfer\ time=\frac{Block\ size}{Transfer\ rate(带宽)}}
+$$
+还有电子控制部件延迟，一般而言可以忽略，以上都是毫秒量级</p>
+<p><img src="https://cdn.ipandai.club/image-20220921135704097.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220921135704097"
+	
+	
+></p>
+<p>大部分时间开销在Seek Time，接近60%</p>
+<p>I/O Controller利用率越高，会导致平均的延迟升高</p>
+<p><img src="https://cdn.ipandai.club/image-20220921140754758.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220921140754758"
+	
+	
+></p>
+<h2 id="data-rate-inner-vs-outer-tracks">Data Rate: Inner vs. Outer Tracks</h2>
+<p>磁盘在里圈和外圈的传输速率不同，</p>
 
 </section>
 
@@ -705,6 +757,9 @@ Seek time inner和outter track中进行移动，到达对应的track所消耗的
 
   <ol>
     <li><a href="#seek-time">Seek time</a></li>
+    <li><a href="#rotational-latency">Rotational Latency</a></li>
+    <li><a href="#data-transfer-time">Data Transfer Time</a></li>
+    <li><a href="#data-rate-inner-vs-outer-tracks">Data Rate: Inner vs. Outer Tracks</a></li>
   </ol>
 </nav>
         </div>

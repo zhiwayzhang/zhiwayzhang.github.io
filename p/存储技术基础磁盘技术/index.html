@@ -488,6 +488,16 @@ $$
 <li>盘面号=(LBN对每个柱面的磁道数取模)/每个磁道的扇区数</li>
 <li>扇区号=LBN对每个磁道的扇区数取模</li>
 </ol>
+<p>讲解了几种调度算法：</p>
+<ul>
+<li>FCFS 先来先服务</li>
+<li>SSTF 最近先服务，有饥饿问题</li>
+<li>SCAN 先往一个方向走，再往另一个方向扫描</li>
+<li>C-SCAN 单向走</li>
+<li>LOOK 相较于SCAN不走0和边界</li>
+<li>C-LOOK 相较于C-SCAN不走边界</li>
+</ul>
+<p>评估指标：平均访问延迟，一般SSTF，C-LOOK</p>
 
 </section>
 

@@ -336,7 +336,7 @@ Note 在分块的时候误写为r=N/(N/i)导致调试耽误大量时间，而且
     
     <h1 id="description">Description</h1>
 <p>给出整数$n,k$,计算$G(n,k)=\sum\limits_{i=1}^n=k \ mod \ i$,$1&lt;=n,k&lt;=1e9$</p>
-<!-- raw HTML omitted -->
+<!-- more -->
 <h1 id="solution">Solution</h1>
 <p>将k mod i展开可以得到$k - i*\lfloor \frac{k}{i} \rfloor$
 将求和式子展开可以得到$ \sum\limits_{i=1}^n = n*k-\sum\limits_{i=1}^n i * \lfloor\frac{k}{i} \rfloor $

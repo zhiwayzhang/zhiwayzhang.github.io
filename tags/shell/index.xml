@@ -14,7 +14,7 @@
         <guid>https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/</guid>
         <description>&lt;p&gt;最近写了一个go项目，需要部署到服务器进行测试，如果只是&lt;code&gt;go run main.go&lt;/code&gt;难免也太麻烦了点，于是学习了项目部署的相关知识。
 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;!-- more --&gt;
 &lt;h1 id=&#34;系统信息&#34;&gt;系统信息&lt;/h1&gt;
 &lt;p&gt;系统信息: &lt;code&gt;CentOS Linux release 8.3.2011 x86_64&lt;/code&gt;
 Go version: &lt;code&gt;go version go1.14.12 linux/amd64&lt;/code&gt;&lt;/p&gt;

@@ -21,7 +21,7 @@
 其中 $c_i$
 表示数字 $i$ 在$[l,r]$ 中的出现次数。
 小B请你帮助他回答询问。&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;!-- more --&gt;
 &lt;h1 id=&#34;solution&#34;&gt;Solution&lt;/h1&gt;
 &lt;p&gt;莫队算法板子题 mark&lt;/p&gt;
 &lt;h1 id=&#34;code&#34;&gt;Code&lt;/h1&gt;

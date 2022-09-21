@@ -29,7 +29,7 @@
 &lt;p&gt;物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置&lt;/p&gt;
 &lt;p&gt;根据柱面-磁头-扇区来访问&lt;/p&gt;
 &lt;p&gt;右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/IMG_0448.jpg&#34; alt=&#34;IMG_0448&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
 &lt;h1 id=&#34;0x01-性能评估&#34;&gt;0x01 性能评估&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;电子设备

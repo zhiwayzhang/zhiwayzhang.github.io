@@ -291,7 +291,7 @@
 	
 	
 &gt;&lt;/a&gt;&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;!-- more --&gt;
 &lt;h1 id=&#34;127001-和-localhost&#34;&gt;127.0.0.1 和 localhost&lt;/h1&gt;
 &lt;p&gt;&lt;code&gt;127.0.0.1&lt;/code&gt;是回路地址中的一个，在计算机中&lt;code&gt;127.*.*.*&lt;/code&gt;被称为回路地址，所有对这些地址的请求都会让本机接收，最最重要的是，外部设备也不能通过这个地址访问到本机的服务。
 localhost其实是一个域名，他一般指代本机的网络，大多数机器都会默认localhost指向&lt;code&gt;127.0.0.1&lt;/code&gt;，可以自行修改为其他地址。&lt;/p&gt;

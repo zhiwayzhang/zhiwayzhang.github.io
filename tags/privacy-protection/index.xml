@@ -262,7 +262,7 @@ $$&lt;/p&gt;
 &lt;p&gt;对于密文$A,B,C,D$，乘法运算$(A*B)*(C*D)$优于$A*(B*(C*D))$，
 前者的乘法深度较小，需要的密文模数小。&lt;/p&gt;
 &lt;p&gt;密文维数$n$：查阅安全性文档中的参数表来选取，选取表格时许啊要了解密钥分发等实现细节。&lt;/p&gt;
-&lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220829231252603.png&#34; alt=&#34;image-20220829231252603&#34; style=&#34;zoom:40%;&#34; /&gt;&lt;/p&gt;
 &lt;h2 id=&#34;3-bgvbfv-hello-world&#34;&gt;3. BGV/BFV Hello World&lt;/h2&gt;
 &lt;p&gt;一个简单的例子&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;

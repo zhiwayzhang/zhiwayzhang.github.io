@@ -14,7 +14,7 @@
         <guid>https://blog.ipandai.club/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</guid>
         <description>&lt;h1 id=&#34;description&#34;&gt;Description&lt;/h1&gt;
 &lt;p&gt;在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有&lt;code&gt;T&lt;/code&gt;组询问，$T \leq 100000$，  $0 \leq k \leq n \leq 1e9$,  保证$p$是质数， 其中$p &amp;lt; 1e4$&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;!-- more --&gt;
 &lt;h1 id=&#34;solution&#34;&gt;Solution&lt;/h1&gt;
 &lt;p&gt;名字虽然是DP，但是可以找出最优方案。
 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$

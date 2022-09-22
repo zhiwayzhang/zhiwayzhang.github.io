@@ -1,89 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='DNS 使用UDP 53端口
-多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
-无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
-首部只有8个字节，源端口号和目的端口号，长度和check sum
-为什么需要checksum校验和：
- 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
-端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
-UDP只能检查错误，不能纠错
-DNS服务采用UDP
-何时UDP，何时TCP？
- 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
-接收方反馈：
- ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
-重传，收方发现差错，发送方重传
-序号，检测哪个数据包出错进行重传
-数据包可靠传输：
- 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
- 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
- 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
-GBN发送方：
- 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
-选择重传 避免不必要的重传
-发送方接收方都维护一个窗口
-发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：'><title>计算机网络自顶向下</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='DNS 使用UDP 53端口 多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务'><title>计算机网络自顶向下</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='计算机网络自顶向下'>
-<meta property='og:description' content='DNS 使用UDP 53端口
-多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
-无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
-首部只有8个字节，源端口号和目的端口号，长度和check sum
-为什么需要checksum校验和：
- 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
-端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
-UDP只能检查错误，不能纠错
-DNS服务采用UDP
-何时UDP，何时TCP？
- 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
-接收方反馈：
- ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
-重传，收方发现差错，发送方重传
-序号，检测哪个数据包出错进行重传
-数据包可靠传输：
- 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
- 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
- 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
-GBN发送方：
- 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
-选择重传 避免不必要的重传
-发送方接收方都维护一个窗口
-发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：'>
+<meta property='og:description' content='DNS 使用UDP 53端口 多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='计算机网络' /><meta property='article:tag' content='Note' /><meta property='article:published_time' content='2022-03-05T10:32:46&#43;00:00'/><meta property='article:modified_time' content='2022-03-05T10:32:46&#43;00:00'/>
 <meta name="twitter:title" content="计算机网络自顶向下">
-<meta name="twitter:description" content="DNS 使用UDP 53端口
-多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快
-无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务器）
-首部只有8个字节，源端口号和目的端口号，长度和check sum
-为什么需要checksum校验和：
- 在路由器内存中可能有bit差错 链路传输不可靠  checksum最终为1111111&amp;hellip;则可能无差错
-端到端原则：某种功能应该在较高级别提供，在较低级别上设置该功能可能会冗余
-UDP只能检查错误，不能纠错
-DNS服务采用UDP
-何时UDP，何时TCP？
- 不希望延迟报文的发送，TCP有拥塞控制机制，并容忍数据的丢失  可靠数据传输 差错检测
-接收方反馈：
- ACK肯定确认 NAK否定确认  ACK 0接收成功，ACK 1接收失败
-重传，收方发现差错，发送方重传
-序号，检测哪个数据包出错进行重传
-数据包可靠传输：
- 在没有ack的情况下，等待一定的时间后进行重传 序号可以保证传输不冗余（接收方检测是否冗余）  发送方需要实现：
- 没发送或者重传一个分组，启动定时器countdown timer 定时器过期后响应 终止定时器  流水线可靠传输协议：
- 采用极小的数据包，接收方收到最后一bit立即ack  GBN协议（回退N步），滑动窗口协议 限制数据包的序号，直到相应序号ack之后再发送后续的序号，用长度为N的窗口控制。
-GBN发送方：
- 发送数据包时，检查发送窗口，未满则返回未发送的分组 收到ack后，对分组中的序号累积确认，表明接收方，正确接收到序号为n的分组以及以前的所有分组，[0, N] 超时，发送方重传所有未被确认的分组  接收方收到的分组都是有序的，如果出现无序，会丢弃后面的数据包，等待重传
-选择重传 避免不必要的重传
-发送方接收方都维护一个窗口
-发送方：
- 收到send base后窗口右移到第一个没确认的分组处 接收ack将窗口内分组标记为ack 定时器防止分组丢失  接收方：">
+<meta name="twitter:description" content="DNS 使用UDP 53端口 多路复用和多路分解 无连接运输UDP UDP无需建立连接，速度快 无连接状态，不需要维护序列号，可以支持更多用户活跃（游戏服务">
     </head>
     <body class="
     article-page
@@ -286,27 +214,6 @@ GBN发送方：
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -383,7 +290,7 @@ GBN发送方：
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    3 minute read
                 </time>
             </div>
         
@@ -701,7 +608,8 @@ GBN发送方：
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

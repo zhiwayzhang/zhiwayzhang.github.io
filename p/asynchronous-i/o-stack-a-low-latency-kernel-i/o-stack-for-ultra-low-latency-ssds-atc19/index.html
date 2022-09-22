@@ -1,53 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Intro 优化I/O的方法
- 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
- 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
- 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
- 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
-Motivation 背景 现状：
- I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
-本文专注于：
- Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
-此类操作可以在设备I/O操作进行时执行
-因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
-For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
-由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求'><title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Intro 优化I/O的方法 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈'><title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)'>
-<meta property='og:description' content='Intro 优化I/O的方法
- 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
- 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
- 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
- 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
-Motivation 背景 现状：
- I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
-本文专注于：
- Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
-此类操作可以在设备I/O操作进行时执行
-因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
-For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
-由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求'>
+<meta property='og:description' content='Intro 优化I/O的方法 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈'>
 <meta property='og:url' content='https://blog.ipandai.club/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='Paper' /><meta property='article:published_time' content='2022-08-17T10:30:41&#43;08:00'/><meta property='article:modified_time' content='2022-08-17T10:30:41&#43;08:00'/>
 <meta name="twitter:title" content="Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)">
-<meta name="twitter:description" content="Intro 优化I/O的方法
- 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈  使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制    Related Work 减少内核的开销
- 减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销  修改存储接口
- 分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号  改善fsync
- 冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行  用户层直接访问外设，存在隔离、保护等安全问题
-Motivation 背景 现状：
- I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建  目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
-本文专注于：
- Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统  For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
-此类操作可以在设备I/O操作进行时执行
-因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
-For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
-由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求">
+<meta name="twitter:description" content="Intro 优化I/O的方法 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈">
     </head>
     <body class="
     article-page
@@ -250,27 +214,6 @@ For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -347,7 +290,7 @@ For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    4 minute read
                 </time>
             </div>
         
@@ -674,7 +617,8 @@ For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

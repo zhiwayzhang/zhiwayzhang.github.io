@@ -1,56 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本讲内容HDD好弟弟：
- 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法  推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
-0x00 组成 转轴，盘片，磁头
-track 磁道，每个盘片的正面和背面的同心圆
-对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
-所有盘片上同一个位置的track是一个cylinder（柱面）
-寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
-根据柱面-磁头-扇区来访问
-右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
-0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
-Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
-评价方法：
- Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  Rotational Latency 平均旋转速度：转半圈的时间
-厂商使用转速来标称'><title>【存储技术基础】磁盘技术</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本讲内容HDD好弟弟： 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang 0x00 组成 转'><title>【存储技术基础】磁盘技术</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='【存储技术基础】磁盘技术'>
-<meta property='og:description' content='本讲内容HDD好弟弟：
- 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法  推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
-0x00 组成 转轴，盘片，磁头
-track 磁道，每个盘片的正面和背面的同心圆
-对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
-所有盘片上同一个位置的track是一个cylinder（柱面）
-寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
-根据柱面-磁头-扇区来访问
-右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
-0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
-Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
-评价方法：
- Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  Rotational Latency 平均旋转速度：转半圈的时间
-厂商使用转速来标称'>
+<meta property='og:description' content='本讲内容HDD好弟弟： 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang 0x00 组成 转'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:published_time' content='2022-09-20T16:13:29&#43;08:00'/><meta property='article:modified_time' content='2022-09-20T16:13:29&#43;08:00'/>
 <meta name="twitter:title" content="【存储技术基础】磁盘技术">
-<meta name="twitter:description" content="本讲内容HDD好弟弟：
- 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法  推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
-0x00 组成 转轴，盘片，磁头
-track 磁道，每个盘片的正面和背面的同心圆
-对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
-所有盘片上同一个位置的track是一个cylinder（柱面）
-寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
-根据柱面-磁头-扇区来访问
-右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
-0x01 性能评估  电子设备  电路驱动   机械设备  seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率    $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
-Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
-评价方法：
- Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间  Rotational Latency 平均旋转速度：转半圈的时间
-厂商使用转速来标称">
+<meta name="twitter:description" content="本讲内容HDD好弟弟： 磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang 0x00 组成 转">
     </head>
     <body class="
     article-page
@@ -253,27 +214,6 @@ Seek time inner和outter track中进行移动，到达对应的track所消耗的
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -350,7 +290,7 @@ Seek time inner和outter track中进行移动，到达对应的track所消耗的
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    3 minute read
                 </time>
             </div>
         
@@ -685,7 +625,8 @@ $$
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

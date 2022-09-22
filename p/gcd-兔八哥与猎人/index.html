@@ -1,23 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
-Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
-Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ?'><title>GCD-兔八哥与猎人</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪'><title>GCD-兔八哥与猎人</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='GCD-兔八哥与猎人'>
-<meta property='og:description' content='Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
-Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
-Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ?'>
+<meta property='og:description' content='Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪'>
 <meta property='og:url' content='https://blog.ipandai.club/p/gcd-%E5%85%94%E5%85%AB%E5%93%A5%E4%B8%8E%E7%8C%8E%E4%BA%BA/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='ACM' /><meta property='article:published_time' content='2020-10-07T22:04:23&#43;00:00'/><meta property='article:modified_time' content='2020-10-07T22:04:23&#43;00:00'/>
 <meta name="twitter:title" content="GCD-兔八哥与猎人">
-<meta name="twitter:description" content="Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪走进了果园，他爬上一棵果树，准备杀死兔八哥。 如果猎人与兔八哥之间没有其它的果树，猎人就可以看到兔八哥。 现己知猎人和兔八哥的位置，编写程序判断兔子所在的位置是否安全. 输入：　第一行为n，表示有n(n ≤ 100,000)组数据，每组数据的第一行为两个正整数ax和ay，表示猎人的位置，第二行为两个正整数bx和by，表示兔八哥的位置(1 ≤ ax, ay, bx, by ≤ 100,000,000)。 输出： 共有n行，每行为“yes”或“no”表示兔八哥的位置是否安全。
-Solution 容易想到，兔八哥和猎人只要连线上无整数点即可，可以转化成$|a_x - b_x| 和 |a_y - b_y|$互质，即$gcd(|a_x - b_x|,|a_y - b_y|)=1$
-Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31  #include&amp;lt;bits/stdc&#43;&#43;.h&amp;gt;#define mem(a,b) memset(a,b,sizeof(a)) typedef long long ll; typedef unsigned long long ull; using namespace std; inline int gcd(int a, int b) { return b == 0 ?">
+<meta name="twitter:description" content="Description 兔八哥躲藏在树林旁边的果园里。果园有M × N棵树，组成一个M行N列的矩阵，水平或垂直相邻的两棵树的距离为1。兔八哥在一棵果树下。 猎人背着猎枪">
     </head>
     <body class="
     article-page
@@ -220,27 +214,6 @@ Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -599,7 +572,8 @@ Code 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

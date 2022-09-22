@@ -1,56 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此篇搁置了好几天了，网挑复赛耽误了一段时间
-0x00 Standardize 1. Notation and definition   ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$
-​	将参数实例化
-  $\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性
-  $PT$表示明文空间，目前指定了两种参数明文空间
- (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS
-  $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
-    ${\rm PubKeygen(Params)\to SK,PK,EK}$
-生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
-  ${\rm SecKeygen(Params)\to SK,EK}$
-生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
-  ${\rm PubEncrypt(PK,M)\to C}$
-通过公钥加密信息，生成密文。通常使用随机性保证安全性。
-  ${\rm SecEncrypt(SK, M)\to C}$'><title>Homomorphic Encryption Security Standard</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='此篇搁置了好几天了，网挑复赛耽误了一段时间 0x00 Standardize 1. Notation and definition ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$ ​ 将参数实例化 $\lambda$代表需要的安全等级，128-bit安全性或25'><title>Homomorphic Encryption Security Standard</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/homomorphic-encryption-security-standard/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Homomorphic Encryption Security Standard'>
-<meta property='og:description' content='此篇搁置了好几天了，网挑复赛耽误了一段时间
-0x00 Standardize 1. Notation and definition   ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$
-​	将参数实例化
-  $\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性
-  $PT$表示明文空间，目前指定了两种参数明文空间
- (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS
-  $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
-    ${\rm PubKeygen(Params)\to SK,PK,EK}$
-生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
-  ${\rm SecKeygen(Params)\to SK,EK}$
-生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
-  ${\rm PubEncrypt(PK,M)\to C}$
-通过公钥加密信息，生成密文。通常使用随机性保证安全性。
-  ${\rm SecEncrypt(SK, M)\to C}$'>
+<meta property='og:description' content='此篇搁置了好几天了，网挑复赛耽误了一段时间 0x00 Standardize 1. Notation and definition ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$ ​ 将参数实例化 $\lambda$代表需要的安全等级，128-bit安全性或25'>
 <meta property='og:url' content='https://blog.ipandai.club/p/homomorphic-encryption-security-standard/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Homomorphic Encryption' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='Privacy Protection' /><meta property='article:published_time' content='2022-09-04T14:11:46&#43;08:00'/><meta property='article:modified_time' content='2022-09-04T14:11:46&#43;08:00'/>
 <meta name="twitter:title" content="Homomorphic Encryption Security Standard">
-<meta name="twitter:description" content="此篇搁置了好几天了，网挑复赛耽误了一段时间
-0x00 Standardize 1. Notation and definition   ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$
-​	将参数实例化
-  $\lambda$代表需要的安全等级，128-bit安全性或256-bit安全性
-  $PT$表示明文空间，目前指定了两种参数明文空间
- (MI) Modular Integer，确定了明文空间的大小，例如$Z_p, p=1024$表示每个信息空间的元素都在$(0,1023)$范围中并且对所有元素的操作都要对p取模。 (EX) Extension Ring/Fields 由模数$p$和$Z_p$上的多项式$f(x)$确定，指定了明文空间$\frac{Z[x]}{(p,f(x))}$，每个信息空间的元素都是一个度数小于$f(x)$整数多项式，系数在范围$(0,p-1)$之间，并且所有对单个元素的操作都是$mod \ f(x)$和$mod \ p$    $K$表示被加密向量的维数。例如$K=100$，$PT=(M1,1024)$表示将要被加密的信息是向量$(V_1,&amp;hellip;,V_K)$，每个$V_i\in(0,1023)$并且执行Component-wise操作（对向量的每一个分量进行操作并得到一个新的向量）。根据定义，$(V_1,&amp;hellip;,V_K)&#43;(V_1^\prime,&amp;hellip;,V_K^\prime)=(V_1&#43;V_1^\prime,&amp;hellip;,V_K&#43;V_K^\prime)$，乘法操作类似，所有向量的空间称为消息空间messa;&amp;lsquo;ge space MS
-  $B$表示需要程序和电路的复杂性，越小则说明程序越简单，可以处理的范围也就越小；越大则加密支持更多复杂的操作，同时需要更复杂的处理程序
-    ${\rm PubKeygen(Params)\to SK,PK,EK}$
-生成一组私钥和公钥，这两个概念比较熟悉。要注意EK，Evaluation Key，用于在密文上执行同态操作时使用。
-  ${\rm SecKeygen(Params)\to SK,EK}$
-生成一组私钥和EK，SK会同时用于对数据进行加密和解密，EK同上。
-  ${\rm PubEncrypt(PK,M)\to C}$
-通过公钥加密信息，生成密文。通常使用随机性保证安全性。
-  ${\rm SecEncrypt(SK, M)\to C}$">
+<meta name="twitter:description" content="此篇搁置了好几天了，网挑复赛耽误了一段时间 0x00 Standardize 1. Notation and definition ${\rm ParamGen}(\lambda,PT,K,B)\to {\rm Params}$ ​ 将参数实例化 $\lambda$代表需要的安全等级，128-bit安全性或25">
     </head>
     <body class="
     article-page
@@ -253,27 +214,6 @@
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -350,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    2 minute read
+                    6 minute read
                 </time>
             </div>
         
@@ -723,7 +663,8 @@ $$</p>
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

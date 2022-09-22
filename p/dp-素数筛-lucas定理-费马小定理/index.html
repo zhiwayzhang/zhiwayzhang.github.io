@@ -1,35 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &amp;lt; 1e4$
-Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&amp;hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &amp;gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到**费马小定理**
- 费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
- 已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
-对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
-可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
-1 2 3 4  long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; }   有了这些工具之后就可以预处理阶乘和逆元了'><title>DP? 素数筛&#43;Lucas定理&#43;费马小定理</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所'><title>DP? 素数筛&#43;Lucas定理&#43;费马小定理</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='DP? 素数筛&#43;Lucas定理&#43;费马小定理'>
-<meta property='og:description' content='Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &amp;lt; 1e4$
-Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&amp;hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &amp;gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到**费马小定理**
- 费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
- 已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
-对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
-可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
-1 2 3 4  long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; }   有了这些工具之后就可以预处理阶乘和逆元了'>
+<meta property='og:description' content='Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所'>
 <meta property='og:url' content='https://blog.ipandai.club/p/dp-%E7%B4%A0%E6%95%B0%E7%AD%9B-lucas%E5%AE%9A%E7%90%86-%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Lucas定理' /><meta property='article:tag' content='费马小定理' /><meta property='article:tag' content='ACM' /><meta property='article:tag' content='Math' /><meta property='article:published_time' content='2019-12-13T18:57:13&#43;00:00'/><meta property='article:modified_time' content='2019-12-13T18:57:13&#43;00:00'/>
 <meta name="twitter:title" content="DP? 素数筛&#43;Lucas定理&#43;费马小定理">
-<meta name="twitter:description" content="Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &amp;lt; 1e4$
-Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&amp;hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &amp;gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到**费马小定理**
- 费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
- 已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
-对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
-可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
-1 2 3 4  long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; }   有了这些工具之后就可以预处理阶乘和逆元了">
+<meta name="twitter:description" content="Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所">
     </head>
     <body class="
     article-page
@@ -232,27 +214,6 @@ Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \l
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -745,7 +706,8 @@ Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \l
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

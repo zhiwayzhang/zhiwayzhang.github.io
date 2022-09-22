@@ -1,35 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
-系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
-几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
-git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
-ps ps命令为 process status,可以查看系统当前的进程状态
-例如
-1 2 3 4 5 6  ~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps   我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:'><title>记录一次Go项目的部署</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种'><title>记录一次Go项目的部署</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='记录一次Go项目的部署'>
-<meta property='og:description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
-系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
-几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
-git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
-ps ps命令为 process status,可以查看系统当前的进程状态
-例如
-1 2 3 4 5 6  ~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps   我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:'>
+<meta property='og:description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Golang' /><meta property='article:tag' content='Linux' /><meta property='article:tag' content='Shell' /><meta property='article:published_time' content='2021-03-30T12:23:42&#43;00:00'/><meta property='article:modified_time' content='2021-03-30T12:23:42&#43;00:00'/>
 <meta name="twitter:title" content="记录一次Go项目的部署">
-<meta name="twitter:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
-系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
-几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &amp;gt; xxx.log 2&amp;gt;&amp;amp;1 &amp;amp; 解释： &amp;gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&amp;gt;&amp;amp;1将标准错误2重定向到标准输出&amp;amp;1，然后标准输出&amp;amp;1再被重定向至xxx.log文件
-git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
-ps ps命令为 process status,可以查看系统当前的进程状态
-例如
-1 2 3 4 5 6  ~&amp;gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps   我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:">
+<meta name="twitter:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种">
     </head>
     <body class="
     article-page
@@ -232,27 +214,6 @@ ps ps命令为 process status,可以查看系统当前的进程状态
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -614,7 +575,8 @@ Already up to date.
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

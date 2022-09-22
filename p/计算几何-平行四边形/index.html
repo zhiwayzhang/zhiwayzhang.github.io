@@ -1,23 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意三点不共线。 输出 一行一个整数表示平行四边形个数。
-Solution 按照平行四边形的性质，两组顶点的中点重合，可以统计出每组顶点的中点，再统计每个顶点的个数，排列组合一下
-Note 第一发对于顶点的统计出锅了，排序条件写错，提交都要检查排序'><title>计算几何-平行四边形</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意'><title>计算几何-平行四边形</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95-%E5%B9%B3%E8%A1%8C%E5%9B%9B%E8%BE%B9%E5%BD%A2/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='计算几何-平行四边形'>
-<meta property='og:description' content='Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意三点不共线。 输出 一行一个整数表示平行四边形个数。
-Solution 按照平行四边形的性质，两组顶点的中点重合，可以统计出每组顶点的中点，再统计每个顶点的个数，排列组合一下
-Note 第一发对于顶点的统计出锅了，排序条件写错，提交都要检查排序'>
+<meta property='og:description' content='Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95-%E5%B9%B3%E8%A1%8C%E5%9B%9B%E8%BE%B9%E5%BD%A2/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='计算几何' /><meta property='article:tag' content='ACM' /><meta property='article:published_time' content='2020-05-13T22:05:25&#43;00:00'/><meta property='article:modified_time' content='2020-05-13T22:05:25&#43;00:00'/>
 <meta name="twitter:title" content="计算几何-平行四边形">
-<meta name="twitter:description" content="Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意三点不共线。 输出 一行一个整数表示平行四边形个数。
-Solution 按照平行四边形的性质，两组顶点的中点重合，可以统计出每组顶点的中点，再统计每个顶点的个数，排列组合一下
-Note 第一发对于顶点的统计出锅了，排序条件写错，提交都要检查排序">
+<meta name="twitter:description" content="Description 求平面上n个点构成的平行四边形个数。 输入 一行一个数n。 接下来n行，每行两个数x,y，表示这个点的坐标为(x,y)。 保证任意两点不重合，任意">
     </head>
     <body class="
     article-page
@@ -220,27 +214,6 @@ Note 第一发对于顶点的统计出锅了，排序条件写错，提交都要
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -532,7 +505,8 @@ Note 第一发对于顶点的统计出锅了，排序条件写错，提交都要
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

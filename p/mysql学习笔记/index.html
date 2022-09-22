@@ -1,71 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='基础知识 单进程多线程，线程之间共享内存
-OLTP Online Transaction Processing 在线事务处理
-InnoDB overview 特点：
- 行级锁 支持外键 支持事务  MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读
-四种隔离级别：
- REPEATABLE 默认  聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID
-后台线程  Master Thread 缓冲区数据异步更新到磁盘 IO Thread innodb使用异步IO，提高数据库性能，负责接受回调 Purge Thread 事务提交后回收undolog页 Page Cleaner Thread 脏页刷新  主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞
-内存 用页管理记录
-缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池fix，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。
-配置参数innodb_buffer_pool_size
-数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等
-允许有多个缓冲池
-内存管理 LRU List 频繁使用的在列表前，不频繁的在列表后，先释放尾部的页
-页默认大小16KB
-innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。
-Free列表保存空闲页
-MyISAM  表锁 全文索引 不支持事务  缓冲区只缓存索引文件，不缓冲数据
-MYD保存数据，MYI保存索引文件
-myisampack使用Huffman编码压缩MYD，压缩后只读'><title>Mysql学习笔记</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='基础知识 单进程多线程，线程之间共享内存 OLTP Online Transaction Processing 在线事务处理 InnoDB overview 特点： 行级锁 支持外键 支持事务 MVCC并发控制，插入缓冲，二次写，自适应哈希索引'><title>Mysql学习笔记</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Mysql学习笔记'>
-<meta property='og:description' content='基础知识 单进程多线程，线程之间共享内存
-OLTP Online Transaction Processing 在线事务处理
-InnoDB overview 特点：
- 行级锁 支持外键 支持事务  MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读
-四种隔离级别：
- REPEATABLE 默认  聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID
-后台线程  Master Thread 缓冲区数据异步更新到磁盘 IO Thread innodb使用异步IO，提高数据库性能，负责接受回调 Purge Thread 事务提交后回收undolog页 Page Cleaner Thread 脏页刷新  主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞
-内存 用页管理记录
-缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池fix，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。
-配置参数innodb_buffer_pool_size
-数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等
-允许有多个缓冲池
-内存管理 LRU List 频繁使用的在列表前，不频繁的在列表后，先释放尾部的页
-页默认大小16KB
-innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。
-Free列表保存空闲页
-MyISAM  表锁 全文索引 不支持事务  缓冲区只缓存索引文件，不缓冲数据
-MYD保存数据，MYI保存索引文件
-myisampack使用Huffman编码压缩MYD，压缩后只读'>
+<meta property='og:description' content='基础知识 单进程多线程，线程之间共享内存 OLTP Online Transaction Processing 在线事务处理 InnoDB overview 特点： 行级锁 支持外键 支持事务 MVCC并发控制，插入缓冲，二次写，自适应哈希索引'>
 <meta property='og:url' content='https://blog.ipandai.club/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Note' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2022-01-17T23:16:08&#43;00:00'/><meta property='article:modified_time' content='2022-01-17T23:16:08&#43;00:00'/>
 <meta name="twitter:title" content="Mysql学习笔记">
-<meta name="twitter:description" content="基础知识 单进程多线程，线程之间共享内存
-OLTP Online Transaction Processing 在线事务处理
-InnoDB overview 特点：
- 行级锁 支持外键 支持事务  MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读
-四种隔离级别：
- REPEATABLE 默认  聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID
-后台线程  Master Thread 缓冲区数据异步更新到磁盘 IO Thread innodb使用异步IO，提高数据库性能，负责接受回调 Purge Thread 事务提交后回收undolog页 Page Cleaner Thread 脏页刷新  主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞
-内存 用页管理记录
-缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池fix，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。
-配置参数innodb_buffer_pool_size
-数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等
-允许有多个缓冲池
-内存管理 LRU List 频繁使用的在列表前，不频繁的在列表后，先释放尾部的页
-页默认大小16KB
-innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。
-Free列表保存空闲页
-MyISAM  表锁 全文索引 不支持事务  缓冲区只缓存索引文件，不缓冲数据
-MYD保存数据，MYI保存索引文件
-myisampack使用Huffman编码压缩MYD，压缩后只读">
+<meta name="twitter:description" content="基础知识 单进程多线程，线程之间共享内存 OLTP Online Transaction Processing 在线事务处理 InnoDB overview 特点： 行级锁 支持外键 支持事务 MVCC并发控制，插入缓冲，二次写，自适应哈希索引">
     </head>
     <body class="
     article-page
@@ -268,27 +214,6 @@ myisampack使用Huffman编码压缩MYD，压缩后只读">
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -365,7 +290,7 @@ myisampack使用Huffman编码压缩MYD，压缩后只读">
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    2 minute read
                 </time>
             </div>
         
@@ -614,7 +539,8 @@ myisampack使用Huffman编码压缩MYD，压缩后只读">
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

@@ -1,80 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='0x00 Intro 对于场景制定存储方案：
- 存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率  要学习硬件的选择和文件系统设计
-0x01 现状 存储的挑战 数据量激增
-存储是什么 分层的存储架构
-L0-L1-L2-DRAM-Disk
-存储的特性 可靠性：
- 多副本 纠删码  一致性：
- 原子&#43;持久化  数据保护 容灾和备份：
- 解决单点故障  0x02 存储历史与发展 硬件上的发展 1956&amp;ndash;HDD
-1984&amp;ndash;Flash Memory 早期用于嵌入式
-2010s&amp;ndash;Persistent Memory 3D-Point Intel
-SSD NAND Flash：
-SLC，MLC，TLC，QLC存储单元中电平的等级
-对比HDD和SSD：
-  对于NAND，需要先擦出，再写
-  NAND Flash有擦除，HDD只能覆盖写
-  SSD多个颗粒可以并行I/O，总体上速度快
-  软件上的发展 网络存储 远程挂载目录NAS
-分布式文件系统GFS，Hadoop HDFS
-键值存储Key-Value
-云存储 数据存在远端，商业化，软件协作Office
-Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？'><title>【存储技术基础】概述</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='0x00 Intro 对于场景制定存储方案： 存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计 0x01 现状 存储的挑战 数据量激增 存储是'><title>【存储技术基础】概述</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/'>
 
 <link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='【存储技术基础】概述'>
-<meta property='og:description' content='0x00 Intro 对于场景制定存储方案：
- 存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率  要学习硬件的选择和文件系统设计
-0x01 现状 存储的挑战 数据量激增
-存储是什么 分层的存储架构
-L0-L1-L2-DRAM-Disk
-存储的特性 可靠性：
- 多副本 纠删码  一致性：
- 原子&#43;持久化  数据保护 容灾和备份：
- 解决单点故障  0x02 存储历史与发展 硬件上的发展 1956&amp;ndash;HDD
-1984&amp;ndash;Flash Memory 早期用于嵌入式
-2010s&amp;ndash;Persistent Memory 3D-Point Intel
-SSD NAND Flash：
-SLC，MLC，TLC，QLC存储单元中电平的等级
-对比HDD和SSD：
-  对于NAND，需要先擦出，再写
-  NAND Flash有擦除，HDD只能覆盖写
-  SSD多个颗粒可以并行I/O，总体上速度快
-  软件上的发展 网络存储 远程挂载目录NAS
-分布式文件系统GFS，Hadoop HDFS
-键值存储Key-Value
-云存储 数据存在远端，商业化，软件协作Office
-Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？'>
+<meta property='og:description' content='0x00 Intro 对于场景制定存储方案： 存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计 0x01 现状 存储的挑战 数据量激增 存储是'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:published_time' content='2022-09-20T14:41:57&#43;08:00'/><meta property='article:modified_time' content='2022-09-20T14:41:57&#43;08:00'/>
 <meta name="twitter:title" content="【存储技术基础】概述">
-<meta name="twitter:description" content="0x00 Intro 对于场景制定存储方案：
- 存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率  要学习硬件的选择和文件系统设计
-0x01 现状 存储的挑战 数据量激增
-存储是什么 分层的存储架构
-L0-L1-L2-DRAM-Disk
-存储的特性 可靠性：
- 多副本 纠删码  一致性：
- 原子&#43;持久化  数据保护 容灾和备份：
- 解决单点故障  0x02 存储历史与发展 硬件上的发展 1956&amp;ndash;HDD
-1984&amp;ndash;Flash Memory 早期用于嵌入式
-2010s&amp;ndash;Persistent Memory 3D-Point Intel
-SSD NAND Flash：
-SLC，MLC，TLC，QLC存储单元中电平的等级
-对比HDD和SSD：
-  对于NAND，需要先擦出，再写
-  NAND Flash有擦除，HDD只能覆盖写
-  SSD多个颗粒可以并行I/O，总体上速度快
-  软件上的发展 网络存储 远程挂载目录NAS
-分布式文件系统GFS，Hadoop HDFS
-键值存储Key-Value
-云存储 数据存在远端，商业化，软件协作Office
-Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？">
+<meta name="twitter:description" content="0x00 Intro 对于场景制定存储方案： 存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计 0x01 现状 存储的挑战 数据量激增 存储是">
     </head>
     <body class="
     article-page
@@ -277,27 +214,6 @@ Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考�
         
 
         <div class="menu-bottom-section">
-                <li id="i18n-switch">  
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M4 5h7" />
-  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
-  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
-  <path d="M12 20l4 -9l4 9" />
-  <path d="M19.1 18h-6.2" />
-</svg>
-
-
-
-                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
-                        
-                            <option value="https://blog.ipandai.club/" selected>English</option>
-                        
-                            <option value="https://blog.ipandai.club/zh-cn/" >中文</option>
-                        
-                    </select>
-                </li>
-            
             
             
                 <li id="dark-mode-toggle">
@@ -630,7 +546,8 @@ Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考�
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>

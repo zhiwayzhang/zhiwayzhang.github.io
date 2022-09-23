@@ -6,7 +6,126 @@
         <description>Recent content in Storage on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 20 Sep 2022 16:13:29 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/storage/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 22 Sep 2022 09:36:42 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/storage/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>【存储技术基础】固态硬盘</title>
+        <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/</link>
+        <pubDate>Thu, 22 Sep 2022 09:36:42 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/</guid>
+        <description>&lt;p&gt;主要由Flash Memory 和FTL组成&lt;/p&gt;
+&lt;p&gt;Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存&lt;/p&gt;
+&lt;p&gt;根据延迟数量级，一般用PCM做内存，Flash Memory做外存&lt;/p&gt;
+&lt;h1 id=&#34;0x00-flash-memory&#34;&gt;0x00 Flash Memory&lt;/h1&gt;
+&lt;h2 id=&#34;闪存原理&#34;&gt;闪存原理&lt;/h2&gt;
+&lt;h3 id=&#34;类型&#34;&gt;类型&lt;/h3&gt;
+&lt;p&gt;NOR闪存&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;存储密度低&lt;/li&gt;
+&lt;li&gt;可字节改写&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;NAND闪存（主流）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;存储密度高&lt;/li&gt;
+&lt;li&gt;不可覆盖写&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用于外存需要较高的存储量级，一般用NAND&lt;/p&gt;
+&lt;h3 id=&#34;闪存单元&#34;&gt;闪存单元&lt;/h3&gt;
+&lt;p&gt;读：电压代表不同数值&lt;/p&gt;
+&lt;p&gt;写：电子注入&lt;/p&gt;
+&lt;p&gt;相比晶体管添加了浮栅门，保存电子&lt;/p&gt;
+&lt;p&gt;原理其实比较简单，非电子系就不做太详细的研究了&lt;/p&gt;
+&lt;p&gt;闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行&lt;/p&gt;
+&lt;p&gt;闪存块(擦除单元)，由多个页组成的单元&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922124359358.png&#34; alt=&#34;image-20220922124359358&#34; style=&#34;zoom:33%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;选中行和列，然后将数据加载到Sense Amplifiers&lt;/p&gt;
+&lt;p&gt;存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922124755447.png&#34; alt=&#34;image-20220922124755447&#34; style=&#34;zoom:25%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Pass Through&lt;/p&gt;
+&lt;p&gt;选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922131649578.png&#34; alt=&#34;image-20220922131649578&#34; style=&#34;zoom:25%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011&lt;/p&gt;
+&lt;img src=&#34;https://cdn.ipandai.club/image-20220922134857889.png&#34; alt=&#34;image-20220922134857889&#34; style=&#34;zoom:33%;&#34;/&gt;
+&lt;p&gt;上述为SLC，Single Level Cell，单存储单元&lt;/p&gt;
+&lt;h3 id=&#34;多比特闪存&#34;&gt;多比特闪存&lt;/h3&gt;
+&lt;p&gt;多比特闪存单元MLC，包含2Bits 4个Level的数据&lt;/p&gt;
+&lt;p&gt;TLC 3 Bits 8个Level&lt;/p&gt;
+&lt;p&gt;QLC 4 Bits 16个Level&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;多比特使用格雷码来编码&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;使用格雷码使得相邻单元只有一位差异，方便纠错&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922135516463.png&#34; alt=&#34;image-20220922135516463&#34; style=&#34;zoom:45%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922140421405.png&#34; alt=&#34;image-20220922140421405&#34; style=&#34;zoom:40%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922141455826.png&#34; alt=&#34;image-20220922141455826&#34; style=&#34;zoom:40%;&#34; /&gt;&lt;/p&gt;
+&lt;h3 id=&#34;闪存&#34;&gt;闪存&lt;/h3&gt;
+&lt;p&gt;Block的大小的一种配置：&lt;/p&gt;
+&lt;p&gt;一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB&lt;/p&gt;
+&lt;p&gt;有64列bitlines，一个block的大小即为&lt;code&gt;16KB*64*2=2MB&lt;/code&gt;，一般按照此比例配置Block&lt;/p&gt;
+&lt;p&gt;写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率&lt;/p&gt;
+&lt;p&gt;写入是需要先擦除再写入，擦除整个块&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922143608667.png&#34; alt=&#34;image-20220922143608667&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;h4 id=&#34;特性&#34;&gt;特性&lt;/h4&gt;
+&lt;h5 id=&#34;读写粒度&#34;&gt;读写粒度&lt;/h5&gt;
+&lt;p&gt;闪存页读写粒度：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;4KB，8KB，16KB必须全部读取或者写入&lt;/li&gt;
+&lt;li&gt;us延迟&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;闪存块擦除力度&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;2MB擦除&lt;/li&gt;
+&lt;li&gt;ms延迟，可以通过FTL来优化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;不可覆盖写&#34;&gt;不可覆盖写&lt;/h5&gt;
+&lt;p&gt;写前需要擦除，读写粒度与擦除粒度不同&lt;/p&gt;
+&lt;p&gt;存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922162139217.png&#34; alt=&#34;image-20220922162139217&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;h5 id=&#34;有限次擦除&#34;&gt;有限次擦除&lt;/h5&gt;
+&lt;p&gt;随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。&lt;/p&gt;
+&lt;p&gt;氧化层老化变薄，束缚电子能力变弱&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;耐久性 变薄地次数&lt;/li&gt;
+&lt;li&gt;保持力 不通电可以放置的时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;SLC：10w次&lt;/p&gt;
+&lt;p&gt;MLC：1w次&lt;/p&gt;
+&lt;p&gt;TLC：1k次&lt;/p&gt;
+&lt;p&gt;根据特性设计FTL固件来&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922164523965.png&#34; alt=&#34;image-20220922164523965&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;h1 id=&#34;0x01-ftl&#34;&gt;0x01 FTL&lt;/h1&gt;
+&lt;p&gt;固态硬盘整体构成&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922164728094.png&#34; alt=&#34;image-20220922164728094&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922165354311.png&#34; alt=&#34;image-20220922165354311&#34; style=&#34;zoom:50%;&#34; /&gt;&lt;/p&gt;
+&lt;h2 id=&#34;垃圾回收&#34;&gt;垃圾回收&lt;/h2&gt;
+&lt;p&gt;page对于OS而言，是写入时的block&lt;/p&gt;
+&lt;p&gt;Page三种状态&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;空闲 free page&lt;/li&gt;
+&lt;li&gt;有效页 live/valid page&lt;/li&gt;
+&lt;li&gt;无效页 dead/invalid page&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922184349456.png&#34; alt=&#34;image-20220922184349456&#34; style=&#34;zoom:25%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220922184406162.png&#34; alt=&#34;image-20220922184406162&#34; style=&#34;zoom:25%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;时间开销：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量&lt;/li&gt;
+&lt;li&gt;擦除产生的开销 ms级延迟&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;gc策略&#34;&gt;GC策略&lt;/h3&gt;
+&lt;p&gt;要解决的问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;何时启动GC&lt;/li&gt;
+&lt;li&gt;选中那些/多少Block进行GC&lt;/li&gt;
+&lt;li&gt;有效的页如何被转写&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>【存储技术基础】磁盘技术</title>
         <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/</link>
         <pubDate>Tue, 20 Sep 2022 16:13:29 +0800</pubDate>
@@ -146,6 +265,11 @@ $$
 &lt;li&gt;C-LOOK 相较于C-SCAN不走边界&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;评估指标：平均访问延迟，一般SSTF，C-LOOK&lt;/p&gt;
+&lt;h1 id=&#34;缺陷-第三讲开头部分&#34;&gt;缺陷 第三讲开头部分&lt;/h1&gt;
+&lt;p&gt;机械式部件限制了性能，继续提升会产生一些物理问题&lt;/p&gt;
+&lt;p&gt;带宽提升有限&lt;/p&gt;
+&lt;p&gt;存在能耗问题，需要通电、散热冷却等开销&lt;/p&gt;
+&lt;p&gt;随机访问的性能差&lt;/p&gt;
 </description>
         </item>
         <item>

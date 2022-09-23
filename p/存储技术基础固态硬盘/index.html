@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Description 给出整数$n,k$,计算$G(n,k)=\sum\limits_{i=1}^n=k \ mod \ i$,$1&amp;lt;=n,k&amp;lt;=1e9$ Solution 将k mod i展开可以得到$k - i*\lfloor \frac{k}{i} \rfloor$ 将求和式子展开'><title>余数求和-整除分块</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做'><title>【存储技术基础】固态硬盘</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/'>
 
-<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='余数求和-整除分块'>
-<meta property='og:description' content='Description 给出整数$n,k$,计算$G(n,k)=\sum\limits_{i=1}^n=k \ mod \ i$,$1&amp;lt;=n,k&amp;lt;=1e9$ Solution 将k mod i展开可以得到$k - i*\lfloor \frac{k}{i} \rfloor$ 将求和式子展开'>
-<meta property='og:url' content='https://blog.ipandai.club/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/'>
+<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='【存储技术基础】固态硬盘'>
+<meta property='og:description' content='主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做'>
+<meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Math' /><meta property='article:tag' content='ACM' /><meta property='article:published_time' content='2020-10-07T21:47:20&#43;00:00'/><meta property='article:modified_time' content='2020-10-07T21:47:20&#43;00:00'/>
-<meta name="twitter:title" content="余数求和-整除分块">
-<meta name="twitter:description" content="Description 给出整数$n,k$,计算$G(n,k)=\sum\limits_{i=1}^n=k \ mod \ i$,$1&amp;lt;=n,k&amp;lt;=1e9$ Solution 将k mod i展开可以得到$k - i*\lfloor \frac{k}{i} \rfloor$ 将求和式子展开">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:published_time' content='2022-09-22T09:36:42&#43;08:00'/><meta property='article:modified_time' content='2022-09-22T09:36:42&#43;08:00'/>
+<meta name="twitter:title" content="【存储技术基础】固态硬盘">
+<meta name="twitter:description" content="主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RWZSPCVWSC"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -264,7 +264,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E4%BD%99%E6%95%B0%E6%B1%82%E5%92%8C-%E6%95%B4%E9%99%A4%E5%88%86%E5%9D%97/">余数求和-整除分块</a>
+            <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/">【存储技术基础】固态硬盘</a>
         </h2>
     
         
@@ -283,7 +283,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Oct 07, 2020</time>
+                <time class="article-time--published">Sep 22, 2022</time>
             </div>
         
 
@@ -298,7 +298,7 @@
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    3 minute read
                 </time>
             </div>
         
@@ -312,120 +312,118 @@
     <section class="article-content">
     
     
-    <h1 id="description">Description</h1>
-<p>给出整数$n,k$,计算$G(n,k)=\sum\limits_{i=1}^n=k \ mod \ i$,$1&lt;=n,k&lt;=1e9$</p>
-<!-- more -->
-<h1 id="solution">Solution</h1>
-<p>将k mod i展开可以得到$k - i*\lfloor \frac{k}{i} \rfloor$
-将求和式子展开可以得到$ \sum\limits_{i=1}^n = n*k-\sum\limits_{i=1}^n i * \lfloor\frac{k}{i} \rfloor $
-利用整除分块，可以发现，对于相同的$\lfloor\frac{k}{i} \rfloor$，即每个区间$l 到 r$，每次只需要再对i求和即可
-即每次计算$(r-l+1)*\lfloor \frac{k}{i} \rfloor * (l+r)/2$</p>
-<h1 id="note">Note</h1>
-<p>在分块的时候误写为<code>r=N/(N/i)</code>导致调试耽误大量时间，而且交了四发才发现</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="k">for</span> <span class="p">(</span><span class="n">ll</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">l</span> <span class="o">=</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">K</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="o">/</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">l</span><span class="p">));</span>
-        <span class="n">ans</span> <span class="o">-=</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">l</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-    <span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h1 id="code">Code</h1>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//https://www.luogu.com.cn/problem/P2261
-</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;cmath&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;map&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;set&gt;</span><span class="cp">
-</span><span class="cp">#define mem(a,b) memset(a,b,sizeof(a))
-</span><span class="cp">#define debug cout&lt;&lt;0&lt;&lt;endl
-</span><span class="cp">#define ll long long
-</span><span class="cp"></span><span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mf">1e2</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span>
-<span class="k">const</span> <span class="kt">int</span> <span class="n">MOD</span> <span class="o">=</span> <span class="mf">1e9</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;</span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+    <p>主要由Flash Memory 和FTL组成</p>
+<p>Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存</p>
+<p>根据延迟数量级，一般用PCM做内存，Flash Memory做外存</p>
+<h1 id="0x00-flash-memory">0x00 Flash Memory</h1>
+<h2 id="闪存原理">闪存原理</h2>
+<h3 id="类型">类型</h3>
+<p>NOR闪存</p>
+<ul>
+<li>存储密度低</li>
+<li>可字节改写</li>
+</ul>
+<p>NAND闪存（主流）</p>
+<ul>
+<li>存储密度高</li>
+<li>不可覆盖写</li>
+</ul>
+<p>用于外存需要较高的存储量级，一般用NAND</p>
+<h3 id="闪存单元">闪存单元</h3>
+<p>读：电压代表不同数值</p>
+<p>写：电子注入</p>
+<p>相比晶体管添加了浮栅门，保存电子</p>
+<p>原理其实比较简单，非电子系就不做太详细的研究了</p>
+<p>闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行</p>
+<p>闪存块(擦除单元)，由多个页组成的单元</p>
+<p><img src="https://cdn.ipandai.club/image-20220922124359358.png" alt="image-20220922124359358" style="zoom:33%;" /></p>
+<p>选中行和列，然后将数据加载到Sense Amplifiers</p>
+<p>存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0</p>
+<p><img src="https://cdn.ipandai.club/image-20220922124755447.png" alt="image-20220922124755447" style="zoom:25%;" /></p>
+<p>Pass Through</p>
+<p>选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态</p>
+<p><img src="https://cdn.ipandai.club/image-20220922131649578.png" alt="image-20220922131649578" style="zoom:25%;" /></p>
+<p>如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011</p>
+<img src="https://cdn.ipandai.club/image-20220922134857889.png" alt="image-20220922134857889" style="zoom:33%;"/>
+<p>上述为SLC，Single Level Cell，单存储单元</p>
+<h3 id="多比特闪存">多比特闪存</h3>
+<p>多比特闪存单元MLC，包含2Bits 4个Level的数据</p>
+<p>TLC 3 Bits 8个Level</p>
+<p>QLC 4 Bits 16个Level</p>
+<p><strong>多比特使用格雷码来编码</strong></p>
+<blockquote>
+<p>使用格雷码使得相邻单元只有一位差异，方便纠错</p>
+</blockquote>
+<p>多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。</p>
+<p><img src="https://cdn.ipandai.club/image-20220922135516463.png" alt="image-20220922135516463" style="zoom:45%;" /></p>
+<p>对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。</p>
+<p><img src="https://cdn.ipandai.club/image-20220922140421405.png" alt="image-20220922140421405" style="zoom:40%;" /></p>
+<p>对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。</p>
+<p><img src="https://cdn.ipandai.club/image-20220922141455826.png" alt="image-20220922141455826" style="zoom:40%;" /></p>
+<h3 id="闪存">闪存</h3>
+<p>Block的大小的一种配置：</p>
+<p>一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB</p>
+<p>有64列bitlines，一个block的大小即为<code>16KB*64*2=2MB</code>，一般按照此比例配置Block</p>
+<p>写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率</p>
+<p>写入是需要先擦除再写入，擦除整个块</p>
+<p><img src="https://cdn.ipandai.club/image-20220922143608667.png" alt="image-20220922143608667" style="zoom:50%;" /></p>
+<h4 id="特性">特性</h4>
+<h5 id="读写粒度">读写粒度</h5>
+<p>闪存页读写粒度：</p>
+<ul>
+<li>4KB，8KB，16KB必须全部读取或者写入</li>
+<li>us延迟</li>
+</ul>
+<p>闪存块擦除力度</p>
+<ul>
+<li>2MB擦除</li>
+<li>ms延迟，可以通过FTL来优化</li>
+</ul>
+<h5 id="不可覆盖写">不可覆盖写</h5>
+<p>写前需要擦除，读写粒度与擦除粒度不同</p>
+<p>存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错</p>
+<p><img src="https://cdn.ipandai.club/image-20220922162139217.png" alt="image-20220922162139217" style="zoom:50%;" /></p>
+<h5 id="有限次擦除">有限次擦除</h5>
+<p>随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。</p>
+<p>氧化层老化变薄，束缚电子能力变弱</p>
+<ul>
+<li>耐久性 变薄地次数</li>
+<li>保持力 不通电可以放置的时间</li>
+</ul>
+<p>SLC：10w次</p>
+<p>MLC：1w次</p>
+<p>TLC：1k次</p>
+<p>根据特性设计FTL固件来</p>
+<p><img src="https://cdn.ipandai.club/image-20220922164523965.png" alt="image-20220922164523965" style="zoom:50%;" /></p>
+<h1 id="0x01-ftl">0x01 FTL</h1>
+<p>固态硬盘整体构成</p>
+<p><img src="https://cdn.ipandai.club/image-20220922164728094.png" alt="image-20220922164728094" style="zoom:50%;" /></p>
+<p>SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大</p>
+<p><img src="https://cdn.ipandai.club/image-20220922165354311.png" alt="image-20220922165354311" style="zoom:50%;" /></p>
+<h2 id="垃圾回收">垃圾回收</h2>
+<p>page对于OS而言，是写入时的block</p>
+<p>Page三种状态</p>
+<ul>
+<li>空闲 free page</li>
+<li>有效页 live/valid page</li>
+<li>无效页 dead/invalid page</li>
+</ul>
+<p><img src="https://cdn.ipandai.club/image-20220922184349456.png" alt="image-20220922184349456" style="zoom:25%;" /></p>
+<p>需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲</p>
+<p><img src="https://cdn.ipandai.club/image-20220922184406162.png" alt="image-20220922184406162" style="zoom:25%;" /></p>
+<p>时间开销：</p>
+<ul>
+<li>复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量</li>
+<li>擦除产生的开销 ms级延迟</li>
+</ul>
+<h3 id="gc策略">GC策略</h3>
+<p>要解决的问题：</p>
+<ul>
+<li>何时启动GC</li>
+<li>选中那些/多少Block进行GC</li>
+<li>有效的页如何被转写</li>
+</ul>
 
-<span class="n">ll</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-
-<span class="kt">void</span> <span class="nf">solve</span><span class="p">(</span><span class="n">ll</span> <span class="n">N</span><span class="p">,</span> <span class="n">ll</span> <span class="n">K</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">ans</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="n">K</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">ll</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;=</span> <span class="n">N</span><span class="p">;</span> <span class="n">l</span> <span class="o">=</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">K</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="o">/</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">l</span><span class="p">));</span>
-        <span class="n">ans</span> <span class="o">-=</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">l</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">ans</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
-    <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-    <span class="n">ll</span> <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">;</span> <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">N</span> <span class="o">&gt;&gt;</span> <span class="n">K</span><span class="p">;</span>
-    <span class="n">solve</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div>
 </section>
 
 
@@ -433,9 +431,9 @@
     
     <section class="article-tags">
         
-            <a href="/tags/math/">Math</a>
+            <a href="/tags/ssd/">SSD</a>
         
-            <a href="/tags/acm/">ACM</a>
+            <a href="/tags/storage/">Storage</a>
         
     </section>
 
@@ -492,6 +490,45 @@
             
                 
 <article class="">
+    <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【存储技术基础】磁盘技术</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【存储技术基础】概述</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
     <a href="/p/homomorphic-encryption-security-standard/">
         
         
@@ -505,51 +542,12 @@
             
                 
 <article class="">
-    <a href="/p/homomorphic-encryption-learning-notes/">
+    <a href="/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">Homomorphic Encryption Learning Notes</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E7%BB%9F%E8%AE%A1%E7%A1%AC%E5%B8%81-%E9%80%92%E6%8E%A8/dp/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">统计硬币-递推/DP</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">小兔的棋盘 组合数学</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【存储技术基础】固态硬盘</h2>
+            <h2 class="article-title">使用GitHub Workflow工作流自动部署静态博客</h2>
         </div>
     </a>
 </article>
@@ -725,10 +723,37 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#description">Description</a></li>
-    <li><a href="#solution">Solution</a></li>
-    <li><a href="#note">Note</a></li>
-    <li><a href="#code">Code</a></li>
+    <li><a href="#0x00-flash-memory">0x00 Flash Memory</a>
+      <ol>
+        <li><a href="#闪存原理">闪存原理</a>
+          <ol>
+            <li><a href="#类型">类型</a></li>
+            <li><a href="#闪存单元">闪存单元</a></li>
+            <li><a href="#多比特闪存">多比特闪存</a></li>
+            <li><a href="#闪存">闪存</a>
+              <ol>
+                <li><a href="#特性">特性</a>
+                  <ol>
+                    <li><a href="#读写粒度">读写粒度</a></li>
+                    <li><a href="#不可覆盖写">不可覆盖写</a></li>
+                    <li><a href="#有限次擦除">有限次擦除</a></li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#0x01-ftl">0x01 FTL</a>
+      <ol>
+        <li><a href="#垃圾回收">垃圾回收</a>
+          <ol>
+            <li><a href="#gc策略">GC策略</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>

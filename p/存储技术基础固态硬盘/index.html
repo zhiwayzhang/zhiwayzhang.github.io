@@ -298,7 +298,7 @@
 
 
                 <time class="article-time--reading">
-                    3 minute read
+                    5 minute read
                 </time>
             </div>
         
@@ -422,7 +422,68 @@
 <li>何时启动GC</li>
 <li>选中那些/多少Block进行GC</li>
 <li>有效的页如何被转写</li>
+<li>新数据写到哪里</li>
 </ul>
+<p>GC的时间开销：</p>
+<ul>
+<li>块擦除的时间 ms</li>
+<li>有效页的复制时间</li>
+</ul>
+<p>贪心策略：</p>
+<ul>
+<li>找到脏页最多的block来进行擦除</li>
+</ul>
+<p>优化：</p>
+<ul>
+<li>Age</li>
+<li>Hot/Cold 数据隔离，分组问题</li>
+</ul>
+<h2 id="磨损均衡">磨损均衡</h2>
+<p>优化寿命，有静态和动态策略</p>
+<p>静态：周期性的调整冷热数据存储的位置</p>
+<p>冷热数据的分区：将冷数据放在一起，热数据放在一起</p>
+<h2 id="ftl简介">FTL简介</h2>
+<ul>
+<li>
+<p>维护映射，虚拟地址到物理地址</p>
+</li>
+<li>
+<p>使用SRAM存储映射</p>
+</li>
+<li>
+<p>向上层隐藏擦除操作：</p>
+<ul>
+<li>
+<p>避免原地更新-&gt;异地更新</p>
+</li>
+<li>
+<p>更新一个新页面</p>
+</li>
+<li>
+<p>高性能的垃圾回收和擦除</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>OOB有物理地址到虚拟地址的映射，用于掉电恢复，这里引用一段<a class="link" href="https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf"  target="_blank" rel="noopener"
+    >wisc的OSTEP中的一段解释（44 Flash- based SSD）</a>。</p>
+<p>OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射</p>
+<p>为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程</p>
+<p>大致看了一下OSTEP，记得是jyy老师推荐的教材，希望以后有时间读一下</p>
+<p><img src="https://cdn.ipandai.club/image-20220924141132556.png" alt="image-20220924141132556" style="zoom:50%;" /></p>
+<h3 id="page-level-ftl">Page-Level FTL</h3>
+<p>原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number</p>
+<p>缺点是页表占用很大的空间</p>
+<p><img src="https://cdn.ipandai.club/image-20220924152322358.png" alt="image-20220924152322358" style="zoom:50%;" /></p>
+<h3 id="block-level-ftl">Block-Level FTL</h3>
+<p>保持Block 到Block的映射</p>
+<p>先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的</p>
+<p><img src="https://cdn.ipandai.club/image-20220924152259043.png" alt="image-20220924152259043" style="zoom:50%;" /></p>
+<p>优点是占用空间很小，缺点是GC负载增加</p>
+<p>原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】</p>
+<h3 id="hybrid-ftl">Hybrid FTL</h3>
+<p>对写入分为新/旧数据，新写入的数据用Page-Level Mapping效率高，写入Log Blocks作为缓冲，之后再更新到Data Blocks</p>
+<p>旧数据因为写入后更新相对不频繁，使用Block-Level Mapping，写入Data Blocks</p>
 
 </section>
 
@@ -503,6 +564,19 @@
             
                 
 <article class="">
+    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">【存储技术基础】主存</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
     <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E6%8A%80%E6%9C%AF/">
         
         
@@ -535,19 +609,6 @@
 
         <div class="article-details">
             <h2 class="article-title">Homomorphic Encryption Security Standard</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E4%BD%BF%E7%94%A8github-workflow%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">使用GitHub Workflow工作流自动部署静态博客</h2>
         </div>
     </a>
 </article>
@@ -613,7 +674,7 @@
         2022 Coding_Panda&#39;s Blog
     </section>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
@@ -750,6 +811,14 @@
         <li><a href="#垃圾回收">垃圾回收</a>
           <ol>
             <li><a href="#gc策略">GC策略</a></li>
+          </ol>
+        </li>
+        <li><a href="#磨损均衡">磨损均衡</a></li>
+        <li><a href="#ftl简介">FTL简介</a>
+          <ol>
+            <li><a href="#page-level-ftl">Page-Level FTL</a></li>
+            <li><a href="#block-level-ftl">Block-Level FTL</a></li>
+            <li><a href="#hybrid-ftl">Hybrid FTL</a></li>
           </ol>
         </li>
       </ol>

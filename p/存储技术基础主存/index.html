@@ -5,21 +5,13 @@
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/'>
 
-<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='【存储技术基础】主存'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='【存储技术基础】主存'>
 <meta property='og:description' content='0x00 主存 当前面临的问题： 容量问题、带宽问题、QoS保证 多核处理器、数据密集应用、云计算、GPU HDFS（GFS）基于外存储器 Spark 内存中数据处理 能'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:published_time' content='2022-09-24T18:26:22&#43;08:00'/><meta property='article:modified_time' content='2022-09-24T18:26:22&#43;08:00'/>
 <meta name="twitter:title" content="【存储技术基础】主存">
 <meta name="twitter:description" content="0x00 主存 当前面临的问题： 容量问题、带宽问题、QoS保证 多核处理器、数据密集应用、云计算、GPU HDFS（GFS）基于外存储器 Spark 内存中数据处理 能">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RWZSPCVWSC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RWZSPCVWSC');
-</script>
     </head>
     <body class="
     article-page
@@ -63,7 +55,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                        <img src="/img/avatar_hu8a3d9192938a940b103f152e82f8d0c1_176069_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -89,7 +81,7 @@
                     >
                         
                         
-                            <svg t="1662569194383" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2703" width="25" height="25"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2704"></path></svg>
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1664723478952" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2240" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2241" fill="#BFBFBF"></path></svg>
                         
                     </a>
                 </li>
@@ -298,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    1 minute read
+                    3 minute read
                 </time>
             </div>
         
@@ -337,6 +329,109 @@
 </ul>
 </li>
 </ul>
+<h1 id="0x01-dram的组成">0x01 DRAM的组成</h1>
+<ul>
+<li>Channel</li>
+<li>DIMM 内存条</li>
+<li>Rank 二维阵列最小单元</li>
+<li>Chip 芯片</li>
+<li>Bank</li>
+<li>Row/Column</li>
+</ul>
+<p>行为字线 word line</p>
+<p>列为位线，交点是cell 内存单元</p>
+<img src="https://cdn.ipandai.club/image-20221003154123646.png" alt="image-20221003154123646" style="zoom:70%;" />
+<p>DRAM row是一个DRAM page</p>
+<p>Sense Amplifiers 也被叫做Row buffer</p>
+<p>每个地址通过<code>&lt;row,colum&gt;</code>编址</p>
+<p>访问一个<code>closed row</code>的过程：</p>
+<ul>
+<li>Activate：将row放到row buffer中</li>
+<li>Read/Write：读写row buffer中的column</li>
+<li>Precharge：从row buffer中的数据写回到选中的row中</li>
+</ul>
+<h2 id="bank-operation">Bank Operation</h2>
+<p>给定Row Address通过Row decoder选中一行</p>
+<p>将行加载到Row Buffer</p>
+<p>若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据</p>
+<p>若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据</p>
+<h2 id="chip">Chip</h2>
+<p>由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）</p>
+<p>每次只能读4或16 Bit</p>
+<h2 id="rank-and-module">Rank and Module</h2>
+<p>Module为DIMM内存条，连接在主板上，由一个或多个rank组成</p>
+<p>Rank由多个Chip构成，提高接口带宽，多个Chip共享地址和指令总线，有单独的数据总线</p>
+<img src="https://cdn.ipandai.club/image-20221003164422987.png" alt="image-20221003164422987" style="zoom:80%;" />
+<p>多个Chip可以并行操作</p>
+<p>对于64 bit的读取，分配到多个Chip中同时读取</p>
+<p>对于多DIMM情况，可以先确定在哪根DIMM条中，再进行读取操作</p>
+<h2 id="chanel">Chanel</h2>
+<p>Bank之间为分时共享</p>
+<p>Channel为独立总线，数据可同时读写，每个Channel有一个Memory Controller</p>
+<p><img src="https://cdn.ipandai.club/image-20221003182243697.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221003182243697"
+	
+	
+></p>
+<p>在同一个Channel中的DIMM数据分时共享</p>
+<p>一张比较清晰的结构关系图</p>
+<p><img src="https://cdn.ipandai.club/image-20221003182445252.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221003182445252"
+	
+	
+></p>
+<p>同一个Channel可以连接多个DIMM条</p>
+<h2 id="从cpu访问角度观察">从CPU访问角度观察</h2>
+<p>Memory Channel中，在DIMM中Chip Selection选择访问的Rank，通过地址确定访问的数据</p>
+<p>Rank中的8个Chip每个都提供8 bit，共提供8 Byte访问</p>
+<p>由每个Chip中的bank选择器从8个bank中选择一个获取8 bit</p>
+<p>Bank中通过Row-Buffer来获取数据</p>
+<blockquote>
+<p>延迟的产生：</p>
+<ul>
+<li>CPU到controller的传输时间</li>
+<li>Controller延迟，请求队列和调度</li>
+<li>Controller到DRAM的传输时间（总线）</li>
+<li>DRAM 中Bank的延迟
+<ul>
+<li>选择某一行 Activate</li>
+<li>读取的时间</li>
+<li>Precharge</li>
+</ul>
+</li>
+<li>DRAM到CPU的传输时间</li>
+</ul>
+<p>主要关注Bank中的延迟</p>
+</blockquote>
+<h2 id="multiple-banks">Multiple Banks</h2>
+<p>使DRAM访问并行</p>
+<p>由于不同Bank分时共享，可以使得Bank提前将row加载到Row Buffer中，提高利用率</p>
+<h2 id="multiple-channels">Multiple Channels</h2>
+<p>更容易实现</p>
+<p>提高总线带宽</p>
+<p>提高并发能力需要减少Bank和Channel的冲突问题，需要对编址策略进行优化</p>
+<p>比较直观的观察Multiple Banks优化的效果，达到Overlap的效果</p>
+<p><img src="https://cdn.ipandai.club/image-20221003204558855.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221003204558855"
+	
+	
+></p>
+<h2 id="address-mapping">Address Mapping</h2>
 
 </section>
 
@@ -475,7 +570,7 @@
     <div class="disqus-container">
     <div id="disqus_thread"></div>
 <script type="application/javascript">
-    var disqus_config = function () {
+    window.disqus_config = function () {
     
     
     
@@ -524,12 +619,11 @@
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+    
     <section class="powerby">
+        ICP备案： <a href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -636,6 +730,18 @@
             <nav id="TableOfContents">
   <ol>
     <li><a href="#0x00-主存">0x00 主存</a></li>
+    <li><a href="#0x01-dram的组成">0x01 DRAM的组成</a>
+      <ol>
+        <li><a href="#bank-operation">Bank Operation</a></li>
+        <li><a href="#chip">Chip</a></li>
+        <li><a href="#rank-and-module">Rank and Module</a></li>
+        <li><a href="#chanel">Chanel</a></li>
+        <li><a href="#从cpu访问角度观察">从CPU访问角度观察</a></li>
+        <li><a href="#multiple-banks">Multiple Banks</a></li>
+        <li><a href="#multiple-channels">Multiple Channels</a></li>
+        <li><a href="#address-mapping">Address Mapping</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
         </div>

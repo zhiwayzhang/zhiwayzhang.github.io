@@ -9,7 +9,7 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 
 <link rel='canonical' href='https://blog.ipandai.club/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/'>
 
-<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='Bilibili视频网站排行榜评分的线性回归分析'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='Bilibili视频网站排行榜评分的线性回归分析'>
 <meta property='og:description' content='Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
 Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
 本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
@@ -24,14 +24,6 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
 完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。
 ">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RWZSPCVWSC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RWZSPCVWSC');
-</script>
     </head>
     <body class="
     article-page
@@ -75,7 +67,7 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
                     
                     
                         
-                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                        <img src="/img/avatar_hu8a3d9192938a940b103f152e82f8d0c1_176069_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -101,7 +93,7 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
                     >
                         
                         
-                            <svg t="1662569194383" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2703" width="25" height="25"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2704"></path></svg>
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1664723478952" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2240" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2241" fill="#BFBFBF"></path></svg>
                         
                     </a>
                 </li>
@@ -401,65 +393,65 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 </span><span class="lnt">58
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-<span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
-<span class="nt">&#34;videos&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="nt">&#34;tid&#34;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
-<span class="nt">&#34;tname&#34;</span><span class="p">:</span> <span class="s2">&#34;单机游戏&#34;</span><span class="p">,</span>
-<span class="nt">&#34;copyright&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="nt">&#34;pic&#34;</span><span class="p">:</span> <span class="s2">&#34;http://i0.hdslb.com/bfs/archive/85005893d4c4959ff096d6fb061040e223842bcb.jpg&#34;</span><span class="p">,</span>
-<span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="s2">&#34;史上最骚魔法师！(第二集)&#34;</span><span class="p">,</span>
-<span class="nt">&#34;pubdate&#34;</span><span class="p">:</span> <span class="mi">1621566911</span><span class="p">,</span>
-<span class="nt">&#34;ctime&#34;</span><span class="p">:</span> <span class="mi">1621566912</span><span class="p">,</span>
-<span class="nt">&#34;desc&#34;</span><span class="p">:</span> <span class="s2">&#34;本期请到了Warma参与配音！鼓掌！！！！！\n游戏：Darkside Detective\n第一集：BV1M64y1m7gA\n各位如果看得开心，希望三连支持一下！&#34;</span><span class="p">,</span>
-<span class="nt">&#34;state&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;duration&#34;</span><span class="p">:</span> <span class="mi">658</span><span class="p">,</span>
-<span class="nt">&#34;mission_id&#34;</span><span class="p">:</span> <span class="mi">24025</span><span class="p">,</span>
-<span class="nt">&#34;rights&#34;</span><span class="p">:</span> <span class="p">{</span>
-<span class="nt">&#34;bp&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;elec&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;download&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;movie&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;pay&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;hd5&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;no_reprint&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="nt">&#34;autoplay&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="nt">&#34;ugc_pay&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;is_cooperation&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;ugc_pay_preview&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;no_background&#34;</span><span class="p">:</span> <span class="mi">0</span>
-<span class="p">},</span>
-<span class="nt">&#34;owner&#34;</span><span class="p">:</span> <span class="p">{</span>
-<span class="nt">&#34;mid&#34;</span><span class="p">:</span> <span class="mi">546195</span><span class="p">,</span>
-<span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老番茄&#34;</span><span class="p">,</span>
-<span class="nt">&#34;face&#34;</span><span class="p">:</span> <span class="s2">&#34;http://i0.hdslb.com/bfs/face/bc5ca101313d4db223c395d64779e76eb3482d60.jpg&#34;</span>
-<span class="p">},</span>
-<span class="nt">&#34;stat&#34;</span><span class="p">:</span> <span class="p">{</span>
-<span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
-<span class="nt">&#34;view&#34;</span><span class="p">:</span> <span class="mi">1149043</span><span class="p">,</span>
-<span class="nt">&#34;danmaku&#34;</span><span class="p">:</span> <span class="mi">7300</span><span class="p">,</span>
-<span class="nt">&#34;reply&#34;</span><span class="p">:</span> <span class="mi">3278</span><span class="p">,</span>
-<span class="nt">&#34;favorite&#34;</span><span class="p">:</span> <span class="mi">37490</span><span class="p">,</span>
-<span class="nt">&#34;coin&#34;</span><span class="p">:</span> <span class="mi">98319</span><span class="p">,</span>
-<span class="nt">&#34;share&#34;</span><span class="p">:</span> <span class="mi">1780</span><span class="p">,</span>
-<span class="nt">&#34;now_rank&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="nt">&#34;his_rank&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="nt">&#34;like&#34;</span><span class="p">:</span> <span class="mi">210211</span><span class="p">,</span>
-<span class="nt">&#34;dislike&#34;</span><span class="p">:</span> <span class="mi">0</span>
-<span class="p">},</span>
-<span class="nt">&#34;dynamic&#34;</span><span class="p">:</span> <span class="s2">&#34;用魔法击败魔法&#34;</span><span class="p">,</span>
-<span class="nt">&#34;cid&#34;</span><span class="p">:</span> <span class="mi">341808079</span><span class="p">,</span>
-<span class="nt">&#34;dimension&#34;</span><span class="p">:</span> <span class="p">{</span>
-<span class="nt">&#34;width&#34;</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span>
-<span class="nt">&#34;height&#34;</span><span class="p">:</span> <span class="mi">1080</span><span class="p">,</span>
-<span class="nt">&#34;rotate&#34;</span><span class="p">:</span> <span class="mi">0</span>
-<span class="p">},</span>
-<span class="nt">&#34;short_link&#34;</span><span class="p">:</span> <span class="s2">&#34;https://b23.tv/BV1jo4y117Vf&#34;</span><span class="p">,</span>
-<span class="nt">&#34;short_link_v2&#34;</span><span class="p">:</span> <span class="s2">&#34;https://b23.tv/BV1jo4y117Vf&#34;</span><span class="p">,</span>
-<span class="nt">&#34;bvid&#34;</span><span class="p">:</span> <span class="s2">&#34;BV1jo4y117Vf&#34;</span><span class="p">,</span>
-<span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">2446535</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;videos&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;tid&#34;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;tname&#34;</span><span class="p">:</span> <span class="s2">&#34;单机游戏&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;copyright&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;pic&#34;</span><span class="p">:</span> <span class="s2">&#34;http://i0.hdslb.com/bfs/archive/85005893d4c4959ff096d6fb061040e223842bcb.jpg&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="s2">&#34;史上最骚魔法师！(第二集)&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;pubdate&#34;</span><span class="p">:</span> <span class="mi">1621566911</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;ctime&#34;</span><span class="p">:</span> <span class="mi">1621566912</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;desc&#34;</span><span class="p">:</span> <span class="s2">&#34;本期请到了Warma参与配音！鼓掌！！！！！\n游戏：Darkside Detective\n第一集：BV1M64y1m7gA\n各位如果看得开心，希望三连支持一下！&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;state&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;duration&#34;</span><span class="p">:</span> <span class="mi">658</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;mission_id&#34;</span><span class="p">:</span> <span class="mi">24025</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;rights&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;bp&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;elec&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;download&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;movie&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;pay&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;hd5&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;no_reprint&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;autoplay&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;ugc_pay&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;is_cooperation&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;ugc_pay_preview&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;no_background&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;owner&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;mid&#34;</span><span class="p">:</span> <span class="mi">546195</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老番茄&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;face&#34;</span><span class="p">:</span> <span class="s2">&#34;http://i0.hdslb.com/bfs/face/bc5ca101313d4db223c395d64779e76eb3482d60.jpg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;stat&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;view&#34;</span><span class="p">:</span> <span class="mi">1149043</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;danmaku&#34;</span><span class="p">:</span> <span class="mi">7300</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;reply&#34;</span><span class="p">:</span> <span class="mi">3278</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;favorite&#34;</span><span class="p">:</span> <span class="mi">37490</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;coin&#34;</span><span class="p">:</span> <span class="mi">98319</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;share&#34;</span><span class="p">:</span> <span class="mi">1780</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;now_rank&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;his_rank&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;like&#34;</span><span class="p">:</span> <span class="mi">210211</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;dislike&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;dynamic&#34;</span><span class="p">:</span> <span class="s2">&#34;用魔法击败魔法&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;cid&#34;</span><span class="p">:</span> <span class="mi">341808079</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;dimension&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;width&#34;</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;height&#34;</span><span class="p">:</span> <span class="mi">1080</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;rotate&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;short_link&#34;</span><span class="p">:</span> <span class="s2">&#34;https://b23.tv/BV1jo4y117Vf&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;short_link_v2&#34;</span><span class="p">:</span> <span class="s2">&#34;https://b23.tv/BV1jo4y117Vf&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;bvid&#34;</span><span class="p">:</span> <span class="s2">&#34;BV1jo4y117Vf&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">2446535</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>通过解析json格式文件并整理得到bilibili.csv</p>
 <p>数据处理的代码如下</p>
@@ -528,74 +520,72 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 </span><span class="lnt">61
 </span><span class="lnt">62
 </span><span class="lnt">63
-</span><span class="lnt">64
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
-<span class="kn">import</span> <span class="nn">urllib</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">json</span>
-
-<span class="k">def</span> <span class="nf">getDataFromFile</span><span class="p">():</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./data.txt&#39;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&#34;file not exist&#34;</span><span class="p">)</span>
-
-    <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./data.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">text</span>
-    
-
-<span class="k">def</span> <span class="nf">getResponse</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.8    5 Safari/537.36&#39;</span><span class="p">}</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
-    <span class="k">return</span> <span class="n">data</span>
-
-<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&amp;type=all&#39;</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">getDataFromFile</span><span class="p">()</span>
-<span class="n">jsonData</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-
-<span class="n">title</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 标题</span>
-<span class="n">author</span><span class="o">=</span> <span class="p">[]</span> <span class="c1"># up🐷</span>
-<span class="n">view</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 播放量</span>
-<span class="n">danmu</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 弹幕数</span>
-<span class="n">coins</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 投币</span>
-<span class="n">share</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 分享</span>
-<span class="n">like</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 点赞</span>
-<span class="n">score</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 分数</span>
-<span class="n">favor</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 收藏</span>
-<span class="n">reply</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 评论</span>
-<span class="n">rank</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 排名</span>
-
-<span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">104</span><span class="p">):</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">videoData</span> <span class="o">=</span> <span class="n">jsonData</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">])</span>
-        <span class="n">title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
-        <span class="n">author</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
-        
-        <span class="n">videoStat</span> <span class="o">=</span> <span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;stat&#39;</span><span class="p">]</span>
-        <span class="n">danmu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;danmaku&#39;</span><span class="p">])</span>
-        <span class="n">view</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">])</span>
-        <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;his_rank&#39;</span><span class="p">])</span>
-        <span class="n">reply</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;reply&#39;</span><span class="p">])</span>
-        <span class="n">favor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;favorite&#39;</span><span class="p">])</span>
-        <span class="n">coins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;coin&#39;</span><span class="p">])</span>
-        <span class="n">share</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">])</span>
-        <span class="n">like</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;like&#39;</span><span class="p">])</span>
-        <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
-        
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">continue</span>
-
-<span class="n">outfile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&#34;title&#34;</span><span class="p">:</span> <span class="n">title</span> <span class="p">,</span><span class="s2">&#34;author&#34;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span> <span class="s2">&#34;rank&#34;</span><span class="p">:</span> <span class="n">rank</span><span class="p">,</span> <span class="s2">&#34;score&#34;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&#34;view&#34;</span><span class="p">:</span> <span class="n">view</span><span class="p">,</span> <span class="s2">&#34;coins&#34;</span><span class="p">:</span> <span class="n">coins</span><span class="p">,</span> <span class="s2">&#34;favorite&#34;</span><span class="p">:</span> <span class="n">favor</span><span class="p">,</span> <span class="s2">&#34;reply&#34;</span><span class="p">:</span> <span class="n">reply</span><span class="p">,</span> <span class="s2">&#34;danmu&#34;</span><span class="p">:</span> <span class="n">danmu</span><span class="p">})</span>
-<span class="n">outfile</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&#34;bilibili2.csv&#34;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">urllib</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">getDataFromFile</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./data.txt&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&#34;file not exist&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./data.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">text</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">getResponse</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.8    5 Safari/537.36&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&amp;type=all&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">res</span> <span class="o">=</span> <span class="n">getDataFromFile</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">jsonData</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">title</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 标题</span>
+</span></span><span class="line"><span class="cl"><span class="n">author</span><span class="o">=</span> <span class="p">[]</span> <span class="c1"># up🐷</span>
+</span></span><span class="line"><span class="cl"><span class="n">view</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 播放量</span>
+</span></span><span class="line"><span class="cl"><span class="n">danmu</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 弹幕数</span>
+</span></span><span class="line"><span class="cl"><span class="n">coins</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 投币</span>
+</span></span><span class="line"><span class="cl"><span class="n">share</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 分享</span>
+</span></span><span class="line"><span class="cl"><span class="n">like</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 点赞</span>
+</span></span><span class="line"><span class="cl"><span class="n">score</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 分数</span>
+</span></span><span class="line"><span class="cl"><span class="n">favor</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 收藏</span>
+</span></span><span class="line"><span class="cl"><span class="n">reply</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 评论</span>
+</span></span><span class="line"><span class="cl"><span class="n">rank</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 排名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">104</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">temp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">videoData</span> <span class="o">=</span> <span class="n">jsonData</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">author</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">videoStat</span> <span class="o">=</span> <span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;stat&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">danmu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;danmaku&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">view</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;his_rank&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reply</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;reply&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">favor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;favorite&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">coins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;coin&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">share</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">like</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;like&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">outfile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&#34;title&#34;</span><span class="p">:</span> <span class="n">title</span> <span class="p">,</span><span class="s2">&#34;author&#34;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span> <span class="s2">&#34;rank&#34;</span><span class="p">:</span> <span class="n">rank</span><span class="p">,</span> <span class="s2">&#34;score&#34;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&#34;view&#34;</span><span class="p">:</span> <span class="n">view</span><span class="p">,</span> <span class="s2">&#34;coins&#34;</span><span class="p">:</span> <span class="n">coins</span><span class="p">,</span> <span class="s2">&#34;favorite&#34;</span><span class="p">:</span> <span class="n">favor</span><span class="p">,</span> <span class="s2">&#34;reply&#34;</span><span class="p">:</span> <span class="n">reply</span><span class="p">,</span> <span class="s2">&#34;danmu&#34;</span><span class="p">:</span> <span class="n">danmu</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="n">outfile</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&#34;bilibili2.csv&#34;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="数据分析">数据分析</h1>
 <p>数据加载</p>
@@ -625,29 +615,29 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># csv文件读写分析</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># 线性代数</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># 制图</span>
-
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./bilibili.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
-
-<span class="c1"># 评分</span>
-<span class="n">score</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> 
-<span class="c1"># 播放量</span>
-<span class="n">view</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">]</span> 
-<span class="c1"># 投币</span>
-<span class="n">coins</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;coins&#39;</span><span class="p">]</span>
-<span class="c1"># 收藏</span>
-<span class="n">favor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;favorite&#39;</span><span class="p">]</span>
-<span class="c1"># 评论</span>
-<span class="n">reply</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;reply&#39;</span><span class="p">]</span>
-<span class="c1"># 点赞</span>
-<span class="n">like</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;like&#39;</span><span class="p">]</span>
-<span class="c1"># 弹幕数量</span>
-<span class="n">danmu</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;danmu&#39;</span><span class="p">]</span>
-<span class="c1"># 分享次数</span>
-<span class="n">share</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># csv文件读写分析</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># 线性代数</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># 制图</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./bilibili.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 评分</span>
+</span></span><span class="line"><span class="cl"><span class="n">score</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 播放量</span>
+</span></span><span class="line"><span class="cl"><span class="n">view</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 投币</span>
+</span></span><span class="line"><span class="cl"><span class="n">coins</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;coins&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 收藏</span>
+</span></span><span class="line"><span class="cl"><span class="n">favor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;favorite&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 评论</span>
+</span></span><span class="line"><span class="cl"><span class="n">reply</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;reply&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 点赞</span>
+</span></span><span class="line"><span class="cl"><span class="n">like</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;like&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 弹幕数量</span>
+</span></span><span class="line"><span class="cl"><span class="n">danmu</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;danmu&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 分享次数</span>
+</span></span><span class="line"><span class="cl"><span class="n">share</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>绘制图像，观察数据之前的关系
 <a class="link" href="https://imgtu.com/i/R2qfcn"  target="_blank" rel="noopener"
@@ -755,13 +745,13 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 计算系数矩阵w-hat</span>
-<span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
-<span class="c1"># 获取b矩阵</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># 获取w系数矩阵</span>
-<span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 计算系数矩阵w-hat</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取b矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取w系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>看查w的值</p>
 <div class="highlight"><div class="chroma">
@@ -775,14 +765,14 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span> <span class="mf">0.53588246</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">2.01063732</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">5.79443124</span><span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">4.91889223</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">17.51523907</span><span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">3.73019387</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.89537493</span><span class="p">]]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[[</span> <span class="mf">0.53588246</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">2.01063732</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">5.79443124</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="o">-</span><span class="mf">4.91889223</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">17.51523907</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="o">-</span><span class="mf">3.73019387</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">0.89537493</span><span class="p">]]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这里发现w系数矩阵中出现了负值，经检查发现该项目对应的自变量为like和reply，即视频的点赞次数和评论数，这与实际情况是不符的，猜测是因为该自变量对结果的影响过小，导致预测出现了偏差，同时发现弹幕数量对视频评分的影响过大，远超于其他参数，显然与实际生活不符，并且作为对视频质量的估计，弹幕数也的确不能作为一个重要的参数。</p>
 <p>因此我们对弹幕数进行剔除重新进行拟合。</p>
@@ -805,22 +795,22 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 获取自变量矩阵，剔除弹幕数</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
-<span class="c1"># 获取因变量矩阵</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="c1"># 生成设计矩阵</span>
-<span class="n">om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">om</span><span class="p">))</span>
-
-<span class="c1"># 计算系数矩阵w-hat</span>
-<span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
-<span class="c1"># 获取b矩阵</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># 获取w系数矩阵</span>
-<span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 获取自变量矩阵，剔除弹幕数</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取因变量矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 生成设计矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">om</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算系数矩阵w-hat</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取b矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取w系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>得到w的值为</p>
 <div class="highlight"><div class="chroma">
@@ -833,13 +823,13 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span> <span class="mf">0.60269881</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">2.82157809</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">5.35461617</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">3.04630747</span><span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">3.9125348</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.33063835</span><span class="p">]]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[[</span> <span class="mf">0.60269881</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">2.82157809</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">5.35461617</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">3.04630747</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="o">-</span><span class="mf">3.9125348</span> <span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">0.33063835</span><span class="p">]]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>观察发现此时各项参数对于评分的影响已经较为接近正常水平。但是share，视频分享数对于评分的影响仍为负值，依然根据上述猜测，share对于总分的影响过小，导致拟合的结果差，因此再次剔除share字段。</p>
 <div class="highlight"><div class="chroma">
@@ -863,24 +853,24 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 获取自变量矩阵，剔除弹幕数，分享数</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
-<span class="c1"># 获取因变量矩阵</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="c1"># 生成设计矩阵</span>
-<span class="n">om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">om</span><span class="p">))</span>
-
-<span class="c1"># 计算系数矩阵w-hat</span>
-<span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
-<span class="c1"># 获取b矩阵</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="c1"># 获取w系数矩阵</span>
-<span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-<span class="n">X_test</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
-<span class="n">Y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 获取自变量矩阵，剔除弹幕数，分享数</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取因变量矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 生成设计矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">om</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算系数矩阵w-hat</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取b矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取w系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">X_test</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>得到w矩阵为</p>
 <div class="highlight"><div class="chroma">
@@ -892,12 +882,12 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[[</span><span class="mf">0.59149795</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[[</span><span class="mf">0.59149795</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>绘制预测值与实际值图像
 <a class="link" href="https://imgtu.com/i/R2q7AU"  target="_blank" rel="noopener"
@@ -944,12 +934,12 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="p">[</span><span class="mf">0.59149795</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[</span><span class="mf">0.59149795</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>根据权重分析各个数据对总分的影响，可以发现，收藏对于视频总评分的影响占比最高，其次是硬币数，播放数，说明哔哩哔哩对与视频的质量高低评判有一定的综合考量，播放量属于可以由视频制作人通过其他方式刷取，但是收藏量是由用户对于视频质量的高低做出的决定，因而更具代表性，更有说服力。反观实际观看体验中，有些视频制作人会以视频收藏满几万后，更新下一期视频，因为该项对视频的收益影响最大，更能给视频制作人带来实际收益。</p>
 <p>本次线性回归的拟合可以较为准确的判断出各各数据对于视频评分的影响，但是对于视频评分的预测误差较大，但是仍能较准确的判断出视频评分所影响的视频排名，认为有如下原因：</p>
@@ -1098,7 +1088,7 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
     <div class="disqus-container">
     <div id="disqus_thread"></div>
 <script type="application/javascript">
-    var disqus_config = function () {
+    window.disqus_config = function () {
     
     
     
@@ -1147,12 +1137,11 @@ $ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+    
     <section class="powerby">
+        ICP备案： <a href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 

@@ -5,21 +5,13 @@
 
 <link rel='canonical' href='https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/'>
 
-<link rel="stylesheet" href="/scss/style.min.ac77dcf8b111b51da39a92990f431923f210f3876d85798a2125667f96dc33a4.css"><meta property='og:title' content='记录一次Go项目的部署'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='记录一次Go项目的部署'>
 <meta property='og:description' content='最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1go%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%83%A8%E7%BD%B2/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Golang' /><meta property='article:tag' content='Linux' /><meta property='article:tag' content='Shell' /><meta property='article:published_time' content='2021-03-30T12:23:42&#43;00:00'/><meta property='article:modified_time' content='2021-03-30T12:23:42&#43;00:00'/>
 <meta name="twitter:title" content="记录一次Go项目的部署">
 <meta name="twitter:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RWZSPCVWSC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RWZSPCVWSC');
-</script>
     </head>
     <body class="
     article-page
@@ -63,7 +55,7 @@
                     
                     
                         
-                        <img src="/img/avatar_hu0e99aaec2f72e77a7fcbe37d2cf4aace_148890_300x0_resize_box_3.png" width="300"
+                        <img src="/img/avatar_hu8a3d9192938a940b103f152e82f8d0c1_176069_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -89,7 +81,7 @@
                     >
                         
                         
-                            <svg t="1662569194383" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2703" width="25" height="25"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2704"></path></svg>
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1664723478952" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2240" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2241" fill="#BFBFBF"></path></svg>
                         
                     </a>
                 </li>
@@ -342,13 +334,13 @@ Go version: <code>go version go1.14.12 linux/amd64</code></p>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">~&gt; ps
-    PID TTY          TIME CMD
- <span class="m">255873</span> pts/0    00:00:02 zsh
- <span class="m">258517</span> pts/0    00:00:00 sh
- <span class="m">258519</span> pts/0    00:00:00 OnlineJudge
- <span class="m">263021</span> pts/0    00:00:00 ps
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">~&gt; ps
+</span></span><span class="line"><span class="cl">    PID TTY          TIME CMD
+</span></span><span class="line"><span class="cl"> <span class="m">255873</span> pts/0    00:00:02 zsh
+</span></span><span class="line"><span class="cl"> <span class="m">258517</span> pts/0    00:00:00 sh
+</span></span><span class="line"><span class="cl"> <span class="m">258519</span> pts/0    00:00:00 OnlineJudge
+</span></span><span class="line"><span class="cl"> <span class="m">263021</span> pts/0    00:00:00 ps
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>我们将用ps命令与grep等命令筛选出项目的pid
 ps命令有很多参数选择，这里介绍一下用到的两条命令:</p>
@@ -358,9 +350,9 @@ ps命令有很多参数选择，这里介绍一下用到的两条命令:</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">ps -e  列出所有进程
-ps -f  显示进程的全部信息
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -e  列出所有进程
+</span></span><span class="line"><span class="cl">ps -f  显示进程的全部信息
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="grep">grep</h2>
 <p>grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称，
@@ -393,21 +385,21 @@ ps -f  显示进程的全部信息
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">echo</span> -e <span class="s2">&#34;*** Online_Judge ***\n&#34;</span>
-<span class="nb">echo</span> -e <span class="s2">&#34;*** 检查上游代码中 ***\n&#34;</span>
-
-git pull origin dev
-
-<span class="nb">echo</span> -e <span class="s2">&#34;*** 编译中 ***\n&#34;</span>
-go build
-chmod -R <span class="m">777</span> OnlineJudge
-<span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
-<span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="nv">$pid</span><span class="s2">\n&#34;</span>
-<span class="nb">kill</span> <span class="nv">$pid</span> <span class="o">&amp;&amp;</span> nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span>
-
-<span class="nv">pid2</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
-<span class="nb">echo</span> -e <span class="s2">&#34;项目部署成功***进程ID为:</span><span class="nv">$pid2</span><span class="s2">&#34;</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;*** Online_Judge ***\n&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;*** 检查上游代码中 ***\n&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">git pull origin dev
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;*** 编译中 ***\n&#34;</span>
+</span></span><span class="line"><span class="cl">go build
+</span></span><span class="line"><span class="cl">chmod -R <span class="m">777</span> OnlineJudge
+</span></span><span class="line"><span class="cl"><span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="nv">$pid</span><span class="s2">\n&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">kill</span> <span class="nv">$pid</span> <span class="o">&amp;&amp;</span> nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">pid2</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;项目部署成功***进程ID为:</span><span class="nv">$pid2</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>将脚本保存至项目目录，赋予执行权限
 <code>chmod +x setup.sh</code>
@@ -436,27 +428,27 @@ chmod -R <span class="m">777</span> OnlineJudge
 </span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">➜ git:<span class="o">(</span>dev<span class="o">)</span> ✗ ./setup.sh         
-*** Online_Judge ***
-
-
-*** 检查上游代码中 ***
-From url
- * branch            dev        -&gt; FETCH_HEAD
-Already up to date.
-*** 编译中 ***
-
-*** 添加权限 ***
-
-添加权限成功
-
-*** kill进程 ***
-
-<span class="m">258519</span>
-
-./setup.sh: line 18: <span class="m">258519</span> Terminated              nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span>
-项目部署成功***进程ID为:263948
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">➜ git:<span class="o">(</span>dev<span class="o">)</span> ✗ ./setup.sh         
+</span></span><span class="line"><span class="cl">*** Online_Judge ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** 检查上游代码中 ***
+</span></span><span class="line"><span class="cl">From url
+</span></span><span class="line"><span class="cl"> * branch            dev        -&gt; FETCH_HEAD
+</span></span><span class="line"><span class="cl">Already up to date.
+</span></span><span class="line"><span class="cl">*** 编译中 ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** 添加权限 ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">添加权限成功
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** kill进程 ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">258519</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">./setup.sh: line 18: <span class="m">258519</span> Terminated              nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">项目部署成功***进程ID为:263948
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>至此项目即可部署成功
 上述shell中的视个人情况而修改</p>
@@ -534,7 +526,7 @@ Already up to date.
     <div class="disqus-container">
     <div id="disqus_thread"></div>
 <script type="application/javascript">
-    var disqus_config = function () {
+    window.disqus_config = function () {
     
     
     
@@ -583,12 +575,11 @@ Already up to date.
         
         2022 Coding_Panda&#39;s Blog
     </section>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span id="busuanzi_container_site_uv">本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+    
     <section class="powerby">
+        ICP备案： <a href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.13.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> <br/>
-        ICP备案:<a target="_blank" href="https://beian.miit.gov.cn">鲁ICP备2021030271号-1</a> <br/>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 

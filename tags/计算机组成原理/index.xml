@@ -122,7 +122,7 @@ $d = |x-y|=\sum_{i=0}^{m-1}|x_i-y_i|$&lt;/p&gt;
 &lt;p&gt;奇校验：设
 $X = x_0x_1x_2x_3x_4&amp;hellip;x_{n-1}$
 是一个n位字，在最高位添加一位奇校验c使得
-$X&#39;=cx_0x_1x_2x_3x_4&amp;hellip;x_{n-1}$
+$X&amp;rsquo;=cx_0x_1x_2x_3x_4&amp;hellip;x_{n-1}$
 有
 $c \oplus x_1\oplus &amp;hellip; \oplus x_{n-1} = 1$&lt;/p&gt;
 &lt;/blockquote&gt;

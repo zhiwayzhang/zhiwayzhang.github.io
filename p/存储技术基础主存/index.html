@@ -290,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    3 minute read
+                    5 minute read
                 </time>
             </div>
         
@@ -432,6 +432,65 @@
 	
 ></p>
 <h2 id="address-mapping">Address Mapping</h2>
+<p>地址映射对DRAM并发能力的影响</p>
+<p>将访问DRAM中数据的地址进行排列，包含Channel、Row、Bank、Column</p>
+<p>核心思想：调整容易产生冲突的地址，使其相对靠后，还要兼顾其他问题</p>
+<p>将Column的高8位和低3位分离</p>
+<img src="https://cdn.ipandai.club/image-20221004202109741.png" alt="image-20221004202109741" style="zoom:80%;" />
+<p>提高Row Buffer的利用率，倒数第二种比较常用</p>
+<p>对OS而言，由逻辑地址Virtual Address映射到物理地址</p>
+<p><code>Virtual Page Number </code>-&gt; <code>&lt;Row,Bank&gt;</code>，可以通过调整映射算法来优化存储效率</p>
+<h1 id="0x02-dram-refresh">0x02 DRAM Refresh</h1>
+<p>由于电容中的电子持续泄漏，每隔一段时间重新写入数据，读取到row buffer再写回，刷新间隔一般为64ms</p>
+<blockquote>
+<p>负面影响：</p>
+<ul>
+<li>能耗增加</li>
+<li>性能减少，Refresh中内存不可用</li>
+<li>QoS影响，不能保证平稳</li>
+<li>刷新率使得DRAM容量的扩展受限</li>
+</ul>
+</blockquote>
+<h2 id="性能影响">性能影响</h2>
+<p>刷新时Bank变得不可用，Row Buffer的占用</p>
+<p>在刷新结束前有长时间的暂定，有两种优化策略：</p>
+<ol>
+<li>Burst Refresh 所有的行依次全部刷新</li>
+<li>Distributed Refresh 每行以固定的时间间隔在不同的时间进行刷新</li>
+</ol>
+<p>两种方式（集中式/分布式）的示意图：</p>
+<p><img src="https://cdn.ipandai.club/image-20221004153056950.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221004153056950"
+	
+	
+></p>
+<p>Distributed Refresh减少了等待时间</p>
+<p>随着设备容量的增加，消耗在Refresh上的时间/能耗占比越来越大</p>
+<p>目前应用的策略：Auto Refresh，每次只Refresh其中几行</p>
+<p>一些探索：刷新间隔的调整，64ms保证在最坏情况下的可靠性，在容忍存储单元出故障的前提下，可以适当提高刷新间隔，对于出错的单元采用更低的刷新间隔（不同存储单元采用不同刷新频率）</p>
+<h1 id="0x03-memory-controller">0x03 Memory Controller</h1>
+<p>位于CPU中</p>
+<p>基本功能：</p>
+<ul>
+<li>保证DRAM的正确性，刷新和时序timing</li>
+<li>遵循一定的时序约束（bank，总线，channel的冲突）来完成DRAM请求，转换请求为DRAM Command</li>
+<li>对请求进行调度提高性能</li>
+<li>管理电源能耗，开关Chip，管理电源模式</li>
+</ul>
+<img src="https://cdn.ipandai.club/image-20221004204322362.png" alt="image-20221004204322362" style="zoom:50%;" />
+<p>由L2 Cache发送请求到Memory Controller，由一个Buffer来对请求进行缓存</p>
+<h2 id="请求调度">请求调度</h2>
+<h1 id="0x04-引入nvm">0x04 引入NVM</h1>
+<h1 id="reference">Reference</h1>
+<p><a class="link" href="https://www.bilibili.com/video/BV1xE411T7Dy"  target="_blank" rel="noopener"
+    >存储技术基础—Main Memory I</a></p>
+<p><a class="link" href="https://www.bilibili.com/video/BV1xE411T7Dy"  target="_blank" rel="noopener"
+    >存储技术基础—Main Memory II</a></p>
 
 </section>
 
@@ -742,6 +801,18 @@
         <li><a href="#address-mapping">Address Mapping</a></li>
       </ol>
     </li>
+    <li><a href="#0x02-dram-refresh">0x02 DRAM Refresh</a>
+      <ol>
+        <li><a href="#性能影响">性能影响</a></li>
+      </ol>
+    </li>
+    <li><a href="#0x03-memory-controller">0x03 Memory Controller</a>
+      <ol>
+        <li><a href="#请求调度">请求调度</a></li>
+      </ol>
+    </li>
+    <li><a href="#0x04-引入nvm">0x04 引入NVM</a></li>
+    <li><a href="#reference">Reference</a></li>
   </ol>
 </nav>
         </div>

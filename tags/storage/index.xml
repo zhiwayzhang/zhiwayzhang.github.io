@@ -6,7 +6,133 @@
         <description>Recent content in Storage on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 24 Sep 2022 18:26:22 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/storage/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 05 Oct 2022 16:54:42 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/storage/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>【存储系统】多硬盘存储系统</title>
+        <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</link>
+        <pubDate>Wed, 05 Oct 2022 16:54:42 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</guid>
+        <description>&lt;h1 id=&#34;0x00-多硬盘系统&#34;&gt;0x00 多硬盘系统&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221005193755942.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221005193755942&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对多硬盘系统可靠性的度量，上图从&lt;code&gt;故障产生&lt;/code&gt;，&lt;code&gt;故障产生程序错误&lt;/code&gt;，&lt;code&gt;错误检测&lt;/code&gt;，&lt;code&gt;修复故障&lt;/code&gt;四个时间节点为一个周期。&lt;/p&gt;
+&lt;p&gt;三个可靠性的指标：&lt;/p&gt;
+&lt;p&gt;可靠性：通过&lt;code&gt;错误产生到发现错误&lt;/code&gt;的时间间隔MTTF来衡量&lt;/p&gt;
+&lt;p&gt;可维护性：通过&lt;code&gt;发现错误到错误修复&lt;/code&gt;的时间间隔来衡量，定义系统修复的能力&lt;/p&gt;
+&lt;p&gt;可用性：通过系统中非修复时间所占的比例，可以对外提供服务的时间占比，$EA=\frac{MTTF}{MTTF+MTTR}$&lt;/p&gt;
+&lt;p&gt;MTBF=MTTR+MTTF，两故障之间的时间间隔&lt;/p&gt;
+&lt;p&gt;恢复一块硬盘的代价很高，为了提高系统可用性，需要构建多盘系统，在某块磁盘故障时仍然能正常工作。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;每秒的I/O请求峰值为1200，R/W比例为2:1，分别使用RAID 1/5，计算峰值的硬盘负载&lt;/p&gt;
+&lt;p&gt;总的R/W分别为800/400&lt;/p&gt;
+&lt;p&gt;RAID 1：写操作需要翻倍，总负载为&lt;code&gt;800+400*2=1600&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;RAID 5：写操作翻四倍，总负载为&lt;code&gt;800+400*4=2400&lt;/code&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;使用多盘系统的目的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;提高存储容量&lt;/li&gt;
+&lt;li&gt;提高性能
+&lt;ul&gt;
+&lt;li&gt;负载均衡
+&lt;ul&gt;
+&lt;li&gt;Disk Striping&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;带宽&lt;/li&gt;
+&lt;li&gt;吞吐量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;提高可靠性
+&lt;ul&gt;
+&lt;li&gt;容错
+&lt;ul&gt;
+&lt;li&gt;基于奇偶校验的保护&lt;/li&gt;
+&lt;li&gt;创建副本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;JBOD（Just a Bunch Of Disks）单纯对硬盘进行组合，只提高存储容量&lt;/p&gt;
+&lt;h2 id=&#34;负载均衡&#34;&gt;负载均衡&lt;/h2&gt;
+&lt;p&gt;静态：某一地址固定映射到某块硬盘&lt;/p&gt;
+&lt;p&gt;动态：热点数据分配到不同的硬盘中&lt;/p&gt;
+&lt;p&gt;按照数据块：将一个数据划分后存储到所有硬盘中（Disk Striping 条带化）&lt;/p&gt;
+&lt;h3 id=&#34;disk-striping&#34;&gt;Disk Striping&lt;/h3&gt;
+&lt;p&gt;按一定大小对数据分块（stripe unit/block），然后依次存储到各个硬盘中&lt;/p&gt;
+&lt;p&gt;分配规则使用轮询枚举，通过取模判断存储的磁盘编号，根据余数确定偏移量&lt;/p&gt;
+&lt;p&gt;Stripe Unit大小设置一般为&lt;code&gt;2M、4M、16M&lt;/code&gt;，太大丧失负载均衡能力，太小会在寻址上花费太多时间&lt;/p&gt;
+&lt;h2 id=&#34;磁盘失效&#34;&gt;磁盘失效&lt;/h2&gt;
+&lt;p&gt;对于JBOD、Striping某块盘失效，整个文件系统都将失效&lt;/p&gt;
+&lt;p&gt;可以通过备份来解决，要花费较长的时间&lt;/p&gt;
+&lt;p&gt;多盘系统的MTTF为第一块磁盘失效的时间，比单盘系统时间短很多&lt;/p&gt;
+&lt;p&gt;解决方案：Redundancy冗余存储&lt;/p&gt;
+&lt;h3 id=&#34;redundancy&#34;&gt;Redundancy&lt;/h3&gt;
+&lt;h4 id=&#34;存储副本&#34;&gt;存储副本&lt;/h4&gt;
+&lt;p&gt;存储两份或更多的副本，采用三副本的服务有HDFS/GFS/Cloud Storage&lt;/p&gt;
+&lt;h5 id=&#34;disk-mirroring&#34;&gt;Disk Mirroring&lt;/h5&gt;
+&lt;p&gt;磁盘镜像，分主从磁盘，从盘基于主盘进行同步，可以从任意盘进行读取&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;有较高的可用性&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;花费较高&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;写性能降低，磁盘之间需要同步，受限于最慢同步的磁盘&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;读性能提高，请求被分散到各个磁盘&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;磁盘镜像可以与结合条带化&lt;/p&gt;
+&lt;p&gt;先做Mirroring再做Striping (RAID 10)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221005210811763.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221005210811763&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;若有磁盘故障，会损失1/2的数据&lt;/p&gt;
+&lt;p&gt;先做Striping再做Mirroring (RAID 01)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221005211127116.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221005211127116&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;若有磁盘故障，不会影响整体的读写，可以保证可靠性&lt;/p&gt;
+&lt;h5 id=&#34;shadowing&#34;&gt;Shadowing&lt;/h5&gt;
+&lt;p&gt;不对外服务，只充当备份&lt;/p&gt;
+&lt;h5 id=&#34;duplexing&#34;&gt;Duplexing&lt;/h5&gt;
+&lt;p&gt;可进行交换&lt;/p&gt;
+&lt;h4 id=&#34;eccerror-correcting-codes&#34;&gt;ECC(Error-Correcting Codes)&lt;/h4&gt;
+&lt;p&gt;纠错码常用方案有RAID，纠删码，奇偶校验&lt;/p&gt;
+&lt;h5 id=&#34;parity-disk&#34;&gt;Parity Disk&lt;/h5&gt;
+&lt;p&gt;增加一块检验盘，保存其他盘上数据的异或值&lt;/p&gt;
+&lt;p&gt;奇偶校验：统计数据中1的个数，奇数为1，偶数为0&lt;/p&gt;
+&lt;p&gt;43:25&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>【存储技术基础】主存</title>
         <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/</link>
         <pubDate>Sat, 24 Sep 2022 18:26:22 +0800</pubDate>

@@ -9,7 +9,7 @@
 <meta property='og:description' content='0x00 主存 当前面临的问题： 容量问题、带宽问题、QoS保证 多核处理器、数据密集应用、云计算、GPU HDFS（GFS）基于外存储器 Spark 内存中数据处理 能'>
 <meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='DRAM' /><meta property='article:published_time' content='2022-09-24T18:26:22&#43;08:00'/><meta property='article:modified_time' content='2022-09-24T18:26:22&#43;08:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='DRAM' /><meta property='article:tag' content='NVM' /><meta property='article:published_time' content='2022-09-24T18:26:22&#43;08:00'/><meta property='article:modified_time' content='2022-09-24T18:26:22&#43;08:00'/>
 <meta name="twitter:title" content="【存储技术基础】主存">
 <meta name="twitter:description" content="0x00 主存 当前面临的问题： 容量问题、带宽问题、QoS保证 多核处理器、数据密集应用、云计算、GPU HDFS（GFS）基于外存储器 Spark 内存中数据处理 能">
     </head>
@@ -290,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    5 minute read
+                    6 minute read
                 </time>
             </div>
         
@@ -484,8 +484,91 @@
 </ul>
 <img src="https://cdn.ipandai.club/image-20221004204322362.png" alt="image-20221004204322362" style="zoom:50%;" />
 <p>由L2 Cache发送请求到Memory Controller，由一个Buffer来对请求进行缓存</p>
-<h2 id="请求调度">请求调度</h2>
-<h1 id="0x04-引入nvm">0x04 引入NVM</h1>
+<h2 id="请求调度策略">请求调度策略</h2>
+<ol>
+<li>
+<p>FCFS</p>
+</li>
+<li>
+<p>FR-FCFS,First Ready</p>
+<ul>
+<li>Row-Hit First，优先调度命中Row Buffer的请求，提高命中率</li>
+<li>FCFS 防止饥饿</li>
+</ul>
+</li>
+</ol>
+<h2 id="row-buffer管理策略">Row Buffer管理策略</h2>
+<p>Open Row 不预先执行Precharge回写</p>
+<p>Closed Row 预先回写</p>
+<p>自适应结合两种方案</p>
+<h2 id="dram-controller的设计难点">DRAM Controller的设计难点</h2>
+<p>时序约束</p>
+<img src="https://cdn.ipandai.club/image-20221005142053482.png" alt="image-20221005142053482" style="zoom:67%;" />
+<p>防止冲突的发生</p>
+<p>Refresh操作</p>
+<h2 id="能耗管理">能耗管理</h2>
+<p>在不访问chip时切断供电</p>
+<p>厂商提供多种不同功耗的工作状态</p>
+<p>状态过渡时Chip无法被访问，因此会产生延迟</p>
+<h1 id="0x04-nvm">0x04 NVM</h1>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">读</th>
+<th style="text-align:center">写</th>
+<th style="text-align:center">特点</th>
+<th style="text-align:center">e.g.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Charge Memory电荷存储器</td>
+<td style="text-align:center">通过检测电压V读取数据</td>
+<td style="text-align:center">通过捕获电荷Q写入数据</td>
+<td style="text-align:center">通过写放大器来读写，体积不能太小</td>
+<td style="text-align:center">DRAM, Flash</td>
+</tr>
+<tr>
+<td style="text-align:center">Resistive Memory电阻式存储器</td>
+<td style="text-align:center">通过检测电阻R</td>
+<td style="text-align:center">通过脉冲电流$\frac{dQ}{dt}$写入数据</td>
+<td style="text-align:center">写数据调整阻抗</td>
+<td style="text-align:center">PCM, STT-MRAM，memristors</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="pcm">PCM</h2>
+<p>通电加热会改变状态结晶态/非晶态，阻抗发生变化，表示0/1</p>
+<h3 id="写">写</h3>
+<p>两个状态：</p>
+<ul>
+<li>SET：保持低电压，将介质变为结晶态</li>
+<li>RESET：提高温度变为非晶态</li>
+</ul>
+<h3 id="读">读</h3>
+<p>检测结晶态($10^3-10^4\Omega$)/非晶态($10^6-10^7\Omega$)的阻抗，两者数量级差距较大</p>
+<h2 id="优势">优势</h2>
+<p>比DRAM，Flash有更高的扩展能力，存储密度</p>
+<p>每个单元的存储密度提高</p>
+<p>Non-Volatile，不通电情况下可以保存10年以上（85摄氏度）</p>
+<p>不需要Refresh操作，低功耗</p>
+<h3 id="mlc-pcm">MLC-PCM</h3>
+<p>根据电阻划分多个bit，控制距离间隔</p>
+<p>延迟相较于DRAM高</p>
+<p>动态能耗高于DRAM</p>
+<p>写寿命较低</p>
+<h2 id="stt-mram">STT-MRAM</h2>
+<p>自旋距磁存储器</p>
+<p>电流改变磁介质方向，改变阻抗</p>
+<p>Reference Layer和Free Layer方向相同表示0，相反时表示1</p>
+<h3 id="优势-1">优势</h3>
+<p>容量大，造价低</p>
+<p>非易失</p>
+<p>功耗低</p>
+<p>缺点类似于PCM</p>
+<h2 id="memristorsrramreram">Memristors/RRAM/ReRAM</h2>
+<p>改变原子结构</p>
 <h1 id="reference">Reference</h1>
 <p><a class="link" href="https://www.bilibili.com/video/BV1xE411T7Dy"  target="_blank" rel="noopener"
     >存储技术基础—Main Memory I</a></p>
@@ -502,6 +585,8 @@
             <a href="/tags/storage/">Storage</a>
         
             <a href="/tags/dram/">DRAM</a>
+        
+            <a href="/tags/nvm/">NVM</a>
         
     </section>
 
@@ -810,10 +895,33 @@
     </li>
     <li><a href="#0x03-memory-controller">0x03 Memory Controller</a>
       <ol>
-        <li><a href="#请求调度">请求调度</a></li>
+        <li><a href="#请求调度策略">请求调度策略</a></li>
+        <li><a href="#row-buffer管理策略">Row Buffer管理策略</a></li>
+        <li><a href="#dram-controller的设计难点">DRAM Controller的设计难点</a></li>
+        <li><a href="#能耗管理">能耗管理</a></li>
       </ol>
     </li>
-    <li><a href="#0x04-引入nvm">0x04 引入NVM</a></li>
+    <li><a href="#0x04-nvm">0x04 NVM</a>
+      <ol>
+        <li><a href="#pcm">PCM</a>
+          <ol>
+            <li><a href="#写">写</a></li>
+            <li><a href="#读">读</a></li>
+          </ol>
+        </li>
+        <li><a href="#优势">优势</a>
+          <ol>
+            <li><a href="#mlc-pcm">MLC-PCM</a></li>
+          </ol>
+        </li>
+        <li><a href="#stt-mram">STT-MRAM</a>
+          <ol>
+            <li><a href="#优势-1">优势</a></li>
+          </ol>
+        </li>
+        <li><a href="#memristorsrramreram">Memristors/RRAM/ReRAM</a></li>
+      </ol>
+    </li>
     <li><a href="#reference">Reference</a></li>
   </ol>
 </nav>

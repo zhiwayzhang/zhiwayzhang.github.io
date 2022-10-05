@@ -368,6 +368,90 @@ CGI程序（通用网关接口Common Gateway Interface），将内容发送到�
 &lt;p&gt;本章主要了解了Unix如何建立一个网络连接，以及数据传输的具体过程，socket的设计巧妙之处，以及Linux一切皆文件的进一步理解。&lt;/p&gt;</description>
         </item>
         <item>
+        <title>【操作系统】系统级IO</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</link>
+        <pubDate>Mon, 03 Jan 2022 10:31:33 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/</guid>
+        <description>&lt;p&gt;高级别的IO程序，如c中的printf和scanf，c++中的&lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt;和&lt;code&gt;&amp;lt;&amp;lt;&lt;/code&gt;，都依赖Unix 系统级IO&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-10 笔记&lt;/p&gt;
+&lt;h2 id=&#34;unix-io&#34;&gt;Unix IO&lt;/h2&gt;
+&lt;p&gt;Linux文件即是m个字节的序列$B_0, B_1, &amp;hellip;, B_k, &amp;hellip;, B_{m-1}$&lt;/p&gt;
+&lt;p&gt;所有的IO设备（网络，磁盘，终端）被抽象为文件，输入和输出被作为相应文件的读和写进行，Linux内核只需要暴露一个简单低级的应用接口&lt;/p&gt;
+&lt;p&gt;输入和输出的统一方式:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;打开文件：应用程序请求IO设备，内核返回描述符&lt;/li&gt;
+&lt;li&gt;Linux Shell创建的进程开始时有三个文件：标准输入0，标准输出1，标准错误2&lt;/li&gt;
+&lt;li&gt;改变当前的文件位置：内核存储文件位置k，初始为0，通过seek改变这个偏移量&lt;/li&gt;
+&lt;li&gt;读写文件：读为复制字节到内存，当k&amp;gt;=m时，会触发EOF条件；写为复制字节到一个文件中，从当前位置k开始，然后更新k&lt;/li&gt;
+&lt;li&gt;关闭文件：通知内核，内核释放文件打开时创建的数据结构，释放描述符，进程终止时内核会释放打开的文件以及内存&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;文件&#34;&gt;文件&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;普通文件：文本文件：ASCII或Unicode字符文件，其他的都是二进制文件，对内核而言无区别，换行符&lt;code&gt;\n&lt;/code&gt;对应ASCII LF&lt;/li&gt;
+&lt;li&gt;目录：包含一组链接的文件，链接将文件名映射到一个文件&lt;/li&gt;
+&lt;li&gt;套接字socket：与另一个进程进行跨网络通信的文件&lt;/li&gt;
+&lt;li&gt;命名通道named pipe，符号链接，字符和块设备&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;绝对路径：以斜杠开始&lt;code&gt;/home/test&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;相对路径：以文件名开始,&lt;code&gt;../test&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;打开和关闭文件&#34;&gt;打开和关闭文件&lt;/h2&gt;
+&lt;p&gt;open函数打开或创建文件&lt;/p&gt;
+&lt;p&gt;返回一个文件描述符，在进程中没有打开的最小描述符
+几种控制参数flags&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_RDONLY&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;只读&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_WRONLY&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;只写&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_RDWR&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;可读可写&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_CREAT&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;文件不存在则创建空文件&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_TRUNC&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;存在则截断，清空&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;O_APPEND&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;追加写入&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;mode参数控制读写权限&lt;/p&gt;
+&lt;p&gt;每个进程都有umask&lt;/p&gt;
+&lt;p&gt;访问权限为&lt;code&gt;mode &amp;amp; ~umask&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;close(int fd)关闭文件，成功返回0，失败-1&lt;/p&gt;
+&lt;h2 id=&#34;读写文件&#34;&gt;读写文件&lt;/h2&gt;
+&lt;p&gt;read和write&lt;/p&gt;
+&lt;p&gt;输入的size为unsigned long类型，ssize_t为long类型，因为read和write函数需要返回-1&lt;/p&gt;
+&lt;p&gt;read和write读写遇到不足的情况：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;读取时遇到EOF&lt;/li&gt;
+&lt;li&gt;从终端读文本行&lt;/li&gt;
+&lt;li&gt;读写socket：网络延迟导致read和write返回值不足&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;rio包-robust-io&#34;&gt;RIO包 Robust IO&lt;/h2&gt;
+&lt;h2 id=&#34;读取文件元数据&#34;&gt;读取文件元数据&lt;/h2&gt;
+&lt;p&gt;stat和fstat函数，读取文件信息&lt;/p&gt;
+&lt;h2 id=&#34;读取目录内容&#34;&gt;读取目录内容&lt;/h2&gt;
+&lt;p&gt;opendir函数&lt;/p&gt;
+&lt;h2 id=&#34;共享文件&#34;&gt;共享文件&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;描述符表，每个进程之间独立&lt;/li&gt;
+&lt;li&gt;文件表，打开文件的集合，所有进程共享，包含文件位置，引用计数，指向vnode表的指针，当引用计数为0时，操作系统删除表项&lt;/li&gt;
+&lt;li&gt;v-node，进程间共享，包含stat中的信息，st mode，st size&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;io重定向&#34;&gt;IO重定向&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;标准输出&lt;/strong&gt;重定向到磁盘文件&lt;/p&gt;
+&lt;p&gt;覆盖写入文件之前的内容&lt;/p&gt;
+&lt;p&gt;使用dup2函数，将终端的输出关闭，改为磁盘文件，磁盘文件引用次数+1&lt;/p&gt;
+&lt;h2 id=&#34;标准io&#34;&gt;标准IO&lt;/h2&gt;
+&lt;p&gt;标准IO将打开的文件模型化为一个流，减少系统级IO操作的调用&lt;/p&gt;
+&lt;p&gt;第一次getc调用IO read函数读取到缓冲区，之后调用将缓冲区第一个字节返回给应用程序&lt;/p&gt;
+&lt;h2 id=&#34;选取io函数问题&#34;&gt;选取IO函数问题&lt;/h2&gt;
+&lt;p&gt;socket中不要使用标准IO，可能会导致崩溃，使用RIO函数/Unix IO&lt;/p&gt;</description>
+        </item>
+        <item>
         <title>【操作系统】程序的机器级表示</title>
         <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</link>
         <pubDate>Fri, 10 Dec 2021 21:19:54 +0000</pubDate>

@@ -271,6 +271,270 @@
 &lt;/ol&gt;</description>
         </item>
         <item>
+        <title>【操作系统】网络编程</title>
+        <link>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</link>
+        <pubDate>Mon, 03 Jan 2022 13:37:02 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</guid>
+        <description>&lt;p&gt;承接Unix I/O这一章节，了解网络如何构建以及客户端和服务器如何通信，socket函数相关内容的学习&lt;/p&gt;
+&lt;p&gt;CSAPP Ch-11 笔记&lt;/p&gt;
+&lt;h2 id=&#34;cs编程模型&#34;&gt;CS编程模型&lt;/h2&gt;
+&lt;p&gt;客户端服务器模型&lt;/p&gt;
+&lt;p&gt;一个服务器进程，多个客户端进程&lt;/p&gt;
+&lt;p&gt;基本操作是事务transaction&lt;/p&gt;
+&lt;p&gt;有四步&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端向服务器发送请求，发起一个事务&lt;/li&gt;
+&lt;li&gt;服务器解释请求，用响应的方式操作资源&lt;/li&gt;
+&lt;li&gt;服务器返回响应，等待下一个请求&lt;/li&gt;
+&lt;li&gt;客户端接受响应并处理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;网络&#34;&gt;网络&lt;/h2&gt;
+&lt;p&gt;网络是一种IO设备，是数据源和数据接收方&lt;/p&gt;
+&lt;p&gt;网络数据接收后经IO和内存总线复制到内存，双向传输&lt;/p&gt;
+&lt;p&gt;以太网Ethernet是局域网技术&lt;/p&gt;
+&lt;p&gt;电缆链接主机和集线器，集线器广播每个端口的信息到所有主机&lt;/p&gt;
+&lt;p&gt;主机发送帧frame开头的信息，包括header，随后是有效载荷，payload，网内每个主机都可以见，只有目的主机读取&lt;/p&gt;
+&lt;p&gt;桥接以太网，主机&amp;hellip;-集线器-桥-桥-集线器-&amp;hellip;主机，网桥会根据通信需要来选择是否转发帧到其他网桥&lt;/p&gt;
+&lt;p&gt;连接多个局域网使用路由器&lt;/p&gt;
+&lt;p&gt;协议解决网络传输中的差异，提供命名机制（网络地址）和传输机制（包头+有效载荷）&lt;/p&gt;
+&lt;p&gt;数据发送过程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;主机A通过系统调用从虚存加载数据到内核缓冲区&lt;/li&gt;
+&lt;li&gt;主机A上的协议软件添加互联网包头和接口帧头，互联网包头指向主机B，接口帧头指向主机LAN1。是封装关系。
+帧头的包数据为互联网包头以及数据，帧头为其自己的互联网包头&lt;/li&gt;
+&lt;li&gt;LAN1适配器复制数据到网络&lt;/li&gt;
+&lt;li&gt;路由器读取数据猴传送到协议软件&lt;/li&gt;
+&lt;li&gt;协议软件读取目标互联网地址，作为路由表的索引转发到对应的LAN2适配器&lt;/li&gt;
+&lt;li&gt;LAN2适配器复制帧到网络&lt;/li&gt;
+&lt;li&gt;到达主机B，从适配器读取帧，传输到协议软件&lt;/li&gt;
+&lt;li&gt;协议软件去除包头和帧头，读取数据，主机B通过系统调用拷贝数据到虚拟地址空间&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;全球ip&#34;&gt;全球IP&lt;/h2&gt;
+&lt;p&gt;客户端（用户）-【socket接口系统调用】-TCP/IP（内核）-【硬件接口，中断】-网络适配器（硬件）-全局IP因特网&lt;/p&gt;
+&lt;p&gt;使用socket接口函数和Unix IO函数通信，socket函数为系统调用，调用内核的TCP/IP函数&lt;/p&gt;
+&lt;p&gt;TCP/IP是一个协议族，IP协议提供命名方法和传递机制，数据报&lt;/p&gt;
+&lt;p&gt;IP机制不可靠，数据报丢失不会自动恢复&lt;/p&gt;
+&lt;p&gt;UDP UNreliable datagram protocol，不可靠数据报协议对其进行了扩展，包可以在进程之间传递，而不是主机之间&lt;/p&gt;
+&lt;p&gt;TCP是基于IP的协议，进程间可靠的全双工连接&lt;/p&gt;
+&lt;p&gt;因特网的特性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主机集合映射到32位ip地址&lt;/li&gt;
+&lt;li&gt;ip地址映射为一组域名&lt;/li&gt;
+&lt;li&gt;主机上的进程能够通过连接其他主机的进程通信&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ipv4和ipv6：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;version 4：32位地址&lt;/li&gt;
+&lt;li&gt;version 6：128位地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;ip地址&#34;&gt;ip地址&lt;/h3&gt;
+&lt;p&gt;32位无符号整数，8*4&lt;/p&gt;
+&lt;p&gt;TCP/IP统一了字节顺序，大端法&lt;/p&gt;
+&lt;p&gt;使用点分十进制表示，Linux查看主机地址&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;hostname -i
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;域名&#34;&gt;域名&lt;/h3&gt;
+&lt;p&gt;一级域名mil，edu，gov，com，cn&lt;/p&gt;
+&lt;p&gt;二级域名whut.edu&lt;/p&gt;
+&lt;p&gt;hosts文件手工维护ip和域名的映射&lt;/p&gt;
+&lt;p&gt;DNS，domain name system&lt;/p&gt;
+&lt;p&gt;Linux使用nslookup查看域名ip&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;nslookup baidu.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;通常域名和ip一一对应，多个域名也可以对应同一ip，泛域名cs.whut.edu, ee.whut.edu&lt;/p&gt;
+&lt;p&gt;多个域名可以映射到同一组的多个ip，如www.twitter.com和twitter.com映射到199.16.156.*&lt;/p&gt;
+&lt;h3 id=&#34;因特网连接&#34;&gt;因特网连接&lt;/h3&gt;
+&lt;p&gt;客户端和服务器在连接上发送和接收字节流来通信，点对点，全双工，可以同时双向流动&lt;/p&gt;
+&lt;p&gt;socket是连接的端点，每个socket都有socket地址，由&lt;code&gt;地址:端口&lt;/code&gt;构成，十六位端口号0-65535&lt;/p&gt;
+&lt;p&gt;客户端发起请求时，客户端socket地址端口由内核自动分配，临时端口；服务器的为默认端口&lt;/p&gt;
+&lt;p&gt;web使用80（http），电子邮件地址使用25（SMTP）&lt;/p&gt;
+&lt;p&gt;可以通过&lt;code&gt;/etc/services&lt;/code&gt;看查&lt;strong&gt;知名&lt;/strong&gt;服务默认端口&lt;/p&gt;
+&lt;p&gt;一个连接两端的socket地址是唯一确定的，socket pair，格式&lt;code&gt;(cliaddr:cliport, servaddr:servport)&lt;/code&gt;，即&lt;code&gt;(客户端IP:客户端端口,服务器IP:服务器端口)&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;socket接口&#34;&gt;socket接口&lt;/h2&gt;
+&lt;p&gt;一组函数实现，和Unix IO配合创建网络应用&lt;/p&gt;
+&lt;p&gt;流程：&lt;/p&gt;
+&lt;p&gt;客户端getaddrinfo-&amp;gt;socket-&amp;gt;connect发送连接请求-&amp;gt;rio_writen-&amp;gt;rio_readlineb-&amp;gt;close发送EOF&lt;/p&gt;
+&lt;p&gt;服务器getaddrinfo-&amp;gt;socket-&amp;gt;bind-&amp;gt;listen-&amp;gt;accept接受请求-&amp;gt;rio_readlineb读客户端的write-&amp;gt;rio_writen写入response-&amp;gt;rio_readlineb读取EOF-close&lt;/p&gt;
+&lt;h3 id=&#34;socket地址结构&#34;&gt;socket地址结构&lt;/h3&gt;
+&lt;p&gt;对于Linux内核，socket就是一个有描述符的打开文件&lt;/p&gt;
+&lt;p&gt;socket地址存放与&lt;code&gt;sockaddr_in&lt;/code&gt;，包含&lt;code&gt;AF_INET&lt;/code&gt;，&lt;code&gt;sin_port&lt;/code&gt;为16位端口号，&lt;code&gt;sin_addr&lt;/code&gt;为32位ip地址，都是以大端法存放&lt;/p&gt;
+&lt;h3 id=&#34;socket函数&#34;&gt;socket函数&lt;/h3&gt;
+&lt;p&gt;客户端和服务器使用socket函数创建socket描述符&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;clientfd&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Socket&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;AF_INET&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SOCK_STREAM&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;AF_INET&lt;/code&gt;表示使用32位IP地址，&lt;code&gt;SOCK_STREAM&lt;/code&gt;表示该socket为连接端点&lt;/p&gt;
+&lt;p&gt;该函数返回的描述符为部分打开的，不能读写，将有客户端完成打开socket的工作&lt;/p&gt;
+&lt;h3 id=&#34;connect函数&#34;&gt;connect函数&lt;/h3&gt;
+&lt;p&gt;客户端调用connect函数建立和服务器连接&lt;/p&gt;
+&lt;p&gt;connect函数会阻塞一直到连接成功建立或者错误，成功后clientfd为可读写状态&lt;/p&gt;
+&lt;p&gt;由getaddrinfo函数获取connect的参数&lt;/p&gt;
+&lt;h3 id=&#34;bind函数&#34;&gt;bind函数&lt;/h3&gt;
+&lt;p&gt;bind函数通知内核将addr中的服务器socket地址和socket描述符socketfd联系到一起&lt;/p&gt;
+&lt;p&gt;由getaddrinfo函数获取bind的参数&lt;/p&gt;
+&lt;h3 id=&#34;listen函数&#34;&gt;listen函数&lt;/h3&gt;
+&lt;p&gt;客户端是发起请求的主动实体，服务器是被动实体&lt;/p&gt;
+&lt;p&gt;默认，内核认为socket函数创建的描述符为主动socket，服务器通过listen函数通知内核描述符是被服务器使用而不是客户端&lt;/p&gt;
+&lt;p&gt;将socketfd从主动socket转化为监听socket，监听socket可以接受客户端的连接请求&lt;/p&gt;
+&lt;p&gt;参数backlog为队列中未完成的请求数量，一般设置较大的数&lt;/p&gt;
+&lt;h3 id=&#34;accept函数&#34;&gt;accept函数&lt;/h3&gt;
+&lt;p&gt;服务器使用accept函数等待客户端的连接请求&lt;/p&gt;
+&lt;p&gt;已经获得监听描述符connfd，listenfd，返回一个已连接描述符，该描述符可以被Unix IO读写，可以和客户端通信，将connfd返回给客户端&lt;/p&gt;
+&lt;p&gt;与监听描述符不太，监听描述符是客户端连接请求的端点，只创建一次，存在于服务器的整个生命周期&lt;/p&gt;
+&lt;p&gt;已连接描述符为客户端和服务器直接已经建立连接的端点，服务器每次接受请求都会创建&lt;/p&gt;
+&lt;p&gt;可以理解为后端程序当前已经监听系统的某个端口，此时客户端请求后后端在该基础上创建一个线程去处理该请求&lt;/p&gt;
+&lt;h3 id=&#34;主机和服务的转换&#34;&gt;主机和服务的转换&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;getaddrinfo&lt;/code&gt;
+将主机名、主机地址、服务名端口号转为socket地址结构
+返回result为一个addrinfo链表，每个结构对应一个host和service的socket地址结构
+客户端调用之后，遍历链表，尝试每个地址，直到socket和connect成功，建立连接
+服务器会遍历每个地址，直到socket和bind成功
+避免内存泄露，最后调用freeaddrinfo释放链表
+参数讲解跳了&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;getnameinfo&lt;/code&gt;
+将socket地址转换为主机和服务名字符串&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;socket接口辅助函数&#34;&gt;socket接口辅助函数&lt;/h3&gt;
+&lt;p&gt;以上接口的整合封装&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;open_clientfd
+&lt;code&gt;int open_clientfd(char *hostname, char *port)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;open_clientfd建立和服务器的连接，返回描述符，可以直接用于Unix IO函数读写&lt;/p&gt;
+&lt;p&gt;流程：getaddrinfo，返回addrinfo链表，遍历链表尝试建立连接，失败则关闭描述符，成功后释放链表将描述符（connfd）返回给客户端&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;open_listenfd
+服务器创建监听描述符&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;int open_listenfd(char *port)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;遍历链表直到调用socket和bind成功&lt;/p&gt;
+&lt;h3 id=&#34;echo实例&#34;&gt;echo实例&lt;/h3&gt;
+&lt;p&gt;简单的单线程处理服务器&lt;/p&gt;
+&lt;p&gt;EOF概念，并不是字符，而是内核检测的一个条件，read函数返回0时，程序检测到EOF条件。磁盘文件读写，文件位置超出长度，判断EOF。网络连接，进程关闭连接其中一端，触发EOF。尝试读取通信中字节流的最后一个字节之后的字节，触发EOF。&lt;/p&gt;
+&lt;h2 id=&#34;web服务器&#34;&gt;Web服务器&lt;/h2&gt;
+&lt;h3 id=&#34;web基础&#34;&gt;Web基础&lt;/h3&gt;
+&lt;p&gt;HTTP协议，Hypertext Transfer Protocol超文本传输协议&lt;/p&gt;
+&lt;h3 id=&#34;web内容&#34;&gt;Web内容&lt;/h3&gt;
+&lt;p&gt;内容是MIME，多用途的网际邮件扩充协议，类型相关的字节序列&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;读取一个磁盘文件，将内容返回给客户端，磁盘文件为静态内容&lt;/li&gt;
+&lt;li&gt;运行可执行文件，将输出返回&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;使用URL标识每个文件&lt;/p&gt;
+&lt;p&gt;根据目录指定返回规则&lt;/p&gt;
+&lt;p&gt;根目录为网页静态内容的根目录&lt;/p&gt;
+&lt;p&gt;后缀为&lt;code&gt;/&lt;/code&gt;时服务器自动补全默认文件名&lt;/p&gt;
+&lt;h3 id=&#34;http事务&#34;&gt;HTTP事务&lt;/h3&gt;
+&lt;p&gt;使用Linux的Telnet和任何web服务器执行事务&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;telnet url port
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;HTTP请求&lt;/p&gt;
+&lt;p&gt;请求行&lt;code&gt;method URI version&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;0个或多个请求报头&lt;/p&gt;
+&lt;p&gt;一个空的文本行终止报头列表&lt;/p&gt;
+&lt;p&gt;body&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;GET / HTTP/1.1  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Host: www.baidu.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;请求方法GET、POST、OPTIONS、HEAD、PUT、DELETE、TRACE&lt;/p&gt;
+&lt;p&gt;URI是相应URL的后缀，包括文件名和参数&lt;/p&gt;
+&lt;p&gt;version为http版本&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/zh-CN/docs/Glossary/Request_header&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Mozilla文档&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;header可以存放多种信息，比如cookie等&lt;/p&gt;
+&lt;p&gt;host请求头在HTTP 1.1位必须，1.0中不必须。代理缓存proxy cache会使用host报头，理解为反向代理？&lt;/p&gt;
+&lt;p&gt;客户端和服务器直接可以由代理，&lt;code&gt;代理链&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;HTTP响应组成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;响应行
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0个或多个响应头
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;终止报头的空行
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;响应主体body
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;响应行格式&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;version status-code status-message&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;version对于HTTP版本，code为&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;1**
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;200
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;301 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;400
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;403
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;404
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;501
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;505
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;更多状态码&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;响应头中应有Content-Type，告知客户端主体内容的MIME类型，Content-Length，告知主体的字节大小&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;传递参数&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;URI或者请求主体
+2. 服务器传递参数给子进程&lt;/p&gt;
+&lt;p&gt;fork一个子进程，调用execve在子进程上下文中执行对应的程序，通过环境变量，如QUERY_STRING, REQUEST_METHOD等信息，程序做出对应的处理&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;子进程的输出到哪里？
+CGI程序（通用网关接口Common Gateway Interface），将内容发送到标准输出，在子进程调用CGI程序之前，使用Linux dup2函数将标准输出重定向到和客户端相连的已连接描述符，CGI程序写入到标准输出的内容都会直接到达客户端&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;实现一个web服务器&#34;&gt;实现一个Web服务器&lt;/h1&gt;
+&lt;p&gt;使用c配合CSAPP提供的封装搭建一个简易的web服务器&lt;/p&gt;
+&lt;h1 id=&#34;总结&#34;&gt;总结&lt;/h1&gt;
+&lt;p&gt;本章主要了解了Unix如何建立一个网络连接，以及数据传输的具体过程，socket的设计巧妙之处，以及Linux一切皆文件的进一步理解。&lt;/p&gt;</description>
+        </item>
+        <item>
         <title>127.0.0.1,localhost和0.0.0.0暨🐼一次两次的神神秘秘的debug记录</title>
         <link>https://blog.ipandai.club/p/127.0.0.1localhost%E5%92%8C0.0.0.0%E6%9A%A8%E4%B8%80%E6%AC%A1%E4%B8%A4%E6%AC%A1%E7%9A%84%E7%A5%9E%E7%A5%9E%E7%A7%98%E7%A7%98%E7%9A%84debug%E8%AE%B0%E5%BD%95/</link>
         <pubDate>Mon, 26 Jul 2021 22:23:38 +0000</pubDate>

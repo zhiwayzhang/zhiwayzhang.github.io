@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>DRAM on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/dram/</link>
+        <description>Recent content in DRAM on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sat, 24 Sep 2022 18:26:22 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/dram/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>【存储技术基础】主存</title>
+        <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/</link>
+        <pubDate>Sat, 24 Sep 2022 18:26:22 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/</guid>
+        <description>&lt;h1 id=&#34;0x00-主存&#34;&gt;0x00 主存&lt;/h1&gt;
+&lt;p&gt;当前面临的问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;容量问题、带宽问题、QoS保证&lt;/p&gt;
+&lt;p&gt;多核处理器、数据密集应用、云计算、GPU&lt;/p&gt;
+&lt;p&gt;HDFS（GFS）基于外存储器&lt;/p&gt;
+&lt;p&gt;Spark 内存中数据处理&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;能耗功率问题&lt;/p&gt;
+&lt;p&gt;40%功耗在DRAM，Refresh操作耗能&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DRAM发展遇到瓶颈&lt;/p&gt;
+&lt;p&gt;制成方式限制&lt;/p&gt;
+&lt;p&gt;改进：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;3D-Stack DRAM 提供更高的带宽&lt;/li&gt;
+&lt;li&gt;低延迟DRAM&lt;/li&gt;
+&lt;li&gt;低功耗DRAM&lt;/li&gt;
+&lt;li&gt;NVM（e.g. PCM）容量更大，延迟较高&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;0x01-dram的组成&#34;&gt;0x01 DRAM的组成&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Channel&lt;/li&gt;
+&lt;li&gt;DIMM 内存条&lt;/li&gt;
+&lt;li&gt;Rank 二维阵列最小单元&lt;/li&gt;
+&lt;li&gt;Chip 芯片&lt;/li&gt;
+&lt;li&gt;Bank&lt;/li&gt;
+&lt;li&gt;Row/Column&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;行为字线 word line&lt;/p&gt;
+&lt;p&gt;列为位线，交点是cell 内存单元&lt;/p&gt;
+&lt;img src=&#34;https://cdn.ipandai.club/image-20221003154123646.png&#34; alt=&#34;image-20221003154123646&#34; style=&#34;zoom:70%;&#34; /&gt;
+&lt;p&gt;DRAM row是一个DRAM page&lt;/p&gt;
+&lt;p&gt;Sense Amplifiers 也被叫做Row buffer&lt;/p&gt;
+&lt;p&gt;每个地址通过&lt;code&gt;&amp;lt;row,colum&amp;gt;&lt;/code&gt;编址&lt;/p&gt;
+&lt;p&gt;访问一个&lt;code&gt;closed row&lt;/code&gt;的过程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Activate：将row放到row buffer中&lt;/li&gt;
+&lt;li&gt;Read/Write：读写row buffer中的column&lt;/li&gt;
+&lt;li&gt;Precharge：从row buffer中的数据写回到选中的row中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;bank-operation&#34;&gt;Bank Operation&lt;/h2&gt;
+&lt;p&gt;给定Row Address通过Row decoder选中一行&lt;/p&gt;
+&lt;p&gt;将行加载到Row Buffer&lt;/p&gt;
+&lt;p&gt;若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据&lt;/p&gt;
+&lt;p&gt;若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据&lt;/p&gt;
+&lt;h2 id=&#34;chip&#34;&gt;Chip&lt;/h2&gt;
+&lt;p&gt;由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）&lt;/p&gt;
+&lt;p&gt;每次只能读4或16 Bit&lt;/p&gt;
+&lt;h2 id=&#34;rank-and-module&#34;&gt;Rank and Module&lt;/h2&gt;
+&lt;p&gt;Module为DIMM内存条，连接在主板上，由一个或多个rank组成&lt;/p&gt;
+&lt;p&gt;Rank由多个Chip构成，提高接口带宽，多个Chip共享地址和指令总线，有单独的数据总线&lt;/p&gt;
+&lt;img src=&#34;https://cdn.ipandai.club/image-20221003164422987.png&#34; alt=&#34;image-20221003164422987&#34; style=&#34;zoom:80%;&#34; /&gt;
+&lt;p&gt;多个Chip可以并行操作&lt;/p&gt;
+&lt;p&gt;对于64 bit的读取，分配到多个Chip中同时读取&lt;/p&gt;
+&lt;p&gt;对于多DIMM情况，可以先确定在哪根DIMM条中，再进行读取操作&lt;/p&gt;
+&lt;h2 id=&#34;chanel&#34;&gt;Chanel&lt;/h2&gt;
+&lt;p&gt;Bank之间为分时共享&lt;/p&gt;
+&lt;p&gt;Channel为独立总线，数据可同时读写，每个Channel有一个Memory Controller&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221003182243697.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221003182243697&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在同一个Channel中的DIMM数据分时共享&lt;/p&gt;
+&lt;p&gt;一张比较清晰的结构关系图&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221003182445252.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221003182445252&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;同一个Channel可以连接多个DIMM条&lt;/p&gt;
+&lt;h2 id=&#34;从cpu访问角度观察&#34;&gt;从CPU访问角度观察&lt;/h2&gt;
+&lt;p&gt;Memory Channel中，在DIMM中Chip Selection选择访问的Rank，通过地址确定访问的数据&lt;/p&gt;
+&lt;p&gt;Rank中的8个Chip每个都提供8 bit，共提供8 Byte访问&lt;/p&gt;
+&lt;p&gt;由每个Chip中的bank选择器从8个bank中选择一个获取8 bit&lt;/p&gt;
+&lt;p&gt;Bank中通过Row-Buffer来获取数据&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;延迟的产生：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CPU到controller的传输时间&lt;/li&gt;
+&lt;li&gt;Controller延迟，请求队列和调度&lt;/li&gt;
+&lt;li&gt;Controller到DRAM的传输时间（总线）&lt;/li&gt;
+&lt;li&gt;DRAM 中Bank的延迟
+&lt;ul&gt;
+&lt;li&gt;选择某一行 Activate&lt;/li&gt;
+&lt;li&gt;读取的时间&lt;/li&gt;
+&lt;li&gt;Precharge&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;DRAM到CPU的传输时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;主要关注Bank中的延迟&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;multiple-banks&#34;&gt;Multiple Banks&lt;/h2&gt;
+&lt;p&gt;使DRAM访问并行&lt;/p&gt;
+&lt;p&gt;由于不同Bank分时共享，可以使得Bank提前将row加载到Row Buffer中，提高利用率&lt;/p&gt;
+&lt;h2 id=&#34;multiple-channels&#34;&gt;Multiple Channels&lt;/h2&gt;
+&lt;p&gt;更容易实现&lt;/p&gt;
+&lt;p&gt;提高总线带宽&lt;/p&gt;
+&lt;p&gt;提高并发能力需要减少Bank和Channel的冲突问题，需要对编址策略进行优化&lt;/p&gt;
+&lt;p&gt;比较直观的观察Multiple Banks优化的效果，达到Overlap的效果&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221003204558855.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221003204558855&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;address-mapping&#34;&gt;Address Mapping&lt;/h2&gt;
+&lt;p&gt;地址映射对DRAM并发能力的影响&lt;/p&gt;
+&lt;p&gt;将访问DRAM中数据的地址进行排列，包含Channel、Row、Bank、Column&lt;/p&gt;
+&lt;p&gt;核心思想：调整容易产生冲突的地址，使其相对靠后，还要兼顾其他问题&lt;/p&gt;
+&lt;p&gt;将Column的高8位和低3位分离&lt;/p&gt;
+&lt;img src=&#34;https://cdn.ipandai.club/image-20221004202109741.png&#34; alt=&#34;image-20221004202109741&#34; style=&#34;zoom:80%;&#34; /&gt;
+&lt;p&gt;提高Row Buffer的利用率，倒数第二种比较常用&lt;/p&gt;
+&lt;p&gt;对OS而言，由逻辑地址Virtual Address映射到物理地址&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Virtual Page Number &lt;/code&gt;-&amp;gt; &lt;code&gt;&amp;lt;Row,Bank&amp;gt;&lt;/code&gt;，可以通过调整映射算法来优化存储效率&lt;/p&gt;
+&lt;h1 id=&#34;0x02-dram-refresh&#34;&gt;0x02 DRAM Refresh&lt;/h1&gt;
+&lt;p&gt;由于电容中的电子持续泄漏，每隔一段时间重新写入数据，读取到row buffer再写回，刷新间隔一般为64ms&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;负面影响：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;能耗增加&lt;/li&gt;
+&lt;li&gt;性能减少，Refresh中内存不可用&lt;/li&gt;
+&lt;li&gt;QoS影响，不能保证平稳&lt;/li&gt;
+&lt;li&gt;刷新率使得DRAM容量的扩展受限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;性能影响&#34;&gt;性能影响&lt;/h2&gt;
+&lt;p&gt;刷新时Bank变得不可用，Row Buffer的占用&lt;/p&gt;
+&lt;p&gt;在刷新结束前有长时间的暂定，有两种优化策略：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Burst Refresh 所有的行依次全部刷新&lt;/li&gt;
+&lt;li&gt;Distributed Refresh 每行以固定的时间间隔在不同的时间进行刷新&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;两种方式（集中式/分布式）的示意图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221004153056950.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221004153056950&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Distributed Refresh减少了等待时间&lt;/p&gt;
+&lt;p&gt;随着设备容量的增加，消耗在Refresh上的时间/能耗占比越来越大&lt;/p&gt;
+&lt;p&gt;目前应用的策略：Auto Refresh，每次只Refresh其中几行&lt;/p&gt;
+&lt;p&gt;一些探索：刷新间隔的调整，64ms保证在最坏情况下的可靠性，在容忍存储单元出故障的前提下，可以适当提高刷新间隔，对于出错的单元采用更低的刷新间隔（不同存储单元采用不同刷新频率）&lt;/p&gt;
+&lt;h1 id=&#34;0x03-memory-controller&#34;&gt;0x03 Memory Controller&lt;/h1&gt;
+&lt;p&gt;位于CPU中&lt;/p&gt;
+&lt;p&gt;基本功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;保证DRAM的正确性，刷新和时序timing&lt;/li&gt;
+&lt;li&gt;遵循一定的时序约束（bank，总线，channel的冲突）来完成DRAM请求，转换请求为DRAM Command&lt;/li&gt;
+&lt;li&gt;对请求进行调度提高性能&lt;/li&gt;
+&lt;li&gt;管理电源能耗，开关Chip，管理电源模式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img src=&#34;https://cdn.ipandai.club/image-20221004204322362.png&#34; alt=&#34;image-20221004204322362&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;p&gt;由L2 Cache发送请求到Memory Controller，由一个Buffer来对请求进行缓存&lt;/p&gt;
+&lt;h2 id=&#34;请求调度&#34;&gt;请求调度&lt;/h2&gt;
+&lt;h1 id=&#34;0x04-引入nvm&#34;&gt;0x04 引入NVM&lt;/h1&gt;
+&lt;h1 id=&#34;reference&#34;&gt;Reference&lt;/h1&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.bilibili.com/video/BV1xE411T7Dy&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;存储技术基础—Main Memory I&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.bilibili.com/video/BV1xE411T7Dy&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;存储技术基础—Main Memory II&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

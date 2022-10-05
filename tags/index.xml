@@ -7,11 +7,27 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <lastBuildDate>Sat, 24 Sep 2022 18:26:22 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>DRAM</title>
+        <link>https://blog.ipandai.club/tags/dram/</link>
+        <pubDate>Sat, 24 Sep 2022 18:26:22 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/dram/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Storage</title>
         <link>https://blog.ipandai.club/tags/storage/</link>
         <pubDate>Sat, 24 Sep 2022 18:26:22 +0800</pubDate>
         
         <guid>https://blog.ipandai.club/tags/storage/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>NVM</title>
+        <link>https://blog.ipandai.club/tags/nvm/</link>
+        <pubDate>Thu, 22 Sep 2022 09:36:42 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/nvm/</guid>
         <description></description>
         </item>
         <item>
@@ -95,14 +111,6 @@
         <description></description>
         </item>
         <item>
-        <title>Note</title>
-        <link>https://blog.ipandai.club/tags/note/</link>
-        <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
-        
-        <guid>https://blog.ipandai.club/tags/note/</guid>
-        <description></description>
-        </item>
-        <item>
         <title>计算机网络</title>
         <link>https://blog.ipandai.club/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
         <pubDate>Sat, 05 Mar 2022 10:32:46 +0000</pubDate>
@@ -111,11 +119,19 @@
         <description></description>
         </item>
         <item>
-        <title>Go</title>
-        <link>https://blog.ipandai.club/tags/go/</link>
+        <title>Golang</title>
+        <link>https://blog.ipandai.club/tags/golang/</link>
         <pubDate>Tue, 25 Jan 2022 20:14:16 +0000</pubDate>
         
-        <guid>https://blog.ipandai.club/tags/go/</guid>
+        <guid>https://blog.ipandai.club/tags/golang/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Database</title>
+        <link>https://blog.ipandai.club/tags/database/</link>
+        <pubDate>Mon, 17 Jan 2022 23:16:08 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/database/</guid>
         <description></description>
         </item>
         <item>
@@ -127,11 +143,43 @@
         <description></description>
         </item>
         <item>
+        <title>HTTP</title>
+        <link>https://blog.ipandai.club/tags/http/</link>
+        <pubDate>Sun, 16 Jan 2022 22:25:00 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/http/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>CSAPP</title>
         <link>https://blog.ipandai.club/tags/csapp/</link>
         <pubDate>Fri, 14 Jan 2022 10:12:15 +0000</pubDate>
         
         <guid>https://blog.ipandai.club/tags/csapp/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>操作系统</title>
+        <link>https://blog.ipandai.club/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+        <pubDate>Fri, 14 Jan 2022 10:12:15 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Redis</title>
+        <link>https://blog.ipandai.club/tags/redis/</link>
+        <pubDate>Mon, 03 Jan 2022 16:22:27 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/redis/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>汇编语言</title>
+        <link>https://blog.ipandai.club/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</link>
+        <pubDate>Sun, 02 Jan 2022 10:33:48 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</guid>
         <description></description>
         </item>
         <item>
@@ -215,14 +263,6 @@
         <description></description>
         </item>
         <item>
-        <title>Golang</title>
-        <link>https://blog.ipandai.club/tags/golang/</link>
-        <pubDate>Tue, 30 Mar 2021 12:23:42 +0000</pubDate>
-        
-        <guid>https://blog.ipandai.club/tags/golang/</guid>
-        <description></description>
-        </item>
-        <item>
         <title>Shell</title>
         <link>https://blog.ipandai.club/tags/shell/</link>
         <pubDate>Tue, 30 Mar 2021 12:23:42 +0000</pubDate>
@@ -231,11 +271,11 @@
         <description></description>
         </item>
         <item>
-        <title>汇编语言</title>
-        <link>https://blog.ipandai.club/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</link>
-        <pubDate>Tue, 16 Mar 2021 10:29:27 +0000</pubDate>
+        <title>Note</title>
+        <link>https://blog.ipandai.club/tags/note/</link>
+        <pubDate>Mon, 15 Mar 2021 19:53:04 +0000</pubDate>
         
-        <guid>https://blog.ipandai.club/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/</guid>
+        <guid>https://blog.ipandai.club/tags/note/</guid>
         <description></description>
         </item>
         <item>
@@ -244,6 +284,14 @@
         <pubDate>Mon, 15 Mar 2021 19:53:04 +0000</pubDate>
         
         <guid>https://blog.ipandai.club/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Blog</title>
+        <link>https://blog.ipandai.club/tags/blog/</link>
+        <pubDate>Sat, 13 Mar 2021 23:28:31 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/blog/</guid>
         <description></description>
         </item>
         <item>
@@ -263,6 +311,30 @@
         <description></description>
         </item>
         <item>
+        <title>Stack</title>
+        <link>https://blog.ipandai.club/tags/stack/</link>
+        <pubDate>Wed, 07 Oct 2020 22:03:17 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/stack/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>中缀表达式</title>
+        <link>https://blog.ipandai.club/tags/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
+        <pubDate>Wed, 07 Oct 2020 22:03:17 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>栈</title>
+        <link>https://blog.ipandai.club/tags/%E6%A0%88/</link>
+        <pubDate>Wed, 07 Oct 2020 22:03:17 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/%E6%A0%88/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>计算几何</title>
         <link>https://blog.ipandai.club/tags/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95/</link>
         <pubDate>Wed, 13 May 2020 22:05:25 +0000</pubDate>
@@ -279,6 +351,14 @@
         <description></description>
         </item>
         <item>
+        <title>数论</title>
+        <link>https://blog.ipandai.club/tags/%E6%95%B0%E8%AE%BA/</link>
+        <pubDate>Fri, 13 Dec 2019 18:57:13 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/%E6%95%B0%E8%AE%BA/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>费马小定理</title>
         <link>https://blog.ipandai.club/tags/%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/</link>
         <pubDate>Fri, 13 Dec 2019 18:57:13 +0000</pubDate>
@@ -287,11 +367,11 @@
         <description></description>
         </item>
         <item>
-        <title>数论</title>
-        <link>https://blog.ipandai.club/tags/%E6%95%B0%E8%AE%BA/</link>
-        <pubDate>Fri, 13 Dec 2019 18:56:57 +0000</pubDate>
+        <title>WHUT</title>
+        <link>https://blog.ipandai.club/tags/whut/</link>
+        <pubDate>Sat, 16 Nov 2019 21:48:04 +0000</pubDate>
         
-        <guid>https://blog.ipandai.club/tags/%E6%95%B0%E8%AE%BA/</guid>
+        <guid>https://blog.ipandai.club/tags/whut/</guid>
         <description></description>
         </item>
         <item>
@@ -300,6 +380,22 @@
         <pubDate>Sat, 16 Nov 2019 21:48:04 +0000</pubDate>
         
         <guid>https://blog.ipandai.club/tags/%E6%B8%B8%E8%AE%B0/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>CI/CD</title>
+        <link>https://blog.ipandai.club/tags/ci/cd/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/ci/cd/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>K/V</title>
+        <link>https://blog.ipandai.club/tags/k/v/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://blog.ipandai.club/tags/k/v/</guid>
         <description></description>
         </item>
         

@@ -130,6 +130,16 @@
 &lt;p&gt;增加一块检验盘，保存其他盘上数据的异或值&lt;/p&gt;
 &lt;p&gt;奇偶校验：统计数据中1的个数，奇数为1，偶数为0&lt;/p&gt;
 &lt;p&gt;43:25&lt;/p&gt;
+&lt;h1 id=&#34;0x01-raid&#34;&gt;0x01 RAID&lt;/h1&gt;
+&lt;p&gt;通过廉价磁盘构建&lt;strong&gt;可靠&lt;/strong&gt;大型高端存储，类似MapReduce通过廉价服务器来构建高性能计算集群&lt;/p&gt;
+&lt;p&gt;RAID 0 条带化，无冗余存储&lt;/p&gt;
+&lt;p&gt;RAID 1 Mirroring&lt;/p&gt;
+&lt;p&gt;RAID 2 条带化+海明码冗余存储&lt;/p&gt;
+&lt;p&gt;RAID 3 条带化+奇偶校验 细粒度&lt;/p&gt;
+&lt;p&gt;RAID 4 块条带化+奇偶校验 粒度大&lt;/p&gt;
+&lt;p&gt;RAID 5 块条带化+条带化的奇偶校验&lt;/p&gt;
+&lt;p&gt;RAID 6 块条带化+两个条带化的奇偶校验&lt;/p&gt;
+&lt;p&gt;RAID 0无容错，RAID 1-5支持一个单位的容错，RAID 6支持两个单位容错&lt;/p&gt;
 </description>
         </item>
         

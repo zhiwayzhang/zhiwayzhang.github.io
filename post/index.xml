@@ -6,7 +6,232 @@
         <description>Recent content in Posts on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 05 Oct 2022 16:54:42 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 11 Oct 2022 13:44:49 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>【存储系统】文件系统</title>
+        <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
+        <pubDate>Tue, 11 Oct 2022 13:44:49 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</guid>
+        <description>&lt;h1 id=&#34;0x00-基本概念&#34;&gt;0x00 基本概念&lt;/h1&gt;
+&lt;p&gt;文件的基本概念， 包含信息的比特流/块，计算机往往需要处理远高于主存容量的数据，需要使用文件来保存；文件的生命周期更长，不能存储在堆栈中；对文件的数据/信息对外进行分享的媒介。可以用于进程间的信息共享，自由性和容量上都优于共享内存的方式。&lt;/p&gt;
+&lt;h2 id=&#34;文件系统的功能&#34;&gt;文件系统的功能&lt;/h2&gt;
+&lt;p&gt;Namespace 命名空间&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文件目录的建立、维护和检索（目录树）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;存储管理&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;空间管理：存储空间的分配和管理（管理空闲的块）&lt;/li&gt;
+&lt;li&gt;文件块管理：逻辑地址与存储物理地址的映射（logical offset—Physical Block number）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;数据保护&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文件出现坏块&lt;/li&gt;
+&lt;li&gt;灾备&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;可靠性/一致性&lt;/p&gt;
+&lt;h1 id=&#34;0x01-用户视角&#34;&gt;0x01 用户视角&lt;/h1&gt;
+&lt;h2 id=&#34;文件目录操作&#34;&gt;文件目录操作&lt;/h2&gt;
+&lt;p&gt;文件操作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create/Delete&lt;/li&gt;
+&lt;li&gt;Open/Close 返回File Handle&lt;/li&gt;
+&lt;li&gt;Read/Write&lt;/li&gt;
+&lt;li&gt;Append 追加写入&lt;/li&gt;
+&lt;li&gt;Seek 移动文件指针 offset&lt;/li&gt;
+&lt;li&gt;Getattr/Setattr 读取/修改inode中保存的文件信息&lt;/li&gt;
+&lt;li&gt;Rename&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;目录操作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Createdir/rmdir&lt;/li&gt;
+&lt;li&gt;Link 软链接、硬链接 讲目录项目指向文件的inode&lt;/li&gt;
+&lt;li&gt;Unlink&lt;/li&gt;
+&lt;li&gt;Readdir 读取子目录以及目录项&lt;/li&gt;
+&lt;li&gt;Rename&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;文件目录的构成&#34;&gt;文件目录的构成&lt;/h2&gt;
+&lt;p&gt;文件的组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文件内容，字节序列&lt;/li&gt;
+&lt;li&gt;文件的元数据metadata，文件控制块，Unix系统中称为inode(index node)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;目录的组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;本质是一种特殊的文件，内容是子目录、文件等目录项目&lt;/li&gt;
+&lt;li&gt;目录也有inode&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;file-handle&#34;&gt;File Handle&lt;/h2&gt;
+&lt;p&gt;创建原文件的一个实例对象，对其进行读写，Offset可以共享给两个File Handle，也可以每个File Handle独有各自的Offset。&lt;/p&gt;
+&lt;p&gt;Linux VFS中为文件描述符fd，对应一个File Object，包含文件的信息，文件系统管理dentry、inode的缓存，用于查找文件在磁盘上的位置。关于&lt;strong&gt;Linux VFS&lt;/strong&gt;的内容，计划再单独开个博客记录一下。&lt;/p&gt;
+&lt;h2 id=&#34;file-control-block-inode&#34;&gt;File Control Block (Inode)&lt;/h2&gt;
+&lt;p&gt;每个文件唯一的id，包含以下结构&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Block的信息，文件在磁盘上的位置&lt;/li&gt;
+&lt;li&gt;数据大小&lt;/li&gt;
+&lt;li&gt;Ctime创建时间，utime更新时间，access time最后一次访问时间&lt;/li&gt;
+&lt;li&gt;所有者信息，ACL(access control lists)访问控制&lt;/li&gt;
+&lt;li&gt;链接情况统计&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;dirent---directory-entry&#34;&gt;Dirent - Directory Entry&lt;/h2&gt;
+&lt;p&gt;目录项纪录子文件和子目录的名称&lt;/p&gt;
+&lt;p&gt;每个目录项的结构&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;大小&lt;/th&gt;
+&lt;th&gt;字段&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;__le32&lt;/td&gt;
+&lt;td&gt;4bytes&lt;/td&gt;
+&lt;td&gt;Inode&lt;/td&gt;
+&lt;td&gt;inode编号&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;__le16&lt;/td&gt;
+&lt;td&gt;2bytes&lt;/td&gt;
+&lt;td&gt;Rec_len&lt;/td&gt;
+&lt;td&gt;目录项的长度&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;__u8&lt;/td&gt;
+&lt;td&gt;2bytes&lt;/td&gt;
+&lt;td&gt;Name_len&lt;/td&gt;
+&lt;td&gt;文件名长度&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;__u8&lt;/td&gt;
+&lt;td&gt;2bytes&lt;/td&gt;
+&lt;td&gt;File_type&lt;/td&gt;
+&lt;td&gt;文件类型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;char[EXT2_NAME_LEN]&lt;/td&gt;
+&lt;td&gt;最大255个字符&lt;/td&gt;
+&lt;td&gt;Name&lt;/td&gt;
+&lt;td&gt;文件名&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;所有目录都包含的目录项包括当前目录和上级目录:&lt;code&gt;.&lt;/code&gt;,&lt;code&gt;..&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;要对文件名进行4字节对齐，后面补&lt;code&gt;\0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;所有目录项顺序拼接组成目录信息，在进行查询时可以使用rec_len来计算偏移量，便于查找目录中的文件（顺序遍历）&lt;/p&gt;
+&lt;h2 id=&#34;目录树&#34;&gt;目录树&lt;/h2&gt;
+&lt;p&gt;目录树的结构如下图所示，每个目录都有自己的inode，同时还有direntry，对其中的子目录可以构建子树，文件可以建立文件子节点&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221011191955170.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221011191955170&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;根据Pathname查找文件的过程&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从根目录&lt;code&gt;/&lt;/code&gt;开始查询，解析出要查询的项目&lt;/li&gt;
+&lt;li&gt;获取当前目录的目录项（可能在内存中，也可能要向磁盘请求）&lt;/li&gt;
+&lt;li&gt;比对相应的纪录是否存在于目录项中，比对成功则获取其inode&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;查找过程中需要考虑的问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;检查权限：在每级目录查找时，需要检查是否有对当前目录进行访问的权限，然后才能继续进行操作&lt;/li&gt;
+&lt;li&gt;检测是否为软链接/符号链接(Symbolic link)：目录项可能指向同一个inode，防止出现循环链接&lt;/li&gt;
+&lt;li&gt;检测是否挂载了其他文件系统，文件名可以是挂在文件系统的挂载点，若出现此类情况需要进入新的文件系统进行查找&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;access-control-lists-访问控制&#34;&gt;Access Control Lists 访问控制&lt;/h2&gt;
+&lt;p&gt;基本ACL纪录内容：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;记录类型&lt;/th&gt;
+&lt;th&gt;格式&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Owner&lt;/td&gt;
+&lt;td&gt;user::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Owning Group&lt;/td&gt;
+&lt;td&gt;group::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Others&lt;/td&gt;
+&lt;td&gt;other::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;rwx为掩码形式，使用三位八进制，&lt;code&gt;777&lt;/code&gt;为可读可写可执行，系统调用为&lt;code&gt;chmod&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;在文件系统中有扩展ACL，记录内容为：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;记录类型&lt;/th&gt;
+&lt;th&gt;格式&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Owner&lt;/td&gt;
+&lt;td&gt;user::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Named User&lt;/td&gt;
+&lt;td&gt;user:name:rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Owning Group&lt;/td&gt;
+&lt;td&gt;group::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Named Group&lt;/td&gt;
+&lt;td&gt;group:name:rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Mask&lt;/td&gt;
+&lt;td&gt;mask::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Others&lt;/td&gt;
+&lt;td&gt;other::rwx&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;对于文件的访问权限通过Named User，Owning Group和Named Group进行授权，同时可以使用Mask设置掩码对权限进行控制，例如有权限&lt;code&gt;r-x&lt;/code&gt;，对于Mask:&lt;code&gt;mask::rw-&lt;/code&gt;，最终的操作权限为&lt;code&gt;r--&lt;/code&gt;，将掩码和权限进行与操作&lt;/p&gt;
+&lt;p&gt;不同文件系统有对ACL不同的扩展和实现&lt;/p&gt;
+&lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;int fd = open(&amp;quot;/foo/bar.txt&amp;quot;, RO)&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;查找文件的inode
+&lt;ol&gt;
+&lt;li&gt;在根目录查找foo目录&lt;/li&gt;
+&lt;li&gt;读取foo目录的内容&lt;/li&gt;
+&lt;li&gt;在foo目录中查找bar&lt;/li&gt;
+&lt;li&gt;每次查询先在缓存中进行查找&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;为inode创建vnode结构
+&lt;ol&gt;
+&lt;li&gt;判断inode是否在inode cache中，若不在则需要从磁盘中请求&lt;/li&gt;
+&lt;li&gt;请求后创建vnode缓存&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;初始化File Object&lt;/li&gt;
+&lt;li&gt;生成fd，填充数据信息&lt;/li&gt;
+&lt;li&gt;返回fd给进程&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;0x02-实现角度&#34;&gt;0x02 实现角度&lt;/h1&gt;
+</description>
+        </item>
+        <item>
         <title>【存储系统】多硬盘存储系统</title>
         <link>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</link>
         <pubDate>Wed, 05 Oct 2022 16:54:42 +0800</pubDate>

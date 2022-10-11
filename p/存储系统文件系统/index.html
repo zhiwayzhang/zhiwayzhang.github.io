@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有'><title>汇编语言笔记</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='0x00 基本概念 文件的基本概念， 包含信息的比特流/块，计算机往往需要处理远高于主存容量的数据，需要使用文件来保存；文件的生命周期更长，不能存储在堆'><title>【存储系统】文件系统</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/'>
 
-<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='汇编语言笔记'>
-<meta property='og:description' content='简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有'>
-<meta property='og:url' content='https://blog.ipandai.club/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='【存储系统】文件系统'>
+<meta property='og:description' content='0x00 基本概念 文件的基本概念， 包含信息的比特流/块，计算机往往需要处理远高于主存容量的数据，需要使用文件来保存；文件的生命周期更长，不能存储在堆'>
+<meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2021-03-16T10:29:27&#43;00:00'/><meta property='article:modified_time' content='2021-03-16T10:29:27&#43;00:00'/>
-<meta name="twitter:title" content="汇编语言笔记">
-<meta name="twitter:description" content="简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='操作系统' /><meta property='article:published_time' content='2022-10-11T13:44:49&#43;08:00'/><meta property='article:modified_time' content='2022-10-11T13:44:49&#43;08:00'/>
+<meta name="twitter:title" content="【存储系统】文件系统">
+<meta name="twitter:description" content="0x00 基本概念 文件的基本概念， 包含信息的比特流/块，计算机往往需要处理远高于主存容量的数据，需要使用文件来保存；文件的生命周期更长，不能存储在堆">
     </head>
     <body class="
     article-page
@@ -256,7 +256,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/">汇编语言笔记</a>
+            <a href="/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">【存储系统】文件系统</a>
         </h2>
     
         
@@ -275,7 +275,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Mar 16, 2021</time>
+                <time class="article-time--published">Oct 11, 2022</time>
             </div>
         
 
@@ -290,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    2 minute read
+                    4 minute read
                 </time>
             </div>
         
@@ -304,166 +304,224 @@
     <section class="article-content">
     
     
-    <h2 id="简介">简介</h2>
-<p>本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。
-其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。
-本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些cs213/CSAPP 的内容以及bomb lab的解析。</p>
-<!-- more -->
-<h2 id="准备工作">准备工作</h2>
-<p>dos系统现在以及年代久远，想使用8086CPU指令集调试的话需要借助DosBox来实现。
-<a class="link" href="https://www.dosbox.com/"  target="_blank" rel="noopener"
-    >DosBox官网</a></p>
-<p>由于macOS下没有DOSbox需要的调试工具，因此下载之后需要挂载debug.exe等Windows下的调试工具
-在DOSbox中输入</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mount C ~/dos
-</span></span><span class="line"><span class="cl">C:
-</span></span><span class="line"><span class="cl">debug
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>即可进入debug模式</p>
-<h2 id="实验1">实验1</h2>
-<h3 id="前置知识">前置知识</h3>
-<p>几条汇编指令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mov 目标操作对象,源操作数
-</span></span><span class="line"><span class="cl">add 目标操作对象,源操作数
-</span></span><span class="line"><span class="cl">jmp 寄存器 //修改IP寄存器的值
-</span></span><span class="line"><span class="cl">or 
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">jmp CS:IP
-</span></span><span class="line"><span class="cl">eg: jmp ax == (let IP = ax)
-</span></span><span class="line"><span class="cl">    jmp 2AE3:3 == let CS = 2AE3H and let IP = 0003H
-</span></span><span class="line"><span class="cl">sub ax,bx
-</span></span><span class="line"><span class="cl">ax = ax - bx
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">inc and dec
-</span></span><span class="line"><span class="cl">inc 操作对象 
-</span></span><span class="line"><span class="cl">eg: inc ax == ax+=1
-</span></span><span class="line"><span class="cl">    dec ax == ax-=1
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>注意：不可用mov指令修改段寄存器的值。（代码段寄存器CS，指令指针寄存器IP）
-CPU中识别<code>CS:IP</code>为执行指令
-操作对象可以是寄存器，也可以是地址</p>
-<p>Debug命令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">r: 看查寄存器内容，或者修改寄存器内容
-</span></span><span class="line"><span class="cl">d: 看查内存内容
-</span></span><span class="line"><span class="cl">e: 改写内存内容
-</span></span><span class="line"><span class="cl">u: 将机器指令翻译为汇编指令
-</span></span><span class="line"><span class="cl">t: 执行下一条汇编指令
-</span></span><span class="line"><span class="cl">a: 写入汇编指令
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>编译指令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">masm test
-</span></span><span class="line"><span class="cl">link test.obj
-</span></span><span class="line"><span class="cl">debug test.exe
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="lab1">lab1</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">WORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="mi">1100</span><span class="p">],</span><span class="mi">3445</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">WORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="mi">1102</span><span class="p">],</span><span class="mi">5678</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">WORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="mi">1106</span><span class="p">],</span><span class="mi">6732</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">AX</span><span class="p">,[</span><span class="mi">1100</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">SUB</span> <span class="no">AX</span><span class="p">,[</span><span class="mi">1102</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">ADD</span> <span class="no">AX</span><span class="p">,[</span><span class="mi">1106</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="p">[</span><span class="mi">1104</span><span class="p">],</span><span class="no">AX</span>
-</span></span><span class="line"><span class="cl"><span class="nf">HLT</span> <span class="c1">//使CPU停止工作
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">AX</span><span class="p">,</span><span class="mi">1234</span> 
-</span></span><span class="line"><span class="cl"><span class="no">MOV</span>	<span class="p">[</span><span class="mi">1000</span><span class="p">],</span><span class="no">AX</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">BX</span><span class="p">,</span><span class="mi">1002</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">BYTE</span> <span class="no">PTR</span><span class="p">[</span><span class="no">BX</span><span class="p">],</span><span class="mi">20</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">DL</span><span class="p">,</span><span class="mi">39</span>
-</span></span><span class="line"><span class="cl"><span class="nf">INC</span>	<span class="no">BX</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="p">[</span><span class="no">BX</span><span class="p">],</span><span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">DEC</span>	<span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">SI</span><span class="p">,</span><span class="mi">3</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="p">[</span><span class="no">BX</span><span class="err">+</span><span class="no">SI</span><span class="p">],</span><span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="p">[</span><span class="no">BX</span><span class="err">+</span><span class="no">SI</span><span class="err">+</span><span class="mi">1</span><span class="p">],</span><span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">WORD</span> <span class="no">PTR</span><span class="p">[</span><span class="no">BX</span><span class="err">+</span><span class="no">SI</span><span class="err">+</span><span class="mi">2</span><span class="p">],</span><span class="mi">2846</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div>
+    <h1 id="0x00-基本概念">0x00 基本概念</h1>
+<p>文件的基本概念， 包含信息的比特流/块，计算机往往需要处理远高于主存容量的数据，需要使用文件来保存；文件的生命周期更长，不能存储在堆栈中；对文件的数据/信息对外进行分享的媒介。可以用于进程间的信息共享，自由性和容量上都优于共享内存的方式。</p>
+<h2 id="文件系统的功能">文件系统的功能</h2>
+<p>Namespace 命名空间</p>
+<ul>
+<li>文件目录的建立、维护和检索（目录树）</li>
+</ul>
+<p>存储管理</p>
+<ul>
+<li>空间管理：存储空间的分配和管理（管理空闲的块）</li>
+<li>文件块管理：逻辑地址与存储物理地址的映射（logical offset—Physical Block number）</li>
+</ul>
+<p>数据保护</p>
+<ul>
+<li>文件出现坏块</li>
+<li>灾备</li>
+</ul>
+<p>可靠性/一致性</p>
+<h1 id="0x01-用户视角">0x01 用户视角</h1>
+<h2 id="文件目录操作">文件目录操作</h2>
+<p>文件操作：</p>
+<ul>
+<li>Create/Delete</li>
+<li>Open/Close 返回File Handle</li>
+<li>Read/Write</li>
+<li>Append 追加写入</li>
+<li>Seek 移动文件指针 offset</li>
+<li>Getattr/Setattr 读取/修改inode中保存的文件信息</li>
+<li>Rename</li>
+</ul>
+<p>目录操作：</p>
+<ul>
+<li>Createdir/rmdir</li>
+<li>Link 软链接、硬链接 讲目录项目指向文件的inode</li>
+<li>Unlink</li>
+<li>Readdir 读取子目录以及目录项</li>
+<li>Rename</li>
+</ul>
+<h2 id="文件目录的构成">文件目录的构成</h2>
+<p>文件的组成：</p>
+<ul>
+<li>文件内容，字节序列</li>
+<li>文件的元数据metadata，文件控制块，Unix系统中称为inode(index node)</li>
+</ul>
+<p>目录的组成：</p>
+<ul>
+<li>本质是一种特殊的文件，内容是子目录、文件等目录项目</li>
+<li>目录也有inode</li>
+</ul>
+<h2 id="file-handle">File Handle</h2>
+<p>创建原文件的一个实例对象，对其进行读写，Offset可以共享给两个File Handle，也可以每个File Handle独有各自的Offset。</p>
+<p>Linux VFS中为文件描述符fd，对应一个File Object，包含文件的信息，文件系统管理dentry、inode的缓存，用于查找文件在磁盘上的位置。关于<strong>Linux VFS</strong>的内容，计划再单独开个博客记录一下。</p>
+<h2 id="file-control-block-inode">File Control Block (Inode)</h2>
+<p>每个文件唯一的id，包含以下结构</p>
+<ul>
+<li>Block的信息，文件在磁盘上的位置</li>
+<li>数据大小</li>
+<li>Ctime创建时间，utime更新时间，access time最后一次访问时间</li>
+<li>所有者信息，ACL(access control lists)访问控制</li>
+<li>链接情况统计</li>
+</ul>
+<h2 id="dirent---directory-entry">Dirent - Directory Entry</h2>
+<p>目录项纪录子文件和子目录的名称</p>
+<p>每个目录项的结构</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>大小</th>
+<th>字段</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>__le32</td>
+<td>4bytes</td>
+<td>Inode</td>
+<td>inode编号</td>
+</tr>
+<tr>
+<td>__le16</td>
+<td>2bytes</td>
+<td>Rec_len</td>
+<td>目录项的长度</td>
+</tr>
+<tr>
+<td>__u8</td>
+<td>2bytes</td>
+<td>Name_len</td>
+<td>文件名长度</td>
+</tr>
+<tr>
+<td>__u8</td>
+<td>2bytes</td>
+<td>File_type</td>
+<td>文件类型</td>
+</tr>
+<tr>
+<td>char[EXT2_NAME_LEN]</td>
+<td>最大255个字符</td>
+<td>Name</td>
+<td>文件名</td>
+</tr>
+</tbody>
+</table></div>
+<p>所有目录都包含的目录项包括当前目录和上级目录:<code>.</code>,<code>..</code></p>
+<p>要对文件名进行4字节对齐，后面补<code>\0</code></p>
+<p>所有目录项顺序拼接组成目录信息，在进行查询时可以使用rec_len来计算偏移量，便于查找目录中的文件（顺序遍历）</p>
+<h2 id="目录树">目录树</h2>
+<p>目录树的结构如下图所示，每个目录都有自己的inode，同时还有direntry，对其中的子目录可以构建子树，文件可以建立文件子节点</p>
+<p><img src="https://cdn.ipandai.club/image-20221011191955170.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221011191955170"
+	
+	
+></p>
+<p>根据Pathname查找文件的过程</p>
+<ul>
+<li>从根目录<code>/</code>开始查询，解析出要查询的项目</li>
+<li>获取当前目录的目录项（可能在内存中，也可能要向磁盘请求）</li>
+<li>比对相应的纪录是否存在于目录项中，比对成功则获取其inode</li>
+</ul>
+<p>查找过程中需要考虑的问题：</p>
+<ul>
+<li>检查权限：在每级目录查找时，需要检查是否有对当前目录进行访问的权限，然后才能继续进行操作</li>
+<li>检测是否为软链接/符号链接(Symbolic link)：目录项可能指向同一个inode，防止出现循环链接</li>
+<li>检测是否挂载了其他文件系统，文件名可以是挂在文件系统的挂载点，若出现此类情况需要进入新的文件系统进行查找</li>
+</ul>
+<h2 id="access-control-lists-访问控制">Access Control Lists 访问控制</h2>
+<p>基本ACL纪录内容：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>记录类型</th>
+<th>格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Owner</td>
+<td>user::rwx</td>
+</tr>
+<tr>
+<td>Owning Group</td>
+<td>group::rwx</td>
+</tr>
+<tr>
+<td>Others</td>
+<td>other::rwx</td>
+</tr>
+</tbody>
+</table></div>
+<p>rwx为掩码形式，使用三位八进制，<code>777</code>为可读可写可执行，系统调用为<code>chmod</code></p>
+<p>在文件系统中有扩展ACL，记录内容为：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>记录类型</th>
+<th>格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Owner</td>
+<td>user::rwx</td>
+</tr>
+<tr>
+<td>Named User</td>
+<td>user:name:rwx</td>
+</tr>
+<tr>
+<td>Owning Group</td>
+<td>group::rwx</td>
+</tr>
+<tr>
+<td>Named Group</td>
+<td>group:name:rwx</td>
+</tr>
+<tr>
+<td>Mask</td>
+<td>mask::rwx</td>
+</tr>
+<tr>
+<td>Others</td>
+<td>other::rwx</td>
+</tr>
+</tbody>
+</table></div>
+<p>对于文件的访问权限通过Named User，Owning Group和Named Group进行授权，同时可以使用Mask设置掩码对权限进行控制，例如有权限<code>r-x</code>，对于Mask:<code>mask::rw-</code>，最终的操作权限为<code>r--</code>，将掩码和权限进行与操作</p>
+<p>不同文件系统有对ACL不同的扩展和实现</p>
+<h2 id="example">Example</h2>
+<p><code>int fd = open(&quot;/foo/bar.txt&quot;, RO)</code></p>
+<ol>
+<li>查找文件的inode
+<ol>
+<li>在根目录查找foo目录</li>
+<li>读取foo目录的内容</li>
+<li>在foo目录中查找bar</li>
+<li>每次查询先在缓存中进行查找</li>
+</ol>
+</li>
+<li>为inode创建vnode结构
+<ol>
+<li>判断inode是否在inode cache中，若不在则需要从磁盘中请求</li>
+<li>请求后创建vnode缓存</li>
+</ol>
+</li>
+<li>初始化File Object</li>
+<li>生成fd，填充数据信息</li>
+<li>返回fd给进程</li>
+</ol>
+<h1 id="0x02-实现角度">0x02 实现角度</h1>
+
 </section>
 
 
@@ -471,7 +529,11 @@ CPU中识别<code>CS:IP</code>为执行指令
     
     <section class="article-tags">
         
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+            <a href="/tags/storage/">Storage</a>
+        
+            <a href="/tags/file-system/">File System</a>
+        
+            <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
         
     </section>
 
@@ -528,12 +590,12 @@ CPU中识别<code>CS:IP</code>为执行指令
             
                 
 <article class="">
-    <a href="/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/">
+    <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">编译原理笔记</h2>
+            <h2 class="article-title">Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</h2>
         </div>
     </a>
 </article>
@@ -541,12 +603,12 @@ CPU中识别<code>CS:IP</code>为执行指令
             
                 
 <article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+    <a href="/p/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%B3%BB%E7%BB%9F%E7%BA%A7io/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">【存储系统】文件系统</h2>
+            <h2 class="article-title">【操作系统】系统级IO</h2>
         </div>
     </a>
 </article>
@@ -760,18 +822,24 @@ CPU中识别<code>CS:IP</code>为执行指令
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li>
+    <li><a href="#0x00-基本概念">0x00 基本概念</a>
       <ol>
-        <li><a href="#简介">简介</a></li>
-        <li><a href="#准备工作">准备工作</a></li>
-        <li><a href="#实验1">实验1</a>
-          <ol>
-            <li><a href="#前置知识">前置知识</a></li>
-            <li><a href="#lab1">lab1</a></li>
-          </ol>
-        </li>
+        <li><a href="#文件系统的功能">文件系统的功能</a></li>
       </ol>
     </li>
+    <li><a href="#0x01-用户视角">0x01 用户视角</a>
+      <ol>
+        <li><a href="#文件目录操作">文件目录操作</a></li>
+        <li><a href="#文件目录的构成">文件目录的构成</a></li>
+        <li><a href="#file-handle">File Handle</a></li>
+        <li><a href="#file-control-block-inode">File Control Block (Inode)</a></li>
+        <li><a href="#dirent---directory-entry">Dirent - Directory Entry</a></li>
+        <li><a href="#目录树">目录树</a></li>
+        <li><a href="#access-control-lists-访问控制">Access Control Lists 访问控制</a></li>
+        <li><a href="#example">Example</a></li>
+      </ol>
+    </li>
+    <li><a href="#0x02-实现角度">0x02 实现角度</a></li>
   </ol>
 </nav>
         </div>

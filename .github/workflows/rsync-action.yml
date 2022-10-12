@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy site to server
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.2
       - name: Rsync to Remote Server
         uses: Burnett01/rsync-deployments@5.2.1
         with:

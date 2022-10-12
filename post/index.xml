@@ -1344,7 +1344,7 @@ $$&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;新公钥不防起名叫&lt;code&gt;github-action.pub&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;将&lt;code&gt;github-action.pub&lt;/code&gt;（生成的新公钥）丢进GitHub Secrets中的&lt;code&gt;SSH_PRIVATE_KEY&lt;/code&gt;变量中&lt;/p&gt;
+&lt;p&gt;将&lt;code&gt;github-action&lt;/code&gt;（生成的新私钥）丢进&lt;code&gt;GitHub Secrets&lt;/code&gt;中的&lt;code&gt;SSH_PRIVATE_KEY&lt;/code&gt;变量中&lt;/p&gt;
 &lt;p&gt;再把该公钥加入到&lt;code&gt;authorized_keys&lt;/code&gt;中&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;

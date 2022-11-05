@@ -6,7 +6,195 @@
         <description>Recent content in Storage on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sun, 09 Oct 2022 13:44:18 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/categories/storage/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 29 Oct 2022 16:48:32 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/categories/storage/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>[OSDI&#39;21] Modernizing File System through In-Storage Indexing</title>
+        <link>https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/</link>
+        <pubDate>Sat, 29 Oct 2022 16:48:32 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/</guid>
+        <description>&lt;h1 id=&#34;todo-论文在事务一致性恢复的部分&#34;&gt;TODO 论文在事务一致性/恢复的部分&lt;/h1&gt;
+&lt;h1 id=&#34;questions&#34;&gt;Questions&lt;/h1&gt;
+&lt;p&gt;核心思想部分需要再思考和梳理下，&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？&lt;/li&gt;
+&lt;li&gt;其中，利用了 KV SSD 的什么特性？&lt;/li&gt;
+&lt;li&gt;对文件系统哪些地方做了什么以优化？&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;论文试图解决的问题：&lt;/p&gt;
+&lt;p&gt;随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。&lt;/p&gt;
+&lt;p&gt;文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。&lt;/p&gt;
+&lt;p&gt;核心思想：&lt;/p&gt;
+&lt;p&gt;使用Key-Value存储接口取代传统的快设备接口。&lt;/p&gt;
+&lt;p&gt;具体实现：&lt;/p&gt;
+&lt;p&gt;提出Kevin，分为Kevin=KevinFS + KevinSSD&lt;/p&gt;
+&lt;p&gt;KevinFS&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;维护文件和目录到KV对象的映射关系&lt;/li&gt;
+&lt;li&gt;将POSIX系统调用转译成KV操作指令&lt;/li&gt;
+&lt;li&gt;保证KV-SSD的一致性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;KevinSSD&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在存储设备中索引KV对象&lt;/li&gt;
+&lt;li&gt;对多个KV对象提供事务操作&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
+&lt;p&gt;Kevin避免了大量元数据的维护带来的I/O放大&lt;/p&gt;
+&lt;p&gt;不需要日志即可完成崩溃一致性的维护&lt;/p&gt;
+&lt;p&gt;可以抵御文件分段后造成的性能下降&lt;/p&gt;
+&lt;p&gt;存储的文件块通过LSM进行分部排序和索引&lt;/p&gt;
+&lt;h1 id=&#34;0x01-bg--related-work&#34;&gt;0x01 BG &amp;amp;&amp;amp; Related Work&lt;/h1&gt;
+&lt;h2 id=&#34;传统块设备&#34;&gt;传统块设备&lt;/h2&gt;
+&lt;p&gt;提供块粒度（512B or 4KB）的访问&lt;/p&gt;
+&lt;p&gt;HDD通过维护一个间接表来处理坏块&lt;/p&gt;
+&lt;p&gt;基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。&lt;/p&gt;
+&lt;p&gt;现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量&lt;/p&gt;
+&lt;p&gt;DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。&lt;/p&gt;
+&lt;p&gt;KV存储可以高效处理元数据和小文件的写入&lt;/p&gt;
+&lt;h2 id=&#34;lsm-tree&#34;&gt;LSM-Tree&lt;/h2&gt;
+&lt;img src=&#34;https://cdn.ipandai.club/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
+&lt;p&gt;LSM Tree有多级，包括$L_1,L_2,&amp;hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i+1})&amp;gt;=T*Size(L_i)$&lt;/p&gt;
+&lt;p&gt;每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。&lt;/p&gt;
+&lt;p&gt;KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。&lt;/p&gt;
+&lt;p&gt;为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储&lt;code&gt;&amp;lt;key, value pointer&amp;gt;&lt;/code&gt;形式。对于失效的value要考虑垃圾回收问题。&lt;/p&gt;
+&lt;p&gt;在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li+1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。&lt;/p&gt;
+&lt;h1 id=&#34;0x02-architecture&#34;&gt;0x02 Architecture&lt;/h1&gt;
+&lt;p&gt;KEVIN分为两个部分&lt;/p&gt;
+&lt;p&gt;KEVINFS：维护文件、目录到KV对象映射的文件系统&lt;/p&gt;
+&lt;p&gt;KEVINSSD：索引KV对象到闪存的LSM-tree&lt;/p&gt;
+&lt;h2 id=&#34;kv-command&#34;&gt;KV Command&lt;/h2&gt;
+&lt;p&gt;支持多种KV指令，同时支持事务&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102154423353.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221102154423353&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;作者将Key限制为256B，value大小没有限制&lt;/p&gt;
+&lt;h2 id=&#34;文件和目录的映射&#34;&gt;文件和目录的映射&lt;/h2&gt;
+&lt;p&gt;KevinFS只使用三个类型的KV对象：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$superblock$：保存文件系统的信息，大小128B&lt;/li&gt;
+&lt;li&gt;$meta$：保存文件、目录的元数据，大小256B&lt;/li&gt;
+&lt;li&gt;$data$：保存文件数据，unlimited，不超过文件大小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对于目录的遍历通过ITERATE&lt;/p&gt;
+&lt;p&gt;Key的命名遵循如下规则：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;meta对象的key组成：
+&lt;ul&gt;
+&lt;li&gt;前缀&lt;code&gt;m:&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;父目录的inode number&lt;/li&gt;
+&lt;li&gt;分隔符&lt;code&gt;:&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;文件/目录名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;data对象的key组成：
+&lt;ul&gt;
+&lt;li&gt;前缀&lt;code&gt;d:&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;文件的inode number&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Key命名规范参考了其他论文（Kai Ren and Garth Gibson. TABLEFS: Enhancing Metadata Efficiency in the Local File System. In Proceedings of the USENIX Annual Technical Conference, pages 145–156, 2013.），本篇文章将其扩展到了存储设备层面&lt;/p&gt;
+&lt;p&gt;KevinFS没有实现dentry，如果需要访问一个目录内的所有项目，可以通过&lt;code&gt;ITERATE(m:50:, 2)&lt;/code&gt;，来获取两个父目录inode为50（前缀匹配给定的pattern）的子目录/文件的元数据。&lt;/p&gt;
+&lt;p&gt;一个优化：为了防止ITERATE消耗太长时间，建议指定cnt&lt;/p&gt;
+&lt;p&gt;一个优化：为了高效处理小文件，KevinFS将总体小于4KB的小文件的元数据和数据内容打包，I/O直接操作meta对象GET/SET来进行读写&lt;/p&gt;
+&lt;p&gt;@TODO 一个优化：使用全路径索引来取代基于inode的索引，这提高了基于排序算法的KV存储的扫描性能，主要对seek time开销大的HDD优化比较明显&lt;/p&gt;
+&lt;h2 id=&#34;kv对象索引&#34;&gt;KV对象索引&lt;/h2&gt;
+&lt;p&gt;KevinSSD基本实现了传统SSD 中FTL的所有功能，将KV对象映射到闪存、分配和释放闪存的空间。&lt;/p&gt;
+&lt;p&gt;FTL只做坏块管理和磨损均衡等简单工作。&lt;/p&gt;
+&lt;p&gt;每个Level维护一个内存表，来记录Flash中的KV对象。表的每个记录都有&lt;code&gt;&amp;lt;start key, end key, pointer&amp;gt;&lt;/code&gt;，其中指针指向保存KV对象的闪存页面的位置，start key和end key是页面中key的范围。key的范围可以在多个Level上重叠。为了快速查找，所有记录都按开始键排序。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102165350981.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221102165350981&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;meta和data对象的Key和Value会被分离存储。通过&lt;code&gt;&amp;lt;key, value pointer&amp;gt;&lt;/code&gt;的方式进行存储，会有专门的flash page来分别存储这些信息（meta和data对象使用不同的flash page），key-index pages&lt;/p&gt;
+&lt;h3 id=&#34;meta-object&#34;&gt;Meta object&lt;/h3&gt;
+&lt;p&gt;在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li+1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。&lt;/p&gt;
+&lt;p&gt;对目录项的更新只需要修改其元数据即可完成，而不需要修改4KB的块&lt;/p&gt;
+&lt;h3 id=&#34;data-object&#34;&gt;Data object&lt;/h3&gt;
+&lt;p&gt;为了避免对大数据的小范围更新带来的I/O高负载，KevinSSD将data object分割为4KB大小的子对象，使用单独的后缀来对他们进行表示，后缀从0开始，拼接在原始的data object Key后，因此data object的key最终构成为
+$$
+d:{inode\ \ \ number}:{subobject \ \ number,start\ with \ 0}
+$$
+不需要中间表进行索引，只需要通过偏移量即可定位要修改的对象&lt;/p&gt;
+&lt;p&gt;Data object同样使用保存指针的方式将映射存储在key-index pages中，key-index pages会对键进行排序，因此属于同一个文件的subobject一般会在同一个flash page中。&lt;/p&gt;
+&lt;p&gt;==优化==：在查找指针时，会将一整个闪存页内的数据全部取出，存储在控制器的DRAM中，减轻后续查找可能带来的负载&lt;/p&gt;
+&lt;h2 id=&#34;缓解索引负载&#34;&gt;缓解索引负载&lt;/h2&gt;
+&lt;p&gt;使用LSM-tree由于多级查找带来额外的I/O，传统FTL的映射都保存在DRAM，因此没有额外开销。作者介绍了三种主要原因和解决方案。&lt;/p&gt;
+&lt;h3 id=&#34;压缩操作的开销&#34;&gt;压缩操作的开销&lt;/h3&gt;
+&lt;p&gt;同上文介绍的方案，通过分离Value可以显著缓解I/O的数据传输负载，对data进行分片我个人感觉反而会加大压缩操作的合并过程，即使分片后键值都是有序的。&lt;/p&gt;
+&lt;h3 id=&#34;层级查找的开销&#34;&gt;层级查找的开销&lt;/h3&gt;
+&lt;p&gt;由于LSM-tree的特性，需要逐层进行查找，为了防止大量的顺序查找，作者使用布隆过滤器进行了优化。&lt;/p&gt;
+&lt;p&gt;同时还缓存了热点K2V索引数据（与目标索引处在同一个flash page中的）&lt;/p&gt;
+&lt;p&gt;为了利用大容量SSD中提供的超大DRAM，作者采用压缩存储K2V索引，并在其中插入没有压缩的K2V索引来作为二分查找的参照物。（快速在缓存中查找？不如继续用布隆过滤器）&lt;/p&gt;
+&lt;h3 id=&#34;分散的对象带来的开销&#34;&gt;分散的对象带来的开销&lt;/h3&gt;
+&lt;p&gt;LSM-tree允许各层之间的key范围重叠，因此有同一个前缀的目录或者文件可能被分配到不同的Level中，对于获取一个目录中所有目录、文件的操作，需要对多个闪存页进行访问。这个问题作者没有给出一个明确的方案（在压缩合并时隐式解决），但是提供了一个用户工具来主动触发合并，效率较高。&lt;/p&gt;
+&lt;p&gt;作者对比了各种方法在随机读、局部读（？）、顺序读情况下对闪存页的读取次数，使用布隆过滤器的时候稳定会有一次读取&lt;/p&gt;
+&lt;p&gt;使用了KevinSSD后对于SSD而言，I/O延迟有轻微的增加，整体而言效率提高了&lt;/p&gt;
+&lt;h1 id=&#34;0x03-implement-vfs&#34;&gt;0x03 Implement VFS&lt;/h1&gt;
+&lt;h2 id=&#34;write&#34;&gt;write&lt;/h2&gt;
+&lt;p&gt;所有的写相关系统调用可以通过SET和DELETE来实现。&lt;/p&gt;
+&lt;p&gt;例如unlink，只需要两次DELETE指令，移除meta和data object。&lt;/p&gt;
+&lt;p&gt;SET时现在Memtable中保存一个KV对象，然后持久化到flash中，若Key已存在则丢弃旧的对象&lt;/p&gt;
+&lt;p&gt;DELETE时在树上写入一个4B大小的墓碑&lt;/p&gt;
+&lt;p&gt;失效的对象（被SET覆盖）和删除的对象在压缩期间被永久删除&lt;/p&gt;
+&lt;h2 id=&#34;read&#34;&gt;read&lt;/h2&gt;
+&lt;p&gt;通过GET和ITERATE实现&lt;/p&gt;
+&lt;p&gt;如下图所示&lt;/p&gt;
+&lt;p&gt;执行open系统调用时，查询meta object获取文件的inode，通过GET命令实现&lt;/p&gt;
+&lt;p&gt;执行lookup系统调用时，给定一个完整的路径&lt;code&gt;/home/alice/&lt;/code&gt;，从根目录开始获取多个meta object，最终获取目标文件的inode&lt;/p&gt;
+&lt;p&gt;执行read系统调用时，将GET一个data object&lt;/p&gt;
+&lt;p&gt;执行readdir系统调用时，使用ITERATE，批量获取一组meta objects来获取inode&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102210344432.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221102210344432&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;相较于Ext4，KevinFS可以更好的防止文件碎片化带来的影响。&lt;/p&gt;
+&lt;h1 id=&#34;0x04-crash-consistency&#34;&gt;0x04 Crash Consistency&lt;/h1&gt;
+&lt;h2 id=&#34;一致性维护&#34;&gt;一致性维护&lt;/h2&gt;
+&lt;p&gt;通过事务即可实现原子化的操作&lt;/p&gt;
+&lt;p&gt;事务的隔离？对==fsync==指令单独创建一个小型事务来提高效率。&lt;/p&gt;
+&lt;p&gt;KevinFS基于KV事务的特性来维护一致性，不使用日志系统。&lt;/p&gt;
+&lt;h2 id=&#34;kv事务的实现&#34;&gt;KV事务的实现&lt;/h2&gt;
+&lt;p&gt;使用了三个数据结构：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;事务表$TxTable$：记录事务基本信息&lt;/li&gt;
+&lt;li&gt;事务日志$TxLogs$：维护事务对象的K2V索引，存储在DRAM或者闪存中&lt;/li&gt;
+&lt;li&gt;恢复日志$TxRecovery$：用于恢复和终止事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。&lt;/p&gt;
+&lt;p&gt;当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED。将提交的KV索引同步到LSM-tree中&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221103102304181.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221103102304181&#34;
+	
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Linux Block I/O Stack简介</title>
         <link>https://blog.ipandai.club/p/linux-block-i/o-stack%E7%AE%80%E4%BB%8B/</link>
         <pubDate>Sun, 09 Oct 2022 13:44:18 +0800</pubDate>

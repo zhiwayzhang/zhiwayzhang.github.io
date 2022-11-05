@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Go语言源码阅读与原理分析
-'><title>Go语言学习笔记</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='TODO 论文在事务一致性/恢复的部分 Questions 核心思想部分需要再思考和梳理下， 为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文'><title>[OSDI&#39;21] Modernizing File System through In-Storage Indexing</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/'>
 
-<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='Go语言学习笔记'>
-<meta property='og:description' content='Go语言源码阅读与原理分析
-'>
-<meta property='og:url' content='https://blog.ipandai.club/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='[OSDI&#39;21] Modernizing File System through In-Storage Indexing'>
+<meta property='og:description' content='TODO 论文在事务一致性/恢复的部分 Questions 核心思想部分需要再思考和梳理下， 为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文'>
+<meta property='og:url' content='https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Golang' /><meta property='article:published_time' content='2022-01-25T20:14:16&#43;00:00'/><meta property='article:modified_time' content='2022-01-25T20:14:16&#43;00:00'/>
-<meta name="twitter:title" content="Go语言学习笔记">
-<meta name="twitter:description" content="Go语言源码阅读与原理分析
-">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Paper' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='LSM-tree' /><meta property='article:tag' content='K/V' /><meta property='article:tag' content='Database' /><meta property='article:published_time' content='2022-10-29T16:48:32&#43;08:00'/><meta property='article:modified_time' content='2022-10-29T16:48:32&#43;08:00'/>
+<meta name="twitter:title" content="[OSDI&#39;21] Modernizing File System through In-Storage Indexing">
+<meta name="twitter:description" content="TODO 论文在事务一致性/恢复的部分 Questions 核心思想部分需要再思考和梳理下， 为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文">
     </head>
     <body class="
     article-page
@@ -250,6 +247,10 @@
     
     <header class="article-category">
         
+            <a href="/categories/storage/" >
+                Storage
+            </a>
+        
             <a href="/categories/notes/" >
                 Notes
             </a>
@@ -259,7 +260,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Go语言学习笔记</a>
+            <a href="/p/osdi21-modernizing-file-system-through-in-storage-indexing/">[OSDI&#39;21] Modernizing File System through In-Storage Indexing</a>
         </h2>
     
         
@@ -278,7 +279,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Jan 25, 2022</time>
+                <time class="article-time--published">Oct 29, 2022</time>
             </div>
         
 
@@ -293,7 +294,7 @@
 
 
                 <time class="article-time--reading">
-                    6 minute read
+                    9 minute read
                 </time>
             </div>
         
@@ -307,245 +308,187 @@
     <section class="article-content">
     
     
-    <p>Go语言源码阅读与原理分析</p>
-<h1 id="go的编译">Go的编译</h1>
-<h1 id="数据结构">数据结构</h1>
-<h2 id="数组">数组</h2>
-<p>声明</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="p">[</span><span class="mi">3</span><span class="p">]{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">...</span><span class="p">]{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span><span class="nx">语法糖</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>第二种编译器会进行转换成第一种</p>
-<p>上限推导</p>
-<p>语句转换</p>
-<p>由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化</p>
+    <h1 id="todo-论文在事务一致性恢复的部分">TODO 论文在事务一致性/恢复的部分</h1>
+<h1 id="questions">Questions</h1>
+<p>核心思想部分需要再思考和梳理下，</p>
+<ol>
+<li>为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？</li>
+<li>其中，利用了 KV SSD 的什么特性？</li>
+<li>对文件系统哪些地方做了什么以优化？</li>
+</ol>
+<p>论文试图解决的问题：</p>
+<p>随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。</p>
+<p>文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。</p>
+<p>核心思想：</p>
+<p>使用Key-Value存储接口取代传统的快设备接口。</p>
+<p>具体实现：</p>
+<p>提出Kevin，分为Kevin=KevinFS + KevinSSD</p>
+<p>KevinFS</p>
 <ul>
-<li>元素数量<code>&lt;=</code>4，元素放在栈上</li>
-<li><code>&gt;</code>4时，元素保存在静态区，运行时取出</li>
+<li>维护文件和目录到KV对象的映射关系</li>
+<li>将POSIX系统调用转译成KV操作指令</li>
+<li>保证KV-SSD的一致性</li>
 </ul>
-<p>元素数量<code>&lt;=</code>4时，简化为赋值表达式</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">arr</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span>
-</span></span><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
-</span></span><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
-</span></span><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">3</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="review">review</h3>
-<p>编译之后的二进制文件包含：栈，堆，数据段，代码段</p>
-<p>堆栈为动态区域，数据段和代码段为静态区域</p>
-<p>栈：编译器自动分配释放，存放参数值，局部变量等</p>
-<p>堆：程序动态申请的内存，malloc，用链表实现</p>
-<p>代码区：函数体的二进制代码</p>
-<p>数据段：包含</p>
+<p>KevinSSD</p>
+<ul>
+<li>在存储设备中索引KV对象</li>
+<li>对多个KV对象提供事务操作</li>
+</ul>
+<h1 id="0x00-intro">0x00 Intro</h1>
+<p>Kevin避免了大量元数据的维护带来的I/O放大</p>
+<p>不需要日志即可完成崩溃一致性的维护</p>
+<p>可以抵御文件分段后造成的性能下降</p>
+<p>存储的文件块通过LSM进行分部排序和索引</p>
+<h1 id="0x01-bg--related-work">0x01 BG &amp;&amp; Related Work</h1>
+<h2 id="传统块设备">传统块设备</h2>
+<p>提供块粒度（512B or 4KB）的访问</p>
+<p>HDD通过维护一个间接表来处理坏块</p>
+<p>基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。</p>
+<p>现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量</p>
+<p>DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。</p>
+<p>KV存储可以高效处理元数据和小文件的写入</p>
+<h2 id="lsm-tree">LSM-Tree</h2>
+<img src="https://cdn.ipandai.club/image-20221102145019013.png" alt="image-20221102145019013" style="zoom:70%;" />
+<p>LSM Tree有多级，包括$L_1,L_2,&hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i+1})&gt;=T*Size(L_i)$</p>
+<p>每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。</p>
+<p>KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。</p>
+<p>为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储<code>&lt;key, value pointer&gt;</code>形式。对于失效的value要考虑垃圾回收问题。</p>
+<p>在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li+1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。</p>
+<h1 id="0x02-architecture">0x02 Architecture</h1>
+<p>KEVIN分为两个部分</p>
+<p>KEVINFS：维护文件、目录到KV对象映射的文件系统</p>
+<p>KEVINSSD：索引KV对象到闪存的LSM-tree</p>
+<h2 id="kv-command">KV Command</h2>
+<p>支持多种KV指令，同时支持事务</p>
+<p><img src="https://cdn.ipandai.club/image-20221102154423353.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221102154423353"
+	
+	
+></p>
+<p>作者将Key限制为256B，value大小没有限制</p>
+<h2 id="文件和目录的映射">文件和目录的映射</h2>
+<p>KevinFS只使用三个类型的KV对象：</p>
+<ul>
+<li>$superblock$：保存文件系统的信息，大小128B</li>
+<li>$meta$：保存文件、目录的元数据，大小256B</li>
+<li>$data$：保存文件数据，unlimited，不超过文件大小</li>
+</ul>
+<p>对于目录的遍历通过ITERATE</p>
+<p>Key的命名遵循如下规则：</p>
 <ol>
-<li>只读数据段 const</li>
-<li>已初始化的读写数据段 初始化的全局变量，初始化的静态局部变量static</li>
-<li>未初始化段 未初始化的全局变量和静态变量</li>
+<li>meta对象的key组成：
+<ul>
+<li>前缀<code>m:</code></li>
+<li>父目录的inode number</li>
+<li>分隔符<code>:</code></li>
+<li>文件/目录名</li>
+</ul>
+</li>
+<li>data对象的key组成：
+<ul>
+<li>前缀<code>d:</code></li>
+<li>文件的inode number</li>
+</ul>
+</li>
 </ol>
-<p>当数组元素个数大于四个时</p>
-<p>获取一个唯一的staticname，在静态存储区进行初始化，之后再拷贝到栈上</p>
-<p>访问和赋值</p>
-<p>编译器的静态类型检查时检测数组越界，索引是否为非负整数，索引越界</p>
-<p>使用变量作为索引时，无法编译检查，需要<strong>运行时</strong>阻止，出发panic</p>
-<p>发现数组切片字符串越界时通过运行时的<code>runtime.panicIndex</code>和<code>runtime.goPanicIndex</code>触发panic</p>
-<p>下标没有越界时，编译器获取数组的内存地址和访问下标，计算出目标地址，使用Load将元素加载到内存中</p>
-<p>编译时插入运行时越界检查函数</p>
-<p>赋值时先确定目标元素地址，使用Store指令将数据存入地址，在编译阶段而不是运行时</p>
-<h1 id="切片">切片</h1>
-<p>编译时确定类型，存储在Extra字段</p>
-<p>数据结构</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">Data</span>
-</span></span><span class="line"><span class="cl"><span class="nx">Len</span>
-</span></span><span class="line"><span class="cl"><span class="nx">Cap</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>切片只在运行时确定内容</p>
-<h2 id="初始化">初始化</h2>
-<h3 id="切片slicelr">切片<code>slice[l:r]</code></h3>
-<p>调用SliceMake函数，参数为 元素类型，数组指针，切片大小和容量</p>
-<p>这样初始化的切片创建了指向原切片的结构体</p>
-<h3 id="字面量">字面量</h3>
-<p>编译时：</p>
-<p>对字面量数组做大小推断，初始化为数组</p>
-<p>创建一个数组指针，指向静态数组</p>
-<p>使用<code>[:]</code>通过指针创建切片</p>
-<h3 id="make">make</h3>
-<p><code>make([]int, len, cap)</code>
-会做参数校验，<code>cap &gt;= len</code></p>
-<ol>
-<li>判断切片大小和容量是否足够</li>
-<li>切片是否发生了逃逸，最终在堆上初始化</li>
-</ol>
-<p>切片太大时也会在堆上初始化，使用运行时makeslice</p>
-<p>makeslice会在堆上申请连续的内存</p>
-<p>可能的运行时错误：</p>
-<ol>
-<li>内存空间大小发生了溢出</li>
-<li>申请内存大于最大可分配内存</li>
-<li>传入的<code>len&lt;0 or len &gt; cap</code></li>
-</ol>
-<h3 id="访问">访问</h3>
-<p>对len和cap的访问会在编译时替换为常量</p>
-<p>使用index获取元素会直接转换为对地址的访问</p>
-<h3 id="append和扩容">append和扩容</h3>
-<p>如果append之后<strong>不需要</strong>赋值给原有变量：</p>
-<p>判断append之后的大小和容量触发扩容</p>
-<p>如果append之后<strong>需要</strong>赋值给原有变量：</p>
-<p>append后的切片覆盖原切片，编译器优化为不发生拷贝，直接操作原切片</p>
-<h4 id="growslice">growslice</h4>
-<p>先确定新切片容量，扩容策略：</p>
-<ol>
-<li>如果期望容量大于当前的两倍，就会使用期望容量</li>
-<li>当前切片长度小于1024会将容量翻倍</li>
-<li>如果当前的切片长度大于1024每次增加25%的容量，直到新容量大于期望容量</li>
-</ol>
-<p>扩容之后进行内存对齐，提高内存分配效率，减少碎片</p>
-<p>使用预制的内存大小数组向上取整，然后通过该内存大小重新计算cap</p>
-<p>对于非指针切片，将原数组内容拷贝至新内存</p>
-<p>growslice返回的是一个新的切片，都是新的 slice(p, len, newcap)</p>
-<h2 id="copy">copy</h2>
-<p><code>copy(a,b)</code></p>
-<p>编译时会直接使用memmove拷贝到内存</p>
-<p>运行时会直接进行合法性检查</p>
-<p>大切片性能开销比较大</p>
-<h1 id="哈希">哈希</h1>
-<h2 id="解决冲突">解决冲突</h2>
-<h3 id="开放寻址">开放寻址</h3>
-<p>从index处向后寻找空闲位置，读取会从index处向后匹配相等元素</p>
-<p><code>装载因子=元素数量/数组大小</code></p>
-<p>装载因子增大，线性探测法的平均用时增加，最坏到On</p>
-<h3 id="拉链法">拉链法</h3>
-<p>使用链表数组，每个数组是一个桶，通过index访问</p>
-<p><code>装载因子=元素数量/桶数量</code></p>
-<p>一般情况下不超过1，装载因子太大会触发扩容</p>
-<h2 id="struct">struct</h2>
-<p>runtime hmap</p>
-<p>保存对数，桶的数量都是2的倍数</p>
-<p>包含runtime bmap，能存储8个键值对，超过8个时会使用extra.nextOverflow中的溢出桶存</p>
-<p>bmap中存储key哈希的高八位tophash uint8</p>
-<h2 id="初始化-1">初始化</h2>
-<h3 id="字面量-1">字面量</h3>
-<p>当哈希表的元素<code>&lt;=25</code>个时，将初始化转化为</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;1&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;2&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="nx">to</span>
-</span></span><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;1&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
-</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;2&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>超过时会转换为两个切片循环加入hash</p>
-<h3 id="运行时">运行时</h3>
-<p>当桶的数量小于$2^4$，不创建溢出桶</p>
-<p>否则创建$2^{B-4}$个溢出桶</p>
-<h2 id="读写">读写</h2>
-<p>遍历使用for range</p>
-<p>删除<code>delete(hash, key)</code></p>
-<p>bmap的实际存储是tophash为一个连续的空间，keys，values 。。。</p>
-<p>访问时限获取哈希值，再获取哈希的高8位</p>
-<p>通过哈希的最低几位获取桶序号</p>
-<blockquote>
-<p>这里因为哈希计算出来并不在桶范围内，在二进制中体现出来是取高几位和低几位，低几位就是取模之后的值，因此可以有效避免桶中有大量重复tophash</p>
-</blockquote>
-<p>在bmap中先比较哈希高8位，加速访问</p>
-<p>匹配成功会根据指针和偏移量获取key进行比较，匹配成功再获取value</p>
-<p><strong>尽量使用双值接收结果，防止实际的value是nil</strong></p>
-<p>写入时会遍历正常桶和溢出桶，溢出桶也包含tophash</p>
-<p>如果桶满，创建新的桶护着在溢出桶中保存</p>
-<p>获取存储地址后，将值拷贝到内存</p>
-<h3 id="扩容">扩容</h3>
-<p>在写入时，触发扩容</p>
-<ol>
-<li>装载因子超过6.5</li>
-<li>哈希使用了太多溢出桶，容易产生内存泄露</li>
-</ol>
-<p>扩容非原子过程，扩容前判断是否正在扩容</p>
-<p>溢出桶太多触发等量扩容，新桶保存数据，回收旧桶（大量的写入删除操作）</p>
-<p>翻倍扩容，随着写操作增量进行，不会产生性能的巨大抖动，创建一组新桶和溢出桶，将原来的桶组设置到oldbuckets，溢出桶也设置到oldoverflow上</p>
-<p>数据迁移发生在运行时 evacuate，对传入桶的元素再分配，每个旧桶元素分流到两个新桶</p>
-<p>分流逻辑：原来通过取模得到的桶掩码为<code>0b11</code>，扩容翻倍之后将变为<code>0b111</code>，因此该数据被分流到3号和7号桶</p>
-<p>当旧桶完全被分流后清除oldbuckets和oldoverflow，通过计数器控制</p>
-<p>扩容期间访问时，若oldbuckets存在，并且旧桶没有被分流时会先去旧桶寻找</p>
-<p>扩容期间写入赋值时，会触发增量拷贝，向新桶分流</p>
-<h2 id="删除">删除</h2>
-<p>扩容期间删除，会分流桶中的元素，然后找到桶中的目标键值对删除</p>
-<p>与写入类似</p>
-<p>访问，写入删除都是运行时处理</p>
-<h1 id="字符串">字符串</h1>
-<p><strong>只读</strong>的字节数组，使用连续空间</p>
-<p>data和len</p>
-<p>分配在只读的内存空间，修改需要和<code>[]byte</code>相互转换</p>
-<ol>
-<li>拷贝内存到栈或者堆</li>
-<li>将变量修改为<code>[]byte</code>然后修改字节数据</li>
-<li>修改字节数组转回<code>string</code></li>
-</ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;hello\&#34;&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nx">str</span> <span class="o">:=</span> <span class="s">`
-</span></span></span><span class="line"><span class="cl"><span class="s">{
-</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;name&#34; : &#34;panda&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;tags&#34; : [&#34;panda&#34;]
-</span></span></span><span class="line"><span class="cl"><span class="s">}
-</span></span></span><span class="line"><span class="cl"><span class="s">`</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>赋值时使用scanner解析字符串成token流</p>
-<p><code>strconv.Unquote</code>去除引号</p>
-<p>使用+拼接，拼接字符串的数量小于等于五个时，使用concatstring{2,3,4,5}，否则使用runtime.concatstrings，传入数组切片，最终通过运行时过滤空字符串计算拼接后长度，如果非空字符串数量为1，并且不在栈上，则直接返回</p>
-<p>拷贝到目标地址空间</p>
-<p>类型转换有性能损失，需要拷贝数据</p>
-<h1 id="函数调用">函数调用</h1>
-<p>c语言使用寄存器传参数，小于等于六个时使用寄存器，大于6个的参数使用栈传递，使用寄存器传递返回值，并且只使用一个寄存器，因此只能有一个返回值。</p>
-<p>go语言使用栈传递参数和返回值，因此存在性能损失，但是可以支持多返回值，便于维护编译器，不需要考虑寄存器数量和命名。</p>
-<h2 id="参数传递方式">参数传递方式</h2>
-<p>传值，基本类型，结构体，指针，对参数进行拷贝</p>
+<p>Key命名规范参考了其他论文（Kai Ren and Garth Gibson. TABLEFS: Enhancing Metadata Efficiency in the Local File System. In Proceedings of the USENIX Annual Technical Conference, pages 145–156, 2013.），本篇文章将其扩展到了存储设备层面</p>
+<p>KevinFS没有实现dentry，如果需要访问一个目录内的所有项目，可以通过<code>ITERATE(m:50:, 2)</code>，来获取两个父目录inode为50（前缀匹配给定的pattern）的子目录/文件的元数据。</p>
+<p>一个优化：为了防止ITERATE消耗太长时间，建议指定cnt</p>
+<p>一个优化：为了高效处理小文件，KevinFS将总体小于4KB的小文件的元数据和数据内容打包，I/O直接操作meta对象GET/SET来进行读写</p>
+<p>@TODO 一个优化：使用全路径索引来取代基于inode的索引，这提高了基于排序算法的KV存储的扫描性能，主要对seek time开销大的HDD优化比较明显</p>
+<h2 id="kv对象索引">KV对象索引</h2>
+<p>KevinSSD基本实现了传统SSD 中FTL的所有功能，将KV对象映射到闪存、分配和释放闪存的空间。</p>
+<p>FTL只做坏块管理和磨损均衡等简单工作。</p>
+<p>每个Level维护一个内存表，来记录Flash中的KV对象。表的每个记录都有<code>&lt;start key, end key, pointer&gt;</code>，其中指针指向保存KV对象的闪存页面的位置，start key和end key是页面中key的范围。key的范围可以在多个Level上重叠。为了快速查找，所有记录都按开始键排序。</p>
+<p><img src="https://cdn.ipandai.club/image-20221102165350981.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221102165350981"
+	
+	
+></p>
+<p>meta和data对象的Key和Value会被分离存储。通过<code>&lt;key, value pointer&gt;</code>的方式进行存储，会有专门的flash page来分别存储这些信息（meta和data对象使用不同的flash page），key-index pages</p>
+<h3 id="meta-object">Meta object</h3>
+<p>在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li+1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。</p>
+<p>对目录项的更新只需要修改其元数据即可完成，而不需要修改4KB的块</p>
+<h3 id="data-object">Data object</h3>
+<p>为了避免对大数据的小范围更新带来的I/O高负载，KevinSSD将data object分割为4KB大小的子对象，使用单独的后缀来对他们进行表示，后缀从0开始，拼接在原始的data object Key后，因此data object的key最终构成为
+$$
+d:{inode\ \ \ number}:{subobject \ \ number,start\ with \ 0}
+$$
+不需要中间表进行索引，只需要通过偏移量即可定位要修改的对象</p>
+<p>Data object同样使用保存指针的方式将映射存储在key-index pages中，key-index pages会对键进行排序，因此属于同一个文件的subobject一般会在同一个flash page中。</p>
+<p>==优化==：在查找指针时，会将一整个闪存页内的数据全部取出，存储在控制器的DRAM中，减轻后续查找可能带来的负载</p>
+<h2 id="缓解索引负载">缓解索引负载</h2>
+<p>使用LSM-tree由于多级查找带来额外的I/O，传统FTL的映射都保存在DRAM，因此没有额外开销。作者介绍了三种主要原因和解决方案。</p>
+<h3 id="压缩操作的开销">压缩操作的开销</h3>
+<p>同上文介绍的方案，通过分离Value可以显著缓解I/O的数据传输负载，对data进行分片我个人感觉反而会加大压缩操作的合并过程，即使分片后键值都是有序的。</p>
+<h3 id="层级查找的开销">层级查找的开销</h3>
+<p>由于LSM-tree的特性，需要逐层进行查找，为了防止大量的顺序查找，作者使用布隆过滤器进行了优化。</p>
+<p>同时还缓存了热点K2V索引数据（与目标索引处在同一个flash page中的）</p>
+<p>为了利用大容量SSD中提供的超大DRAM，作者采用压缩存储K2V索引，并在其中插入没有压缩的K2V索引来作为二分查找的参照物。（快速在缓存中查找？不如继续用布隆过滤器）</p>
+<h3 id="分散的对象带来的开销">分散的对象带来的开销</h3>
+<p>LSM-tree允许各层之间的key范围重叠，因此有同一个前缀的目录或者文件可能被分配到不同的Level中，对于获取一个目录中所有目录、文件的操作，需要对多个闪存页进行访问。这个问题作者没有给出一个明确的方案（在压缩合并时隐式解决），但是提供了一个用户工具来主动触发合并，效率较高。</p>
+<p>作者对比了各种方法在随机读、局部读（？）、顺序读情况下对闪存页的读取次数，使用布隆过滤器的时候稳定会有一次读取</p>
+<p>使用了KevinSSD后对于SSD而言，I/O延迟有轻微的增加，整体而言效率提高了</p>
+<h1 id="0x03-implement-vfs">0x03 Implement VFS</h1>
+<h2 id="write">write</h2>
+<p>所有的写相关系统调用可以通过SET和DELETE来实现。</p>
+<p>例如unlink，只需要两次DELETE指令，移除meta和data object。</p>
+<p>SET时现在Memtable中保存一个KV对象，然后持久化到flash中，若Key已存在则丢弃旧的对象</p>
+<p>DELETE时在树上写入一个4B大小的墓碑</p>
+<p>失效的对象（被SET覆盖）和删除的对象在压缩期间被永久删除</p>
+<h2 id="read">read</h2>
+<p>通过GET和ITERATE实现</p>
+<p>如下图所示</p>
+<p>执行open系统调用时，查询meta object获取文件的inode，通过GET命令实现</p>
+<p>执行lookup系统调用时，给定一个完整的路径<code>/home/alice/</code>，从根目录开始获取多个meta object，最终获取目标文件的inode</p>
+<p>执行read系统调用时，将GET一个data object</p>
+<p>执行readdir系统调用时，使用ITERATE，批量获取一组meta objects来获取inode</p>
+<p><img src="https://cdn.ipandai.club/image-20221102210344432.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221102210344432"
+	
+	
+></p>
+<p>相较于Ext4，KevinFS可以更好的防止文件碎片化带来的影响。</p>
+<h1 id="0x04-crash-consistency">0x04 Crash Consistency</h1>
+<h2 id="一致性维护">一致性维护</h2>
+<p>通过事务即可实现原子化的操作</p>
+<p>事务的隔离？对==fsync==指令单独创建一个小型事务来提高效率。</p>
+<p>KevinFS基于KV事务的特性来维护一致性，不使用日志系统。</p>
+<h2 id="kv事务的实现">KV事务的实现</h2>
+<p>使用了三个数据结构：</p>
+<ul>
+<li>事务表$TxTable$：记录事务基本信息</li>
+<li>事务日志$TxLogs$：维护事务对象的K2V索引，存储在DRAM或者闪存中</li>
+<li>恢复日志$TxRecovery$：用于恢复和终止事务</li>
+</ul>
+<p>但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。</p>
+<p>当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED。将提交的KV索引同步到LSM-tree中</p>
+<p><img src="https://cdn.ipandai.club/image-20221103102304181.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221103102304181"
+	
+	
+></p>
+
 </section>
 
 
@@ -553,7 +496,15 @@
     
     <section class="article-tags">
         
-            <a href="/tags/golang/">Golang</a>
+            <a href="/tags/paper/">Paper</a>
+        
+            <a href="/tags/file-system/">File System</a>
+        
+            <a href="/tags/lsm-tree/">LSM-tree</a>
+        
+            <a href="/tags/k/v/">K/V</a>
+        
+            <a href="/tags/database/">Database</a>
         
     </section>
 
@@ -610,12 +561,38 @@
             
                 
 <article class="">
-    <a href="/p/osdi21-modernizing-file-system-through-in-storage-indexing/">
+    <a href="/p/linux-block-i/o-stack%E7%AE%80%E4%BB%8B/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">[OSDI&#39;21] Modernizing File System through In-Storage Indexing</h2>
+            <h2 class="article-title">Linux Block I/O Stack简介</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</h2>
         </div>
     </a>
 </article>
@@ -636,38 +613,12 @@
             
                 
 <article class="">
-    <a href="/p/linux-block-i/o-stack%E7%AE%80%E4%BB%8B/">
+    <a href="/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">Linux Block I/O Stack简介</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【存储系统】多硬盘存储系统</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【存储技术基础】主存</h2>
+            <h2 class="article-title">Mysql学习笔记</h2>
         </div>
     </a>
 </article>
@@ -844,61 +795,44 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#go的编译">Go的编译</a></li>
-    <li><a href="#数据结构">数据结构</a>
+    <li><a href="#todo-论文在事务一致性恢复的部分">TODO 论文在事务一致性/恢复的部分</a></li>
+    <li><a href="#questions">Questions</a></li>
+    <li><a href="#0x00-intro">0x00 Intro</a></li>
+    <li><a href="#0x01-bg--related-work">0x01 BG &amp;&amp; Related Work</a>
       <ol>
-        <li><a href="#数组">数组</a>
+        <li><a href="#传统块设备">传统块设备</a></li>
+        <li><a href="#lsm-tree">LSM-Tree</a></li>
+      </ol>
+    </li>
+    <li><a href="#0x02-architecture">0x02 Architecture</a>
+      <ol>
+        <li><a href="#kv-command">KV Command</a></li>
+        <li><a href="#文件和目录的映射">文件和目录的映射</a></li>
+        <li><a href="#kv对象索引">KV对象索引</a>
           <ol>
-            <li><a href="#review">review</a></li>
+            <li><a href="#meta-object">Meta object</a></li>
+            <li><a href="#data-object">Data object</a></li>
+          </ol>
+        </li>
+        <li><a href="#缓解索引负载">缓解索引负载</a>
+          <ol>
+            <li><a href="#压缩操作的开销">压缩操作的开销</a></li>
+            <li><a href="#层级查找的开销">层级查找的开销</a></li>
+            <li><a href="#分散的对象带来的开销">分散的对象带来的开销</a></li>
           </ol>
         </li>
       </ol>
     </li>
-    <li><a href="#切片">切片</a>
+    <li><a href="#0x03-implement-vfs">0x03 Implement VFS</a>
       <ol>
-        <li><a href="#初始化">初始化</a>
-          <ol>
-            <li><a href="#切片slicelr">切片<code>slice[l:r]</code></a></li>
-            <li><a href="#字面量">字面量</a></li>
-            <li><a href="#make">make</a></li>
-            <li><a href="#访问">访问</a></li>
-            <li><a href="#append和扩容">append和扩容</a>
-              <ol>
-                <li><a href="#growslice">growslice</a></li>
-              </ol>
-            </li>
-          </ol>
-        </li>
-        <li><a href="#copy">copy</a></li>
+        <li><a href="#write">write</a></li>
+        <li><a href="#read">read</a></li>
       </ol>
     </li>
-    <li><a href="#哈希">哈希</a>
+    <li><a href="#0x04-crash-consistency">0x04 Crash Consistency</a>
       <ol>
-        <li><a href="#解决冲突">解决冲突</a>
-          <ol>
-            <li><a href="#开放寻址">开放寻址</a></li>
-            <li><a href="#拉链法">拉链法</a></li>
-          </ol>
-        </li>
-        <li><a href="#struct">struct</a></li>
-        <li><a href="#初始化-1">初始化</a>
-          <ol>
-            <li><a href="#字面量-1">字面量</a></li>
-            <li><a href="#运行时">运行时</a></li>
-          </ol>
-        </li>
-        <li><a href="#读写">读写</a>
-          <ol>
-            <li><a href="#扩容">扩容</a></li>
-          </ol>
-        </li>
-        <li><a href="#删除">删除</a></li>
-      </ol>
-    </li>
-    <li><a href="#字符串">字符串</a></li>
-    <li><a href="#函数调用">函数调用</a>
-      <ol>
-        <li><a href="#参数传递方式">参数传递方式</a></li>
+        <li><a href="#一致性维护">一致性维护</a></li>
+        <li><a href="#kv事务的实现">KV事务的实现</a></li>
       </ol>
     </li>
   </ol>

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做'><title>【存储技术基础】固态硬盘</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Intro 优化I/O的方法 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈'><title>[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/atc19-asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds/'>
 
-<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='【存储技术基础】固态硬盘'>
-<meta property='og:description' content='主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做'>
-<meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs'>
+<meta property='og:description' content='Intro 优化I/O的方法 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈'>
+<meta property='og:url' content='https://blog.ipandai.club/p/atc19-asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='NVM' /><meta property='article:published_time' content='2022-09-22T09:36:42&#43;08:00'/><meta property='article:modified_time' content='2022-09-22T09:36:42&#43;08:00'/>
-<meta name="twitter:title" content="【存储技术基础】固态硬盘">
-<meta name="twitter:description" content="主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='Paper' /><meta property='article:published_time' content='2022-08-17T10:30:41&#43;08:00'/><meta property='article:modified_time' content='2022-08-17T10:30:41&#43;08:00'/>
+<meta name="twitter:title" content="[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs">
+<meta name="twitter:description" content="Intro 优化I/O的方法 用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈">
     </head>
     <body class="
     article-page
@@ -256,7 +256,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/">【存储技术基础】固态硬盘</a>
+            <a href="/p/atc19-asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds/">[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</a>
         </h2>
     
         
@@ -275,7 +275,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Sep 22, 2022</time>
+                <time class="article-time--published">Aug 17, 2022</time>
             </div>
         
 
@@ -290,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    5 minute read
+                    4 minute read
                 </time>
             </div>
         
@@ -304,178 +304,126 @@
     <section class="article-content">
     
     
-    <p>主要由Flash Memory 和FTL组成</p>
-<p>Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存</p>
-<p>根据延迟数量级，一般用PCM做内存，Flash Memory做外存</p>
-<h1 id="0x00-flash-memory">0x00 Flash Memory</h1>
-<h2 id="闪存原理">闪存原理</h2>
-<h3 id="类型">类型</h3>
-<p>NOR闪存</p>
+    <h1 id="intro">Intro</h1>
+<p>优化I/O的方法</p>
 <ul>
-<li>存储密度低</li>
-<li>可字节改写</li>
-</ul>
-<p>NAND闪存（主流）</p>
+<li>用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。</li>
+<li>优化操作系统内核的I/O 栈
 <ul>
-<li>存储密度高</li>
-<li>不可覆盖写</li>
-</ul>
-<p>用于外存需要较高的存储量级，一般用NAND</p>
-<h3 id="闪存单元">闪存单元</h3>
-<p>读：电压代表不同数值</p>
-<p>写：电子注入</p>
-<p>相比晶体管添加了浮栅门，保存电子</p>
-<p>原理其实比较简单，非电子系就不做太详细的研究了</p>
-<p>闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行</p>
-<p>闪存块(擦除单元)，由多个页组成的单元</p>
-<img src="https://cdn.ipandai.club/image-20220922124359358.png" alt="image-20220922124359358" style="zoom:33%;" />
-<p>选中行和列，然后将数据加载到Sense Amplifiers</p>
-<p>存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0</p>
-<img src="https://cdn.ipandai.club/image-20220922124755447.png" alt="image-20220922124755447" style="zoom:25%;" />
-<p>Pass Through</p>
-<p>选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态</p>
-<img src="https://cdn.ipandai.club/image-20220922131649578.png" alt="image-20220922131649578" style="zoom:25%;" />
-<p>如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011</p>
-<img src="https://cdn.ipandai.club/image-20220922134857889.png" alt="image-20220922134857889" style="zoom:33%;"/>
-<p>上述为SLC，Single Level Cell，单存储单元</p>
-<h3 id="多比特闪存">多比特闪存</h3>
-<p>多比特闪存单元MLC，包含2Bits 4个Level的数据</p>
-<p>TLC 3 Bits 8个Level</p>
-<p>QLC 4 Bits 16个Level</p>
-<p><strong>多比特使用格雷码来编码</strong></p>
-<blockquote>
-<p>使用格雷码使得相邻单元只有一位差异，方便纠错</p>
-</blockquote>
-<p>多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。</p>
-<img src="https://cdn.ipandai.club/image-20220922135516463.png" alt="image-20220922135516463" style="zoom:45%;" />
-<p>对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。</p>
-<img src="https://cdn.ipandai.club/image-20220922140421405.png" alt="image-20220922140421405" style="zoom:40%;" />
-<p>对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。</p>
-<img src="https://cdn.ipandai.club/image-20220922141455826.png" alt="image-20220922141455826" style="zoom:40%;" />
-<h3 id="闪存">闪存</h3>
-<p>Block的大小的一种配置：</p>
-<p>一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB</p>
-<p>有64列bitlines，一个block的大小即为<code>16KB*64*2=2MB</code>，一般按照此比例配置Block</p>
-<p>写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率</p>
-<p>写入是需要先擦除再写入，擦除整个块</p>
-<img src="https://cdn.ipandai.club/image-20220922143608667.png" alt="image-20220922143608667" style="zoom:50%;" />
-<h4 id="特性">特性</h4>
-<h5 id="读写粒度">读写粒度</h5>
-<p>闪存页读写粒度：</p>
-<ul>
-<li>4KB，8KB，16KB必须全部读取或者写入</li>
-<li>us延迟</li>
-</ul>
-<p>闪存块擦除力度</p>
-<ul>
-<li>2MB擦除</li>
-<li>ms延迟，可以通过FTL来优化</li>
-</ul>
-<h5 id="不可覆盖写">不可覆盖写</h5>
-<p>写前需要擦除，读写粒度与擦除粒度不同</p>
-<p>存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错</p>
-<img src="https://cdn.ipandai.club/image-20220922162139217.png" alt="image-20220922162139217" style="zoom:50%;" />
-<h5 id="有限次擦除">有限次擦除</h5>
-<p>随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。</p>
-<p>氧化层老化变薄，束缚电子能力变弱</p>
-<ul>
-<li>耐久性 变薄地次数</li>
-<li>保持力 不通电可以放置的时间</li>
-</ul>
-<p>SLC：10w次</p>
-<p>MLC：1w次</p>
-<p>TLC：1k次</p>
-<p>根据特性设计FTL固件来</p>
-<img src="https://cdn.ipandai.club/image-20220922164523965.png" alt="image-20220922164523965" style="zoom:50%;" />
-<h1 id="0x01-ftl">0x01 FTL</h1>
-<p>固态硬盘整体构成</p>
-<img src="https://cdn.ipandai.club/image-20220922164728094.png" alt="image-20220922164728094" style="zoom:50%;" />
-<p>SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大</p>
-<img src="https://cdn.ipandai.club/image-20220922165354311.png" alt="image-20220922165354311" style="zoom:50%;" />
-<h2 id="垃圾回收">垃圾回收</h2>
-<p>page对于OS而言，是写入时的block</p>
-<p>Page三种状态</p>
-<ul>
-<li>空闲 free page</li>
-<li>有效页 live/valid page</li>
-<li>无效页 dead/invalid page</li>
-</ul>
-<img src="https://cdn.ipandai.club/image-20220922184349456.png" alt="image-20220922184349456" style="zoom:25%;" />
-<p>需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲</p>
-<img src="https://cdn.ipandai.club/image-20220922184406162.png" alt="image-20220922184406162" style="zoom:25%;" />
-<p>时间开销：</p>
-<ul>
-<li>复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量</li>
-<li>擦除产生的开销 ms级延迟</li>
-</ul>
-<h3 id="gc策略">GC策略</h3>
-<p>要解决的问题：</p>
-<ul>
-<li>何时启动GC</li>
-<li>选中那些/多少Block进行GC</li>
-<li>有效的页如何被转写</li>
-<li>新数据写到哪里</li>
-</ul>
-<p>GC的时间开销：</p>
-<ul>
-<li>块擦除的时间 ms</li>
-<li>有效页的复制时间</li>
-</ul>
-<p>贪心策略：</p>
-<ul>
-<li>找到脏页最多的block来进行擦除</li>
-</ul>
-<p>优化：</p>
-<ul>
-<li>Age</li>
-<li>Hot/Cold 数据隔离，分组问题</li>
-</ul>
-<h2 id="磨损均衡">磨损均衡</h2>
-<p>优化寿命，有静态和动态策略</p>
-<p>静态：周期性的调整冷热数据存储的位置</p>
-<p>冷热数据的分区：将冷数据放在一起，热数据放在一起</p>
-<h2 id="ftl简介">FTL简介</h2>
-<ul>
-<li>
-<p>维护映射，虚拟地址到物理地址</p>
-</li>
-<li>
-<p>使用SRAM存储映射</p>
-</li>
-<li>
-<p>向上层隐藏擦除操作：</p>
-<ul>
-<li>
-<p>避免原地更新-&gt;异地更新</p>
-</li>
-<li>
-<p>更新一个新页面</p>
-</li>
-<li>
-<p>高性能的垃圾回收和擦除</p>
-</li>
+<li>使用轮询来减少上下文切换的开销</li>
+<li>在底层减少一半的中断处理</li>
+<li>分散I/O指令</li>
+<li>I/O block调度机制</li>
 </ul>
 </li>
 </ul>
-<p>OOB有物理地址到虚拟地址的映射，用于掉电恢复，这里引用一段<a class="link" href="https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf"  target="_blank" rel="noopener"
-    >wisc的OSTEP中的一段解释（44 Flash- based SSD）</a>。</p>
-<p>OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射</p>
-<p>为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程</p>
-<p>大致看了一下OSTEP，记得是jyy老师推荐的教材，希望以后有时间读一下</p>
-<img src="https://cdn.ipandai.club/image-20220924141132556.png" alt="image-20220924141132556" style="zoom:50%;" />
-<h3 id="page-level-ftl">Page-Level FTL</h3>
-<p>原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number</p>
-<p>缺点是页表占用很大的空间</p>
-<img src="https://cdn.ipandai.club/image-20220924152322358.png" alt="image-20220924152322358" style="zoom:50%;" />
-<h3 id="block-level-ftl">Block-Level FTL</h3>
-<p>保持Block 到Block的映射</p>
-<p>先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的</p>
-<img src="https://cdn.ipandai.club/image-20220924152259043.png" alt="image-20220924152259043" style="zoom:50%;" />
-<p>优点是占用空间很小，缺点是GC负载增加</p>
-<p>原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】</p>
-<h3 id="hybrid-ftl">Hybrid FTL</h3>
-<p>对写入分为新/旧数据，新写入的数据用Page-Level Mapping效率高，写入Log Blocks作为缓冲，之后再更新到Data Blocks</p>
-<p>旧数据因为写入后更新相对不频繁，使用Block-Level Mapping，写入Data Blocks</p>
+<h1 id="related-work">Related Work</h1>
+<p>减少内核的开销</p>
+<ul>
+<li>减少中断处理的后半部分</li>
+<li>是用轮询技术而非中断，减少上下文切换</li>
+<li>混合轮询</li>
+<li>基于SSD的闪存随机读写简化调度策略</li>
+<li>在NVMe固件中进行调度</li>
+<li>对高优先级的任务，提供不同的IO path支持，最小化IO path的开销</li>
+</ul>
+<p>修改存储接口</p>
+<ul>
+<li>分散/分散 IO合并多个IO到一个指令，减少往返次数</li>
+<li>移除doorbell机制和完成信号</li>
+</ul>
+<p>改善fsync</p>
+<ul>
+<li>冲fsync请求发出到收到response，延长数据持久化的时间</li>
+<li>在日志提交记录中使用校验和，有效的重叠日志写入和块写入</li>
+<li>提出<code>写守序系统调用</code>，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行</li>
+</ul>
+<p>用户层直接访问外设，存在隔离、保护等安全问题</p>
+<h1 id="motivation">Motivation</h1>
+<h2 id="背景">背景</h2>
+<p>现状：</p>
+<ul>
+<li>I/O 请求过程中太多的步骤</li>
+<li>页面缓存分配和索引</li>
+<li>DMA，一系列数据结构的创建</li>
+</ul>
+<p>目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化</p>
+<p>本文专注于：</p>
+<ul>
+<li>Linux内核中的<code>read()</code>和<code>write()+fsync()</code></li>
+<li>基于NVMe SSD的Ext4文件系统</li>
+</ul>
+<h2 id="for-read-path">For Read Path</h2>
+<p>研究发现许多剩余的操作不必在设备I/O之前或之后执行</p>
+<p>此类操作可以在设备I/O操作进行时执行</p>
+<p>因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠</p>
+<h2 id="for-write-path">For Write Path</h2>
+<p>缓冲写<code>write()</code>，并不发起IO请求，不能异步处理</p>
+<p>由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求</p>
+<p>由于文件系统带来的三次IO操作</p>
+<ol>
+<li>数据块写</li>
+<li>jbd2发起写入日志Block I/O</li>
+<li>提交Block I/O</li>
+</ol>
+<p>这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。</p>
+<h2 id="for-lightweight-block-layer">For Lightweight Block Layer</h2>
+<p>传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间</p>
+<p>因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低</p>
+<p>简化block layer，针对异步IO stack进行优化</p>
+<h1 id="design">Design</h1>
+<h2 id="轻量化的block-io-layer">轻量化的Block I/O Layer</h2>
+<p>LBIO，为LL NVMe SSD而设计，只支持IO submission/completion和IO指令tagging</p>
+<p>只使用<code>lbio</code>来表示一个block I/O请求，减少了<code>bio-to-request</code>的时间</p>
+<p>每个lbio包括</p>
+<ul>
+<li>LBA</li>
+<li>I/O 长度</li>
+<li>复制的页面</li>
+<li>页面的DMA地址</li>
+</ul>
+<p>使用全局的lbio二位数组来记录</p>
+<p>行的个数为CPU核心数，行成组被分配到一个NVMe队列</p>
+<p>例如8核心，4NVMe队列，每个队列分配2个核心的lbio
+当核心数等于队列数时，可以实现无锁的命令提交</p>
+<p>lbio在全局数组中的索引用作NVMe指令的tag，减少了之前赋tag的过程</p>
+<p>lbio提交后，调用<code>nvme_queue_lbio</code>来提交I/O指令</p>
+<p><strong>LBIO不会合并和调度IO请求</strong></p>
+<h2 id="read-path">Read Path</h2>
+<p>Ext4文件系统中，由extent status tree保存缓存到物理文件block的映射</p>
+<p>预加载映射到内存中，当树太大时，可以只对某个文件预加载</p>
+<h3 id="异步页面申请和dma分配">异步页面申请和DMA分配</h3>
+<p>提前分配空闲页池</p>
+<p>为了减少页面DMA的分配，为每个核维护一个DMA映射空闲页（4KB DMA映射页的链表）</p>
+<p>当空闲页池不够用时，将退化为同步进行（origin）</p>
+<h3 id="缓存页索引">缓存页索引</h3>
+<p>自旋锁防止并发问题，影响效率</p>
+<p>在请求发出，但是页面还没有更新时，可能重复请求更新页面</p>
+<p>解决方案是不限制request，在request completion阶段解决问题</p>
+<p>尽管多个block请求，但是只能有一个页面被索引</p>
+<p>对于其他页面，标记为abandoned，中断发生之后，如果标记为abandoned，则清除已经完成的页面</p>
+<h3 id="dma解除映射">DMA解除映射</h3>
+<p>原本使用中断来处理，改为当系统空闲或等待一个IO请求时处理</p>
+<p>该方式可能会产生漏洞窗口，若不受到恶意访问，不会产生影响，否则用户可以自行选择关闭惰性DMA映射接触</p>
+<h2 id="write--fsync-path">Write &amp;&amp; fsync Path</h2>
+<p>当fsync涉及文件系统中事务时，可以将jbd2日志处理重叠处理</p>
+<h1 id="experiment">Experiment</h1>
+<p>基于Linux内核5.0.5版本</p>
+<p>使用文件描述符<code>O_AIOS</code></p>
+<h1 id="evaluation">Evaluation</h1>
+<h1 id="conclusion">Conclusion</h1>
+<p>提出了AIOS</p>
+<p>LBIO层</p>
+<p>AIOS将I/O路径中的同步操作替换为异步操作，以将与读取和fsync相关的计算与设备I/O访问重叠。</p>
+<p>AIOS在Optane SSD上实现了一位数微秒的I/O延迟。</p>
+<p>此外，AIOS通过Z-SSD和Optane SSD上的模拟实验和实际测试显著降低延迟和性能改进。</p>
+<h1 id="一些启发">一些启发</h1>
+<ol>
+<li>优化I/O可以从CPU的空闲时间分析，需要考虑内核和文件系统的工作流程，最大程度的利用CPU资源，减少空闲。</li>
+<li>硬件设备在发展的同时，软件应该提供必要适配</li>
+<li>减少内核中与I/O相关的结构类型转化，可以有效节省时间开销</li>
+<li>惰性修改会存在安全问题，在保证安全的情况下，可以提高效率</li>
+</ol>
 
 </section>
 
@@ -484,11 +432,13 @@
     
     <section class="article-tags">
         
+            <a href="/tags/file-system/">File System</a>
+        
             <a href="/tags/ssd/">SSD</a>
         
             <a href="/tags/storage/">Storage</a>
         
-            <a href="/tags/nvm/">NVM</a>
+            <a href="/tags/paper/">Paper</a>
         
     </section>
 
@@ -545,25 +495,12 @@
             
                 
 <article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/">
+    <a href="/p/osdi21-modernizing-file-system-through-in-storage-indexing/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">【存储技术基础】主存</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/atc19-asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</h2>
+            <h2 class="article-title">[OSDI&#39;21] Modernizing File System through In-Storage Indexing</h2>
         </div>
     </a>
 </article>
@@ -597,12 +534,25 @@
             
                 
 <article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
+    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">【存储系统】多硬盘存储系统</h2>
+            <h2 class="article-title">【存储技术基础】固态硬盘</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</h2>
         </div>
     </a>
 </article>
@@ -779,45 +729,33 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#0x00-flash-memory">0x00 Flash Memory</a>
+    <li><a href="#intro">Intro</a></li>
+    <li><a href="#related-work">Related Work</a></li>
+    <li><a href="#motivation">Motivation</a>
       <ol>
-        <li><a href="#闪存原理">闪存原理</a>
-          <ol>
-            <li><a href="#类型">类型</a></li>
-            <li><a href="#闪存单元">闪存单元</a></li>
-            <li><a href="#多比特闪存">多比特闪存</a></li>
-            <li><a href="#闪存">闪存</a>
-              <ol>
-                <li><a href="#特性">特性</a>
-                  <ol>
-                    <li><a href="#读写粒度">读写粒度</a></li>
-                    <li><a href="#不可覆盖写">不可覆盖写</a></li>
-                    <li><a href="#有限次擦除">有限次擦除</a></li>
-                  </ol>
-                </li>
-              </ol>
-            </li>
-          </ol>
-        </li>
+        <li><a href="#背景">背景</a></li>
+        <li><a href="#for-read-path">For Read Path</a></li>
+        <li><a href="#for-write-path">For Write Path</a></li>
+        <li><a href="#for-lightweight-block-layer">For Lightweight Block Layer</a></li>
       </ol>
     </li>
-    <li><a href="#0x01-ftl">0x01 FTL</a>
+    <li><a href="#design">Design</a>
       <ol>
-        <li><a href="#垃圾回收">垃圾回收</a>
+        <li><a href="#轻量化的block-io-layer">轻量化的Block I/O Layer</a></li>
+        <li><a href="#read-path">Read Path</a>
           <ol>
-            <li><a href="#gc策略">GC策略</a></li>
+            <li><a href="#异步页面申请和dma分配">异步页面申请和DMA分配</a></li>
+            <li><a href="#缓存页索引">缓存页索引</a></li>
+            <li><a href="#dma解除映射">DMA解除映射</a></li>
           </ol>
         </li>
-        <li><a href="#磨损均衡">磨损均衡</a></li>
-        <li><a href="#ftl简介">FTL简介</a>
-          <ol>
-            <li><a href="#page-level-ftl">Page-Level FTL</a></li>
-            <li><a href="#block-level-ftl">Block-Level FTL</a></li>
-            <li><a href="#hybrid-ftl">Hybrid FTL</a></li>
-          </ol>
-        </li>
+        <li><a href="#write--fsync-path">Write &amp;&amp; fsync Path</a></li>
       </ol>
     </li>
+    <li><a href="#experiment">Experiment</a></li>
+    <li><a href="#evaluation">Evaluation</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#一些启发">一些启发</a></li>
   </ol>
 </nav>
         </div>

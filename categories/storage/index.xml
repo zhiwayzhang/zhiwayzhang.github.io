@@ -484,14 +484,72 @@ $$
 &lt;p&gt;​	很多磁盘的访问都是顺序的。普通文件以相邻扇区成组存放在磁盘上，因此很少移动磁头就可以快速检索到文件。当程序读或拷贝一个文件时，它通常从第一个字节到最后一个字节顺序地访问文件。因此，在处理进程对同一文件的一系列读请求时，可以从磁盘上很多相邻的扇区读取。&lt;/p&gt;
 &lt;p&gt;​	预读(Read-ahead)是一种技术，这种技术在于在实际请求前读普通文件或块设备文件的几个相邻的数据页。在大多数情况下，预读能极大地提高磁盘的性能，因为预读使磁盘控制器处理较少的命令，其中的每条命令都涉及一大组相邻的扇区。此外，预读还能提高系统的晌应能力。顺序读取文件的进程通常不需要等待请求的数据，因为请求的数据已经在RAM中了。&lt;/p&gt;
 &lt;h2 id=&#34;缓存回写机制&#34;&gt;缓存回写机制&lt;/h2&gt;
-&lt;p&gt;缓存回写机制也就是Page Cache对脏页进行回写，将对文件的I/O修改永久持久化到磁盘上的过程，此处不再赘述。后续可以了解Linux内核对回写的控制。&lt;/p&gt;
+&lt;p&gt;缓存回写机制也就是Page Cache对脏页进行回写，将对文件的I/O修改永久持久化到磁盘上的过程，此处不再赘述。后续计划深入了解Linux内核对回写的控制。&lt;/p&gt;
 &lt;h1 id=&#34;文件系统&#34;&gt;文件系统&lt;/h1&gt;
-&lt;p&gt;整理文件系统的数据布局、读写过程&lt;/p&gt;
+&lt;p&gt;文件系统作为操作系统中一个不可或缺的部分，负责在存储设备上管理、存储、获取数据、维护信息。&lt;/p&gt;
+&lt;p&gt;在Linux中，内核通过VFS虚拟文件系统向用户提供通用的接口，向下对接各种不同的文件系统，可以有效避免不同文件系统的实现差异对上层带来影响。&lt;/p&gt;
 &lt;h2 id=&#34;ext4&#34;&gt;ext4&lt;/h2&gt;
+&lt;h3 id=&#34;ext-文件系统发展历史&#34;&gt;ext 文件系统发展历史&lt;/h3&gt;
+&lt;h4 id=&#34;ext1&#34;&gt;ext1&lt;/h4&gt;
+&lt;p&gt;Extended file system，扩展文件系统。&lt;/p&gt;
+&lt;p&gt;Linux最早使用的文件系统为Minix的文件系统，但是该系统存在文件大小限制的问题，同时性能不佳。在1992年4月，Rémy Card开发了扩展文件系统，首个版本作为Linux中的文件系统一起发行，最大支持2GB空间，同时它还是Linux中第一个使用VFS实现出的文件系统。&lt;/p&gt;
+&lt;h4 id=&#34;ext2&#34;&gt;ext2&lt;/h4&gt;
+&lt;p&gt;在首个ext文件系统中，文件访问、存在inode修改以及文件内容修改没有使用独立时间戳的问题，同时最大仅支持255个字符的文件名以及2GB的空间，ext2系统除了修复了这个问题外，还在磁盘存储数据结构中预留了很多空间供未来开发使用，具有良好的可拓展性。&lt;/p&gt;
+&lt;p&gt;由于块驱动的限制，ext2文件系统最大支持2TB的单个文件。&lt;/p&gt;
+&lt;h4 id=&#34;ext3&#34;&gt;ext3&lt;/h4&gt;
+&lt;p&gt;ext3在当时性能不是很出众，但是支持从当时最流行的ext2文件系统升级，无需备份和数据恢复，同时有较少的资源占用（CPU开销）。&lt;/p&gt;
+&lt;p&gt;ext3相较于ext2增加了&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;日志支持&lt;/li&gt;
+&lt;li&gt;文件系统在线增长&lt;/li&gt;
+&lt;li&gt;对大目录提供HTree哈希树索引&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ext3提供了三个日志级别：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;日志（最低风险）：metadata和文件内容一起写入日志中，由于还要写入文件系统，因此带来额外的性能开销。&lt;/li&gt;
+&lt;li&gt;有序（中等风险）：只将metadata写入日志，但是保证metadata提交前，文件内容会被写入。大部份发行版默认的方式。写入过程中崩溃时，文件系统会清除还没有被提交的文件修改/创建，但是对于文件的覆盖写入，可能会导致文件处于新旧文件的中间态。&lt;/li&gt;
+&lt;li&gt;回写（最高风险）：只记录metadata到日志，文件内容在日志提交前或者提交后写入。如果在日志提交前写入失败，会导致磁盘出现垃圾。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ext3存在的一些缺陷：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;没有在线的碎片整理工具&lt;/li&gt;
+&lt;li&gt;官方缺少压缩工具&lt;/li&gt;
+&lt;li&gt;不支持恢复已经删除的文件&lt;/li&gt;
+&lt;li&gt;缺少快照支持&lt;/li&gt;
+&lt;li&gt;日志中不支持校验和&lt;/li&gt;
+&lt;li&gt;使用四个字节存储Unix时间，因此在2038年1月18日之后将无法继续处理文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;ext4-1&#34;&gt;ext4&lt;/h4&gt;
+&lt;p&gt;ext4在Linux 2.6.28中作为功能完整稳定的文件系统发布，ext4文件系统首先兼容了原有的ext3系统，提供安全可靠的快速迁移。同时还有如下特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;支持更大的文件系统和文件大小，以4KB块，目前支持最大&lt;code&gt;1EiB(1024*1024*1024GB)&lt;/code&gt;的文件系统大小和16TiB的文件大小，使用48bit来编址，未来会支持64bit&lt;/li&gt;
+&lt;li&gt;子目录可扩展行，ext4文件系统支持最多64000个子目录，是ext3文件系统的两倍&lt;/li&gt;
+&lt;li&gt;程度&lt;/li&gt;
+&lt;li&gt;多块分配&lt;/li&gt;
+&lt;li&gt;延迟分配&lt;/li&gt;
+&lt;li&gt;快速FSCK&lt;/li&gt;
+&lt;li&gt;日志校验和&lt;/li&gt;
+&lt;li&gt;无日志模式&lt;/li&gt;
+&lt;li&gt;在线碎片整理&lt;/li&gt;
+&lt;li&gt;inode相关feat&lt;/li&gt;
+&lt;li&gt;持久化预分配&lt;/li&gt;
+&lt;li&gt;默认情况下启用写屏障&lt;/li&gt;
+&lt;li&gt;discard/TRIM&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;f2fs&#34;&gt;F2FS&lt;/h2&gt;
-&lt;p&gt;论文&lt;/p&gt;
+&lt;p&gt;F2FS文件系统提出于&lt;code&gt;USENIX FAST&#39;21&lt;/code&gt;，&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast15/technical-sessions/presentation/lee&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;F2FS: A New File System for Flash Storage | USENIX&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&#34;btrfs&#34;&gt;Btrfs&lt;/h2&gt;
 &lt;h1 id=&#34;块io层-与-io调度器&#34;&gt;块I/O层 与 I/O调度器&lt;/h1&gt;
+&lt;h2 id=&#34;块设备&#34;&gt;块设备&lt;/h2&gt;
+&lt;p&gt;对与Unix系统来说，有着一切皆文件的设计哲学，因此外部设备在操作系统看来是一个设备文件。设备文件共分为两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;块设备：数据可以被随机访问&lt;/li&gt;
+&lt;li&gt;字符设备：数据不可以被随机访问，或者包含受限制的随机访问（设备内部构成）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;块设备的一个主要特点就是CPU和总线读写数据的时间开销与磁盘硬件速度不匹配。&lt;/p&gt;
+&lt;p&gt;内核再对块设备发出I/O请求时，内核利用&lt;code&gt;通用块层&lt;/code&gt;发起I/O，每次I/O请求都是通过一个&lt;code&gt;bio&lt;/code&gt;结构体来描述。通用块层下的I/O调度程序会根据策略将待处理的I/O请求进行归类，将相邻的请求聚集在一起，减少磁盘磁头的移动。&lt;/p&gt;
+&lt;p&gt;块是操作系统和硬件设备在传输数据时的基本单位，&lt;/p&gt;
 &lt;h2 id=&#34;mq-deadline&#34;&gt;mq-deadline&lt;/h2&gt;
 &lt;h2 id=&#34;bfq&#34;&gt;bfq&lt;/h2&gt;
 &lt;h2 id=&#34;kyber&#34;&gt;kyber&lt;/h2&gt;
@@ -774,11 +832,11 @@ $$
 </description>
         </item>
         <item>
-        <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
-        <link>https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
+        <title>[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</title>
+        <link>https://blog.ipandai.club/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/</link>
         <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
         
-        <guid>https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</guid>
+        <guid>https://blog.ipandai.club/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/</guid>
         <description>&lt;p&gt;超低延迟固态硬盘从内核到固件的服务器存储堆栈&lt;/p&gt;
 &lt;h1 id=&#34;个别名词解释&#34;&gt;个别名词解释&lt;/h1&gt;
 &lt;p&gt;the 99^th percentile 超过统计数据99%的数是多少&lt;/p&gt;

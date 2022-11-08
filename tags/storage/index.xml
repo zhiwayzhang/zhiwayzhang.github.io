@@ -1036,11 +1036,11 @@ $$
 </description>
         </item>
         <item>
-        <title>Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs (ATC&#39;19)</title>
-        <link>https://blog.ipandai.club/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</link>
+        <title>[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</title>
+        <link>https://blog.ipandai.club/p/atc19-asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds/</link>
         <pubDate>Wed, 17 Aug 2022 10:30:41 +0800</pubDate>
         
-        <guid>https://blog.ipandai.club/p/asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds-atc19/</guid>
+        <guid>https://blog.ipandai.club/p/atc19-asynchronous-i/o-stack-a-low-latency-kernel-i/o-stack-for-ultra-low-latency-ssds/</guid>
         <description>&lt;h1 id=&#34;intro&#34;&gt;Intro&lt;/h1&gt;
 &lt;p&gt;优化I/O的方法&lt;/p&gt;
 &lt;ul&gt;
@@ -1164,11 +1164,11 @@ $$
 </description>
         </item>
         <item>
-        <title>Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs (OSDI&#39;19)</title>
-        <link>https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</link>
+        <title>[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</title>
+        <link>https://blog.ipandai.club/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/</link>
         <pubDate>Wed, 17 Aug 2022 10:30:30 +0800</pubDate>
         
-        <guid>https://blog.ipandai.club/p/flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds-osdi19/</guid>
+        <guid>https://blog.ipandai.club/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/</guid>
         <description>&lt;p&gt;超低延迟固态硬盘从内核到固件的服务器存储堆栈&lt;/p&gt;
 &lt;h1 id=&#34;个别名词解释&#34;&gt;个别名词解释&lt;/h1&gt;
 &lt;p&gt;the 99^th percentile 超过统计数据99%的数是多少&lt;/p&gt;

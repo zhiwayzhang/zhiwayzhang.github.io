@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做'><title>【存储技术基础】固态硬盘</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='超低延迟固态硬盘从内核到固件的服务器存储堆栈 个别名词解释 the 99^th percentile 超过统计数据99%的数是多少 blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化 message signaled interrupt (MSI) 1.'><title>[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/'>
 
-<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='【存储技术基础】固态硬盘'>
-<meta property='og:description' content='主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做'>
-<meta property='og:url' content='https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/'>
+<link rel="stylesheet" href="/scss/style.min.18145888f21de6cb02d8cb0891be8240096206785da14eda35f6c23c239b966a.css"><meta property='og:title' content='[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs'>
+<meta property='og:description' content='超低延迟固态硬盘从内核到固件的服务器存储堆栈 个别名词解释 the 99^th percentile 超过统计数据99%的数是多少 blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化 message signaled interrupt (MSI) 1.'>
+<meta property='og:url' content='https://blog.ipandai.club/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='NVM' /><meta property='article:published_time' content='2022-09-22T09:36:42&#43;08:00'/><meta property='article:modified_time' content='2022-09-22T09:36:42&#43;08:00'/>
-<meta name="twitter:title" content="【存储技术基础】固态硬盘">
-<meta name="twitter:description" content="主要由Flash Memory 和FTL组成 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存 根据延迟数量级，一般用PCM做内存，Flash Memory做">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='File System' /><meta property='article:tag' content='SSD' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='Paper' /><meta property='article:published_time' content='2022-08-17T10:30:30&#43;08:00'/><meta property='article:modified_time' content='2022-08-17T10:30:30&#43;08:00'/>
+<meta name="twitter:title" content="[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs">
+<meta name="twitter:description" content="超低延迟固态硬盘从内核到固件的服务器存储堆栈 个别名词解释 the 99^th percentile 超过统计数据99%的数是多少 blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化 message signaled interrupt (MSI) 1.">
     </head>
     <body class="
     article-page
@@ -247,8 +247,8 @@
     
     <header class="article-category">
         
-            <a href="/categories/notes/" >
-                Notes
+            <a href="/categories/storage/" >
+                Storage
             </a>
         
     </header>
@@ -256,7 +256,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/">【存储技术基础】固态硬盘</a>
+            <a href="/p/osdi19-flashshare-punching-through-server-storage-stack-from-kernel-to-firmware-for-ultra-low-latency-ssds/">[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</a>
         </h2>
     
         
@@ -275,7 +275,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Sep 22, 2022</time>
+                <time class="article-time--published">Aug 17, 2022</time>
             </div>
         
 
@@ -290,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    5 minute read
+                    8 minute read
                 </time>
             </div>
         
@@ -304,178 +304,225 @@
     <section class="article-content">
     
     
-    <p>主要由Flash Memory 和FTL组成</p>
-<p>Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存</p>
-<p>根据延迟数量级，一般用PCM做内存，Flash Memory做外存</p>
-<h1 id="0x00-flash-memory">0x00 Flash Memory</h1>
-<h2 id="闪存原理">闪存原理</h2>
-<h3 id="类型">类型</h3>
-<p>NOR闪存</p>
+    <p>超低延迟固态硬盘从内核到固件的服务器存储堆栈</p>
+<h1 id="个别名词解释">个别名词解释</h1>
+<p>the 99^th percentile 超过统计数据99%的数是多少</p>
+<p>blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化</p>
+<p><strong>message signaled interrupt (MSI)</strong></p>
+<h1 id="1摘要">1.摘要</h1>
+<p>flash share</p>
+<p>在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。</p>
+<p>对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。</p>
+<p>评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。</p>
+<h1 id="10-intro">1.0 Intro</h1>
+<h2 id="11-现状">1.1 现状</h2>
+<p>网络服务提供商，满足服务级别协议SLA，延迟敏感</p>
+<p>某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA</p>
+<p>现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。</p>
+<p>为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。</p>
+<p>因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。</p>
+<p>现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟</p>
+<p>但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。</p>
+<p>the 99th percentile 是0.8ms（apache）</p>
+<p>但是当服务器同时运行pagerank的时候，延迟会增加228.5%。</p>
+<p>原因：略</p>
+<p>从固件到内核优化堆栈的存储。</p>
 <ul>
-<li>存储密度低</li>
-<li>可字节改写</li>
-</ul>
-<p>NAND闪存（主流）</p>
+<li>
+<p>内核级别的增强：</p>
+<p>两个挑战</p>
 <ul>
-<li>存储密度高</li>
-<li>不可覆盖写</li>
+<li>Linux的blk-mq导致I/O请求队列化，引入延迟</li>
+<li>NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。</li>
 </ul>
-<p>用于外存需要较高的存储量级，一般用NAND</p>
-<h3 id="闪存单元">闪存单元</h3>
-<p>读：电压代表不同数值</p>
-<p>写：电子注入</p>
-<p>相比晶体管添加了浮栅门，保存电子</p>
-<p>原理其实比较简单，非电子系就不做太详细的研究了</p>
-<p>闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行</p>
-<p>闪存块(擦除单元)，由多个页组成的单元</p>
-<img src="https://cdn.ipandai.club/image-20220922124359358.png" alt="image-20220922124359358" style="zoom:33%;" />
-<p>选中行和列，然后将数据加载到Sense Amplifiers</p>
-<p>存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0</p>
-<img src="https://cdn.ipandai.club/image-20220922124755447.png" alt="image-20220922124755447" style="zoom:25%;" />
-<p>Pass Through</p>
-<p>选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态</p>
-<img src="https://cdn.ipandai.club/image-20220922131649578.png" alt="image-20220922131649578" style="zoom:25%;" />
-<p>如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011</p>
-<img src="https://cdn.ipandai.club/image-20220922134857889.png" alt="image-20220922134857889" style="zoom:33%;"/>
-<p>上述为SLC，Single Level Cell，单存储单元</p>
-<h3 id="多比特闪存">多比特闪存</h3>
-<p>多比特闪存单元MLC，包含2Bits 4个Level的数据</p>
-<p>TLC 3 Bits 8个Level</p>
-<p>QLC 4 Bits 16个Level</p>
-<p><strong>多比特使用格雷码来编码</strong></p>
+<p>对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。</p>
+</li>
+<li>
+<p>固件层设计：</p>
+</li>
+</ul>
+<p>​		即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。</p>
+<ul>
+<li>ULL SSD的新中断处理服务：</li>
+</ul>
+<p>​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。</p>
+<p>​	通过将NVMe队列和ISR卸载到硬件加速器中来进一步优化NVMe completion routine。</p>
+<p>​	各种仿真实验后效果不错，效率提高了22%和31%。</p>
+<h1 id="20-background">2.0 Background</h1>
+<h2 id="21-存储内核栈">2.1 存储内核栈</h2>
+<p><img src="https://cdn.ipandai.club/image-20220810145032258.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220810145032258"
+	
+	
+></p>
 <blockquote>
-<p>使用格雷码使得相邻单元只有一位差异，方便纠错</p>
+<p>Linux文件系统IO</p>
+<ul>
+<li>bio</li>
+<li>request</li>
+<li>nvme_rw_command</li>
+</ul>
 </blockquote>
-<p>多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。</p>
-<img src="https://cdn.ipandai.club/image-20220922135516463.png" alt="image-20220922135516463" style="zoom:45%;" />
-<p>对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。</p>
-<img src="https://cdn.ipandai.club/image-20220922140421405.png" alt="image-20220922140421405" style="zoom:40%;" />
-<p>对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。</p>
-<img src="https://cdn.ipandai.club/image-20220922141455826.png" alt="image-20220922141455826" style="zoom:40%;" />
-<h3 id="闪存">闪存</h3>
-<p>Block的大小的一种配置：</p>
-<p>一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB</p>
-<p>有64列bitlines，一个block的大小即为<code>16KB*64*2=2MB</code>，一般按照此比例配置Block</p>
-<p>写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率</p>
-<p>写入是需要先擦除再写入，擦除整个块</p>
-<img src="https://cdn.ipandai.club/image-20220922143608667.png" alt="image-20220922143608667" style="zoom:50%;" />
-<h4 id="特性">特性</h4>
-<h5 id="读写粒度">读写粒度</h5>
-<p>闪存页读写粒度：</p>
+<p>存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。</p>
+<p>当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。</p>
+<h2 id="22-设备固件栈">2.2 设备固件栈</h2>
+<p><img src="https://cdn.ipandai.club/image-20220810232230437.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220810232230437"
+	
+	
+></p>
+<ol>
+<li>收到request</li>
+<li>SQ tail++入队</li>
+<li>写入SQ门铃寄存器</li>
+<li>通过DMA读取数据的物理位置</li>
+<li>SQ head++出队</li>
+<li>将请求转发至嵌入式缓存层或者FTL</li>
+<li>当出现缺页或者页面替换时，FTL将目标LBA转换成Z-NAND中相应的物理地址，必要时自行GC</li>
+<li>在完成I/O请求之后，NVMe控制器增加这个CQ的tail，入队</li>
+<li>通过DMA传输数据，并修改phase tag</li>
+<li>主机ISR通过搜索队列中检查phase tag，对于有效的phase tag，ISR清除tag位，并且处理剩余的I/O完成请求程序。</li>
+<li>CQ head++出队，在SQ中移除相应的记录，并且写入CQ的head doorbell</li>
+</ol>
+<h1 id="30-跨层设计">3.0 跨层设计</h1>
+<h2 id="31-快速存储的挑战">3.1 快速存储的挑战</h2>
+<p><img src="https://cdn.ipandai.club/image-20220811110758918.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220811110758918"
+	
+	
+></p>
+<p>原因是存储栈无法区分来自Apache的I/O请求，及时两个应用需要不同级别I/O的响应。</p>
+<h1 id="32-预知灵敏响应">3.2 预知灵敏响应</h1>
+<p>为了让内核可以区分I/O 请求的优先级和紧迫程度，修改Linux的进程控制快<code>task_struct</code>.</p>
+<p>为了保证有效性，在<code>address_space</code>,<code>bio</code>,<code>request</code>,<code>nvme_rw_command</code></p>
+<p>中都保存工作负载属性，在存储堆栈上打孔。</p>
+<p>FlashShare同时提供了一个可以在服务器上配置这些属性的工具。叫做<code>chworkload_attr</code>。</p>
+<p>可以方便的修改每个应用的属性并绑定到<code>task_struct</code>中</p>
+<p>修改了syscall表<code>arch/x86/entry/syscalls/syscall 64.tbl</code>添加了两个系统调用，可以从<code>task_struct</code>中set/get工作属性。</p>
+<p>在<code>/linux/syscall.h</code>中进行注册，并带有<code>asmlinkage</code>标签。</p>
+<p>用户通过shell给定特定进程，实现于<code>/sched/cores.c</code></p>
+<h2 id="33-内核优化">3.3 内核优化</h2>
+<p>优化文件系统中的blk-mq和NVMe驱动</p>
+<p>blk-mq合并重排请求提高了带宽使用，但是引入了延迟</p>
+<p>跳过所有在线应用的I/O 请求</p>
+<p>如果离线应用程序的 I/O 请求被 blk-mq 调度到后续在线应用程序发出的同一 LBA，则可能发生危险。</p>
+<p>如果两个请求的操作类型不同，blk-mq会将两个请求串联。否则blk-mq会将两个请求合并为一个<code>request</code>并交给NVMe驱动。</p>
+<p>为了防止延迟敏感的I/O 被NVMe控制器杀死：</p>
 <ul>
-<li>4KB，8KB，16KB必须全部读取或者写入</li>
-<li>us延迟</li>
+<li>为每个核心创建两个SQ队列和一个CQ队列</li>
 </ul>
-<p>闪存块擦除力度</p>
+<p><img src="https://cdn.ipandai.club/image-20220811173922087.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220811173922087"
+	
+	
+></p>
+<p>其中一个SQ保存来自在线应用的I/O请求。<strong>NVMe驱动程序通过管理员队列发送消息，通知NVMe控制器选择一种新的队列调度方法，该方法始终优先安排该SQ中的请求。</strong></p>
+<p>未来避免因优先级带来的饥饿，当该队列中的请求数量大于阈值时，或者没有在规定时间内被满足，NVMe驱动会满足所有离线应用I/O 。</p>
+<p>实验表明，队列大小为8或者200us的阈值最好。</p>
+<h1 id="40-io-completion和缓存">4.0 I/O Completion和缓存</h1>
+<p>采用轮询机制时查询I/O Completion时，内核态占用97%。</p>
+<p>带来两个问题：</p>
+<ol>
+<li>没有为处理I/O 响应单独分配核心，对于多进程下低效</li>
+<li>我们要减轻处理I/O轮询的核心开销，进一步降低延迟</li>
+</ol>
+<h2 id="41-中断处理程序">4.1 中断处理程序</h2>
+<p>flash share仅对来自在线应用的I/O 请求使用轮询</p>
+<p>使用信号处理离线应用</p>
+<p><img src="https://cdn.ipandai.club/image-20220811231355037.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220811231355037"
+	
+	
+></p>
+<ol>
+<li>修改blk-mq中的<code>submit_bio()</code>，将由文件系统或缓存的bio插入到mq</li>
+<li>如果bio是来自离线应用的，则插入队列，as normal</li>
+<li>如果bio是来自在线应用的，blk-mq则调用<code>queue_rq()</code>将请求发送至NVMe驱动。</li>
+<li>NVMe驱动转换I/O 请求为NVMe指令并非插入到响应SQ队列中</li>
+</ol>
+<p>使用Select-ISR，当请求为离线应用时，CPU核心可以通过上下文切换从NVMe驱动中释放。否则，blk-mq调用轮询机制<code>blk-poll()</code>。<code>blk-poll()</code>持续调用<code>nvme_poll()</code>，检查有效的完成记录是否存在于目标NVMe CQ中。如果存在，blk-mq禁用此CQ的IRQ，以至于MSI信号无法再次捕获blk-mq程序。<code>nvme_poll()</code>通过检查CQ中的phase tags查找CQ中的新记录。</p>
+<p>具体来说，<code>nvme poll()</code>搜索一个CQ记录，其请求信息与<code>blk poll()</code>等待完成的标签匹配。一旦检测到这样的新记录，blk-mq就会退出在<code>blk poll()</code>中实现的无限迭代，并将上下文切换到其用户进程。</p>
+<p>提出<code>I/O-stack accelerator</code></p>
+<p>主要目的是将blk-mq的任务迁移到附属于PCIe的加速器中</p>
+<p>可以使得通过上层文件系统生成的bio直接转换成<code>nvm_rw_command</code>。</p>
+<p>通过特殊的tag索引搜索队列中的元素，并且代表CPU合并bio</p>
+<p>该方法可以减少36%的I/O completion时间。</p>
+<h2 id="42-固件层">4.2 固件层</h2>
+<p>创建两个内存分区，一个服务于在线应用，一个服务于离线应用。</p>
+<p>三种模式</p>
+<ol>
+<li>固定拆分缓存</li>
+<li>根据I/O动态划分</li>
+<li>数据可保留</li>
+</ol>
+<p><img src="https://cdn.ipandai.club/image-20220812003132031.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220812003132031"
+	
+	
+></p>
+<h2 id="43-io-stack-acceleration">4.3 I/O-Stack Acceleration</h2>
+<p>添加了一个barrier logic，简单的MUX，作为硬件仲裁</p>
+<p>引入status bitmap来过滤SQ队列中的记录</p>
 <ul>
-<li>2MB擦除</li>
-<li>ms延迟，可以通过FTL来优化</li>
+<li>合并逻辑插入一个行的nvme 指令，status bitmap设置为1</li>
+<li>如果监测到ULL SSD从I/O SQ中读取NVMe指令，status bitmap设置为0</li>
 </ul>
-<h5 id="不可覆盖写">不可覆盖写</h5>
-<p>写前需要擦除，读写粒度与擦除粒度不同</p>
-<p>存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错</p>
-<img src="https://cdn.ipandai.club/image-20220922162139217.png" alt="image-20220922162139217" style="zoom:50%;" />
-<h5 id="有限次擦除">有限次擦除</h5>
-<p>随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。</p>
-<p>氧化层老化变薄，束缚电子能力变弱</p>
-<ul>
-<li>耐久性 变薄地次数</li>
-<li>保持力 不通电可以放置的时间</li>
-</ul>
-<p>SLC：10w次</p>
-<p>MLC：1w次</p>
-<p>TLC：1k次</p>
-<p>根据特性设计FTL固件来</p>
-<img src="https://cdn.ipandai.club/image-20220922164523965.png" alt="image-20220922164523965" style="zoom:50%;" />
-<h1 id="0x01-ftl">0x01 FTL</h1>
-<p>固态硬盘整体构成</p>
-<img src="https://cdn.ipandai.club/image-20220922164728094.png" alt="image-20220922164728094" style="zoom:50%;" />
-<p>SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大</p>
-<img src="https://cdn.ipandai.club/image-20220922165354311.png" alt="image-20220922165354311" style="zoom:50%;" />
-<h2 id="垃圾回收">垃圾回收</h2>
-<p>page对于OS而言，是写入时的block</p>
-<p>Page三种状态</p>
-<ul>
-<li>空闲 free page</li>
-<li>有效页 live/valid page</li>
-<li>无效页 dead/invalid page</li>
-</ul>
-<img src="https://cdn.ipandai.club/image-20220922184349456.png" alt="image-20220922184349456" style="zoom:25%;" />
-<p>需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲</p>
-<img src="https://cdn.ipandai.club/image-20220922184406162.png" alt="image-20220922184406162" style="zoom:25%;" />
-<p>时间开销：</p>
-<ul>
-<li>复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量</li>
-<li>擦除产生的开销 ms级延迟</li>
-</ul>
-<h3 id="gc策略">GC策略</h3>
-<p>要解决的问题：</p>
-<ul>
-<li>何时启动GC</li>
-<li>选中那些/多少Block进行GC</li>
-<li>有效的页如何被转写</li>
-<li>新数据写到哪里</li>
-</ul>
-<p>GC的时间开销：</p>
-<ul>
-<li>块擦除的时间 ms</li>
-<li>有效页的复制时间</li>
-</ul>
-<p>贪心策略：</p>
-<ul>
-<li>找到脏页最多的block来进行擦除</li>
-</ul>
-<p>优化：</p>
-<ul>
-<li>Age</li>
-<li>Hot/Cold 数据隔离，分组问题</li>
-</ul>
-<h2 id="磨损均衡">磨损均衡</h2>
-<p>优化寿命，有静态和动态策略</p>
-<p>静态：周期性的调整冷热数据存储的位置</p>
-<p>冷热数据的分区：将冷数据放在一起，热数据放在一起</p>
-<h2 id="ftl简介">FTL简介</h2>
-<ul>
-<li>
-<p>维护映射，虚拟地址到物理地址</p>
-</li>
-<li>
-<p>使用SRAM存储映射</p>
-</li>
-<li>
-<p>向上层隐藏擦除操作：</p>
-<ul>
-<li>
-<p>避免原地更新-&gt;异地更新</p>
-</li>
-<li>
-<p>更新一个新页面</p>
-</li>
-<li>
-<p>高性能的垃圾回收和擦除</p>
-</li>
-</ul>
-</li>
-</ul>
-<p>OOB有物理地址到虚拟地址的映射，用于掉电恢复，这里引用一段<a class="link" href="https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf"  target="_blank" rel="noopener"
-    >wisc的OSTEP中的一段解释（44 Flash- based SSD）</a>。</p>
-<p>OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射</p>
-<p>为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程</p>
-<p>大致看了一下OSTEP，记得是jyy老师推荐的教材，希望以后有时间读一下</p>
-<img src="https://cdn.ipandai.club/image-20220924141132556.png" alt="image-20220924141132556" style="zoom:50%;" />
-<h3 id="page-level-ftl">Page-Level FTL</h3>
-<p>原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number</p>
-<p>缺点是页表占用很大的空间</p>
-<img src="https://cdn.ipandai.club/image-20220924152322358.png" alt="image-20220924152322358" style="zoom:50%;" />
-<h3 id="block-level-ftl">Block-Level FTL</h3>
-<p>保持Block 到Block的映射</p>
-<p>先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的</p>
-<img src="https://cdn.ipandai.club/image-20220924152259043.png" alt="image-20220924152259043" style="zoom:50%;" />
-<p>优点是占用空间很小，缺点是GC负载增加</p>
-<p>原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】</p>
-<h3 id="hybrid-ftl">Hybrid FTL</h3>
-<p>对写入分为新/旧数据，新写入的数据用Page-Level Mapping效率高，写入Log Blocks作为缓冲，之后再更新到Data Blocks</p>
-<p>旧数据因为写入后更新相对不频繁，使用Block-Level Mapping，写入Data Blocks</p>
+<p>如果状态位图表明CAM中的请求条目（与目标SQ相关联）无效，CAM将跳过对这些条目的搜索。</p>
+<h1 id="50-实验">5.0 实验</h1>
+<h2 id="51-实验步骤">5.1 实验步骤</h2>
+<p>使用gem5系统结构模拟</p>
+<p>64位arm指令集</p>
+<p>Linux 4.9.30</p>
+<p>8核心2GHz</p>
+<p>L1 Cache 64KB</p>
+<p>2GB Memory</p>
+<p><img src="https://cdn.ipandai.club/image-20220812191343849.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220812191343849"
+	
+	
+></p>
+<h1 id="related-work">Related Work</h1>
+<p>将SSD固件转移到主机上，消除冗余的地址转换</p>
+<p>根据应用程序特征对缓存进行分区处理，然而不能发挥ULL SSD的作用</p>
+<p>从文件系统和block IO设备方面优化移动端操作系统，使其提高SQLite的性能，有局限性，应用程序、ULL SSD</p>
+<p>在内核的多个层对写请求进行调度，容易阻塞读请求和ULL操作</p>
+<p>根据前台任务和后台任务中的依赖关系，分配优先级，允许后台任务高优先级，IO通常情况下没有依赖关系，效果差，服务器大部分都是多进程</p>
+<p>考虑对在线应用设置高优先级，但是没有考虑对IO stack中其他部分的影响</p>
 
 </section>
 
@@ -484,11 +531,13 @@
     
     <section class="article-tags">
         
+            <a href="/tags/file-system/">File System</a>
+        
             <a href="/tags/ssd/">SSD</a>
         
             <a href="/tags/storage/">Storage</a>
         
-            <a href="/tags/nvm/">NVM</a>
+            <a href="/tags/paper/">Paper</a>
         
     </section>
 
@@ -545,12 +594,25 @@
             
                 
 <article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E4%B8%BB%E5%AD%98/">
+    <a href="/p/osdi21-modernizing-file-system-through-in-storage-indexing/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">【存储技术基础】主存</h2>
+            <h2 class="article-title">[OSDI&#39;21] Modernizing File System through In-Storage Indexing</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/linux-block-i/o-stack%E7%AE%80%E4%BB%8B/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux Block I/O Stack简介</h2>
         </div>
     </a>
 </article>
@@ -584,25 +646,12 @@
             
                 
 <article class="">
-    <a href="/p/linux-block-i/o-stack%E7%AE%80%E4%BB%8B/">
+    <a href="/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">Linux Block I/O Stack简介</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【存储系统】多硬盘存储系统</h2>
+            <h2 class="article-title">【存储技术基础】固态硬盘</h2>
         </div>
     </a>
 </article>
@@ -779,45 +828,42 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#0x00-flash-memory">0x00 Flash Memory</a>
+    <li><a href="#个别名词解释">个别名词解释</a></li>
+    <li><a href="#1摘要">1.摘要</a></li>
+    <li><a href="#10-intro">1.0 Intro</a>
       <ol>
-        <li><a href="#闪存原理">闪存原理</a>
-          <ol>
-            <li><a href="#类型">类型</a></li>
-            <li><a href="#闪存单元">闪存单元</a></li>
-            <li><a href="#多比特闪存">多比特闪存</a></li>
-            <li><a href="#闪存">闪存</a>
-              <ol>
-                <li><a href="#特性">特性</a>
-                  <ol>
-                    <li><a href="#读写粒度">读写粒度</a></li>
-                    <li><a href="#不可覆盖写">不可覆盖写</a></li>
-                    <li><a href="#有限次擦除">有限次擦除</a></li>
-                  </ol>
-                </li>
-              </ol>
-            </li>
-          </ol>
-        </li>
+        <li><a href="#11-现状">1.1 现状</a></li>
       </ol>
     </li>
-    <li><a href="#0x01-ftl">0x01 FTL</a>
+    <li><a href="#20-background">2.0 Background</a>
       <ol>
-        <li><a href="#垃圾回收">垃圾回收</a>
-          <ol>
-            <li><a href="#gc策略">GC策略</a></li>
-          </ol>
-        </li>
-        <li><a href="#磨损均衡">磨损均衡</a></li>
-        <li><a href="#ftl简介">FTL简介</a>
-          <ol>
-            <li><a href="#page-level-ftl">Page-Level FTL</a></li>
-            <li><a href="#block-level-ftl">Block-Level FTL</a></li>
-            <li><a href="#hybrid-ftl">Hybrid FTL</a></li>
-          </ol>
-        </li>
+        <li><a href="#21-存储内核栈">2.1 存储内核栈</a></li>
+        <li><a href="#22-设备固件栈">2.2 设备固件栈</a></li>
       </ol>
     </li>
+    <li><a href="#30-跨层设计">3.0 跨层设计</a>
+      <ol>
+        <li><a href="#31-快速存储的挑战">3.1 快速存储的挑战</a></li>
+      </ol>
+    </li>
+    <li><a href="#32-预知灵敏响应">3.2 预知灵敏响应</a>
+      <ol>
+        <li><a href="#33-内核优化">3.3 内核优化</a></li>
+      </ol>
+    </li>
+    <li><a href="#40-io-completion和缓存">4.0 I/O Completion和缓存</a>
+      <ol>
+        <li><a href="#41-中断处理程序">4.1 中断处理程序</a></li>
+        <li><a href="#42-固件层">4.2 固件层</a></li>
+        <li><a href="#43-io-stack-acceleration">4.3 I/O-Stack Acceleration</a></li>
+      </ol>
+    </li>
+    <li><a href="#50-实验">5.0 实验</a>
+      <ol>
+        <li><a href="#51-实验步骤">5.1 实验步骤</a></li>
+      </ol>
+    </li>
+    <li><a href="#related-work">Related Work</a></li>
   </ol>
 </nav>
         </div>

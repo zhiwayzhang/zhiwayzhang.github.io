@@ -294,7 +294,7 @@
 
 
                 <time class="article-time--reading">
-                    26 minute read
+                    29 minute read
                 </time>
             </div>
         
@@ -333,7 +333,7 @@
 </ul>
 <h2 id="块io层">块I/O层</h2>
 <p>系统能够随机访问固定大小的数据片的设备被称为块设备，最常见的块设备为硬盘，对块设备的访问通常是在其内部安装文件系统。操作系统为了对其访问和保证性能，需要一个子系统来对块设备和对块设备的请求进行管理。</p>
-<h2 id="scsi底层设备驱动层">SCSI底层设备驱动层</h2>
+<h2 id="scsi底层设备驱动层-todo">SCSI底层设备驱动层 ==TODO==</h2>
 <p>块I/O层将请求发往SCSI层，SCSI就开始真实处理这些IO请求，但是SCSI层又对其内部按照功能划分了不同层次：</p>
 <ul>
 <li>
@@ -597,6 +597,9 @@
 <p>文件系统作为操作系统中一个不可或缺的部分，负责在存储设备上管理、存储、获取数据、维护信息。</p>
 <p>在Linux中，内核通过VFS虚拟文件系统向用户提供通用的接口，向下对接各种不同的文件系统，可以有效避免不同文件系统的实现差异对上层带来影响。</p>
 <h2 id="ext4">ext4</h2>
+<p>本部分大量内容来自kernel.org的文档</p>
+<p><a class="link" href="https://www.kernel.org/doc/html/latest/filesystems/ext4/index.html"  target="_blank" rel="noopener"
+    >ext4 Data Structures and Algorithms — The Linux Kernel documentation</a></p>
 <h3 id="ext-文件系统发展历史">ext 文件系统发展历史</h3>
 <h4 id="ext1">ext1</h4>
 <p>Extended file system，扩展文件系统。</p>
@@ -700,9 +703,68 @@
 <p>随着使用的block数量接近SSD的容量上限，会导致SSD的性能下降，文件系统通过discard指令告知SSD哪些范围内的block已经不再使用，SSD可以将其回收或者用来实现磨损均衡</p>
 </li>
 </ul>
+<h3 id="数据组织">数据组织</h3>
+<p>ext4文件系统将部分block组织为一个group，默认block大小采用4KB，因此一个group中的block数量为<code>8*block_size_in_bytes=32768 blocks</code>，空间为128MB。</p>
+<p>ext4部分在磁盘中按小端写入，jdb2日志部分在磁盘中按大端写入。</p>
+<p>ext4在分配磁盘空间时只能分配若干个block，一个block包含磁盘上的若干个扇区，扇区的数量必须是2的幂次。</p>
+<p>不使用扩展布局的文件（通过block映射维护）必须存放在文件系统前$2^{32}$个block中，通过扩展布局来保存的文件，必须存放在前$2^{48}$个block中。</p>
+<p>对于32位和64位的文件系统，各个数据结构的大小限制如下图所示：</p>
+<p><img src="https://cdn.ipandai.club/image-20221115165058013.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221115165058013"
+	
+	
+></p>
+<p><img src="https://cdn.ipandai.club/image-20221115165128885.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221115165128885"
+	
+	
+></p>
+<p>在一个Block Group中，数据的组织如表格所示：</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>Group 0 Padding</th>
+<th>ext4 Super Block</th>
+<th>Group Descriptors</th>
+<th>Reserved GDT Blocks</th>
+<th>Data Block Bitmap</th>
+<th>inode Bitmap</th>
+<th>inode Table</th>
+<th>Data Blocks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1024 bytes</td>
+<td>1 block</td>
+<td>many blocks</td>
+<td>many blocks</td>
+<td>1 block</td>
+<td>1 block</td>
+<td>many blocks</td>
+<td>many more blocks</td>
+</tr>
+</tbody>
+</table></div>
+<p>磁盘中会预留1024 bytes，用于操作系统的引导模块安装，该padding分区只有group 0含有，为了避免supper block损坏导致整个文件系统不可用，在其他block group中还会有备份，如果一个block group不含有冗余备份，那么它将以data block bitmap开头。</p>
+<p>在执行mkfs时，还会在group descriptor描述符分区和data block bitmap分区之间分配一个保留的GDT blocks分区，用于文件系统日后的扩展。</p>
+<p>ext4文件系统中还引入了Flexible Block Groups的概念(flex_bg)，主要思想是将若干个block group组合成一个大的Group，将所有block group中的元数据（inode，bitmap）都集中到第一个block group中，提高对元数据加载和查询的效率，并且使得文件数据在磁盘上连续，更紧凑。一般通过<code>2^sb.s_log_groups_per_flex</code>个block group来组成一个大的Group。</p>
+<p>自ext3起，ext文件系统就开始使用Meta block groups(META_BG)，是一组只用一个group descriptor来描述的block groups，首个block group不再存储每个block group的描述符，转由meta block group来存储，并且会在其中存储几个冗余副本。</p>
+<p>对于ext4文件系统的读写流程计划在此后单独写一篇文章进行总结。</p>
 <h2 id="f2fs">F2FS</h2>
 <p>F2FS文件系统提出于<code>USENIX FAST'21</code>，<a class="link" href="https://www.usenix.org/conference/fast15/technical-sessions/presentation/lee"  target="_blank" rel="noopener"
     >F2FS: A New File System for Flash Storage | USENIX</a></p>
+<p>全称为Flash-Friendly File System，</p>
 <h2 id="btrfs">Btrfs</h2>
 <h1 id="块io层-与-io调度器">块I/O层 与 I/O调度器</h1>
 <h2 id="块设备">块设备</h2>
@@ -996,10 +1058,14 @@
     >【kernel.org Ext4文件系统介绍】Ext4 Howto - Ext4</a></li>
 <li><a class="link" href="https://btrfs.wiki.kernel.org/index.php/Status"  target="_blank" rel="noopener"
     >【kernel.org Btrfs文件系统现状】Status - btrfs Wiki</a></li>
+<li><a class="link" href="https://www.kernel.org/doc/html/latest/filesystems/ext4/index.html"  target="_blank" rel="noopener"
+    >【kernel.org Ext4文件系统设计】ext4 Data Structures and Algorithms</a></li>
 <li><a class="link" href="https://www.usenix.org/conference/fast15/technical-sessions/presentation/lee"  target="_blank" rel="noopener"
     >【USENIX FAST'21】F2FS: A New File System for Flash Storage</a></li>
 <li><a class="link" href="https://wiki.archlinux.org/title/Ext4_%28%e7%ae%80%e4%bd%93%e4%b8%ad%e6%96%87%29#%e5%85%b3%e9%97%ad%e5%b1%8f%e9%9a%9c"  target="_blank" rel="noopener"
     >【archlinux.org ArchWiki】Ext4 </a></li>
+<li><a class="link" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-ssd"  target="_blank" rel="noopener"
+    >【Red Hat Customer Portal | SSD discard】Chapter 21. Solid-State Disk Deployment Guidelines Red Hat Enterprise Linux 7</a></li>
 </ol>
 
 </section>
@@ -1313,7 +1379,7 @@
         <li><a href="#应用程序层">应用程序层</a></li>
         <li><a href="#vfs层">VFS层</a></li>
         <li><a href="#块io层">块I/O层</a></li>
-        <li><a href="#scsi底层设备驱动层">SCSI底层设备驱动层</a></li>
+        <li><a href="#scsi底层设备驱动层-todo">SCSI底层设备驱动层 ==TODO==</a></li>
         <li><a href="#物理外设层">物理外设层</a></li>
       </ol>
     </li>
@@ -1372,6 +1438,7 @@
                 <li><a href="#ext4-1">ext4</a></li>
               </ol>
             </li>
+            <li><a href="#数据组织">数据组织</a></li>
           </ol>
         </li>
         <li><a href="#f2fs">F2FS</a></li>

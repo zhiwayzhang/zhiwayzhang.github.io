@@ -294,7 +294,7 @@
 
 
                 <time class="article-time--reading">
-                    29 minute read
+                    30 minute read
                 </time>
             </div>
         
@@ -333,7 +333,7 @@
 </ul>
 <h2 id="块io层">块I/O层</h2>
 <p>系统能够随机访问固定大小的数据片的设备被称为块设备，最常见的块设备为硬盘，对块设备的访问通常是在其内部安装文件系统。操作系统为了对其访问和保证性能，需要一个子系统来对块设备和对块设备的请求进行管理。</p>
-<h2 id="scsi底层设备驱动层-todo">SCSI底层设备驱动层 ==TODO==</h2>
+<h2 id="scsi底层--设备驱动层">SCSI底层 &amp;&amp; 设备驱动层</h2>
 <p>块I/O层将请求发往SCSI层，SCSI就开始真实处理这些IO请求，但是SCSI层又对其内部按照功能划分了不同层次：</p>
 <ul>
 <li>
@@ -346,6 +346,7 @@
 <p>SCSI低层：底层负责识别物理设备，将其抽象提供给高层，同时接收高层派发的SCSI命令，交给物理设备处理</p>
 </li>
 </ul>
+<p>更正：对于传统的块设备而言，服务器通过SCSI协议、SAS接口连接，个人电脑通过AHCI协议/SATA接口连接，目前主流的发展方向为NVMe协议/M.2接口。</p>
 <h2 id="物理外设层">物理外设层</h2>
 <p>在I/O中一般为磁盘、固态硬盘等存储设备</p>
 <h1 id="vfs简介">VFS简介</h1>
@@ -764,8 +765,33 @@
 <h2 id="f2fs">F2FS</h2>
 <p>F2FS文件系统提出于<code>USENIX FAST'21</code>，<a class="link" href="https://www.usenix.org/conference/fast15/technical-sessions/presentation/lee"  target="_blank" rel="noopener"
     >F2FS: A New File System for Flash Storage | USENIX</a></p>
-<p>全称为Flash-Friendly File System，</p>
+<p>全称为Flash-Friendly File System，基于日志结构文件系统(Log-structured File System, LFS)，针对LFS中wandering tree和gc开销大的问题进行了优化。</p>
+<h3 id="主要特点">主要特点</h3>
+<p>针对闪存进行了优化：</p>
+<ul>
+<li>扩大随机写入区域来提高性能，但带来了空间局部性</li>
+<li>尽可能使得文件系统的处理单元与FTL中保持一致</li>
+</ul>
+<p>针对wandering tree问题，该问题是因为LFS的脏数据通过追加更新，如果一个数据块变成脏数据，那么其索引块，以及间接索引块都会变成脏块：</p>
+<ul>
+<li>使用node来代替inode和指针块</li>
+<li>通过包含所有node块地址的Node Address Table(NAT)来切断更新递归的传播</li>
+</ul>
+<p>垃圾回收问题：</p>
+<ul>
+<li>支持后台清理</li>
+<li>支持贪心和cost-benefit算法</li>
+<li>为动态/静态冷热数据分离提供multi-head logs</li>
+<li>引入自适应日志来实现高效的块分配</li>
+</ul>
 <h2 id="btrfs">Btrfs</h2>
+<p>Btrfs是一个写时复制的文件系统，基于B-tree实现，专注于容错，修复和易于管理，发布于2014年，发展目标是为了取代ext3文件系统，解决ext3的限制。在2021年，Fedora 33宣布将使用Btrfs作为安装时默认的文件系统。而Fedora受到redhat的直接赞助，说明Btrfs在不断发展的过程中，得到了社区中部分用户以及企业的认可，目前还处在测试和不断完善的阶段。</p>
+<p>主要特点</p>
+<ul>
+<li>基于B-Tree维护元数据，插入查询操作高效</li>
+<li>基于COW，提高磁盘寿命</li>
+<li>支持只读/可读快照</li>
+</ul>
 <h1 id="块io层-与-io调度器">块I/O层 与 I/O调度器</h1>
 <h2 id="块设备">块设备</h2>
 <p>对于Unix系统来说，有着一切皆文件的设计哲学，因此外部设备在操作系统看来是一个设备文件。设备文件共分为两种：</p>
@@ -1048,6 +1074,8 @@
 <li>《深入理解Linux内核》</li>
 <li>《Linux设备驱动程序》</li>
 <li>《深入浅出SSD：固态存储核心技术、原理与实战》</li>
+<li><a class="link" href="https://www.enterprisestorageforum.com/hardware/nand-dram-sas-scsi-and-sata-ahci-not-dead-yet/"  target="_blank" rel="noopener"
+    >NAND, DRAM, SAS/SCSI and SATA/AHCI: Not Dead, Yet | Enterprise Storage Forum</a></li>
 <li><a class="link" href="https://www.quora.com/Linux-Kernel/What-is-the-major-difference-between-the-buffer-cache-and-the-page-cache-Why-were-they-separate-entities-in-older-kernels-Why-were-they-merged-later-on/answer/Robert-Love-1"  target="_blank" rel="noopener"
     >【Quora】Robert Love对缓冲区缓存和页面缓存的主要区别是什么的回答？为什么它们在较旧的内核中是独立的实体？为什么后来他们被合并了？</a></li>
 <li><a class="link" href="https://pages.cs.wisc.edu/~remzi/OSTEP/"  target="_blank" rel="noopener"
@@ -1379,7 +1407,7 @@
         <li><a href="#应用程序层">应用程序层</a></li>
         <li><a href="#vfs层">VFS层</a></li>
         <li><a href="#块io层">块I/O层</a></li>
-        <li><a href="#scsi底层设备驱动层-todo">SCSI底层设备驱动层 ==TODO==</a></li>
+        <li><a href="#scsi底层--设备驱动层">SCSI底层 &amp;&amp; 设备驱动层</a></li>
         <li><a href="#物理外设层">物理外设层</a></li>
       </ol>
     </li>
@@ -1441,7 +1469,11 @@
             <li><a href="#数据组织">数据组织</a></li>
           </ol>
         </li>
-        <li><a href="#f2fs">F2FS</a></li>
+        <li><a href="#f2fs">F2FS</a>
+          <ol>
+            <li><a href="#主要特点">主要特点</a></li>
+          </ol>
+        </li>
         <li><a href="#btrfs">Btrfs</a></li>
       </ol>
     </li>

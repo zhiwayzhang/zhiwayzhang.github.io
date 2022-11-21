@@ -661,7 +661,7 @@ $$
 &lt;h3 id=&#34;主要特点&#34;&gt;主要特点&lt;/h3&gt;
 &lt;p&gt;针对闪存进行了优化：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;扩大随机写入区域来提高性能，但带来了空间局部性&lt;/li&gt;
+&lt;li&gt;==扩大随机写入区域来提高性能==（此处存在疑问），但带来了空间局部性&lt;/li&gt;
 &lt;li&gt;尽可能使得文件系统的处理单元与FTL中保持一致&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;针对wandering tree问题，该问题是因为LFS的脏数据通过追加更新，如果一个数据块变成脏数据，那么其索引块，以及间接索引块都会变成脏块：&lt;/p&gt;
@@ -693,10 +693,34 @@ $$
 &lt;/ul&gt;
 &lt;p&gt;块设备的一个主要特点就是CPU和总线读写数据的时间开销与磁盘硬件速度不匹配。&lt;/p&gt;
 &lt;p&gt;内核再对块设备发出I/O请求时，内核利用&lt;code&gt;通用块层&lt;/code&gt;发起I/O，每次I/O请求都是通过一个&lt;code&gt;bio&lt;/code&gt;结构体来描述。通用块层下的I/O调度程序会根据策略将待处理的I/O请求进行归类，将相邻的请求聚集在一起，减少磁盘磁头的移动。&lt;/p&gt;
-&lt;p&gt;块是操作系统和硬件设备在传输数据时的基本单位，&lt;/p&gt;
+&lt;p&gt;块是操作系统和硬件设备在传输数据时的基本单位。&lt;/p&gt;
+&lt;p&gt;本文主要介绍mq-deadline，kyber，bfq三个多队列设计的调度器&lt;/p&gt;
 &lt;h2 id=&#34;mq-deadline&#34;&gt;mq-deadline&lt;/h2&gt;
+&lt;p&gt;mq-deadline调度器主要根据deadline调度器来设计，是deadline调度器的多队列版本，适配了block层的多队列&lt;/p&gt;
+&lt;p&gt;mq-deadline调度器将IO分为read和write两种类型，对于这每种类型的IO有一棵红黑树和一个FIFO的队列，红黑树用于将I/O按照其访问的LBA排列方便查找合并，FIFO队列则记录了I/O进入mq-deadline调度器的顺序，以提供超时期限的保障&lt;/p&gt;
+&lt;p&gt;read请求的I/O可以抢占write的分发机会，但不能一直占有，维护了一个计数保证read请求不会导致write请求饥饿&lt;/p&gt;
+&lt;p&gt;mq-deadline调度器会优先去批量式地分发I/O而不去管I/O的到期时间，当批量分发到一定的个数再关心到期时间，然后去分发即将到期的I/O&lt;/p&gt;
+&lt;p&gt;最后mq-deadline针对sync穿透性I/O这种需要尽快发送到设备的I/O设置另外一个dispatch队列，然后每次派发的时候都优先派发dispatch队列上的I/O&lt;/p&gt;
 &lt;h2 id=&#34;bfq&#34;&gt;bfq&lt;/h2&gt;
+&lt;p&gt;全称为Budget Fair Queueing，bfq是一种比例共享的I/O调度器，有一些低延迟能力。支持cgroup。&lt;/p&gt;
+&lt;p&gt;BFQ的主要特点有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BFQ保证了系统和应用程序的响应能力，以及对时间敏感程序保证低延迟（音视频播放）&lt;/li&gt;
+&lt;li&gt;BFQ在进程或者组之间分配带宽、时间，在保持吞吐量时进行时间分配&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在默认配置下，BFQ优先考虑延迟而非吞吐量，可以通过设置&lt;code&gt;low_latency=0&lt;/code&gt;来关闭低延迟启发式算法，来提高设备吞吐量。BFQ通过锁来保护每个I/O请求，会增加一些额外开销。&lt;/p&gt;
+&lt;p&gt;BFQ是一种比例份额调度器，主要部分借鉴了CFQ，是一种公平的调度器。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;每个在设备上执行I/O的进程都与一个权重和一个bfq 队列相关联&lt;/li&gt;
+&lt;li&gt;BFQ授权一个队列（进程）可以在一段时间内对设备的独占访问，并通过将每个队列与预算（请求扇区数量）相关联来实现。&lt;/li&gt;
+&lt;li&gt;每个队列获得设备访问授权后，队列的预算会在每次请求发送时根据请求大小递减&lt;/li&gt;
+&lt;li&gt;当发生：队列完成其预算、队列清空、触发预算超时时，队列才会过期，预算超时机制可以防止随机I/O进程对设备长时间的占用降低吞吐量&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;kyber&#34;&gt;kyber&lt;/h2&gt;
+&lt;p&gt;Kyber I/O调度器是Linux上面针对高速存储设备（NVMe闪存）设计的一个新的I/O调度器，配和多队列的Block层使用。在Linux 4.12的时候和BFQ调度器一起成为内核中的一个可选项&lt;/p&gt;
+&lt;p&gt;Kyber调度器的基本思路是会为每一个的硬件的队列维护一个不同类型I/O请求的队列，这些请求主要根据I/O操作的方式来进行区分。Kyber按照读、同步写以及其它的(异步写等)将I/O请求分为了3类。在Kyber的设计中，更加倾向于让读优先，这个策略也和其它的一些调度器的设计类似&lt;/p&gt;
+&lt;p&gt;Kyber在一个Kyber上下文中维护了关于这几类请求的队列。它通过限制每一个队列的长度来对在这里产生的请求的延迟进行控制。Kyber只有在这些队列里面的请求被处理了之后才会收集新的请求。这里限制的方式采用了基于Token的方式&lt;/p&gt;
+&lt;p&gt;由于Kyber面向的是高速存储，这类设备一般是NVMe SSD、NVM。采用类似CFQ中的一些对请求排序的方法可能有损于性能，所以在Kyber中没有对请求排序的逻辑。Kyber会对一些I/O请求进行合并操作，以及会尝试批量处理这些请求来提高性能。批量处理的大小根据请求类型来决定&lt;/p&gt;
 &lt;h1 id=&#34;nvme接口协议&#34;&gt;NVMe接口协议&lt;/h1&gt;
 &lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
 &lt;p&gt;NVMe协议的产生是为了取代固态硬盘原有的AHCI协议+SATA接口，随着固态硬盘技术的发展，使得性能瓶颈从存储设备上的转移到了协议和接口中，于是固态硬盘的几大生产商一起制定了该协议。&lt;/p&gt;
@@ -986,6 +1010,10 @@ $$
     &gt;【archlinux.org ArchWiki】Ext4 &lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/ch-ssd&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;【Red Hat Customer Portal | SSD discard】Chapter 21. Solid-State Disk Deployment Guidelines Red Hat Enterprise Linux 7&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.51cto.com/u_15061941/3859244&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;【mq-deadline】mq-deadline调度器原理及源码分析&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://nan01ab.github.io/2019/02/Kyber.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;【Kyber I/O】Kyber IO Scheduler of Linux · Columba M71&amp;rsquo;s Blog&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
         </item>

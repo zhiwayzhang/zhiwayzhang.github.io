@@ -6,7 +6,26 @@
         <description>Recent content in ACM on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sun, 11 Oct 2020 19:45:39 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/acm/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 21 Nov 2022 09:46:56 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/acm/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>WHUT新生赛游记?</title>
+        <link>https://blog.ipandai.club/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</link>
+        <pubDate>Mon, 21 Nov 2022 09:46:56 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</guid>
+        <description>&lt;p&gt;大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢&lt;/p&gt;
+&lt;h1 id=&#34;day-0&#34;&gt;Day 0&lt;/h1&gt;
+&lt;p&gt;体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线&lt;code&gt;4&#39;19&lt;/code&gt;，今年跑了&lt;code&gt;5&#39;00&lt;/code&gt;，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。&lt;/p&gt;
+&lt;h1 id=&#34;day-1&#34;&gt;Day 1&lt;/h1&gt;
+&lt;p&gt;比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。&lt;/p&gt;
+&lt;p&gt;不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。&lt;/p&gt;
+&lt;p&gt;配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，&lt;del&gt;尽量保证体验一致吧&lt;/del&gt;然而线上没有零食吃。&lt;/p&gt;
+&lt;p&gt;志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。&lt;/p&gt;
+&lt;p&gt;整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。&lt;/p&gt;
+&lt;p&gt;从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了第一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。&lt;/p&gt;
+&lt;h1 id=&#34;return-0&#34;&gt;Return 0&lt;/h1&gt;
+</description>
+        </item>
+        <item>
         <title>Luogu3964-松鼠聚会</title>
         <link>https://blog.ipandai.club/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/</link>
         <pubDate>Sun, 11 Oct 2020 19:45:39 +0000</pubDate>

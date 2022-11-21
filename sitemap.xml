@@ -3,12 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://blog.ipandai.club/</loc>
-    <lastmod>2022-10-29T16:48:32+08:00</lastmod>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
   </url><url>
-    <loc>https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/</loc>
-    <lastmod>2022-10-29T16:48:32+08:00</lastmod>
+    <loc>https://blog.ipandai.club/tags/acm/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/categories/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/categories/diary/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/post/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/whut/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/%E6%B8%B8%E8%AE%B0/</loc>
+    <lastmod>2022-11-21T09:46:56+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/</loc>
     <lastmod>2022-10-29T16:48:32+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/database/</loc>
@@ -26,13 +47,7 @@
     <loc>https://blog.ipandai.club/tags/paper/</loc>
     <lastmod>2022-10-29T16:48:32+08:00</lastmod>
   </url><url>
-    <loc>https://blog.ipandai.club/post/</loc>
-    <lastmod>2022-10-29T16:48:32+08:00</lastmod>
-  </url><url>
     <loc>https://blog.ipandai.club/categories/storage/</loc>
-    <lastmod>2022-10-29T16:48:32+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/</loc>
     <lastmod>2022-10-29T16:48:32+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</loc>
@@ -78,9 +93,6 @@
     <lastmod>2022-09-22T09:36:42+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/diary/</loc>
-    <lastmod>2022-09-21T15:27:25+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/categories/diary/</loc>
     <lastmod>2022-09-21T15:27:25+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/p/%E4%B8%AD%E5%A5%96/</loc>
@@ -281,9 +293,6 @@
     <loc>https://blog.ipandai.club/page/</loc>
     <lastmod>2021-03-13T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://blog.ipandai.club/tags/acm/</loc>
-    <lastmod>2020-10-11T19:45:39+00:00</lastmod>
-  </url><url>
     <loc>https://blog.ipandai.club/p/luogu3964-%E6%9D%BE%E9%BC%A0%E8%81%9A%E4%BC%9A/</loc>
     <lastmod>2020-10-11T19:45:39+00:00</lastmod>
   </url><url>
@@ -344,13 +353,7 @@
     <loc>https://blog.ipandai.club/p/%E5%B0%8F%E5%85%94%E7%9A%84%E6%A3%8B%E7%9B%98-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6/</loc>
     <lastmod>2019-12-13T18:56:57+00:00</lastmod>
   </url><url>
-    <loc>https://blog.ipandai.club/tags/whut/</loc>
-    <lastmod>2019-11-16T21:48:04+00:00</lastmod>
-  </url><url>
     <loc>https://blog.ipandai.club/p/whut%E6%96%B0%E7%94%9F%E8%B5%9B%E6%B8%B8%E8%AE%B0/</loc>
-    <lastmod>2019-11-16T21:48:04+00:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/%E6%B8%B8%E8%AE%B0/</loc>
     <lastmod>2019-11-16T21:48:04+00:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/archives/</loc>

@@ -9,7 +9,7 @@ Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获
 
 <link rel='canonical' href='https://blog.ipandai.club/p/bilibili%E8%A7%86%E9%A2%91%E7%BD%91%E7%AB%99%E6%8E%92%E8%A1%8C%E6%A6%9C%E8%AF%84%E5%88%86%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90/'>
 
-<link rel="stylesheet" href="/scss/style.min.007cdc8230626480a18d2925386512e8118bb329d3dc0b10770bc0c700e04c7a.css"><meta property='og:title' content='Bilibili视频网站排行榜评分的线性回归分析'>
+<link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='Bilibili视频网站排行榜评分的线性回归分析'>
 <meta property='og:description' content='Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
 Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
 本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。

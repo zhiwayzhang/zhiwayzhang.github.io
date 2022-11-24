@@ -31,8 +31,7 @@
         <pubDate>Sat, 29 Oct 2022 16:48:32 +0800</pubDate>
         
         <guid>https://blog.ipandai.club/p/osdi21-modernizing-file-system-through-in-storage-indexing/</guid>
-        <description>&lt;h1 id=&#34;todo-论文在事务一致性恢复的部分&#34;&gt;TODO 论文在事务一致性/恢复的部分&lt;/h1&gt;
-&lt;h1 id=&#34;questions&#34;&gt;Questions&lt;/h1&gt;
+        <description>&lt;h1 id=&#34;questions&#34;&gt;Questions&lt;/h1&gt;
 &lt;p&gt;核心思想部分需要再思考和梳理下，&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？&lt;/li&gt;
@@ -190,6 +189,7 @@ $$
 &lt;h1 id=&#34;0x04-crash-consistency&#34;&gt;0x04 Crash Consistency&lt;/h1&gt;
 &lt;h2 id=&#34;一致性维护&#34;&gt;一致性维护&lt;/h2&gt;
 &lt;p&gt;通过事务即可实现原子化的操作&lt;/p&gt;
+&lt;p&gt;在传统的日志结构中，由于事务的大小受日志大小的限制，一个系统调用可能会被划分到多个事务中。KVFS通过强制限制对一个文件的操作驻留在同一个事务中来确保原子性。&lt;/p&gt;
 &lt;p&gt;事务的隔离？对==fsync==指令单独创建一个小型事务来提高效率。&lt;/p&gt;
 &lt;p&gt;KevinFS基于KV事务的特性来维护一致性，不使用日志系统。&lt;/p&gt;
 &lt;h2 id=&#34;kv事务的实现&#34;&gt;KV事务的实现&lt;/h2&gt;
@@ -199,8 +199,8 @@ $$
 &lt;li&gt;事务日志$TxLogs$：维护事务对象的K2V索引，存储在DRAM或者闪存中&lt;/li&gt;
 &lt;li&gt;恢复日志$TxRecovery$：用于恢复和终止事务&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。&lt;/p&gt;
-&lt;p&gt;当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED。将提交的KV索引同步到LSM-tree中&lt;/p&gt;
+&lt;p&gt;但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING（如①）。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。&lt;/p&gt;
+&lt;p&gt;当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED（如②）。将提交的KV索引同步到LSM-tree中&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221103102304181.png&#34;
 	
 	
@@ -211,6 +211,12 @@ $$
 	
 	
 &gt;&lt;/p&gt;
+&lt;p&gt;为了减少在COMMITTED阶段，将TxLogs中的KV索引同步到LSM tree L1中时的负载，对每个事务在DRAM中维护了一个Skiplist，便于快速查找KV对象在TxLogs中的索引，在L1和L2需要进行压缩时再将skiplist中的数据同步到checkpoint，当同步完成后，事务的状态将变为CHECKPOINTED（如③），最终即将对DRAM中的TxTable和TxLogs进行回收。&lt;/p&gt;
+&lt;h2 id=&#34;recovery&#34;&gt;Recovery&lt;/h2&gt;
+&lt;p&gt;若发生掉电，KVSSD会利用电容将KV索引持久化到闪存中的TxLogs，TxTable更新内部的指针，在TxRecovery中进行记录。在系统重启时，KVSSD会扫描Tx Recovery，加载最新的TxTable，对于处于COMMITTED状态的事务，将其TxLogs索引加载到Skiplist中，对于处于RUNNING状态的事务，直接进行Abort并回收其资源。&lt;/p&gt;
+&lt;h1 id=&#34;conclusion--thinking&#34;&gt;Conclusion &amp;amp;&amp;amp; Thinking&lt;/h1&gt;
+&lt;p&gt;本文提出了一种基于K/V存储架构的文件系统，通过对Key的设计保证了在I/O操作中的高效性。通过本文了解了一些KV存储的trick，对于KV存储的各种场景，无论是在Redis中还是在KV文件系统中，对于Key的设计都至关重要，好的设计往往能够带来极大的效率提升，例如布隆过滤器的应用，有很多经验值得学习。同时了解了对事务的一些控制机制。&lt;/p&gt;
+&lt;p&gt;此篇论文让我惊讶于文件系统还能通过KV存储来实现的通知，还让我回想起了TiDB，通过KV存储系统来实现了分布式关系型数据库，并完全兼容MySQL，说明在利用好KV存储的特性的情况下，可以有效的解决问题，要多去学习他们的设计思想。&lt;/p&gt;
 </description>
         </item>
         <item>

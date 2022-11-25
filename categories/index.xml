@@ -6,18 +6,10 @@
         <description>Recent content in Categories on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 21 Nov 2022 09:46:56 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/categories/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Diary</title>
-        <link>https://blog.ipandai.club/categories/diary/</link>
-        <pubDate>Mon, 21 Nov 2022 09:46:56 +0800</pubDate>
-        
-        <guid>https://blog.ipandai.club/categories/diary/</guid>
-        <description></description>
-        </item>
-        <item>
+        <lastBuildDate>Wed, 23 Nov 2022 19:44:51 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/categories/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Notes</title>
         <link>https://blog.ipandai.club/categories/notes/</link>
-        <pubDate>Sat, 29 Oct 2022 16:48:32 +0800</pubDate>
+        <pubDate>Wed, 23 Nov 2022 19:44:51 +0800</pubDate>
         
         <guid>https://blog.ipandai.club/categories/notes/</guid>
         <description></description>
@@ -25,9 +17,17 @@
         <item>
         <title>Storage</title>
         <link>https://blog.ipandai.club/categories/storage/</link>
-        <pubDate>Sat, 29 Oct 2022 16:48:32 +0800</pubDate>
+        <pubDate>Wed, 23 Nov 2022 19:44:51 +0800</pubDate>
         
         <guid>https://blog.ipandai.club/categories/storage/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Diary</title>
+        <link>https://blog.ipandai.club/categories/diary/</link>
+        <pubDate>Mon, 21 Nov 2022 09:46:56 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/categories/diary/</guid>
         <description></description>
         </item>
         <item>

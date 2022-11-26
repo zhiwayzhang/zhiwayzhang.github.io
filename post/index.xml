@@ -6,25 +6,68 @@
         <description>Recent content in Posts on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 23 Nov 2022 19:44:51 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 26 Nov 2022 13:40:59 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</title>
+        <link>https://blog.ipandai.club/p/atc20-pink-high-speed-in-storage-key-value-store-with-bounded-tails/</link>
+        <pubDate>Sat, 26 Nov 2022 13:40:59 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/atc20-pink-high-speed-in-storage-key-value-store-with-bounded-tails/</guid>
+        <description>&lt;h1 id=&#34;0x00-everyday-english&#34;&gt;0x00 Everyday English&lt;/h1&gt;
+&lt;p&gt;preferable 更可取的&lt;/p&gt;
+&lt;p&gt;consequently 因此&lt;/p&gt;
+&lt;p&gt;inevitably 必然的&lt;/p&gt;
+&lt;p&gt;conventional 常规的、传统的&lt;/p&gt;
+&lt;p&gt;exacerbates 加剧&lt;/p&gt;
+&lt;p&gt;deteriorates 恶化&lt;/p&gt;
+&lt;p&gt;deterministic 确定性&lt;/p&gt;
+&lt;h1 id=&#34;0x01-intro&#34;&gt;0x01 Intro&lt;/h1&gt;
+&lt;p&gt;本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化&lt;/p&gt;
+&lt;p&gt;传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销&lt;/p&gt;
+&lt;p&gt;单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题&lt;/li&gt;
+&lt;li&gt;写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担&lt;/li&gt;
+&lt;li&gt;布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;0x02-bg&#34;&gt;0x02 Bg&lt;/h1&gt;
+&lt;p&gt;了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较&lt;/p&gt;
+&lt;h1 id=&#34;0x03-challengs&#34;&gt;0x03 Challengs&lt;/h1&gt;
+</description>
+        </item>
+        <item>
         <title>[FAST&#39;18] FEMU闪存模拟系统介绍</title>
         <link>https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/</link>
         <pubDate>Wed, 23 Nov 2022 19:44:51 +0800</pubDate>
         
         <guid>https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/</guid>
-        <description>&lt;h1 id=&#34;everyday-english&#34;&gt;Everyday English&lt;/h1&gt;
+        <description>&lt;h1 id=&#34;0x00-everyday-english&#34;&gt;0x00 Everyday English&lt;/h1&gt;
 &lt;p&gt;LOC == line of code&lt;/p&gt;
 &lt;p&gt;Guest OS == VM&lt;/p&gt;
 &lt;p&gt;intricacies 错综复杂&lt;/p&gt;
 &lt;p&gt;drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能&lt;/p&gt;
 &lt;p&gt;leverage 影响&lt;/p&gt;
-&lt;h1 id=&#34;intro&#34;&gt;Intro&lt;/h1&gt;
+&lt;h1 id=&#34;0x01-intro&#34;&gt;0x01 Intro&lt;/h1&gt;
 &lt;p&gt;FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率&lt;/p&gt;
 &lt;p&gt;此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。&lt;/p&gt;
 &lt;p&gt;FEMU首先开源免费，并且有较高的准确度，同时可伸缩性强，最大支持32 I/O 线程并模拟32个并行的SSD channels/chips，可扩展性高，得益于基于QEMU的优点，FEMU可以支持针对于SSD的研究，针对os 内核的研究，或者基于os内核和SSD的研究。&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/vtess/FEMU&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;FEMU GitHub 仓库地址： https://github.com/vtess/FEMU&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&#34;femu&#34;&gt;FEMU&lt;/h1&gt;
+&lt;h1 id=&#34;0x02-femu&#34;&gt;0x02 FEMU&lt;/h1&gt;
 &lt;p&gt;FEMU本身仅有3929行代码，基于QEMU v2.9，FEMU近些年的更新也主要为修复一些bug、合并QEMU的版本，将传统的App+宿主机+SSD的研究架构转变为了App+虚拟机+FEMU。&lt;/p&gt;
 &lt;p&gt;FEMU中的FTL模块、GC、I/O调度主要基于VSSIM&lt;a class=&#34;link&#34; href=&#34;https://ieeexplore.ieee.org/document/6558443&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;VSSIM: Virtual machine based SSD simulator | IEEE Conference Publication | IEEE Xplore&lt;/a&gt;&lt;/p&gt;

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 Intro FEMU是用于软硬件全栈的SSD研'><title>[FAST&#39;18] FEMU闪存模拟系统介绍</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 0x01 Intro FEMU是用于软硬件全栈的SS'><title>[FAST&#39;18] FEMU闪存模拟系统介绍</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/'>
 
 <link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='[FAST&#39;18] FEMU闪存模拟系统介绍'>
-<meta property='og:description' content='Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 Intro FEMU是用于软硬件全栈的SSD研'>
+<meta property='og:description' content='0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 0x01 Intro FEMU是用于软硬件全栈的SS'>
 <meta property='og:url' content='https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Paper' /><meta property='article:tag' content='FAST' /><meta property='article:tag' content='FEMU' /><meta property='article:tag' content='QEMU' /><meta property='article:published_time' content='2022-11-23T19:44:51&#43;08:00'/><meta property='article:modified_time' content='2022-11-23T19:44:51&#43;08:00'/>
 <meta name="twitter:title" content="[FAST&#39;18] FEMU闪存模拟系统介绍">
-<meta name="twitter:description" content="Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 Intro FEMU是用于软硬件全栈的SSD研">
+<meta name="twitter:description" content="0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 0x01 Intro FEMU是用于软硬件全栈的SS">
     </head>
     <body class="
     article-page
@@ -316,19 +316,19 @@
     <section class="article-content">
     
     
-    <h1 id="everyday-english">Everyday English</h1>
+    <h1 id="0x00-everyday-english">0x00 Everyday English</h1>
 <p>LOC == line of code</p>
 <p>Guest OS == VM</p>
 <p>intricacies 错综复杂</p>
 <p>drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能</p>
 <p>leverage 影响</p>
-<h1 id="intro">Intro</h1>
+<h1 id="0x01-intro">0x01 Intro</h1>
 <p>FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率</p>
 <p>此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。</p>
 <p>FEMU首先开源免费，并且有较高的准确度，同时可伸缩性强，最大支持32 I/O 线程并模拟32个并行的SSD channels/chips，可扩展性高，得益于基于QEMU的优点，FEMU可以支持针对于SSD的研究，针对os 内核的研究，或者基于os内核和SSD的研究。</p>
 <p><a class="link" href="https://github.com/vtess/FEMU"  target="_blank" rel="noopener"
     >FEMU GitHub 仓库地址： https://github.com/vtess/FEMU</a></p>
-<h1 id="femu">FEMU</h1>
+<h1 id="0x02-femu">0x02 FEMU</h1>
 <p>FEMU本身仅有3929行代码，基于QEMU v2.9，FEMU近些年的更新也主要为修复一些bug、合并QEMU的版本，将传统的App+宿主机+SSD的研究架构转变为了App+虚拟机+FEMU。</p>
 <p>FEMU中的FTL模块、GC、I/O调度主要基于VSSIM<a class="link" href="https://ieeexplore.ieee.org/document/6558443"  target="_blank" rel="noopener"
     >VSSIM: Virtual machine based SSD simulator | IEEE Conference Publication | IEEE Xplore</a></p>
@@ -453,6 +453,19 @@
             
                 
 <article class="">
+    <a href="/p/atc20-pink-high-speed-in-storage-key-value-store-with-bounded-tails/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
     <a href="/p/osdi21-modernizing-file-system-through-in-storage-indexing/">
         
         
@@ -498,19 +511,6 @@
 
         <div class="article-details">
             <h2 class="article-title">[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</h2>
-        </div>
-    </a>
-</article>
-
-            
-                
-<article class="">
-    <a href="/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">【存储系统】文件系统</h2>
         </div>
     </a>
 </article>
@@ -687,9 +687,9 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#everyday-english">Everyday English</a></li>
-    <li><a href="#intro">Intro</a></li>
-    <li><a href="#femu">FEMU</a>
+    <li><a href="#0x00-everyday-english">0x00 Everyday English</a></li>
+    <li><a href="#0x01-intro">0x01 Intro</a></li>
+    <li><a href="#0x02-femu">0x02 FEMU</a>
       <ol>
         <li><a href="#可伸缩性">可伸缩性</a></li>
         <li><a href="#准确度">准确度</a>

@@ -12,19 +12,19 @@
         <pubDate>Wed, 23 Nov 2022 19:44:51 +0800</pubDate>
         
         <guid>https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/</guid>
-        <description>&lt;h1 id=&#34;everyday-english&#34;&gt;Everyday English&lt;/h1&gt;
+        <description>&lt;h1 id=&#34;0x00-everyday-english&#34;&gt;0x00 Everyday English&lt;/h1&gt;
 &lt;p&gt;LOC == line of code&lt;/p&gt;
 &lt;p&gt;Guest OS == VM&lt;/p&gt;
 &lt;p&gt;intricacies 错综复杂&lt;/p&gt;
 &lt;p&gt;drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能&lt;/p&gt;
 &lt;p&gt;leverage 影响&lt;/p&gt;
-&lt;h1 id=&#34;intro&#34;&gt;Intro&lt;/h1&gt;
+&lt;h1 id=&#34;0x01-intro&#34;&gt;0x01 Intro&lt;/h1&gt;
 &lt;p&gt;FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率&lt;/p&gt;
 &lt;p&gt;此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。&lt;/p&gt;
 &lt;p&gt;FEMU首先开源免费，并且有较高的准确度，同时可伸缩性强，最大支持32 I/O 线程并模拟32个并行的SSD channels/chips，可扩展性高，得益于基于QEMU的优点，FEMU可以支持针对于SSD的研究，针对os 内核的研究，或者基于os内核和SSD的研究。&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/vtess/FEMU&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;FEMU GitHub 仓库地址： https://github.com/vtess/FEMU&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&#34;femu&#34;&gt;FEMU&lt;/h1&gt;
+&lt;h1 id=&#34;0x02-femu&#34;&gt;0x02 FEMU&lt;/h1&gt;
 &lt;p&gt;FEMU本身仅有3929行代码，基于QEMU v2.9，FEMU近些年的更新也主要为修复一些bug、合并QEMU的版本，将传统的App+宿主机+SSD的研究架构转变为了App+虚拟机+FEMU。&lt;/p&gt;
 &lt;p&gt;FEMU中的FTL模块、GC、I/O调度主要基于VSSIM&lt;a class=&#34;link&#34; href=&#34;https://ieeexplore.ieee.org/document/6558443&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;VSSIM: Virtual machine based SSD simulator | IEEE Conference Publication | IEEE Xplore&lt;/a&gt;&lt;/p&gt;

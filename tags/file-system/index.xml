@@ -46,7 +46,25 @@
 &lt;/ol&gt;
 &lt;h1 id=&#34;0x02-bg&#34;&gt;0x02 Bg&lt;/h1&gt;
 &lt;p&gt;了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较&lt;/p&gt;
-&lt;h1 id=&#34;0x03-challengs&#34;&gt;0x03 Challengs&lt;/h1&gt;
+&lt;p&gt;作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中&lt;/p&gt;
+&lt;h1 id=&#34;0x03-design&#34;&gt;0x03 Design&lt;/h1&gt;
+&lt;p&gt;Pink有四个主要的数据结构&lt;/p&gt;
+&lt;p&gt;位于DRAM中的level lists和Skiplist&lt;/p&gt;
+&lt;p&gt;位于闪存中的meta segments和data segments&lt;/p&gt;
+&lt;p&gt;在LSM-tree KV 文件系统方面，作者主要参考了&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WiscKey FAST&#39;16&lt;/a&gt;，取代FTL进行GC、索引和磨损均衡&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221128145842322.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221128145842322&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;code&gt;&amp;lt;key size, key, value size, value&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC&lt;/p&gt;
 </description>
         </item>
         <item>

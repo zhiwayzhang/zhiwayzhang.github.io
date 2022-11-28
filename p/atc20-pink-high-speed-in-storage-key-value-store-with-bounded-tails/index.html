@@ -294,7 +294,7 @@
 
 
                 <time class="article-time--reading">
-                    2 minute read
+                    3 minute read
                 </time>
             </div>
         
@@ -350,7 +350,25 @@
 </ol>
 <h1 id="0x02-bg">0x02 Bg</h1>
 <p>了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较</p>
-<h1 id="0x03-challengs">0x03 Challengs</h1>
+<p>作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中</p>
+<h1 id="0x03-design">0x03 Design</h1>
+<p>Pink有四个主要的数据结构</p>
+<p>位于DRAM中的level lists和Skiplist</p>
+<p>位于闪存中的meta segments和data segments</p>
+<p>在LSM-tree KV 文件系统方面，作者主要参考了<a class="link" href="https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu"  target="_blank" rel="noopener"
+    >WiscKey FAST'16</a>，取代FTL进行GC、索引和磨损均衡</p>
+<p><img src="https://cdn.ipandai.club/image-20221128145842322.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20221128145842322"
+	
+	
+></p>
+<p>Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：<code>&lt;key size, key, value size, value&gt;</code></p>
+<p>当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC</p>
 
 </section>
 
@@ -661,7 +679,7 @@
     <li><a href="#0x00-everyday-english">0x00 Everyday English</a></li>
     <li><a href="#0x01-intro">0x01 Intro</a></li>
     <li><a href="#0x02-bg">0x02 Bg</a></li>
-    <li><a href="#0x03-challengs">0x03 Challengs</a></li>
+    <li><a href="#0x03-design">0x03 Design</a></li>
   </ol>
 </nav>
         </div>

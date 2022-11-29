@@ -62,8 +62,86 @@
 	
 	
 &gt;&lt;/p&gt;
+&lt;h2 id=&#34;skiplist&#34;&gt;Skiplist&lt;/h2&gt;
 &lt;p&gt;Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;code&gt;&amp;lt;key size, key, value size, value&amp;gt;&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC&lt;/p&gt;
+&lt;h2 id=&#34;level-list&#34;&gt;Level list&lt;/h2&gt;
+&lt;p&gt;用于跟踪闪存中每个level的meta segment&lt;/p&gt;
+&lt;p&gt;每个level list是一个保存固定大小的指针对的数组，每个指针4B，第一个指针指向meta segment在闪存中的物理地址，第二个指针指向meta segment的start key&lt;/p&gt;
+&lt;p&gt;meta segment的start key单独存储在DRAM中，可以支持动态大小的key，同时可以实现在level list查找meta segment时进行二分查找&lt;/p&gt;
+&lt;p&gt;如果LSM-tree有5个Level，即h=5，除了L0之外，每个level都会有一个level list&lt;/p&gt;
+&lt;p&gt;L0和Level list通过电容来保护，Pink不需要使用日志来维护原子性和数据的持久性&lt;/p&gt;
+&lt;h2 id=&#34;level-pinning&#34;&gt;Level Pinning&lt;/h2&gt;
+&lt;p&gt;消除尾延迟，将$top-k\ \  level(k&amp;lt;=h-1)$ 的meta segment保存在DRAM中，减少了read过程的尾部延迟&lt;/p&gt;
+&lt;p&gt;当处理GET指令时，首先在DRAM中对Key进行查找，当DRAM中没有命中时，将对剩余的几个level在闪存中进行查找，在使用布隆过滤器时，最坏的查询时间复杂度为$O(h-1)$，该策略下可以优化为$O(h-k-1)$&lt;/p&gt;
+&lt;p&gt;因此LSM-tree各level按照参数T进行增长，因此topk策略下空间占用不会过大&lt;/p&gt;
+&lt;p&gt;同时可以直接在DRAM中进行compaction操作，无需占用闪存I/O，因为有电容的存在，无需定期刷新脏segment到闪存中&lt;/p&gt;
+&lt;h2 id=&#34;optimizing-search-path&#34;&gt;Optimizing Search Path&lt;/h2&gt;
+&lt;p&gt;在对Key进行查询时，LSM-tree将对各个Level进行二分查找&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129190239823.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221129190239823&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;朴素的LSM-tree最坏的查询时间复杂度为$O(h^2\cdot log(T))$，使用布隆过滤器的情况下可以更低&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;PinK通过prefix来减少字符串比较的开销，并且先比较key的前4个字节，如果匹配成功才会比较后面的部分&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在level list上每个记录引入一个4字节的范围指针，实现多级cascading范围查找&lt;/p&gt;
+&lt;p&gt;指针指向下一级有最大的start key同时key 小于等于上一级中的记录，在一级一级的传递中不断减少搜索的范围，如上图b所示，平均时间复杂度为$O(h\cdot log(T))$&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;speeding-up-compaction&#34;&gt;Speeding up Compaction&lt;/h2&gt;
+&lt;p&gt;在compaction阶段，引入一个硬件加速器，位于闪存和数据主总线之间，可以方便的合并两个闪存中的level&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129225719057.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221129225719057&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;工作流程：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;PinK向加速器发起compaction请求，请求参数为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;两个level的meta segment的闪存地址$(L_i,L_{i+1})$&lt;/li&gt;
+&lt;li&gt;回写的闪存地址$L_{i+1}$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;向多个闪存发起读取请求，同时还要对不同channel返回的数据进行重新排序，序列化meta segment&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;上图中灰色的比较器，会不断的获取两个level中的数据，输出key较小的那一个&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对于无效的key，将通知PinK进行GC&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输出的排序后结果将保存在write buffer中进行回写&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;操作结束后，加速器通知PinK当前$L_{i+1}$使用的闪存页的数量，便于和此前提供的进行比较，用于GC&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;PinK在DRAM的pinned level中也使用了类似的加速器，基于DMA&lt;/p&gt;
+&lt;h2 id=&#34;optimizing-gc&#34;&gt;Optimizing GC&lt;/h2&gt;
+&lt;p&gt;需要针对meta/data segment分别制定GC策略&lt;/p&gt;
+&lt;h2 id=&#34;durability--scalability&#34;&gt;Durability &amp;amp;&amp;amp; Scalability&lt;/h2&gt;
+&lt;p&gt;使用电容来保护整个DRAM，对于比较低端的SSD，没有足够的电容来维持，只能继续使用定期写回到闪存的机制（要保护level lists，pinned level，L0），同时还要记录日志，由于LSM-tree的特性，该操作比基于hash的KV-SSD开销略小&lt;/p&gt;
+&lt;h1 id=&#34;conclusion--thinking&#34;&gt;Conclusion &amp;amp;&amp;amp; Thinking&lt;/h1&gt;
+&lt;p&gt;留坑，之后再写&lt;/p&gt;
 </description>
         </item>
         <item>

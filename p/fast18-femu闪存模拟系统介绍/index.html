@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 0x01 Intro FEMU是用于软硬件全栈的SS'><title>[FAST&#39;18] FEMU闪存模拟系统介绍</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 对&amp;hellip;产生影响；一般也可以'><title>[FAST&#39;18] FEMU闪存模拟系统介绍</title>
 
 <link rel='canonical' href='https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/'>
 
 <link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='[FAST&#39;18] FEMU闪存模拟系统介绍'>
-<meta property='og:description' content='0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 0x01 Intro FEMU是用于软硬件全栈的SS'>
+<meta property='og:description' content='0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 对&amp;hellip;产生影响；一般也可以'>
 <meta property='og:url' content='https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Paper' /><meta property='article:tag' content='FAST' /><meta property='article:tag' content='FEMU' /><meta property='article:tag' content='QEMU' /><meta property='article:published_time' content='2022-11-23T19:44:51&#43;08:00'/><meta property='article:modified_time' content='2022-11-23T19:44:51&#43;08:00'/>
 <meta name="twitter:title" content="[FAST&#39;18] FEMU闪存模拟系统介绍">
-<meta name="twitter:description" content="0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 影响 0x01 Intro FEMU是用于软硬件全栈的SS">
+<meta name="twitter:description" content="0x00 Everyday English LOC == line of code Guest OS == VM intricacies 错综复杂 drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能 leverage 对&amp;hellip;产生影响；一般也可以">
     </head>
     <body class="
     article-page
@@ -321,7 +321,7 @@
 <p>Guest OS == VM</p>
 <p>intricacies 错综复杂</p>
 <p>drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能</p>
-<p>leverage 影响</p>
+<p>leverage 对&hellip;产生影响；一般也可以理解为 充分利用，比utilize语气强一些</p>
 <h1 id="0x01-intro">0x01 Intro</h1>
 <p>FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率</p>
 <p>此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。</p>

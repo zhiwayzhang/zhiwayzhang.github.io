@@ -17,7 +17,7 @@
 &lt;p&gt;Guest OS == VM&lt;/p&gt;
 &lt;p&gt;intricacies 错综复杂&lt;/p&gt;
 &lt;p&gt;drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能&lt;/p&gt;
-&lt;p&gt;leverage 影响&lt;/p&gt;
+&lt;p&gt;leverage 对&amp;hellip;产生影响；一般也可以理解为 充分利用，比utilize语气强一些&lt;/p&gt;
 &lt;h1 id=&#34;0x01-intro&#34;&gt;0x01 Intro&lt;/h1&gt;
 &lt;p&gt;FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率&lt;/p&gt;
 &lt;p&gt;此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。&lt;/p&gt;

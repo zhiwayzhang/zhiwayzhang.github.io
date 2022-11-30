@@ -6,7 +6,45 @@
         <description>Recent content in Posts on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 26 Nov 2022 13:40:59 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 30 Nov 2022 10:58:22 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage</title>
+        <link>https://blog.ipandai.club/p/acm-trans.-on-storage-hintstor-a-framework-to-study-i/o-hints-in-heterogeneous-storage/</link>
+        <pubDate>Wed, 30 Nov 2022 10:58:22 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/acm-trans.-on-storage-hintstor-a-framework-to-study-i/o-hints-in-heterogeneous-storage/</guid>
+        <description>&lt;h1 id=&#34;0x00-everyday-english&#34;&gt;0x00 Everyday English&lt;/h1&gt;
+&lt;p&gt;Heterogeneous 各种各样的&lt;/p&gt;
+&lt;p&gt;semantic 语义上的&lt;/p&gt;
+&lt;p&gt;conservative 保守的、传统的 &amp;mdash;aggressive 激进的&lt;/p&gt;
+&lt;p&gt;aggregate 合计&lt;/p&gt;
+&lt;p&gt;orchestrate 精心策划&lt;/p&gt;
+&lt;p&gt;proactive 积极主动的&lt;/p&gt;
+&lt;h1 id=&#34;0x01-intro&#34;&gt;0x01 Intro&lt;/h1&gt;
+&lt;p&gt;随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前存储系统的多样性&lt;/p&gt;
+&lt;p&gt;目前还存在多层次的存储系统，将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且混合存储系统由不同速度和特点的存储设备组成&lt;/p&gt;
+&lt;p&gt;再混合存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次&lt;/p&gt;
+&lt;p&gt;这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中&lt;/p&gt;
+&lt;p&gt;本文提出了一个通用灵活的框架，HintStor，为混合存储系统提供access hints&lt;/p&gt;
+&lt;p&gt;设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;新的app/user层面的接口允许用户定义和配置新的hint&lt;/li&gt;
+&lt;li&gt;VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统&lt;/li&gt;
+&lt;li&gt;在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用文件系统内部的数据进行分类（元数据，文件数据，文件大小）&lt;/li&gt;
+&lt;li&gt;Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上&lt;/li&gt;
+&lt;li&gt;云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。&lt;/li&gt;
+&lt;li&gt;I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;0x02-bg&#34;&gt;0x02 Bg&lt;/h1&gt;
+&lt;h1 id=&#34;0x03-hintstor-design&#34;&gt;0x03 HintStor Design&lt;/h1&gt;
+&lt;h1 id=&#34;0x04-4-access-hints&#34;&gt;0x04 4 access Hints&lt;/h1&gt;
+&lt;h1 id=&#34;conclusion--thinking&#34;&gt;Conclusion &amp;amp;&amp;amp; Thinking&lt;/h1&gt;
+</description>
+        </item>
+        <item>
         <title>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</title>
         <link>https://blog.ipandai.club/p/atc20-pink-high-speed-in-storage-key-value-store-with-bounded-tails/</link>
         <pubDate>Sat, 26 Nov 2022 13:40:59 +0800</pubDate>

@@ -18,12 +18,15 @@
 &lt;p&gt;aggregate 合计&lt;/p&gt;
 &lt;p&gt;orchestrate 精心策划&lt;/p&gt;
 &lt;p&gt;proactive 积极主动的&lt;/p&gt;
+&lt;p&gt;by means of 通过，借助于&lt;/p&gt;
+&lt;p&gt;off-the-shelf 现成的&lt;/p&gt;
+&lt;p&gt;elaborate 详细阐述&lt;/p&gt;
 &lt;h1 id=&#34;0x01-intro&#34;&gt;0x01 Intro&lt;/h1&gt;
 &lt;p&gt;随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前存储系统的多样性&lt;/p&gt;
-&lt;p&gt;目前还存在多层次的存储系统，将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且混合存储系统由不同速度和特点的存储设备组成&lt;/p&gt;
-&lt;p&gt;再混合存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次&lt;/p&gt;
+&lt;p&gt;目前还存在多层次的存储系统，将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成&lt;/p&gt;
+&lt;p&gt;在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次&lt;/p&gt;
 &lt;p&gt;这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中&lt;/p&gt;
-&lt;p&gt;本文提出了一个通用灵活的框架，HintStor，为混合存储系统提供access hints&lt;/p&gt;
+&lt;p&gt;本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints&lt;/p&gt;
 &lt;p&gt;设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;新的app/user层面的接口允许用户定义和配置新的hint&lt;/li&gt;
@@ -38,8 +41,31 @@
 &lt;li&gt;I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h1 id=&#34;0x02-bg&#34;&gt;0x02 Bg&lt;/h1&gt;
+&lt;p&gt;在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。&lt;/p&gt;
+&lt;p&gt;目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，&lt;code&gt;fadvise()&lt;/code&gt;和&lt;code&gt;inoice()&lt;/code&gt;系统调用可以改善prefetching，但是不能解决数据移动问题。&lt;/p&gt;
+&lt;p&gt;MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。&lt;/p&gt;
+&lt;p&gt;目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。&lt;/p&gt;
 &lt;h1 id=&#34;0x03-hintstor-design&#34;&gt;0x03 HintStor Design&lt;/h1&gt;
-&lt;h1 id=&#34;0x04-4-access-hints&#34;&gt;0x04 4 access Hints&lt;/h1&gt;
+&lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221202204914922.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221202204914922&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;HintStor的架构图如上图所示&lt;/p&gt;
+&lt;p&gt;Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射&lt;/p&gt;
+&lt;p&gt;整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints&lt;/li&gt;
+&lt;li&gt;为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局&lt;/li&gt;
+&lt;li&gt;为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;0x04-four-access-hints&#34;&gt;0x04 Four access Hints&lt;/h1&gt;
 &lt;h1 id=&#34;conclusion--thinking&#34;&gt;Conclusion &amp;amp;&amp;amp; Thinking&lt;/h1&gt;
 </description>
         </item>

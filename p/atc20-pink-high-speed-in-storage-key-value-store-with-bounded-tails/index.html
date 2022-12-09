@@ -446,7 +446,12 @@
 <h2 id="durability--scalability">Durability &amp;&amp; Scalability</h2>
 <p>使用电容来保护整个DRAM，对于比较低端的SSD，没有足够的电容来维持，只能继续使用定期写回到闪存的机制（要保护level lists，pinned level，L0），同时还要记录日志，由于LSM-tree的特性，该操作比基于hash的KV-SSD开销略小</p>
 <h1 id="conclusion--thinking">Conclusion &amp;&amp; Thinking</h1>
-<p>留坑，之后再写</p>
+<ul>
+<li>与之前阅读的KV-SSD相比，PinK将部分Level固定到DRAM中，一定程度上降低了延迟</li>
+<li>PinK弃用了布隆过滤器，使用一种层级缩小查找范围的方式，优化查询效率</li>
+<li>引入了一个加速器来减少LSM-tree compaction操作的开销</li>
+<li>论文都提高了布隆过滤器使用时重建的开销略高，是否可以考虑使用布谷鸟过滤器，这部分主要着眼于LSM-tree的优化，可能并不是真正的性能瓶颈</li>
+</ul>
 
 </section>
 

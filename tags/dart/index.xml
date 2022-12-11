@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Dart on Coding_Panda&#39;s Blog</title>
+        <link>https://blog.ipandai.club/tags/dart/</link>
+        <description>Recent content in Dart on Coding_Panda&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Fri, 09 Dec 2022 22:20:03 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/dart/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Dart学习笔记</title>
+        <link>https://blog.ipandai.club/p/dart%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Fri, 09 Dec 2022 22:20:03 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/dart%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;h1 id=&#34;a-tour-of-dart&#34;&gt;A Tour Of Dart&lt;/h1&gt;
+&lt;p&gt;在macOS上搭建Dart/Flutter环境&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.flutter.dev/get-started/install/macos&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;在Flutter官网下载SDK&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;将SDK中的bin目录添加到system path&lt;/p&gt;
+&lt;p&gt;执行&lt;code&gt;flutter doctor&lt;/code&gt;看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装&lt;/p&gt;
+&lt;p&gt;安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221210104359404.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20221210104359404&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入&lt;code&gt;.zshrc&lt;/code&gt;中&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;ANDROID_HOME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;/Users/***/Library/Android/sdk&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$ANDROID_HOME&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;/tools:&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$ANDROID_HOME&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;/tools/bin:&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$ANDROID_HOME&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;/platform-tools:&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$PATH&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后执行&lt;code&gt;source ~/.zshrc&lt;/code&gt;，再执行&lt;code&gt;flutter doctor&lt;/code&gt;，可以看到要求接受android licenses&lt;/p&gt;
+&lt;p&gt;运行&lt;code&gt;flutter doctor --android-licenses&lt;/code&gt;，一路按y接受&lt;/p&gt;
+&lt;p&gt;此时flutter全部的配置基本就完成了&lt;/p&gt;
+&lt;p&gt;如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行&lt;code&gt;:CocInstall coc-flutter&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;两个有关flutter的coc.nvim扩展：&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/iamcco/coc-flutter&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;coc-flutter&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/theniceboy/coc-flutter-tools&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;coc-flutter-tools&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;important-concepts&#34;&gt;Important Concepts&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dart是强类型语言，但是&lt;code&gt;var&lt;/code&gt;可以推导变量类型&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;null safety&lt;/code&gt;开启后，变量不会包含null，使用&lt;code&gt;int?&lt;/code&gt;声明变量可以使得变量可为null，在赋值的字面量后添加&lt;code&gt;!&lt;/code&gt;可以保证变量不为null&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-dart&#34; data-lang=&#34;dart&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;NullableNumber&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;unNullableNumber&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Object可以用来作为范型的模版&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dart的函数可以不依赖任何class，top-level&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dart包含warnings和errors机制，errors主要在编译时和运行时&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;variables&#34;&gt;Variables&lt;/h1&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

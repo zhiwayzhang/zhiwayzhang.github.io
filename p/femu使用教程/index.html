@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本文主要参考FEMU仓库README 0x00 Intro FEMU架构图 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &#43;--------------------&#43; | VM / Guest OS | | | | | | NVMe Block Device | &#43;--------^^----------&#43; || PCIe/NVMe || &#43;------------------------------vv----------------------------&#43; | &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;------&#43; |'><title>FEMU使用教程</title>
+
+<link rel='canonical' href='https://blog.ipandai.club/p/femu%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/'>
+
+<link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='FEMU使用教程'>
+<meta property='og:description' content='本文主要参考FEMU仓库README 0x00 Intro FEMU架构图 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &#43;--------------------&#43; | VM / Guest OS | | | | | | NVMe Block Device | &#43;--------^^----------&#43; || PCIe/NVMe || &#43;------------------------------vv----------------------------&#43; | &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;------&#43; |'>
+<meta property='og:url' content='https://blog.ipandai.club/p/femu%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='FEMU' /><meta property='article:tag' content='QEMU' /><meta property='article:published_time' content='2022-12-11T16:10:32&#43;08:00'/><meta property='article:modified_time' content='2022-12-11T16:10:32&#43;08:00'/>
+<meta name="twitter:title" content="FEMU使用教程">
+<meta name="twitter:description" content="本文主要参考FEMU仓库README 0x00 Intro FEMU架构图 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &#43;--------------------&#43; | VM / Guest OS | | | | | | NVMe Block Device | &#43;--------^^----------&#43; || PCIe/NVMe || &#43;------------------------------vv----------------------------&#43; | &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;------&#43; |">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8a3d9192938a940b103f152e82f8d0c1_176069_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/38920489'
+                        target="_blank"
+                        title="Bilibili"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1664723478952" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2240" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2241" fill="#BFBFBF"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/EZ4ZZW'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/notes/" >
+                Notes
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/femu%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">FEMU使用教程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 11, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+        
+        
+            <div class="article-pageview">
+                <svg t="1669099785843" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2735" width="32" height="32"><path d="M759.600191 263.253706c-14.437827-9.465582-33.785477-5.429663-43.25106 8.987698-9.455349 14.427594-5.429663 33.795711 8.987698 43.25106 113.344464 74.322729 172.030052 183.955662 171.714873 221.87939-0.620124 74.14979-152.803151 288.444435-385.216455 288.444435-244.969271 0-385.211339-226.475058-385.211339-288.180422 0-38.473243 58.665121-148.675134 170.804131-222.134193 14.437827-9.455349 18.463514-28.814256 9.018398-43.240827-9.455349-14.427594-28.814256-18.473747-43.240827-9.018398C144.135748 341.236801 64.155159 468.094024 64.155159 537.637913c0 101.133352 178.419576 350.648149 447.679066 350.648149 272.125771 0 446.809255-246.372224 447.684182-350.383112C960.097598 468.957695 879.899044 342.141404 759.600191 263.253706z" p-id="2736" fill="#BABABA"></path><path d="M389.948223 136.356574c-17.253966 0-31.233352 13.980409-31.233352 31.233352l0 30.470989c0 17.253966 13.980409 31.233352 31.233352 31.233352s31.233352-13.980409 31.233352-31.233352l0-30.470989C421.182598 150.336984 407.202189 136.356574 389.948223 136.356574z" p-id="2737" fill="#BABABA"></path><path d="M633.728412 136.356574c-17.253966 0-31.233352 13.980409-31.233352 31.233352l0 30.470989c0 17.253966 13.980409 31.233352 31.233352 31.233352s31.233352-13.980409 31.233352-31.233352l0-30.470989C664.961764 150.336984 650.982378 136.356574 633.728412 136.356574z" p-id="2738" fill="#BABABA"></path><path d="M511.524163 337.555969c43.963281 0 75.105558-30.308283 86.583984-48.223305 9.222035-14.396895 5.042853-33.348526-9.242502-42.753733-14.275121-9.42465-33.57263-5.409197-43.159986 8.744151-0.132006 0.203638-13.614066 19.765159-34.18252 19.765159-19.989263 0-32.43369-18.117636-33.267685-19.378349-9.181103-14.407128-28.285207-18.819624-42.834574-9.750061-14.650675 9.099239-19.155269 28.356838-10.044774 43.007513C436.591543 307.014372 467.347011 337.555969 511.524163 337.555969z" p-id="2739" fill="#BABABA"></path><path d="M511.838318 733.499743c99.893104 0 181.170223-81.277118 181.170223-181.170223s-81.277118-181.170223-181.170223-181.170223-181.170223 81.277118-181.170223 181.170223S411.945213 733.499743 511.838318 733.499743zM511.838318 433.627025c65.456804 0 118.702496 53.245691 118.702496 118.702496s-53.245691 118.702496-118.702496 118.702496-118.702496-53.245691-118.702496-118.702496S446.381513 433.627025 511.838318 433.627025z" p-id="2740" fill="#BABABA"></path></svg>
+                <span>文章阅读量<span id="busuanzi_value_page_pv"></span>次</span>
+            </div>
+        
+
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>本文主要参考FEMU仓库README</p>
+<h1 id="0x00-intro">0x00 Intro</h1>
+<p>FEMU架构图</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">                        +--------------------+
+</span></span><span class="line"><span class="cl">                        |    VM / Guest OS   |
+</span></span><span class="line"><span class="cl">                        |                    |
+</span></span><span class="line"><span class="cl">                        |                    |
+</span></span><span class="line"><span class="cl">                        |  NVMe Block Device |
+</span></span><span class="line"><span class="cl">                        +--------^^----------+
+</span></span><span class="line"><span class="cl">                                 ||
+</span></span><span class="line"><span class="cl">                              PCIe/NVMe
+</span></span><span class="line"><span class="cl">                                 ||
+</span></span><span class="line"><span class="cl">  +------------------------------vv----------------------------+
+</span></span><span class="line"><span class="cl">  |  +---------+ +---------+ +---------+ +---------+ +------+  |
+</span></span><span class="line"><span class="cl">  |  | Blackbox| |  OCSSD  | | ZNS-SSD | |  NoSSD  | | ...  |  |
+</span></span><span class="line"><span class="cl">  |  +---------+ +---------+ +---------+ +---------+ +------+  |
+</span></span><span class="line"><span class="cl">  |                    FEMU NVMe SSD Controller                |
+</span></span><span class="line"><span class="cl">  +------------------------------------------------------------+
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>FEMU是弗吉尼亚理工学院的<strong>Huaicheng LI</strong>教授团队开发的一款SSD模拟器，FEMU的论文此前进行过总结[[<a class="link" href="https://blog.ipandai.club/p/fast18-femu%e9%97%aa%e5%ad%98%e6%a8%a1%e6%8b%9f%e7%b3%bb%e7%bb%9f%e4%bb%8b%e7%bb%8d/"  target="_blank" rel="noopener"
+    >FAST'18] FEMU闪存模拟系统介绍</a>](https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/)</p>
+<p>综合来说，FEMU是通过修改QEMU的基础框架，实现了对SSD性能的监控、控制，同时支持自行对FTL进行设计，对于VM而言，FEMU就是一个NVMe协议块设备，支持多种SSD研究模式：</p>
+<ul>
+<li>白盒模式 Open Chanel SSD：例如软件定义闪存SDF，OCSSD，主机端运行FTL</li>
+<li>黑盒模式 BBSSD：FTL位于存储设备，实现了内部映射表，模拟目前的消费级SSD</li>
+<li>ZNS SSD：向OS暴露NVMe Zone接口，便于OS直接发起read/write请求</li>
+<li>NoSSD：模拟超低延迟的NVMe设备，例如SCM、Optane、Z-NAND SSD</li>
+</ul>
+<p>FEMU使用的一些注意事项：</p>
+<ol>
+<li>
+<p>尽量让FEMU单独运行，以便有较低的误差</p>
+</li>
+<li>
+<p>FEMU默认使用8个核心来轮训NVMe队列，FTL额外使用一个核心，VM使用少量的虚拟CPU，默认配置会为VM保留4个宿主机CPU。FEMU对轮询线程的数量可以自行配置，使用<code>-device femu,queues=1,devsz_mb=xxx,femu_mode=xxx</code>进行设置，即：</p>
+<p><code>FEMU轮询线程+1个FTL线程+FEMU虚拟机虚拟CPU数量+宿主机使用1-2个CPU&lt;=宿主机中的CPU核心数</code></p>
+</li>
+<li>
+<p>FEMU会将整个SSD存储到DRAM中来确保精准的延迟和对闪存的模拟，必须确保有大于存储设备容量的空闲内存，宿主机和VM需要保留2-4GB的内存，一个比较直观的公式表达就是：</p>
+<p><code>FEMU SSD大小+虚拟机DRAM大小+宿主机DRAM大小&lt;=总DRAM大小</code></p>
+<p>$\rm FEMU \ \ SSD\ \ Size + VM\ \ DRAM\ \ Size+Host\ \  DRAM\ \ Size \leq Total\ \ DRAM \ \ Size$</p>
+</li>
+<li>
+<p>FEMU只支持4.14及以上的Linux内核版本</p>
+</li>
+</ol>
+<p>更多详细信息可以参考<a class="link" href="https://github.com/vtess/FEMU/wiki"  target="_blank" rel="noopener"
+    >FEMU wiki</a></p>
+<h1 id="0x01-usage">0x01 Usage</h1>
+<h2 id="image">Image</h2>
+<h3 id="get-from-maintainer">Get From Maintainer</h3>
+<p>首先是要制作系统镜像，如果不想的话，可以直接使用作者提供的镜像，起初我打算在macOS上制作，但是貌似macOS没有给QEMU使用HyperVisor的权限，因此想去装一个Ubuntu双系统，结果Windows在硬盘末尾写了一点数据，导致SSD不能分出足够的空间来安装，最后折腾了一下磁盘碎片整理，关闭虚拟内存、使用win自带的硬盘碎片整理工具，最终还是没能成功分出足够的空间，世界名画：</p>
+<p><img src="https://cdn.ipandai.club/095d3446086861d74d8b96a9623f9c02.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="095d3446086861d74d8b96a9623f9c02"
+	
+	
+></p>
+<p>最后只能借助WSL，制作出来了Ubuntu Server的镜像，几经周折上传到服务器之后，发现启动失败，用md5sum看了一下，结果上传过程中发生了错误，于是压缩了镜像重新上传，此时学长告知可以直接使用作者提供的镜像（ubuntu 20.04.1 server版本，内核版本5.4），看了一下README发现填写问卷即可，<a class="link" href="https://docs.google.com/forms/d/e/1FAIpQLSdCyNTU7n-hwW1ODJ3i_q1vmS6eTT-V3c4vCL8ouYocNLhxvA/viewform"  target="_blank" rel="noopener"
+    >镜像下载Google 问卷</a>，只有邮箱中就会收到下载地址</p>
+<p>下载地址为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget http://people.cs.uchicago.edu/~huaicheng/femu/femu-vm.tar.xz
+</span></span><span class="line"><span class="cl">tar xJvf femu-vm.tar.xz
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下载后解压，然后记得检查一下md5，不然会变得不幸</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">md5sum u20s.qcow2 &gt; tmp.md5sum
+</span></span><span class="line"><span class="cl">diff md5sum u20s.md5sum
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虚拟机的用户名和密码为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">username: femu
+</span></span><span class="line"><span class="cl">passwd: femu
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="make-it-yourself">Make It Yourself</h3>
+<p>在ubuntu官网或者各大高校镜像站下载live-server即可，然后使用qemu-system-x86启动VM安装程序，这里作者要求是最好使用GUI模式来操作，我尝试了nographic发现并不能正确的进入安装程序，顺便提一下，退出QEMU的方式是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">修饰键：Ctrl+A 命令键：x
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是先按下Ctrl+A，再按下x，类似tmux～～</p>
+<p>启动指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo qemu-system-x86_64 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-cdrom ubuntu-22.04.1-live-server-amd64.iso <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-hda femu.qcow2 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-boot d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-net nic -net user <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-m <span class="m">8192</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-rtc <span class="nv">base</span><span class="o">=</span>localtime -smp <span class="m">8</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-cpu host <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-enable-kvm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>作者文档中使用的为<code>-localtime</code>，目前的QEMU版本已经移除了该方式，改为了<code>-rtc base=localtime</code></p>
+<p>一路安装下来之后，使用如下指令进入VM中（去掉挂载iso的参数）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo qemu-system-x86_64 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-hda femu.qcow2 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-boot d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-net nic -net user <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-m <span class="m">8192</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-rtc <span class="nv">base</span><span class="o">=</span>localtime -smp <span class="m">8</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-cpu host <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-enable-kvm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>进入VM后，编辑<code>/etc/default/grub</code>，写入以下启动选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">GRUB_CMDLINE_LINUX</span><span class="o">=</span><span class="s2">&#34;ip=dhcp console=ttyS0,115200 console=tty console=ttyS0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">GRUB_TERMINAL</span><span class="o">=</span>serial
+</span></span><span class="line"><span class="cl"><span class="nv">GRUB_SERIAL_COMMAND</span><span class="o">=</span><span class="s2">&#34;serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过以上指令设置-nographic模式的启动选项，同时设置了ip的获取方式</p>
+<p>保存退出后，更新grub，并退出vm</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo update-grub
+</span></span><span class="line"><span class="cl">sudo shutdown -h now
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时镜像就制作成功了，可以通过FEMU来启动进行</p>
+<h2 id="run-qemu">Run Qemu</h2>
+<p>针对不同的研究方向，可以通过运行不同的启动脚本来运行FEMU</p>
+<p>例如：</p>
+<p>运行黑盒模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-blackbox.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行白盒模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-whitebox.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行NoSSD模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-nossd.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行ZNSSD模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-zns.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以黑盒模式的运行为例，脚本主要内容即FEMU的运行，这里使用的qemu-system-x86_64是FEMU的编译产物，可以通过修改脚本的配置来使FEMU适配自己的机器，参数修改参考上文或者FEMU Wiki</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1"># Huaicheng Li &lt;huaicheng@cs.uchicago.edu&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Run FEMU as a black-box SSD (FTL managed by the device)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># image directory</span>
+</span></span><span class="line"><span class="cl"><span class="nv">IMGDIR</span><span class="o">=</span><span class="nv">$HOME</span>/images
+</span></span><span class="line"><span class="cl"><span class="c1"># Virtual machine disk image</span>
+</span></span><span class="line"><span class="cl"><span class="nv">OSIMGF</span><span class="o">=</span><span class="nv">$IMGDIR</span>/u20s.qcow2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[[</span> ! -e <span class="s2">&#34;</span><span class="nv">$OSIMGF</span><span class="s2">&#34;</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;VM disk image couldn&#39;t be found ...&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;Please prepare a usable VM image and place it as </span><span class="nv">$OSIMGF</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;Once VM disk image is ready, please rerun this script again&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">exit</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo x86_64-softmmu/qemu-system-x86_64 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -name <span class="s2">&#34;FEMU-BBSSD-VM&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -enable-kvm <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -cpu host <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -smp <span class="m">4</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -m 4G <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -device virtio-scsi-pci,id<span class="o">=</span>scsi0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -device scsi-hd,drive<span class="o">=</span>hd0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span><span class="nv">$OSIMGF</span>,if<span class="o">=</span>none,aio<span class="o">=</span>native,cache<span class="o">=</span>none,format<span class="o">=</span>qcow2,id<span class="o">=</span>hd0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -device femu,devsz_mb<span class="o">=</span>4096,femu_mode<span class="o">=</span><span class="m">1</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -net user,hostfwd<span class="o">=</span>tcp::8080-:22 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -net nic,model<span class="o">=</span>virtio <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -nographic <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -qmp unix:./qmp-sock,server,nowait 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>后续进行一些具体实验后再补充一些FEMU在实际研究过程中的使用步骤</p>
+<h1 id="reference">Reference</h1>
+<ol>
+<li><a class="link" href="https://github.com/vtess/FEMU"  target="_blank" rel="noopener"
+    >https://github.com/vtess/FEMU</a></li>
+<li><a class="link" href="https://github.com/vtess/FEMU/wiki"  target="_blank" rel="noopener"
+    >https://github.com/vtess/FEMU/wiki</a></li>
+<li><a class="link" href="https://www.qemu.org/docs/master/about/removed-features.html#localtime-removed-in-3-1"  target="_blank" rel="noopener"
+    >https://www.qemu.org/docs/master/about/removed-features.html#localtime-removed-in-3-1</a></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/femu/">FEMU</a>
+        
+            <a href="/tags/qemu/">QEMU</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[FAST&#39;18] FEMU闪存模拟系统介绍</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/dart%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Dart学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/acm-trans.-on-storage-hintstor-a-framework-to-study-i/o-hints-in-heterogeneous-storage/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/atc20-pink-high-speed-in-storage-key-value-store-with-bounded-tails/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/osdi21-modernizing-file-system-through-in-storage-indexing/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[OSDI&#39;21] Modernizing File System through In-Storage Indexing</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "coding-pandas" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2022 Coding_Panda&#39;s Blog
+    </section>
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span>本站总访问量<span id="busuanzi_value_site_uv"></span>次</span>
+    <section class="powerby">
+        ICP备案： <a href="https://beian.miit.gov.cn">鲁ICP备2021030271号</a> <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#0x00-intro">0x00 Intro</a></li>
+    <li><a href="#0x01-usage">0x01 Usage</a>
+      <ol>
+        <li><a href="#image">Image</a>
+          <ol>
+            <li><a href="#get-from-maintainer">Get From Maintainer</a></li>
+            <li><a href="#make-it-yourself">Make It Yourself</a></li>
+          </ol>
+        </li>
+        <li><a href="#run-qemu">Run Qemu</a></li>
+      </ol>
+    </li>
+    <li><a href="#reference">Reference</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

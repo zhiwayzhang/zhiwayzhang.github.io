@@ -3,9 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://blog.ipandai.club/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/p/osdi22-xrp-in-kernel-storage-functions-with-ebpf/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/categories/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/ebpf/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/io_uring/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/mongodb/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/categories/notes/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/paper/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/post/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/categories/storage/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/wiredtiger/</loc>
+    <lastmod>2023-02-09T14:51:48+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/p/fast22-mt2-memory-bandwidth-regulation-on-hybrid-nvm/dram-platforms/</loc>
     <lastmod>2022-12-19T16:50:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/cgroups/</loc>
@@ -14,25 +47,7 @@
     <loc>https://blog.ipandai.club/tags/memory/</loc>
     <lastmod>2022-12-19T16:50:00+08:00</lastmod>
   </url><url>
-    <loc>https://blog.ipandai.club/p/mt2-memory-bandwidth-regulation-on-hybrid-nvm/dram-platforms/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/categories/notes/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
     <loc>https://blog.ipandai.club/tags/nvm/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/paper/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/post/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/categories/storage/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/</loc>
     <lastmod>2022-12-19T16:50:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/femu/</loc>

@@ -191,7 +191,7 @@
 &lt;p&gt;XRP只针对read操作做优化，update和insert在buffer中维护。&lt;/p&gt;
 &lt;p&gt;WT的BPF函数和BPF-KV差不多，WT需要对B-tree的Page做解析操作。&lt;/p&gt;
 &lt;h1 id=&#34;0x05-thinking&#34;&gt;0x05 Thinking&lt;/h1&gt;
-&lt;p&gt;XRP是OSDI&#39;22的best paper，从很新颖的角度优化了数据库引擎等I/O密集型应用，不需要频繁传递数据于用户空间和NVMe Driver时间，也减少了I/O过程中在轮询时的开销，提高了CPU利用率，通过BPF这一内核特性可以实现自定义I/O函数，同时保证一定的安全性和隔离。&lt;/p&gt;
+&lt;p&gt;XRP是OSDI&#39;22的best paper，文章整体的工作量非常大，修改了ext4文件系统、BPF模块，并设计了优化后的KV存储引擎。文章从很新颖的角度优化了数据库引擎等I/O密集型应用，不需要频繁传递数据于用户空间和NVMe Driver时间，也减少了I/O过程中在轮询时的开销，提高了CPU利用率，通过BPF这一内核特性可以实现自定义I/O函数，同时保证一定的安全性和隔离。&lt;/p&gt;
 &lt;h1 id=&#34;0x06-reference--more-information&#34;&gt;0x06 Reference &amp;amp;&amp;amp; More information&lt;/h1&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://medium.com/databasss/on-disk-io-part-3-lsm-trees-8b2da218496f&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;

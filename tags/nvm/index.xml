@@ -101,7 +101,7 @@
 &lt;p&gt;monitor需要获得不同种类I/O准确的带宽，例如DRAM的read/write带宽，NVM的read/write带宽。Regulator使用这些信息来决定是否要限制每个TGroup的内存带宽。&lt;/p&gt;
 &lt;p&gt;对于NVM/DRAM的read带宽，可以直接通过PMU进行获取&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;NVM Read Bandwidth：&lt;code&gt;ocr.all_data_- rd.pmm_hit_local_pmm.any_snoop&lt;/code&gt; 需要通过PMU事件计数器来检索本地NVM read的数量并乘上cache line size 即64B来得出总带宽&lt;/li&gt;
+&lt;li&gt;NVM Read Bandwidth：&lt;code&gt;ocr.all_data_rd.pmm_hit_local_pmm.any_snoop&lt;/code&gt; 需要通过PMU事件计数器来检索本地NVM read的数量并乘上cache line size 即64B来得出总带宽&lt;/li&gt;
 &lt;li&gt;DRAM Read Bandwidth：&lt;code&gt;ocr.all_data_rd.l3_miss_local_dram.any_snoop&lt;/code&gt; DRAM PMU counter进行统计&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;对于Write的统计无法通过PMU，需要利用MBM来监控每个TGroup的总内存访问带宽，为DRAM read/write Bandwidth 和 NVM read/write Bandwidth的总和。二者的Read带宽可以很容易计算出来。&lt;/p&gt;
@@ -212,8 +212,9 @@ $$&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h1 id=&#34;0x04-thinking&#34;&gt;0x04 Thinking&lt;/h1&gt;
-&lt;p&gt;作者在内核中实现了线程粒度的内存带宽监控，同时利用了多种发放来实现内存带宽的限流。&lt;/p&gt;
+&lt;p&gt;作者在内核中实现了线程粒度的内存带宽监控，同时利用了多种方法来实现内存带宽的限流。&lt;/p&gt;
 &lt;p&gt;同时利用了分析DRAM/NVM读写带宽之间的相互影响，从而确定了优化的方向和方法。&lt;/p&gt;
+&lt;p&gt;本文章来自SJTU的IPADS实验室，文章中的论述非常有条理，采取的每一项措施都有实验验证，有例可循，例如选取NVM write操作较多的TGroup作为干扰项，以及MBA和CPU限额综合调整带宽，都有相应的实验分析。&lt;/p&gt;
 </description>
         </item>
         <item>

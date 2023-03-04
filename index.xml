@@ -6,7 +6,156 @@
         <description>Recent content on Coding_Panda&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Thu, 09 Feb 2023 14:51:48 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 02 Mar 2023 15:11:40 +0800</lastBuildDate><atom:link href="https://blog.ipandai.club/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>[FAST&#39;23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba</title>
+        <link>https://blog.ipandai.club/p/fast23-more-than-capacity-performance-oriented-evolution-of-pangu-in-alibaba/</link>
+        <pubDate>Thu, 02 Mar 2023 15:11:40 +0800</pubDate>
+        
+        <guid>https://blog.ipandai.club/p/fast23-more-than-capacity-performance-oriented-evolution-of-pangu-in-alibaba/</guid>
+        <description>&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast23/presentation/li-qiang-deployed&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[FAST&#39;23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;FAST&#39;23 会议论文翻译，《不仅仅是容量:盘古面向性能的演变》&lt;/p&gt;
+&lt;p&gt;本论文讲述了Pangu存储系统是如何随着硬件及商业需求，去演变提供更高的性能的，存储服务的I/O延迟达到了100-us。盘古的演变主要有两个部分：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Phase 1: 盘古通过优化文件系统并设计了用户端的存储操作系统，积极引入高速SSD和Remote Direct Memory Access(RDMA)网络技术。因此，盘古在有效降低了I/O延迟的同时，还提高了吞吐量和IOPS。&lt;/li&gt;
+&lt;li&gt;Phase 2: 盘古从面向卷的存储供应商转变为面向性能。为了适应这一商业模式的改变，盘古使用足够多的SSD和25Gbps-100Gbps的RDMA带宽更新了基础设施。这引入了一些列的关键设计，包括减少流量放大，远程直接缓存访问，和CPU计算卸载，来保证盘古完全获得基于硬件升级所带来的性能提升。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;除了技术上的创新，作者还分享了盘古发展过程中的运营经验，并讨论了其中的重要教训。&lt;/p&gt;
+&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
+&lt;p&gt;盘古的开发始于2009年，目前已经是阿里巴巴集团和阿里云统一存储平台。盘古为阿里的核心业务提供了可伸缩性、高性能和可靠性。&lt;/p&gt;
+&lt;p&gt;Elastic Block Storage(EBS), Object Storage Service(OSS), Network-Attached Storage(NAS), PolarDB, MaxCompute这些云服务基于盘古建立。经过十几年的发展，盘古已经成为了一个拥有ExaBytes并管理万亿文件的全局存储系统。&lt;/p&gt;
+&lt;h2 id=&#34;盘古-10-提供存储容量&#34;&gt;盘古 1.0: 提供存储容量&lt;/h2&gt;
+&lt;p&gt;Pangu 1.0设计于2009-2015年，通过高性能的CPU和HDD组成，可以提供ms毫秒级别的I/O延迟和Gbps级别的&lt;strong&gt;数据中心带宽&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;Pangu 1.0基于Linux Ext4设计了一个分布式的内核文件系统和内核TCP，并给予不同种类的存储服务提供多种文件类型支持（Tempfile，LogFile，Random Access file）。&lt;/p&gt;
+&lt;p&gt;此时正处于云计算的初始阶段，性能受限于HDD性能和网络带宽，相较于更快的访问速度，用户更关注存储容量。&lt;/p&gt;
+&lt;h2 id=&#34;新的硬件新的设计&#34;&gt;新的硬件，新的设计&lt;/h2&gt;
+&lt;p&gt;自2015年起，为了引入新兴的SSD和RDMA技术，盘古2.0开始设计和开发。盘古2.0的目标是提供100us级别I/O延迟的高性能的存储服务。尽管SSD和RDMA在存储和网络中实现低延迟、高性能的I/O，团队发现：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;盘古1.0中使用的多种文件类型，特别是允许随机访问的文件类型，在固态硬盘上的表现很差，而固态硬盘在顺序操作上可以实现高吞吐量和IOPS。&lt;/li&gt;
+&lt;li&gt;由于数据复制和频繁的中断，内核空间的软件栈无法跟上SSD和RDMA的高IOPS和低I/O延迟。&lt;/li&gt;
+&lt;li&gt;从以服务器为中心的数据中心架构向资源分散的数据中心架构的范式转变，对实现低I/O延迟提出了额外的挑战。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;盘古20-phase-1-通过重构文件系统与用户空间的存储操作系统来拥抱ssd和rdma&#34;&gt;盘古2.0 Phase 1: 通过重构文件系统与用户空间的存储操作系统来拥抱SSD和RDMA&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;为了实现高性能和低I/O延迟，盘古2.0首先在其文件系统中的关键组件提出了新的设计。为了简化整个系统的开发和管理，盘古设计了一个统一、追加写入的持久化层。它还引入了一个独立的分块布局，以减少文件写入操作的I/O延迟。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;盘古2.0设计了一个用户空间的存储操作系统（USSOS），USSOSS使用一个RTC(Run to completion)线程模型来实现用户空间存储栈和用户空间网络栈的高效协作。它还为高效的CPU和内存资源分配提出了一个用户空间的调度机制。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;盘古2.0部署了在动态环境下提供SLA保证的机制。通过这些创新，盘古2.0实现了毫秒级别的P999 I/O延迟。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;盘古20-phase-2-通过基础设施更新和突破网络内存cpu瓶颈适应以性能为导向的业务模式&#34;&gt;盘古2.0 Phase 2: 通过基础设施更新和突破网络/内存/CPU瓶颈，适应以性能为导向的业务模式&lt;/h2&gt;
+&lt;p&gt;2018年起，盘古逐渐从容量导向的商业模式转变为性能导向。这是因为越来越多的企业用户将他们的业务转移到了阿里云并且他们对存储性能的延迟和性能有很严格的要求。这在COVID-19疫情爆发之后变得越来越快，为了适应这一商业模式转变和日益增长的用户，盘古2.0需要继续升级基础设施。&lt;/p&gt;
+&lt;p&gt;用原有的服务器和交换机沿着基于CLOS架构的拓扑结构来对基础设施进行扩容是不经济的，包括高昂的总成本（机架空间、电力、散热、人力成本）和更高的碳排放/环境问题。因此，盘古开发来室内高容量存储服务器（每个服务器96TB SSD）并且升级到了25Gbps-100Gbps的网络带宽。&lt;/p&gt;
+&lt;p&gt;为了完全获得这些升级带来的性能提升，盘古2.0提出了一系列的技术来处理在{网络/内存/CPU}的性能瓶颈并充分利用其强大的硬件资源。具体来说，盘古2.0通过减少网络流量放大率和动态调整不同流量的优先级来优化网络带宽；通过提出Remote Direct Cache Access(RDCA)来处理内存瓶颈；通过消除数据序列化/反序列化的开销并引入CPU等待指令来同步超线程，以此来解决CPU瓶颈问题。&lt;/p&gt;
+&lt;h2 id=&#34;生产中的高性能&#34;&gt;生产中的高性能&lt;/h2&gt;
+&lt;p&gt;盘古2.0成功支持了elastic SSD block存储服务，并可达到100us级别的I/O延迟和1M的IOPS。在2018年双十一活动，盘古2.0加持下的阿里数据库实现了280us的延迟。&lt;/p&gt;
+&lt;p&gt;对于OTS存储服务，同样的硬件条件下。盘古2.0的I/O延迟比盘古1.0降低了一个数量级。&lt;/p&gt;
+&lt;p&gt;对于写敏感的服务（EBS云盘），P999 I/O延迟低于1ms。&lt;/p&gt;
+&lt;p&gt;对于读敏感的服务（在线搜索），P999 I/O延迟低于11ms。&lt;/p&gt;
+&lt;p&gt;在第二阶段，通过将2x25Gbps带宽升级到2x100Gbps，并解决了网络、内存、CPU瓶颈，每台泰山存储服务器的有效吞吐量增加了6.1倍。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Elastic SSD Block/EBS云盘：是为阿里云为云服务器ECS提供的低时延、持久性、高可靠的块级随机存储。块存储支持在可用区内自动复制用户的数据，防止意外硬件故障导致的数据不可用，保护业务免于硬件故障的威胁。&lt;/p&gt;
+&lt;p&gt;OTS：Open Table Service，已更名Table Store，是构建在阿里云飞天分布式系统之上的NoSQL数据库服务，提供海量结构化数据的存储和实时访问。Table Store以实例和表的形式组织数据，通过数据分片和负载均衡技术，实现规模上的无缝扩展。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&#34;0x01-bg&#34;&gt;0x01 Bg&lt;/h1&gt;
+&lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
+&lt;p&gt;盘古是大规模分布式存储系统，由：盘古核心，盘古服务层，盘古监控系统组成（Figure 1）。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230303140052844.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230303140052844&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;盘古core&#34;&gt;盘古Core&lt;/h3&gt;
+&lt;p&gt;盘古核心由：clients，masters，chunk severs组成，提供追加写入的存储语义。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Client&lt;/strong&gt;提供访问盘古云存储服务（EBS，OSS）的SDK，并负责接收从服务端发送的文件请求，与masters和chunk servers通信来实现这些请求。类似于其他分布式文件系统（Tectonic，Colossus），盘古中的Clients负责较重的工作并在盘古的复制管理、SLA保障、数据一致性管理中扮演关键角色。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Master&lt;/strong&gt;管理盘古中的所有元数据并使用基于Raft的协议来维护元数据的分布式一致性。为了更好的水平扩展性和延伸性（大量的文件数），盘古master分解元数据服务为两个部分：namespace服务和stream meta服务，stream是一组chunk的抽象。这两个服务首先根据目录树分隔元数据来实现局部原数据，然后通过哈希将这些stream进一步分隔以达到负载均衡。namespace服务提供文件的信息（目录树和命名空间），stream元数据服务提供从文件到chunk的映射（chunk的位置）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ChunkServers&lt;/strong&gt;以chunk存储数据并配备有自定义的用户空间存储文件系统（USSFS），USSFS为不同硬件（SMRSTORE for HM-SMR drives）提供高性能，追加写入的存储引擎。在盘古2.0的第一阶段，每个存储在chunkservers的文件都有三个冗余，由GCWorker进行垃圾回收，并使用EC（Erasure Coding）编码来存储文件。在盘古2.0的第二阶段，在商业模式中，使用EC替换3个冗余的存储方式来减少流量放大。&lt;/p&gt;
+&lt;h3 id=&#34;盘古service&#34;&gt;盘古Service&lt;/h3&gt;
+&lt;p&gt;盘古服务层提供传统的云存储服务（EBS、OSS、NAS），通过面相云原生的文件系统（Fisc）提供云原生存储服务。&lt;/p&gt;
+&lt;h3 id=&#34;盘古monitoring-system&#34;&gt;盘古Monitoring System&lt;/h3&gt;
+&lt;p&gt;Perseus为盘古核心和盘古服务提供实时监控和人工智能辅助的根本原因分析服务。盘古Core、盘古Service、盘古Monitoring System通过高速网络相连。&lt;/p&gt;
+&lt;h2 id=&#34;盘古20的设计目标&#34;&gt;盘古2.0的设计目标&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;低延迟：盘古2.0要利用SSD和RDMA低延迟的特性，在计算-存储分离架构中实现平均100us级别I/O延迟的性能目标，即使在网络流量抖动和服务器故障等动态环境下，也能提供毫秒级别 P999 SLA。&lt;/li&gt;
+&lt;li&gt;高吞吐量：使存储服务器的有效吞吐量接近其容量。&lt;/li&gt;
+&lt;li&gt;为所有服务提供统一的高性能支持：为运行在其上的所有业务提供统一的高性能支持，例如在线搜索、数据流分析、EBS、OSS和数据库。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;related-work&#34;&gt;Related Work&lt;/h2&gt;
+&lt;p&gt;目前有很多分布式存储系统被提出和使用&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;开源：&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://hadoop.apache.org/docs/r1.2.1/hdfs_design.htmll&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HDFS（Hadoop FS）&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://ceph.com/en/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Ceph（Redhat）[OSDI&#39;06] Ceph: A Scalable, High-Performance Distributed File System&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;私有：&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;GFS（Google）[SOSP&#39;03] The Google File System&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;Tectonic (FaceBook)[FAST&#39;21] Facebook’s Tectonic Filesystem: Efficiency from Exascale&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://aws.amazon.com/products/storage/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;AWS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;阿里巴巴的盘古团队分享过很多盘古的设计理念，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RDMA大型部署,&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[NSDI&#39;21] When Cloud Storage Meets RDMA&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;横向扩展云存储服务的Key-Value键值存储引擎&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[SIGMOD&#39;21] A Key-Value Engine for Scalable Cloud Storage Services&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;EBS存储服务的网络和存储软件栈协同设计&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[SIGCOMM&#39;22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;namespace元数据服务的关键设计&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[FAST&#39;22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;0x02-phase-one-embracing-ssd-and-rdma&#34;&gt;0x02 Phase One: Embracing SSD and RDMA&lt;/h1&gt;
+&lt;p&gt;相较于HDD和TCP，SSD和RDMA技术显著降低了I/O延迟和网络问题。&lt;/p&gt;
+&lt;p&gt;盘古通过开发用户空间存储操作系统并提出一些文件系统的设计来实现高吞吐量、100us级别I/O延迟的高IOPS性能。同时提供了新的机制来保障SLA。&lt;/p&gt;
+&lt;h2 id=&#34;append-only-file-system&#34;&gt;Append-Only File System&lt;/h2&gt;
+&lt;p&gt;盘古提出了统一、追加写入的持久层，通过名为FlatLogFile的追加写入接口来简化架构。FlatLogFile具有高吞吐量和低延迟。基于FlatLogFile，盘古采用追加写入的chunk，并使用独立chunk布局来管理chunkserver中的chunk&lt;/p&gt;
+&lt;h3 id=&#34;unified-append-only-persistence-layer&#34;&gt;Unified, Append-Only Persistence Layer&lt;/h3&gt;
+&lt;p&gt;盘古的持久化层为存储服务提供接口。在早期开发阶段，不同的存储服务会使用不同的接口，例如LogFile接口服务于低延迟的NAS服务，TempFile接口服务于高吞吐量的大型计算数据分析服务。然而，这种设计使开发和管理非常复杂。每个接口都需要有人开发和维护，人力成本高切容易出错。&lt;/p&gt;
+&lt;p&gt;因此，需要简化开发管理过程，还要引入低延迟的SSD，受到计算机网络分层架构的启发，盘古提出了统一的文件类型：FlatLogFile（Figure 2）。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230303201714075.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230303201714075&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;FlatLogFile仅支持追加写入，上层服务（OSS）可以可以使用类似键值的映射来更新数据，并使用垃圾收集机制来压缩历史数据。FlatLogFile为存储服务提供简单、统一的接口操作数据。盘古的开发者必须保证数据操作都是通过FlatLogFile，尤其是写入操作，可以高效并可靠的在存储介质上执行。因此，存储服务的任何升级和改变对于开发者而言都是透明的，简化了开发和管理。&lt;/p&gt;
+&lt;p&gt;在底层，团队观察到SSD由于其自身的存储单元和闪存事务层的特性，可以在顺序操作上获得较高的吞吐量和IOPS。为了保证通过FlatLogFile进行的数据操作能够在SSD上高效地执行，我们将FlatLogFile上的顺序操作对齐以实现高性能。&lt;/p&gt;
+&lt;h3 id=&#34;heavy-weight-client&#34;&gt;Heavy weight Client&lt;/h3&gt;
+&lt;p&gt;脏活累活都是Client来干。Client负责与chunkservers一起进行数据操作，与master一起进行元数据信息的检索和更新。在从masters获取chunk信息后，一个盘古Client将负责相应的复制协议和EC协议。Client有重试机制（备份读取¥3.3）来处理意外的性能抖动（丢包）来保障I/O SLA。&lt;/p&gt;
+&lt;p&gt;Client还有探测机制，定期从masters获取最新的 chunkserver 状态，并评估 chunkserver 的服务质量。类似于Facebook Tectonic FS的client，盘古的Client可以选择合适的读写参数来处理具体的存储服务指令（EBS/OSS）。&lt;/p&gt;
+&lt;h3 id=&#34;append-only-chunk-management&#34;&gt;Append-Only Chunk Management&lt;/h3&gt;
+&lt;h1 id=&#34;0x03-phase-two-adapting-to-performance-oriented-business-model&#34;&gt;0x03 Phase Two: Adapting to Performance-Oriented Business Model&lt;/h1&gt;
+&lt;h1 id=&#34;0x04-operation-experiences&#34;&gt;0x04 Operation Experiences&lt;/h1&gt;
+&lt;h1 id=&#34;0x05-lessons&#34;&gt;0x05 Lessons&lt;/h1&gt;
+&lt;h1 id=&#34;0x06-conclusion&#34;&gt;0x06 Conclusion&lt;/h1&gt;
+&lt;h1 id=&#34;0x07-reference&#34;&gt;0x07 Reference&lt;/h1&gt;
+</description>
+        </item>
+        <item>
         <title>[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</title>
         <link>https://blog.ipandai.club/p/osdi22-xrp-in-kernel-storage-functions-with-ebpf/</link>
         <pubDate>Thu, 09 Feb 2023 14:51:48 +0800</pubDate>

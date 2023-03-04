@@ -148,6 +148,44 @@
 &lt;p&gt;脏活累活都是Client来干。Client负责与chunkservers一起进行数据操作，与master一起进行元数据信息的检索和更新。在从masters获取chunk信息后，一个盘古Client将负责相应的复制协议和EC协议。Client有重试机制（备份读取¥3.3）来处理意外的性能抖动（丢包）来保障I/O SLA。&lt;/p&gt;
 &lt;p&gt;Client还有探测机制，定期从masters获取最新的 chunkserver 状态，并评估 chunkserver 的服务质量。类似于Facebook Tectonic FS的client，盘古的Client可以选择合适的读写参数来处理具体的存储服务指令（EBS/OSS）。&lt;/p&gt;
 &lt;h3 id=&#34;append-only-chunk-management&#34;&gt;Append-Only Chunk Management&lt;/h3&gt;
+&lt;p&gt;传统的文件系统在写入文件时，同时分离写入文件的元数据，产生两次SSD的写操作。&lt;/p&gt;
+&lt;p&gt;为了降低延迟和延长SSD寿命，盘古基于FlatLogFile的append-only语义，选择以chunk为单位存储文件，而非block，chunk存储在chunksever中，并有独立的布局，每个chunk都保存了自己的数据和元数据信息。&lt;/p&gt;
+&lt;p&gt;chunk只需要一次操作就可以被写入到存储介质中，可以有效减少写入延迟和存储介质的寿命。&lt;/p&gt;
+&lt;p&gt;Figure 3是chunk的布局。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230304141646186.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230304141646186&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;一个chunk包含多个部分，每个部分包含三个元素：data、padding、footer。&lt;/p&gt;
+&lt;p&gt;footer保存了chunk的元数据，例如chunk ID、chunk 长度、CRC校验和。&lt;/p&gt;
+&lt;p&gt;独立的chunk布局也使得chunkserver可以执行进行纠错恢复。例如，当一个client连续写入chunk到存储设备时，chunkserver在内存中存储这些chunk的元数据，并且周期性地将这些信息的检查点传递给存储设备。当发生错误导致一些不能完成的写入操作时，chunkserver会加载检查点中的元数据并且和chunk中的元数据进行比较，如果二者不同，chunkserver会检查Chunk的CRC来进行恢复。&lt;/p&gt;
+&lt;h3 id=&#34;metadata-operation-optimization-元数据操作优化&#34;&gt;Metadata Operation Optimization 元数据操作优化&lt;/h3&gt;
+&lt;p&gt;盘古的Master提供两种元数据服务：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;namespace：负责目录树和文件管理&lt;/li&gt;
+&lt;li&gt;Stream：负责chunk信息的维护&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Stream内包含一组chunk，同一个Stream中的chunk保存在一个文件中。&lt;/p&gt;
+&lt;p&gt;这两个服务都是用了分布式架构来保证更好的伸缩性。&lt;/p&gt;
+&lt;p&gt;他们根据元数据局部性和负载均衡对元数据进行划分（先根据目录树划分，再进行哈希）。&lt;/p&gt;
+&lt;p&gt;同时还用多种机制来优化元数据操作的高效性。&lt;/p&gt;
+&lt;h4 id=&#34;并行的元数据处理&#34;&gt;并行的元数据处理&lt;/h4&gt;
+&lt;p&gt;namespace和stream都使用并行处理（InfiniFS）来实现元数据的低延迟访问。&lt;/p&gt;
+&lt;p&gt;盘古使用哈希算法来映射关联性强的元数据到不同的元数据服务器中。使用一种新的数据结构，支持可预测的目录ID，并允许Client高效地平行执行路径解析。同时还引入了几种加速Client从Stream服务中检索chunk信息的技术。&lt;/p&gt;
+&lt;h4 id=&#34;可变长度的chunk&#34;&gt;可变长度的chunk&lt;/h4&gt;
+&lt;h4 id=&#34;在client中缓存chunk信息&#34;&gt;在Client中缓存chunk信息&lt;/h4&gt;
+&lt;h4 id=&#34;批处理chunk信息请求&#34;&gt;批处理chunk信息请求&lt;/h4&gt;
+&lt;h4 id=&#34;推测chunk信息进行预取&#34;&gt;推测chunk信息进行预取&lt;/h4&gt;
+&lt;h4 id=&#34;数据捎带减少往返时延&#34;&gt;数据捎带减少往返时延&lt;/h4&gt;
+&lt;h2 id=&#34;chunkserver-ussos&#34;&gt;ChunkServer USSOS&lt;/h2&gt;
+&lt;h2 id=&#34;高性能sla保障&#34;&gt;高性能SLA保障&lt;/h2&gt;
+&lt;h2 id=&#34;评估&#34;&gt;评估&lt;/h2&gt;
 &lt;h1 id=&#34;0x03-phase-two-adapting-to-performance-oriented-business-model&#34;&gt;0x03 Phase Two: Adapting to Performance-Oriented Business Model&lt;/h1&gt;
 &lt;h1 id=&#34;0x04-operation-experiences&#34;&gt;0x04 Operation Experiences&lt;/h1&gt;
 &lt;h1 id=&#34;0x05-lessons&#34;&gt;0x05 Lessons&lt;/h1&gt;

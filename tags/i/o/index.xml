@@ -13,10 +13,10 @@
         <guid>https://blog.ipandai.club/p/osdi22-xrp-in-kernel-storage-functions-with-ebpf/</guid>
         <description>&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
 &lt;p&gt;随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230224131538122.png&#34; alt=&#34;image-20230224131538122&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230224131538122.png&#34; alt=&#34;image-20230224131538122&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230224132654967.png&#34; alt=&#34;image-20230224132654967&#34; style=&#34;zoom: 67%;&#34; /&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230225105147344.png&#34;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230224132654967.png&#34; alt=&#34;image-20230224132654967&#34; style=&#34;zoom: 67%;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225105147344.png&#34;
 	
 	
 	
@@ -50,7 +50,7 @@
 &lt;p&gt;BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。&lt;/p&gt;
 &lt;p&gt;一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。&lt;/p&gt;
 &lt;p&gt;有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230225134629890.png&#34; alt=&#34;image-20230225134629890&#34; style=&#34;zoom: 33%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225134629890.png&#34; alt=&#34;image-20230225134629890&#34; style=&#34;zoom: 33%;&#34; /&gt;
 &lt;p&gt;在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。&lt;/p&gt;
 &lt;h3 id=&#34;io_uring&#34;&gt;io_uring&lt;/h3&gt;
 &lt;p&gt;io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。&lt;/p&gt;
@@ -73,7 +73,7 @@
 &lt;/ul&gt;
 &lt;h1 id=&#34;0x03-design--implementation&#34;&gt;0x03 Design &amp;amp;&amp;amp; Implementation&lt;/h1&gt;
 &lt;p&gt;XRP的架构图：&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230225161425201.png&#34; alt=&#34;image-20230225161425201&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225161425201.png&#34; alt=&#34;image-20230225161425201&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;resubmission-logic&#34;&gt;Resubmission Logic&lt;/h2&gt;
 &lt;p&gt;XRP的Resubmission主要包含3个部分：&lt;/p&gt;
 &lt;ul&gt;
@@ -86,7 +86,7 @@
 &lt;p&gt;最终，XRP发起下一次NVMe请求，将请求append到相应CPU核心NVMe的SQ中完成resubmission（如上图所示）。&lt;/p&gt;
 &lt;h3 id=&#34;bpf-hook&#34;&gt;BPF Hook&lt;/h3&gt;
 &lt;p&gt;XRP引入&lt;code&gt;BPF_PROG_TYPE_XRP&lt;/code&gt;作为BPF函数的签名（函数签名一般包括函数的参数类型、个数等），符合该签名的程序可以被BPF Hook调用。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230225182708553.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225182708553.png&#34;
 	
 	
 	
@@ -118,7 +118,7 @@
 &lt;p&gt;元数据摘要共有两个函数，如下图所示。&lt;/p&gt;
 &lt;p&gt;当地址映射被更新时，&lt;strong&gt;文件系统&lt;/strong&gt;将调用update函数。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;中断处理程序&lt;/strong&gt;则负责调用lookup函数，通过接收到的inode地址，给出offset和长度获取地址映射；lookup中也会有越界检查来保证安全性。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230225205022040.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225205022040.png&#34;
 	
 	
 	
@@ -175,14 +175,14 @@
 &lt;li&gt;&lt;code&gt;bpf_prog_load&lt;/code&gt;：加载&lt;code&gt;BPF_PROG_TYPE_XRP&lt;/code&gt;类型的BPF函数&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;read_xrp&lt;/code&gt;：将调用BPF函数应用到一个具体的请求上&lt;/li&gt;
 &lt;/ul&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230226143117688.png&#34; alt=&#34;image-20230226143117688&#34; style=&#34;zoom: 50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230226143117688.png&#34; alt=&#34;image-20230226143117688&#34; style=&#34;zoom: 50%;&#34; /&gt;
 &lt;p&gt;具体的使用实例，作者给出了两个示例。&lt;/p&gt;
 &lt;h2 id=&#34;bpf-kv&#34;&gt;BPF-KV&lt;/h2&gt;
 &lt;p&gt;作者使用B+树在磁盘组织数据，同时自行维护DRAM Cache来对块和对象进行索引。&lt;/p&gt;
 &lt;p&gt;最大请求数量限制为31，保证可以遍历一个节点的所有31个孩子。&lt;/p&gt;
 &lt;p&gt;BPF函数用于查找KV对，首先获取在scratch buffer中的查询目标key，并线性地在node中查找。&lt;/p&gt;
 &lt;p&gt;使用&lt;code&gt;read_xrp&lt;/code&gt;来实现read系统调用，BPF-KV首先为scratch buffer分配一块空间，并计算出offset来启动read。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230226152454999.png&#34; alt=&#34;image-20230226152454999&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230226152454999.png&#34; alt=&#34;image-20230226152454999&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;BPF-KV支持范围查询，查询过程中的数据保存在scratch buffer中。&lt;/p&gt;
 &lt;p&gt;BPF-KV支持SUM、MAX、MIN此类操作&lt;/p&gt;
 &lt;h2 id=&#34;wiredtiger&#34;&gt;WiredTiger&lt;/h2&gt;
@@ -247,7 +247,7 @@
 &lt;p&gt;由于NVM和DRAM共享内存总线，因此存在干扰问题。&lt;/p&gt;
 &lt;p&gt;用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况&lt;/p&gt;
 &lt;p&gt;如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223132031882.png&#34; alt=&#34;image-20230223132031882&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223132031882.png&#34; alt=&#34;image-20230223132031882&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;从图中得出的两个结论为：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响&lt;/strong&gt;&lt;/li&gt;
@@ -262,7 +262,7 @@
 &lt;p&gt;MBA在每个物理核心和共享L3 Cache之间引入了一个可编程的请求速率控制器，控制器通过在内存请求之间插入延迟来对内存带宽的使用进行限流。&lt;/p&gt;
 &lt;p&gt;Intel要求使用Classes of Service（CLOS）为线程进行分组，然后为每个CLOS设置一个限流值。&lt;/p&gt;
 &lt;h1 id=&#34;0x02-design&#34;&gt;0x02 Design&lt;/h1&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221223002925874.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221223002925874.png&#34;
 	
 	
 	
@@ -338,11 +338,11 @@ $$&lt;/p&gt;
 &lt;/div&gt;&lt;p&gt;作者使用吞吐量降低10%的延迟作为阈值&lt;/p&gt;
 &lt;h2 id=&#34;regulator&#34;&gt;Regulator&lt;/h2&gt;
 &lt;h3 id=&#34;内存调节机制&#34;&gt;内存调节机制&lt;/h3&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223164328178.png&#34; alt=&#34;image-20230223164328178&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223164328178.png&#34; alt=&#34;image-20230223164328178&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;&lt;strong&gt;MBA&lt;/strong&gt;，通过设置限流值来对程序进行限制。MBA只支持throttling values，不能进行太精细的控制，MBA对DRAM敏感的负载的限制效果更好，对NVM-write的限制几乎没有效果，如上图b。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;CPU调度&lt;/strong&gt;，可以进行更细粒度的内存带宽调整，利用Linux Cgroup CPU子系统来对应用使用的CPU核心进行限额。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;有效性和比较&lt;/strong&gt;，作者通过对比测试后发现，CPU限流会影响应用程序的其他任务，限制其整体的效率，而MBA进对内存的访问进行限制，对程序整体的运行影响较小。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223170600388.png&#34; alt=&#34;image-20230223170600388&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223170600388.png&#34; alt=&#34;image-20230223170600388&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;h3 id=&#34;动态带宽限流&#34;&gt;动态带宽限流&lt;/h3&gt;
 &lt;h4 id=&#34;识别吵闹邻居&#34;&gt;识别吵闹邻居&lt;/h4&gt;
 &lt;p&gt;Prevention策略，所有超过带宽上限的TGroup都被视为吵闹邻居&lt;/p&gt;
@@ -355,7 +355,7 @@ $$&lt;/p&gt;
 &lt;p&gt;一旦内存干扰消失，算法就会尝试放宽带宽限制，操作过程和施加内存限制的方式相反。&lt;/p&gt;
 &lt;p&gt;当Regulator结束了一次调节/释放操作时，就会继续等待下一步操作，取决于Monitor提供的信息。&lt;/p&gt;
 &lt;p&gt;整体的工作流程在作者的Slides上有一张图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230223191251147.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223191251147.png&#34;
 	
 	
 	
@@ -455,7 +455,7 @@ $$&lt;/p&gt;
 &lt;p&gt;目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。&lt;/p&gt;
 &lt;h1 id=&#34;0x03-hintstor-design&#34;&gt;0x03 HintStor Design&lt;/h1&gt;
 &lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221202204914922.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221202204914922.png&#34;
 	
 	
 	
@@ -525,7 +525,7 @@ $$&lt;/p&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;classification&#34;&gt;Classification&lt;/h2&gt;
 &lt;p&gt;I/O access hints可以分为两种，分别为从操作系统动态地进行捕获和从文件系统静态地获取&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221209005726034.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221209005726034.png&#34;
 	
 	
 	
@@ -554,7 +554,7 @@ $$&lt;/p&gt;
 &lt;p&gt;==涉及Linux内核的部分主要为Linux 2.6==&lt;/p&gt;
 &lt;h1 id=&#34;linux-io-栈概述&#34;&gt;Linux I/O 栈概述&lt;/h1&gt;
 &lt;p&gt;Linux I/O 栈的简图如下&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221106012036118.png&#34; alt=&#34;image-20221106012036118&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221106012036118.png&#34; alt=&#34;image-20221106012036118&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;下面分别简述各个层次的功能&lt;/p&gt;
 &lt;h2 id=&#34;应用程序层&#34;&gt;应用程序层&lt;/h2&gt;
 &lt;p&gt;应用程序层通过系统调用向VFS发起I/O请求&lt;/p&gt;
@@ -744,7 +744,7 @@ $$&lt;/p&gt;
 &lt;p&gt;Page Cache 中的每个文件都是一棵基数树（radix tree，本质上是多叉搜索树），树的每个节点都是一个页。&lt;/p&gt;
 &lt;p&gt;内核通过把页索引转换为Radix Tree中的路径，使用Radix Tree来快速搜索页描述符所在的位置。内核通过页描述符可以确定页面是否为等待刷新到硬盘的脏页或其中数据的I/O传输是否正在进行。&lt;/p&gt;
 &lt;p&gt;Radix Tree中的每一个叶子节点指向文件内相应偏移所对应的Cache项&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221101143123364.png&#34; alt=&#34;image-20221101143123364&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221101143123364.png&#34; alt=&#34;image-20221101143123364&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;page-cache处理函数&#34;&gt;Page Cache处理函数&lt;/h2&gt;
 &lt;h3 id=&#34;find_get_page&#34;&gt;find_get_page()&lt;/h3&gt;
 &lt;p&gt;传入 address space对象指针和便宜了，获取自旋锁，在Radix Tree中搜索具有指定偏移量的叶子结点，若成功找到，会增加页面使用计数器，释放自旋锁，并返回页描述符的指针，否则将释放自旋锁并返回NULL。&lt;/p&gt;
@@ -784,7 +784,7 @@ $$&lt;/p&gt;
 &lt;li&gt;读取字符数目的长度&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;对于VFS而言，首先根据文件描述符编号，内核(使用&lt;code&gt;fs/file_table.c&lt;/code&gt;中的&lt;code&gt;fget_light()&lt;/code&gt;函数)从进程的 &lt;code&gt;task_struct&lt;/code&gt;中找到与之相关的文件实例，&lt;code&gt;file_pos_read()&lt;/code&gt;函数确定读取当前文件的位置，并返回一个参数&lt;code&gt;file-&amp;gt;file_pos&lt;/code&gt;，实际的读取操作通过&lt;code&gt;vfs_read()&lt;/code&gt;函数来执行，该函数会判断文件是否有&lt;code&gt;file-&amp;gt;f_op-&amp;gt;read&lt;/code&gt;方法，从而确定后续使用的函数，若不存在则会调用&lt;code&gt;do_sync_read&lt;/code&gt;函数。最后通过&lt;code&gt;file_pos_write&lt;/code&gt;函数来记录文件新的读写位置，通过修改&lt;code&gt;file_ops&lt;/code&gt;的值来实现。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221022151840698.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221022151840698.png&#34;
 	
 	
 	
@@ -952,7 +952,7 @@ $$&lt;/p&gt;
 &lt;p&gt;ext4在分配硬盘空间时只能分配若干个block，一个block包含硬盘上的若干个扇区，扇区的数量必须是2的幂次。&lt;/p&gt;
 &lt;p&gt;不使用扩展布局的文件（通过block映射维护）必须存放在文件系统前$2^{32}$个block中，通过扩展布局来保存的文件，必须存放在前$2^{48}$个block中。&lt;/p&gt;
 &lt;p&gt;对于32位和64位的文件系统，各个数据结构的大小限制如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221115165058013.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221115165058013.png&#34;
 	
 	
 	
@@ -962,7 +962,7 @@ $$&lt;/p&gt;
 	
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221115165128885.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221115165128885.png&#34;
 	
 	
 	
@@ -1089,16 +1089,16 @@ $$&lt;/p&gt;
 &lt;li&gt;I/O 命令：用于主机和SSD之间的数据传输&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Admin命令集有：&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221105160942779.png&#34; alt=&#34;image-20221105160942779&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105160942779.png&#34; alt=&#34;image-20221105160942779&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;NVM I/O指令集有：&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221105161030669.png&#34; alt=&#34;image-20221105161030669&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105161030669.png&#34; alt=&#34;image-20221105161030669&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;从主机io请求到ssd&#34;&gt;从主机I/O请求到SSD&lt;/h3&gt;
 &lt;p&gt;NVMe有三个重要的机制，Submission Queue、Completion Queue、Doorbell Register。&lt;/p&gt;
 &lt;p&gt;SQ和CQ位于主机的内存中，DB位于SSD控制器内部，下图直观的展示了他们之间的位置关系。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221105161458148.png&#34; alt=&#34;image-20221105161458148&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105161458148.png&#34; alt=&#34;image-20221105161458148&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;在主机发起I/O指令时，现将指令放在SQ中，主机会通过修改DB寄存器来通知SSD从SQ中取出需要执行的指令。CQ记录了指令执行的状态（成功/失败），SSD负责向CQ中写入命令的状态。&lt;/p&gt;
 &lt;p&gt;NVMe对指令的处理流程可以用下图来概括：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221105162016851.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105162016851.png&#34;
 	
 	
 	
@@ -1123,7 +1123,7 @@ $$&lt;/p&gt;
 &lt;p&gt;对于I/O指令和Admin指令，分别由专有的SQ和CQ进行管理，即Admin SQ/CQ和I/O SQ/CQ。&lt;/p&gt;
 &lt;p&gt;I/O SQ和SQ是通过Admin的相关指令来进行创建的。&lt;/p&gt;
 &lt;p&gt;主机方面每个CPU核心可以有一个或者多个SQ，但是只能有一个CQ。一个核心创建多个SQ主要是为了提高多线程的并发能力，同时可以对不同SQ设置优先级来提高服务质量。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221105165937311.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105165937311.png&#34;
 	
 	
 	
@@ -1137,7 +1137,7 @@ $$&lt;/p&gt;
 &lt;p&gt;对于I/O SQ/CQ队列，深度在$2-65536(64K)$，一个SQ命令条目大小为$64Byte$，一个CQ条目大小为$16Byte$，队列深度可以自行配置。&lt;/p&gt;
 &lt;p&gt;一个PCIe接口也支持多个lane。&lt;/p&gt;
 &lt;p&gt;整个NVMe的工作流程像是如下图所示的两个生产者消费者模型&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221105234231636.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105234231636.png&#34;
 	
 	
 	
@@ -1185,15 +1185,15 @@ $$&lt;/p&gt;
 &lt;p&gt;原理其实比较简单，非电子系就不做太详细的研究了&lt;/p&gt;
 &lt;p&gt;闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行&lt;/p&gt;
 &lt;p&gt;闪存块(擦除单元)，由多个页组成的单元&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922124359358.png&#34; alt=&#34;image-20220922124359358&#34; style=&#34;zoom:33%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922124359358.png&#34; alt=&#34;image-20220922124359358&#34; style=&#34;zoom:33%;&#34; /&gt;
 &lt;p&gt;选中行和列，然后将数据加载到Sense Amplifiers&lt;/p&gt;
 &lt;p&gt;存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922124755447.png&#34; alt=&#34;image-20220922124755447&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922124755447.png&#34; alt=&#34;image-20220922124755447&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;Pass Through&lt;/p&gt;
 &lt;p&gt;选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922131649578.png&#34; alt=&#34;image-20220922131649578&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922131649578.png&#34; alt=&#34;image-20220922131649578&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922134857889.png&#34; alt=&#34;image-20220922134857889&#34; style=&#34;zoom:33%;&#34;/&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922134857889.png&#34; alt=&#34;image-20220922134857889&#34; style=&#34;zoom:33%;&#34;/&gt;
 &lt;p&gt;上述为SLC，Single Level Cell，单存储单元&lt;/p&gt;
 &lt;h4 id=&#34;多比特闪存&#34;&gt;多比特闪存&lt;/h4&gt;
 &lt;p&gt;多比特闪存单元MLC，包含2Bits 4个Level的数据&lt;/p&gt;
@@ -1204,18 +1204,18 @@ $$&lt;/p&gt;
 &lt;p&gt;使用格雷码使得相邻单元只有一位差异，方便纠错&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922135516463.png&#34; alt=&#34;image-20220922135516463&#34; style=&#34;zoom:45%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922135516463.png&#34; alt=&#34;image-20220922135516463&#34; style=&#34;zoom:45%;&#34; /&gt;
 &lt;p&gt;对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922140421405.png&#34; alt=&#34;image-20220922140421405&#34; style=&#34;zoom:40%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922140421405.png&#34; alt=&#34;image-20220922140421405&#34; style=&#34;zoom:40%;&#34; /&gt;
 &lt;p&gt;对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922141455826.png&#34; alt=&#34;image-20220922141455826&#34; style=&#34;zoom:40%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922141455826.png&#34; alt=&#34;image-20220922141455826&#34; style=&#34;zoom:40%;&#34; /&gt;
 &lt;h4 id=&#34;闪存&#34;&gt;闪存&lt;/h4&gt;
 &lt;p&gt;Block的大小的一种配置：&lt;/p&gt;
 &lt;p&gt;一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB&lt;/p&gt;
 &lt;p&gt;有64列bitlines，一个block的大小即为&lt;code&gt;16KB*64*2=2MB&lt;/code&gt;，一般按照此比例配置Block&lt;/p&gt;
 &lt;p&gt;写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率&lt;/p&gt;
 &lt;p&gt;写入是需要先擦除再写入，擦除整个块&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922143608667.png&#34; alt=&#34;image-20220922143608667&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922143608667.png&#34; alt=&#34;image-20220922143608667&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h4 id=&#34;闪存特性&#34;&gt;闪存特性&lt;/h4&gt;
 &lt;h5 id=&#34;读写粒度&#34;&gt;读写粒度&lt;/h5&gt;
 &lt;p&gt;闪存页读写粒度：&lt;/p&gt;
@@ -1231,7 +1231,7 @@ $$&lt;/p&gt;
 &lt;h5 id=&#34;不可覆盖写&#34;&gt;不可覆盖写&lt;/h5&gt;
 &lt;p&gt;写前需要擦除，读写粒度与擦除粒度不同&lt;/p&gt;
 &lt;p&gt;存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922162139217.png&#34; alt=&#34;image-20220922162139217&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922162139217.png&#34; alt=&#34;image-20220922162139217&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h5 id=&#34;有限次擦除&#34;&gt;有限次擦除&lt;/h5&gt;
 &lt;p&gt;随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。&lt;/p&gt;
 &lt;p&gt;氧化层老化变薄，束缚电子能力变弱&lt;/p&gt;
@@ -1243,12 +1243,12 @@ $$&lt;/p&gt;
 &lt;p&gt;MLC：1w次&lt;/p&gt;
 &lt;p&gt;TLC：1k次&lt;/p&gt;
 &lt;p&gt;根据特性来设计FTL固件&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922164523965.png&#34; alt=&#34;image-20220922164523965&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922164523965.png&#34; alt=&#34;image-20220922164523965&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;ftl&#34;&gt;FTL&lt;/h2&gt;
 &lt;p&gt;固态硬盘整体构成&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922164728094.png&#34; alt=&#34;image-20220922164728094&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922164728094.png&#34; alt=&#34;image-20220922164728094&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922165354311.png&#34; alt=&#34;image-20220922165354311&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922165354311.png&#34; alt=&#34;image-20220922165354311&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;垃圾回收&#34;&gt;垃圾回收&lt;/h3&gt;
 &lt;p&gt;page对于OS而言，是写入时的block&lt;/p&gt;
 &lt;p&gt;Page三种状态&lt;/p&gt;
@@ -1257,9 +1257,9 @@ $$&lt;/p&gt;
 &lt;li&gt;有效页 live/valid page&lt;/li&gt;
 &lt;li&gt;无效页 dead/invalid page&lt;/li&gt;
 &lt;/ul&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922184349456.png&#34; alt=&#34;image-20220922184349456&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922184349456.png&#34; alt=&#34;image-20220922184349456&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922184406162.png&#34; alt=&#34;image-20220922184406162&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922184406162.png&#34; alt=&#34;image-20220922184406162&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;时间开销：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量&lt;/li&gt;
@@ -1319,15 +1319,15 @@ $$&lt;/p&gt;
 &lt;p&gt;OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射&lt;/p&gt;
 &lt;p&gt;为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程&lt;/p&gt;
 &lt;p&gt;大致看了一下OSTEP，是有关操作系统的一本非常好的书，希望以后有时间读一下&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220924141132556.png&#34; alt=&#34;image-20220924141132556&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220924141132556.png&#34; alt=&#34;image-20220924141132556&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;page-level-ftl&#34;&gt;Page-Level FTL&lt;/h3&gt;
 &lt;p&gt;原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number&lt;/p&gt;
 &lt;p&gt;缺点是页表占用很大的空间&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220924152322358.png&#34; alt=&#34;image-20220924152322358&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220924152322358.png&#34; alt=&#34;image-20220924152322358&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;block-level-ftl&#34;&gt;Block-Level FTL&lt;/h3&gt;
 &lt;p&gt;保持Block 到Block的映射&lt;/p&gt;
 &lt;p&gt;先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220924152259043.png&#34; alt=&#34;image-20220924152259043&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220924152259043.png&#34; alt=&#34;image-20220924152259043&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;优点是占用空间很小，缺点是GC负载增加&lt;/p&gt;
 &lt;p&gt;原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】&lt;/p&gt;
 &lt;h3 id=&#34;hybrid-ftl&#34;&gt;Hybrid FTL&lt;/h3&gt;

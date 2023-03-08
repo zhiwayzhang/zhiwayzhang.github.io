@@ -357,7 +357,7 @@
 <p>位于闪存中的meta segments和data segments</p>
 <p>在LSM-tree KV 文件系统方面，作者主要参考了<a class="link" href="https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu"  target="_blank" rel="noopener"
     >WiscKey FAST'16</a>，取代FTL进行GC、索引和磨损均衡</p>
-<p><img src="https://cdn.ipandai.club/image-20221128145842322.png"
+<p><img src="/img/image-20221128145842322.png"
 	
 	
 	
@@ -383,7 +383,7 @@
 <p>同时可以直接在DRAM中进行compaction操作，无需占用闪存I/O，因为有电容的存在，无需定期刷新脏segment到闪存中</p>
 <h2 id="optimizing-search-path">Optimizing Search Path</h2>
 <p>在对Key进行查询时，LSM-tree将对各个Level进行二分查找</p>
-<p><img src="https://cdn.ipandai.club/image-20221129190239823.png"
+<p><img src="/img/image-20221129190239823.png"
 	
 	
 	
@@ -405,7 +405,7 @@
 </ol>
 <h2 id="speeding-up-compaction">Speeding up Compaction</h2>
 <p>在compaction阶段，引入一个硬件加速器，位于闪存和数据主总线之间，可以方便的合并两个闪存中的level</p>
-<p><img src="https://cdn.ipandai.club/image-20221129225719057.png"
+<p><img src="/img/image-20221129225719057.png"
 	
 	
 	

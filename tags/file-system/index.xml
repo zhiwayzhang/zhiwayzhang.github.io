@@ -53,7 +53,7 @@
 &lt;p&gt;位于闪存中的meta segments和data segments&lt;/p&gt;
 &lt;p&gt;在LSM-tree KV 文件系统方面，作者主要参考了&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;WiscKey FAST&#39;16&lt;/a&gt;，取代FTL进行GC、索引和磨损均衡&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221128145842322.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221128145842322.png&#34;
 	
 	
 	
@@ -79,7 +79,7 @@
 &lt;p&gt;同时可以直接在DRAM中进行compaction操作，无需占用闪存I/O，因为有电容的存在，无需定期刷新脏segment到闪存中&lt;/p&gt;
 &lt;h2 id=&#34;optimizing-search-path&#34;&gt;Optimizing Search Path&lt;/h2&gt;
 &lt;p&gt;在对Key进行查询时，LSM-tree将对各个Level进行二分查找&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129190239823.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221129190239823.png&#34;
 	
 	
 	
@@ -101,7 +101,7 @@
 &lt;/ol&gt;
 &lt;h2 id=&#34;speeding-up-compaction&#34;&gt;Speeding up Compaction&lt;/h2&gt;
 &lt;p&gt;在compaction阶段，引入一个硬件加速器，位于闪存和数据主总线之间，可以方便的合并两个闪存中的level&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129225719057.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221129225719057.png&#34;
 	
 	
 	
@@ -195,7 +195,7 @@
 &lt;p&gt;DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。&lt;/p&gt;
 &lt;p&gt;KV存储可以高效处理元数据和小文件的写入&lt;/p&gt;
 &lt;h2 id=&#34;lsm-tree&#34;&gt;LSM-Tree&lt;/h2&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
 &lt;p&gt;LSM Tree有多级，包括$L_1,L_2,&amp;hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i+1})&amp;gt;=T*Size(L_i)$&lt;/p&gt;
 &lt;p&gt;每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。&lt;/p&gt;
 &lt;p&gt;KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。&lt;/p&gt;
@@ -207,7 +207,7 @@
 &lt;p&gt;KEVINSSD：索引KV对象到闪存的LSM-tree&lt;/p&gt;
 &lt;h2 id=&#34;kv-command&#34;&gt;KV Command&lt;/h2&gt;
 &lt;p&gt;支持多种KV指令，同时支持事务&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102154423353.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102154423353.png&#34;
 	
 	
 	
@@ -252,7 +252,7 @@
 &lt;p&gt;KevinSSD基本实现了传统SSD 中FTL的所有功能，将KV对象映射到闪存、分配和释放闪存的空间。&lt;/p&gt;
 &lt;p&gt;FTL只做坏块管理和磨损均衡等简单工作。&lt;/p&gt;
 &lt;p&gt;每个Level维护一个内存表，来记录Flash中的KV对象。表的每个记录都有&lt;code&gt;&amp;lt;start key, end key, pointer&amp;gt;&lt;/code&gt;，其中指针指向保存KV对象的闪存页面的位置，start key和end key是页面中key的范围。key的范围可以在多个Level上重叠。为了快速查找，所有记录都按开始键排序。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102165350981.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102165350981.png&#34;
 	
 	
 	
@@ -300,7 +300,7 @@ $$
 &lt;p&gt;执行lookup系统调用时，给定一个完整的路径&lt;code&gt;/home/alice/&lt;/code&gt;，从根目录开始获取多个meta object，最终获取目标文件的inode&lt;/p&gt;
 &lt;p&gt;执行read系统调用时，将GET一个data object&lt;/p&gt;
 &lt;p&gt;执行readdir系统调用时，使用ITERATE，批量获取一组meta objects来获取inode&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102210344432.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102210344432.png&#34;
 	
 	
 	
@@ -326,7 +326,7 @@ $$
 &lt;/ul&gt;
 &lt;p&gt;但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING（如①）。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。&lt;/p&gt;
 &lt;p&gt;当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED（如②）。将提交的KV索引同步到LSM-tree中&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221103102304181.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221103102304181.png&#34;
 	
 	
 	
@@ -461,7 +461,7 @@ $$
 &lt;p&gt;所有目录项顺序拼接组成目录信息，在进行查询时可以使用rec_len来计算偏移量，便于查找目录中的文件（顺序遍历）&lt;/p&gt;
 &lt;h2 id=&#34;目录树&#34;&gt;目录树&lt;/h2&gt;
 &lt;p&gt;目录树的结构如下图所示，每个目录都有自己的inode，同时还有direntry，对其中的子目录可以构建子树，文件可以建立文件子节点&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221011191955170.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221011191955170.png&#34;
 	
 	
 	
@@ -579,7 +579,7 @@ $$
 &lt;p&gt;==涉及Linux内核的部分主要为Linux 2.6==&lt;/p&gt;
 &lt;h1 id=&#34;linux-io-栈概述&#34;&gt;Linux I/O 栈概述&lt;/h1&gt;
 &lt;p&gt;Linux I/O 栈的简图如下&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221106012036118.png&#34; alt=&#34;image-20221106012036118&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221106012036118.png&#34; alt=&#34;image-20221106012036118&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;下面分别简述各个层次的功能&lt;/p&gt;
 &lt;h2 id=&#34;应用程序层&#34;&gt;应用程序层&lt;/h2&gt;
 &lt;p&gt;应用程序层通过系统调用向VFS发起I/O请求&lt;/p&gt;
@@ -769,7 +769,7 @@ $$
 &lt;p&gt;Page Cache 中的每个文件都是一棵基数树（radix tree，本质上是多叉搜索树），树的每个节点都是一个页。&lt;/p&gt;
 &lt;p&gt;内核通过把页索引转换为Radix Tree中的路径，使用Radix Tree来快速搜索页描述符所在的位置。内核通过页描述符可以确定页面是否为等待刷新到硬盘的脏页或其中数据的I/O传输是否正在进行。&lt;/p&gt;
 &lt;p&gt;Radix Tree中的每一个叶子节点指向文件内相应偏移所对应的Cache项&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221101143123364.png&#34; alt=&#34;image-20221101143123364&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221101143123364.png&#34; alt=&#34;image-20221101143123364&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;page-cache处理函数&#34;&gt;Page Cache处理函数&lt;/h2&gt;
 &lt;h3 id=&#34;find_get_page&#34;&gt;find_get_page()&lt;/h3&gt;
 &lt;p&gt;传入 address space对象指针和便宜了，获取自旋锁，在Radix Tree中搜索具有指定偏移量的叶子结点，若成功找到，会增加页面使用计数器，释放自旋锁，并返回页描述符的指针，否则将释放自旋锁并返回NULL。&lt;/p&gt;
@@ -809,7 +809,7 @@ $$
 &lt;li&gt;读取字符数目的长度&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;对于VFS而言，首先根据文件描述符编号，内核(使用&lt;code&gt;fs/file_table.c&lt;/code&gt;中的&lt;code&gt;fget_light()&lt;/code&gt;函数)从进程的 &lt;code&gt;task_struct&lt;/code&gt;中找到与之相关的文件实例，&lt;code&gt;file_pos_read()&lt;/code&gt;函数确定读取当前文件的位置，并返回一个参数&lt;code&gt;file-&amp;gt;file_pos&lt;/code&gt;，实际的读取操作通过&lt;code&gt;vfs_read()&lt;/code&gt;函数来执行，该函数会判断文件是否有&lt;code&gt;file-&amp;gt;f_op-&amp;gt;read&lt;/code&gt;方法，从而确定后续使用的函数，若不存在则会调用&lt;code&gt;do_sync_read&lt;/code&gt;函数。最后通过&lt;code&gt;file_pos_write&lt;/code&gt;函数来记录文件新的读写位置，通过修改&lt;code&gt;file_ops&lt;/code&gt;的值来实现。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221022151840698.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221022151840698.png&#34;
 	
 	
 	
@@ -977,7 +977,7 @@ $$
 &lt;p&gt;ext4在分配硬盘空间时只能分配若干个block，一个block包含硬盘上的若干个扇区，扇区的数量必须是2的幂次。&lt;/p&gt;
 &lt;p&gt;不使用扩展布局的文件（通过block映射维护）必须存放在文件系统前$2^{32}$个block中，通过扩展布局来保存的文件，必须存放在前$2^{48}$个block中。&lt;/p&gt;
 &lt;p&gt;对于32位和64位的文件系统，各个数据结构的大小限制如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221115165058013.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221115165058013.png&#34;
 	
 	
 	
@@ -987,7 +987,7 @@ $$
 	
 	
 &gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221115165128885.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221115165128885.png&#34;
 	
 	
 	
@@ -1114,16 +1114,16 @@ $$
 &lt;li&gt;I/O 命令：用于主机和SSD之间的数据传输&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Admin命令集有：&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221105160942779.png&#34; alt=&#34;image-20221105160942779&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105160942779.png&#34; alt=&#34;image-20221105160942779&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;NVM I/O指令集有：&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221105161030669.png&#34; alt=&#34;image-20221105161030669&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105161030669.png&#34; alt=&#34;image-20221105161030669&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;从主机io请求到ssd&#34;&gt;从主机I/O请求到SSD&lt;/h3&gt;
 &lt;p&gt;NVMe有三个重要的机制，Submission Queue、Completion Queue、Doorbell Register。&lt;/p&gt;
 &lt;p&gt;SQ和CQ位于主机的内存中，DB位于SSD控制器内部，下图直观的展示了他们之间的位置关系。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221105161458148.png&#34; alt=&#34;image-20221105161458148&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105161458148.png&#34; alt=&#34;image-20221105161458148&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;在主机发起I/O指令时，现将指令放在SQ中，主机会通过修改DB寄存器来通知SSD从SQ中取出需要执行的指令。CQ记录了指令执行的状态（成功/失败），SSD负责向CQ中写入命令的状态。&lt;/p&gt;
 &lt;p&gt;NVMe对指令的处理流程可以用下图来概括：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221105162016851.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105162016851.png&#34;
 	
 	
 	
@@ -1148,7 +1148,7 @@ $$
 &lt;p&gt;对于I/O指令和Admin指令，分别由专有的SQ和CQ进行管理，即Admin SQ/CQ和I/O SQ/CQ。&lt;/p&gt;
 &lt;p&gt;I/O SQ和SQ是通过Admin的相关指令来进行创建的。&lt;/p&gt;
 &lt;p&gt;主机方面每个CPU核心可以有一个或者多个SQ，但是只能有一个CQ。一个核心创建多个SQ主要是为了提高多线程的并发能力，同时可以对不同SQ设置优先级来提高服务质量。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221105165937311.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105165937311.png&#34;
 	
 	
 	
@@ -1162,7 +1162,7 @@ $$
 &lt;p&gt;对于I/O SQ/CQ队列，深度在$2-65536(64K)$，一个SQ命令条目大小为$64Byte$，一个CQ条目大小为$16Byte$，队列深度可以自行配置。&lt;/p&gt;
 &lt;p&gt;一个PCIe接口也支持多个lane。&lt;/p&gt;
 &lt;p&gt;整个NVMe的工作流程像是如下图所示的两个生产者消费者模型&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221105234231636.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221105234231636.png&#34;
 	
 	
 	
@@ -1210,15 +1210,15 @@ $$
 &lt;p&gt;原理其实比较简单，非电子系就不做太详细的研究了&lt;/p&gt;
 &lt;p&gt;闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行&lt;/p&gt;
 &lt;p&gt;闪存块(擦除单元)，由多个页组成的单元&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922124359358.png&#34; alt=&#34;image-20220922124359358&#34; style=&#34;zoom:33%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922124359358.png&#34; alt=&#34;image-20220922124359358&#34; style=&#34;zoom:33%;&#34; /&gt;
 &lt;p&gt;选中行和列，然后将数据加载到Sense Amplifiers&lt;/p&gt;
 &lt;p&gt;存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922124755447.png&#34; alt=&#34;image-20220922124755447&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922124755447.png&#34; alt=&#34;image-20220922124755447&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;Pass Through&lt;/p&gt;
 &lt;p&gt;选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922131649578.png&#34; alt=&#34;image-20220922131649578&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922131649578.png&#34; alt=&#34;image-20220922131649578&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922134857889.png&#34; alt=&#34;image-20220922134857889&#34; style=&#34;zoom:33%;&#34;/&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922134857889.png&#34; alt=&#34;image-20220922134857889&#34; style=&#34;zoom:33%;&#34;/&gt;
 &lt;p&gt;上述为SLC，Single Level Cell，单存储单元&lt;/p&gt;
 &lt;h4 id=&#34;多比特闪存&#34;&gt;多比特闪存&lt;/h4&gt;
 &lt;p&gt;多比特闪存单元MLC，包含2Bits 4个Level的数据&lt;/p&gt;
@@ -1229,18 +1229,18 @@ $$
 &lt;p&gt;使用格雷码使得相邻单元只有一位差异，方便纠错&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922135516463.png&#34; alt=&#34;image-20220922135516463&#34; style=&#34;zoom:45%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922135516463.png&#34; alt=&#34;image-20220922135516463&#34; style=&#34;zoom:45%;&#34; /&gt;
 &lt;p&gt;对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922140421405.png&#34; alt=&#34;image-20220922140421405&#34; style=&#34;zoom:40%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922140421405.png&#34; alt=&#34;image-20220922140421405&#34; style=&#34;zoom:40%;&#34; /&gt;
 &lt;p&gt;对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922141455826.png&#34; alt=&#34;image-20220922141455826&#34; style=&#34;zoom:40%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922141455826.png&#34; alt=&#34;image-20220922141455826&#34; style=&#34;zoom:40%;&#34; /&gt;
 &lt;h4 id=&#34;闪存&#34;&gt;闪存&lt;/h4&gt;
 &lt;p&gt;Block的大小的一种配置：&lt;/p&gt;
 &lt;p&gt;一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB&lt;/p&gt;
 &lt;p&gt;有64列bitlines，一个block的大小即为&lt;code&gt;16KB*64*2=2MB&lt;/code&gt;，一般按照此比例配置Block&lt;/p&gt;
 &lt;p&gt;写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率&lt;/p&gt;
 &lt;p&gt;写入是需要先擦除再写入，擦除整个块&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922143608667.png&#34; alt=&#34;image-20220922143608667&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922143608667.png&#34; alt=&#34;image-20220922143608667&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h4 id=&#34;闪存特性&#34;&gt;闪存特性&lt;/h4&gt;
 &lt;h5 id=&#34;读写粒度&#34;&gt;读写粒度&lt;/h5&gt;
 &lt;p&gt;闪存页读写粒度：&lt;/p&gt;
@@ -1256,7 +1256,7 @@ $$
 &lt;h5 id=&#34;不可覆盖写&#34;&gt;不可覆盖写&lt;/h5&gt;
 &lt;p&gt;写前需要擦除，读写粒度与擦除粒度不同&lt;/p&gt;
 &lt;p&gt;存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922162139217.png&#34; alt=&#34;image-20220922162139217&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922162139217.png&#34; alt=&#34;image-20220922162139217&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h5 id=&#34;有限次擦除&#34;&gt;有限次擦除&lt;/h5&gt;
 &lt;p&gt;随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。&lt;/p&gt;
 &lt;p&gt;氧化层老化变薄，束缚电子能力变弱&lt;/p&gt;
@@ -1268,12 +1268,12 @@ $$
 &lt;p&gt;MLC：1w次&lt;/p&gt;
 &lt;p&gt;TLC：1k次&lt;/p&gt;
 &lt;p&gt;根据特性来设计FTL固件&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922164523965.png&#34; alt=&#34;image-20220922164523965&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922164523965.png&#34; alt=&#34;image-20220922164523965&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;ftl&#34;&gt;FTL&lt;/h2&gt;
 &lt;p&gt;固态硬盘整体构成&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922164728094.png&#34; alt=&#34;image-20220922164728094&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922164728094.png&#34; alt=&#34;image-20220922164728094&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922165354311.png&#34; alt=&#34;image-20220922165354311&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922165354311.png&#34; alt=&#34;image-20220922165354311&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;垃圾回收&#34;&gt;垃圾回收&lt;/h3&gt;
 &lt;p&gt;page对于OS而言，是写入时的block&lt;/p&gt;
 &lt;p&gt;Page三种状态&lt;/p&gt;
@@ -1282,9 +1282,9 @@ $$
 &lt;li&gt;有效页 live/valid page&lt;/li&gt;
 &lt;li&gt;无效页 dead/invalid page&lt;/li&gt;
 &lt;/ul&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922184349456.png&#34; alt=&#34;image-20220922184349456&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922184349456.png&#34; alt=&#34;image-20220922184349456&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220922184406162.png&#34; alt=&#34;image-20220922184406162&#34; style=&#34;zoom:25%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220922184406162.png&#34; alt=&#34;image-20220922184406162&#34; style=&#34;zoom:25%;&#34; /&gt;
 &lt;p&gt;时间开销：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量&lt;/li&gt;
@@ -1344,15 +1344,15 @@ $$
 &lt;p&gt;OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射&lt;/p&gt;
 &lt;p&gt;为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程&lt;/p&gt;
 &lt;p&gt;大致看了一下OSTEP，是有关操作系统的一本非常好的书，希望以后有时间读一下&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220924141132556.png&#34; alt=&#34;image-20220924141132556&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220924141132556.png&#34; alt=&#34;image-20220924141132556&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;page-level-ftl&#34;&gt;Page-Level FTL&lt;/h3&gt;
 &lt;p&gt;原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number&lt;/p&gt;
 &lt;p&gt;缺点是页表占用很大的空间&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220924152322358.png&#34; alt=&#34;image-20220924152322358&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220924152322358.png&#34; alt=&#34;image-20220924152322358&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h3 id=&#34;block-level-ftl&#34;&gt;Block-Level FTL&lt;/h3&gt;
 &lt;p&gt;保持Block 到Block的映射&lt;/p&gt;
 &lt;p&gt;先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220924152259043.png&#34; alt=&#34;image-20220924152259043&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220924152259043.png&#34; alt=&#34;image-20220924152259043&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;优点是占用空间很小，缺点是GC负载增加&lt;/p&gt;
 &lt;p&gt;原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】&lt;/p&gt;
 &lt;h3 id=&#34;hybrid-ftl&#34;&gt;Hybrid FTL&lt;/h3&gt;
@@ -1572,7 +1572,7 @@ $$
 &lt;p&gt;​	各种仿真实验后效果不错，效率提高了22%和31%。&lt;/p&gt;
 &lt;h1 id=&#34;20-background&#34;&gt;2.0 Background&lt;/h1&gt;
 &lt;h2 id=&#34;21-存储内核栈&#34;&gt;2.1 存储内核栈&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220810145032258.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220810145032258.png&#34;
 	
 	
 	
@@ -1593,7 +1593,7 @@ $$
 &lt;p&gt;存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。&lt;/p&gt;
 &lt;p&gt;当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。&lt;/p&gt;
 &lt;h2 id=&#34;22-设备固件栈&#34;&gt;2.2 设备固件栈&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220810232230437.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220810232230437.png&#34;
 	
 	
 	
@@ -1618,7 +1618,7 @@ $$
 &lt;/ol&gt;
 &lt;h1 id=&#34;30-跨层设计&#34;&gt;3.0 跨层设计&lt;/h1&gt;
 &lt;h2 id=&#34;31-快速存储的挑战&#34;&gt;3.1 快速存储的挑战&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811110758918.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220811110758918.png&#34;
 	
 	
 	
@@ -1648,7 +1648,7 @@ $$
 &lt;ul&gt;
 &lt;li&gt;为每个核心创建两个SQ队列和一个CQ队列&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811173922087.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220811173922087.png&#34;
 	
 	
 	
@@ -1671,7 +1671,7 @@ $$
 &lt;h2 id=&#34;41-中断处理程序&#34;&gt;4.1 中断处理程序&lt;/h2&gt;
 &lt;p&gt;flash share仅对来自在线应用的I/O 请求使用轮询&lt;/p&gt;
 &lt;p&gt;使用信号处理离线应用&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811231355037.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220811231355037.png&#34;
 	
 	
 	
@@ -1702,7 +1702,7 @@ $$
 &lt;li&gt;根据I/O动态划分&lt;/li&gt;
 &lt;li&gt;数据可保留&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812003132031.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220812003132031.png&#34;
 	
 	
 	
@@ -1728,7 +1728,7 @@ $$
 &lt;p&gt;8核心2GHz&lt;/p&gt;
 &lt;p&gt;L1 Cache 64KB&lt;/p&gt;
 &lt;p&gt;2GB Memory&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812191343849.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220812191343849.png&#34;
 	
 	
 	

@@ -123,7 +123,7 @@
 &lt;p&gt;所有目录项顺序拼接组成目录信息，在进行查询时可以使用rec_len来计算偏移量，便于查找目录中的文件（顺序遍历）&lt;/p&gt;
 &lt;h2 id=&#34;目录树&#34;&gt;目录树&lt;/h2&gt;
 &lt;p&gt;目录树的结构如下图所示，每个目录都有自己的inode，同时还有direntry，对其中的子目录可以构建子树，文件可以建立文件子节点&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221011191955170.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221011191955170.png&#34;
 	
 	
 	

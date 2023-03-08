@@ -318,10 +318,10 @@
     
     <h1 id="0x00-intro">0x00 Intro</h1>
 <p>随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。</p>
-<img src="https://cdn.ipandai.club/image-20230224131538122.png" alt="image-20230224131538122" style="zoom:67%;" />
+<img src="/img/image-20230224131538122.png" alt="image-20230224131538122" style="zoom:67%;" />
 <p>观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。</p>
-<img src="https://cdn.ipandai.club/image-20230224132654967.png" alt="image-20230224132654967" style="zoom: 67%;" />
-<p><img src="https://cdn.ipandai.club/image-20230225105147344.png"
+<img src="/img/image-20230224132654967.png" alt="image-20230224132654967" style="zoom: 67%;" />
+<p><img src="/img/image-20230225105147344.png"
 	
 	
 	
@@ -355,7 +355,7 @@
 <p>BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。</p>
 <p>一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。</p>
 <p>有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。</p>
-<img src="https://cdn.ipandai.club/image-20230225134629890.png" alt="image-20230225134629890" style="zoom: 33%;" />
+<img src="/img/image-20230225134629890.png" alt="image-20230225134629890" style="zoom: 33%;" />
 <p>在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。</p>
 <h3 id="io_uring">io_uring</h3>
 <p>io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。</p>
@@ -378,7 +378,7 @@
 </ul>
 <h1 id="0x03-design--implementation">0x03 Design &amp;&amp; Implementation</h1>
 <p>XRP的架构图：</p>
-<img src="https://cdn.ipandai.club/image-20230225161425201.png" alt="image-20230225161425201" style="zoom:50%;" />
+<img src="/img/image-20230225161425201.png" alt="image-20230225161425201" style="zoom:50%;" />
 <h2 id="resubmission-logic">Resubmission Logic</h2>
 <p>XRP的Resubmission主要包含3个部分：</p>
 <ul>
@@ -391,7 +391,7 @@
 <p>最终，XRP发起下一次NVMe请求，将请求append到相应CPU核心NVMe的SQ中完成resubmission（如上图所示）。</p>
 <h3 id="bpf-hook">BPF Hook</h3>
 <p>XRP引入<code>BPF_PROG_TYPE_XRP</code>作为BPF函数的签名（函数签名一般包括函数的参数类型、个数等），符合该签名的程序可以被BPF Hook调用。</p>
-<p><img src="https://cdn.ipandai.club/image-20230225182708553.png"
+<p><img src="/img/image-20230225182708553.png"
 	
 	
 	
@@ -423,7 +423,7 @@
 <p>元数据摘要共有两个函数，如下图所示。</p>
 <p>当地址映射被更新时，<strong>文件系统</strong>将调用update函数。</p>
 <p><strong>中断处理程序</strong>则负责调用lookup函数，通过接收到的inode地址，给出offset和长度获取地址映射；lookup中也会有越界检查来保证安全性。</p>
-<p><img src="https://cdn.ipandai.club/image-20230225205022040.png"
+<p><img src="/img/image-20230225205022040.png"
 	
 	
 	
@@ -480,14 +480,14 @@
 <li><code>bpf_prog_load</code>：加载<code>BPF_PROG_TYPE_XRP</code>类型的BPF函数</li>
 <li><code>read_xrp</code>：将调用BPF函数应用到一个具体的请求上</li>
 </ul>
-<img src="https://cdn.ipandai.club/image-20230226143117688.png" alt="image-20230226143117688" style="zoom: 50%;" />
+<img src="/img/image-20230226143117688.png" alt="image-20230226143117688" style="zoom: 50%;" />
 <p>具体的使用实例，作者给出了两个示例。</p>
 <h2 id="bpf-kv">BPF-KV</h2>
 <p>作者使用B+树在磁盘组织数据，同时自行维护DRAM Cache来对块和对象进行索引。</p>
 <p>最大请求数量限制为31，保证可以遍历一个节点的所有31个孩子。</p>
 <p>BPF函数用于查找KV对，首先获取在scratch buffer中的查询目标key，并线性地在node中查找。</p>
 <p>使用<code>read_xrp</code>来实现read系统调用，BPF-KV首先为scratch buffer分配一块空间，并计算出offset来启动read。</p>
-<img src="https://cdn.ipandai.club/image-20230226152454999.png" alt="image-20230226152454999" style="zoom:50%;" />
+<img src="/img/image-20230226152454999.png" alt="image-20230226152454999" style="zoom:50%;" />
 <p>BPF-KV支持范围查询，查询过程中的数据保存在scratch buffer中。</p>
 <p>BPF-KV支持SUM、MAX、MIN此类操作</p>
 <h2 id="wiredtiger">WiredTiger</h2>

@@ -320,7 +320,7 @@
 <p>==涉及Linux内核的部分主要为Linux 2.6==</p>
 <h1 id="linux-io-栈概述">Linux I/O 栈概述</h1>
 <p>Linux I/O 栈的简图如下</p>
-<img src="https://cdn.ipandai.club/image-20221106012036118.png" alt="image-20221106012036118" style="zoom:50%;" />
+<img src="/img/image-20221106012036118.png" alt="image-20221106012036118" style="zoom:50%;" />
 <p>下面分别简述各个层次的功能</p>
 <h2 id="应用程序层">应用程序层</h2>
 <p>应用程序层通过系统调用向VFS发起I/O请求</p>
@@ -510,7 +510,7 @@
 <p>Page Cache 中的每个文件都是一棵基数树（radix tree，本质上是多叉搜索树），树的每个节点都是一个页。</p>
 <p>内核通过把页索引转换为Radix Tree中的路径，使用Radix Tree来快速搜索页描述符所在的位置。内核通过页描述符可以确定页面是否为等待刷新到硬盘的脏页或其中数据的I/O传输是否正在进行。</p>
 <p>Radix Tree中的每一个叶子节点指向文件内相应偏移所对应的Cache项</p>
-<img src="https://cdn.ipandai.club/image-20221101143123364.png" alt="image-20221101143123364" style="zoom:50%;" />
+<img src="/img/image-20221101143123364.png" alt="image-20221101143123364" style="zoom:50%;" />
 <h2 id="page-cache处理函数">Page Cache处理函数</h2>
 <h3 id="find_get_page">find_get_page()</h3>
 <p>传入 address space对象指针和便宜了，获取自旋锁，在Radix Tree中搜索具有指定偏移量的叶子结点，若成功找到，会增加页面使用计数器，释放自旋锁，并返回页描述符的指针，否则将释放自旋锁并返回NULL。</p>
@@ -550,7 +550,7 @@
 <li>读取字符数目的长度</li>
 </ul>
 <p>对于VFS而言，首先根据文件描述符编号，内核(使用<code>fs/file_table.c</code>中的<code>fget_light()</code>函数)从进程的 <code>task_struct</code>中找到与之相关的文件实例，<code>file_pos_read()</code>函数确定读取当前文件的位置，并返回一个参数<code>file-&gt;file_pos</code>，实际的读取操作通过<code>vfs_read()</code>函数来执行，该函数会判断文件是否有<code>file-&gt;f_op-&gt;read</code>方法，从而确定后续使用的函数，若不存在则会调用<code>do_sync_read</code>函数。最后通过<code>file_pos_write</code>函数来记录文件新的读写位置，通过修改<code>file_ops</code>的值来实现。</p>
-<p><img src="https://cdn.ipandai.club/image-20221022151840698.png"
+<p><img src="/img/image-20221022151840698.png"
 	
 	
 	
@@ -718,7 +718,7 @@
 <p>ext4在分配硬盘空间时只能分配若干个block，一个block包含硬盘上的若干个扇区，扇区的数量必须是2的幂次。</p>
 <p>不使用扩展布局的文件（通过block映射维护）必须存放在文件系统前$2^{32}$个block中，通过扩展布局来保存的文件，必须存放在前$2^{48}$个block中。</p>
 <p>对于32位和64位的文件系统，各个数据结构的大小限制如下图所示：</p>
-<p><img src="https://cdn.ipandai.club/image-20221115165058013.png"
+<p><img src="/img/image-20221115165058013.png"
 	
 	
 	
@@ -728,7 +728,7 @@
 	
 	
 ></p>
-<p><img src="https://cdn.ipandai.club/image-20221115165128885.png"
+<p><img src="/img/image-20221115165128885.png"
 	
 	
 	
@@ -855,16 +855,16 @@
 <li>I/O 命令：用于主机和SSD之间的数据传输</li>
 </ul>
 <p>Admin命令集有：</p>
-<img src="https://cdn.ipandai.club/image-20221105160942779.png" alt="image-20221105160942779" style="zoom:50%;" />
+<img src="/img/image-20221105160942779.png" alt="image-20221105160942779" style="zoom:50%;" />
 <p>NVM I/O指令集有：</p>
-<img src="https://cdn.ipandai.club/image-20221105161030669.png" alt="image-20221105161030669" style="zoom:50%;" />
+<img src="/img/image-20221105161030669.png" alt="image-20221105161030669" style="zoom:50%;" />
 <h3 id="从主机io请求到ssd">从主机I/O请求到SSD</h3>
 <p>NVMe有三个重要的机制，Submission Queue、Completion Queue、Doorbell Register。</p>
 <p>SQ和CQ位于主机的内存中，DB位于SSD控制器内部，下图直观的展示了他们之间的位置关系。</p>
-<img src="https://cdn.ipandai.club/image-20221105161458148.png" alt="image-20221105161458148" style="zoom:50%;" />
+<img src="/img/image-20221105161458148.png" alt="image-20221105161458148" style="zoom:50%;" />
 <p>在主机发起I/O指令时，现将指令放在SQ中，主机会通过修改DB寄存器来通知SSD从SQ中取出需要执行的指令。CQ记录了指令执行的状态（成功/失败），SSD负责向CQ中写入命令的状态。</p>
 <p>NVMe对指令的处理流程可以用下图来概括：</p>
-<p><img src="https://cdn.ipandai.club/image-20221105162016851.png"
+<p><img src="/img/image-20221105162016851.png"
 	
 	
 	
@@ -889,7 +889,7 @@
 <p>对于I/O指令和Admin指令，分别由专有的SQ和CQ进行管理，即Admin SQ/CQ和I/O SQ/CQ。</p>
 <p>I/O SQ和SQ是通过Admin的相关指令来进行创建的。</p>
 <p>主机方面每个CPU核心可以有一个或者多个SQ，但是只能有一个CQ。一个核心创建多个SQ主要是为了提高多线程的并发能力，同时可以对不同SQ设置优先级来提高服务质量。</p>
-<p><img src="https://cdn.ipandai.club/image-20221105165937311.png"
+<p><img src="/img/image-20221105165937311.png"
 	
 	
 	
@@ -903,7 +903,7 @@
 <p>对于I/O SQ/CQ队列，深度在$2-65536(64K)$，一个SQ命令条目大小为$64Byte$，一个CQ条目大小为$16Byte$，队列深度可以自行配置。</p>
 <p>一个PCIe接口也支持多个lane。</p>
 <p>整个NVMe的工作流程像是如下图所示的两个生产者消费者模型</p>
-<p><img src="https://cdn.ipandai.club/image-20221105234231636.png"
+<p><img src="/img/image-20221105234231636.png"
 	
 	
 	
@@ -951,15 +951,15 @@
 <p>原理其实比较简单，非电子系就不做太详细的研究了</p>
 <p>闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行</p>
 <p>闪存块(擦除单元)，由多个页组成的单元</p>
-<img src="https://cdn.ipandai.club/image-20220922124359358.png" alt="image-20220922124359358" style="zoom:33%;" />
+<img src="/img/image-20220922124359358.png" alt="image-20220922124359358" style="zoom:33%;" />
 <p>选中行和列，然后将数据加载到Sense Amplifiers</p>
 <p>存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0</p>
-<img src="https://cdn.ipandai.club/image-20220922124755447.png" alt="image-20220922124755447" style="zoom:25%;" />
+<img src="/img/image-20220922124755447.png" alt="image-20220922124755447" style="zoom:25%;" />
 <p>Pass Through</p>
 <p>选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态</p>
-<img src="https://cdn.ipandai.club/image-20220922131649578.png" alt="image-20220922131649578" style="zoom:25%;" />
+<img src="/img/image-20220922131649578.png" alt="image-20220922131649578" style="zoom:25%;" />
 <p>如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011</p>
-<img src="https://cdn.ipandai.club/image-20220922134857889.png" alt="image-20220922134857889" style="zoom:33%;"/>
+<img src="/img/image-20220922134857889.png" alt="image-20220922134857889" style="zoom:33%;"/>
 <p>上述为SLC，Single Level Cell，单存储单元</p>
 <h4 id="多比特闪存">多比特闪存</h4>
 <p>多比特闪存单元MLC，包含2Bits 4个Level的数据</p>
@@ -970,18 +970,18 @@
 <p>使用格雷码使得相邻单元只有一位差异，方便纠错</p>
 </blockquote>
 <p>多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。</p>
-<img src="https://cdn.ipandai.club/image-20220922135516463.png" alt="image-20220922135516463" style="zoom:45%;" />
+<img src="/img/image-20220922135516463.png" alt="image-20220922135516463" style="zoom:45%;" />
 <p>对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。</p>
-<img src="https://cdn.ipandai.club/image-20220922140421405.png" alt="image-20220922140421405" style="zoom:40%;" />
+<img src="/img/image-20220922140421405.png" alt="image-20220922140421405" style="zoom:40%;" />
 <p>对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。</p>
-<img src="https://cdn.ipandai.club/image-20220922141455826.png" alt="image-20220922141455826" style="zoom:40%;" />
+<img src="/img/image-20220922141455826.png" alt="image-20220922141455826" style="zoom:40%;" />
 <h4 id="闪存">闪存</h4>
 <p>Block的大小的一种配置：</p>
 <p>一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB</p>
 <p>有64列bitlines，一个block的大小即为<code>16KB*64*2=2MB</code>，一般按照此比例配置Block</p>
 <p>写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率</p>
 <p>写入是需要先擦除再写入，擦除整个块</p>
-<img src="https://cdn.ipandai.club/image-20220922143608667.png" alt="image-20220922143608667" style="zoom:50%;" />
+<img src="/img/image-20220922143608667.png" alt="image-20220922143608667" style="zoom:50%;" />
 <h4 id="闪存特性">闪存特性</h4>
 <h5 id="读写粒度">读写粒度</h5>
 <p>闪存页读写粒度：</p>
@@ -997,7 +997,7 @@
 <h5 id="不可覆盖写">不可覆盖写</h5>
 <p>写前需要擦除，读写粒度与擦除粒度不同</p>
 <p>存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错</p>
-<img src="https://cdn.ipandai.club/image-20220922162139217.png" alt="image-20220922162139217" style="zoom:50%;" />
+<img src="/img/image-20220922162139217.png" alt="image-20220922162139217" style="zoom:50%;" />
 <h5 id="有限次擦除">有限次擦除</h5>
 <p>随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。</p>
 <p>氧化层老化变薄，束缚电子能力变弱</p>
@@ -1009,12 +1009,12 @@
 <p>MLC：1w次</p>
 <p>TLC：1k次</p>
 <p>根据特性来设计FTL固件</p>
-<img src="https://cdn.ipandai.club/image-20220922164523965.png" alt="image-20220922164523965" style="zoom:50%;" />
+<img src="/img/image-20220922164523965.png" alt="image-20220922164523965" style="zoom:50%;" />
 <h2 id="ftl">FTL</h2>
 <p>固态硬盘整体构成</p>
-<img src="https://cdn.ipandai.club/image-20220922164728094.png" alt="image-20220922164728094" style="zoom:50%;" />
+<img src="/img/image-20220922164728094.png" alt="image-20220922164728094" style="zoom:50%;" />
 <p>SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大</p>
-<img src="https://cdn.ipandai.club/image-20220922165354311.png" alt="image-20220922165354311" style="zoom:50%;" />
+<img src="/img/image-20220922165354311.png" alt="image-20220922165354311" style="zoom:50%;" />
 <h3 id="垃圾回收">垃圾回收</h3>
 <p>page对于OS而言，是写入时的block</p>
 <p>Page三种状态</p>
@@ -1023,9 +1023,9 @@
 <li>有效页 live/valid page</li>
 <li>无效页 dead/invalid page</li>
 </ul>
-<img src="https://cdn.ipandai.club/image-20220922184349456.png" alt="image-20220922184349456" style="zoom:25%;" />
+<img src="/img/image-20220922184349456.png" alt="image-20220922184349456" style="zoom:25%;" />
 <p>需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲</p>
-<img src="https://cdn.ipandai.club/image-20220922184406162.png" alt="image-20220922184406162" style="zoom:25%;" />
+<img src="/img/image-20220922184406162.png" alt="image-20220922184406162" style="zoom:25%;" />
 <p>时间开销：</p>
 <ul>
 <li>复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量</li>
@@ -1085,15 +1085,15 @@
 <p>OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射</p>
 <p>为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程</p>
 <p>大致看了一下OSTEP，是有关操作系统的一本非常好的书，希望以后有时间读一下</p>
-<img src="https://cdn.ipandai.club/image-20220924141132556.png" alt="image-20220924141132556" style="zoom:50%;" />
+<img src="/img/image-20220924141132556.png" alt="image-20220924141132556" style="zoom:50%;" />
 <h3 id="page-level-ftl">Page-Level FTL</h3>
 <p>原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number</p>
 <p>缺点是页表占用很大的空间</p>
-<img src="https://cdn.ipandai.club/image-20220924152322358.png" alt="image-20220924152322358" style="zoom:50%;" />
+<img src="/img/image-20220924152322358.png" alt="image-20220924152322358" style="zoom:50%;" />
 <h3 id="block-level-ftl">Block-Level FTL</h3>
 <p>保持Block 到Block的映射</p>
 <p>先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的</p>
-<img src="https://cdn.ipandai.club/image-20220924152259043.png" alt="image-20220924152259043" style="zoom:50%;" />
+<img src="/img/image-20220924152259043.png" alt="image-20220924152259043" style="zoom:50%;" />
 <p>优点是占用空间很小，缺点是GC负载增加</p>
 <p>原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】</p>
 <h3 id="hybrid-ftl">Hybrid FTL</h3>

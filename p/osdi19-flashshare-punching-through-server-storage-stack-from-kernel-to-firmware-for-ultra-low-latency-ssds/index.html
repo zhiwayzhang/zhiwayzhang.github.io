@@ -358,7 +358,7 @@
 <p>​	各种仿真实验后效果不错，效率提高了22%和31%。</p>
 <h1 id="20-background">2.0 Background</h1>
 <h2 id="21-存储内核栈">2.1 存储内核栈</h2>
-<p><img src="https://cdn.ipandai.club/image-20220810145032258.png"
+<p><img src="/img/image-20220810145032258.png"
 	
 	
 	
@@ -379,7 +379,7 @@
 <p>存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。</p>
 <p>当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。</p>
 <h2 id="22-设备固件栈">2.2 设备固件栈</h2>
-<p><img src="https://cdn.ipandai.club/image-20220810232230437.png"
+<p><img src="/img/image-20220810232230437.png"
 	
 	
 	
@@ -404,7 +404,7 @@
 </ol>
 <h1 id="30-跨层设计">3.0 跨层设计</h1>
 <h2 id="31-快速存储的挑战">3.1 快速存储的挑战</h2>
-<p><img src="https://cdn.ipandai.club/image-20220811110758918.png"
+<p><img src="/img/image-20220811110758918.png"
 	
 	
 	
@@ -434,7 +434,7 @@
 <ul>
 <li>为每个核心创建两个SQ队列和一个CQ队列</li>
 </ul>
-<p><img src="https://cdn.ipandai.club/image-20220811173922087.png"
+<p><img src="/img/image-20220811173922087.png"
 	
 	
 	
@@ -457,7 +457,7 @@
 <h2 id="41-中断处理程序">4.1 中断处理程序</h2>
 <p>flash share仅对来自在线应用的I/O 请求使用轮询</p>
 <p>使用信号处理离线应用</p>
-<p><img src="https://cdn.ipandai.club/image-20220811231355037.png"
+<p><img src="/img/image-20220811231355037.png"
 	
 	
 	
@@ -488,7 +488,7 @@
 <li>根据I/O动态划分</li>
 <li>数据可保留</li>
 </ol>
-<p><img src="https://cdn.ipandai.club/image-20220812003132031.png"
+<p><img src="/img/image-20220812003132031.png"
 	
 	
 	
@@ -514,7 +514,7 @@
 <p>8核心2GHz</p>
 <p>L1 Cache 64KB</p>
 <p>2GB Memory</p>
-<p><img src="https://cdn.ipandai.club/image-20220812191343849.png"
+<p><img src="/img/image-20220812191343849.png"
 	
 	
 	

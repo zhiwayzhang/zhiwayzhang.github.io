@@ -64,7 +64,7 @@
 &lt;h1 id=&#34;0x01-bg&#34;&gt;0x01 Bg&lt;/h1&gt;
 &lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
 &lt;p&gt;盘古是大规模分布式存储系统，由：盘古核心，盘古服务层，盘古监控系统组成（Figure 1）。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230303140052844.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230303140052844.png&#34;
 	
 	
 	
@@ -100,17 +100,23 @@
 &lt;/ul&gt;
 &lt;p&gt;私有：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;GFS（Google）[SOSP&#39;03] The Google File System&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;Tectonic (FaceBook)[FAST&#39;21] Facebook’s Tectonic Filesystem: Efficiency from Exascale&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://pdos.csail.mit.edu/6.824/papers/gfs.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GFS（Google）[SOSP&#39;03] The Google File System&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast21/presentation/pan&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Tectonic (FaceBook)[FAST&#39;21] Facebook’s Tectonic Filesystem: Efficiency from Exascale&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://aws.amazon.com/products/storage/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;AWS&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;阿里巴巴的盘古团队分享过很多盘古的设计理念，包括：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;RDMA大型部署,&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[NSDI&#39;21] When Cloud Storage Meets RDMA&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;横向扩展云存储服务的Key-Value键值存储引擎&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[SIGMOD&#39;21] A Key-Value Engine for Scalable Cloud Storage Services&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;EBS存储服务的网络和存储软件栈协同设计&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[SIGCOMM&#39;22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;namespace元数据服务的关键设计&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[FAST&#39;22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;RDMA大型部署,&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/system/files/nsdi21-gao.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[NSDI&#39;21] When Cloud Storage Meets RDMA&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;横向扩展云存储服务的Key-Value键值存储引擎&lt;a class=&#34;link&#34; href=&#34;https://dl.acm.org/doi/abs/10.1145/3448016.3457553&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[SIGMOD&#39;21] A Key-Value Engine for Scalable Cloud Storage Services&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;EBS存储服务的网络和存储软件栈协同设计&lt;a class=&#34;link&#34; href=&#34;https://dl.acm.org/doi/abs/10.1145/3544216.3544238&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[SIGCOMM&#39;22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;namespace元数据服务的关键设计&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast22/presentation/lv&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[FAST&#39;22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h1 id=&#34;0x02-phase-one-embracing-ssd-and-rdma&#34;&gt;0x02 Phase One: Embracing SSD and RDMA&lt;/h1&gt;
 &lt;p&gt;相较于HDD和TCP，SSD和RDMA技术显著降低了I/O延迟和网络问题。&lt;/p&gt;
@@ -120,7 +126,7 @@
 &lt;h3 id=&#34;unified-append-only-persistence-layer&#34;&gt;Unified, Append-Only Persistence Layer&lt;/h3&gt;
 &lt;p&gt;盘古的持久化层为存储服务提供接口。在早期开发阶段，不同的存储服务会使用不同的接口，例如LogFile接口服务于低延迟的NAS服务，TempFile接口服务于高吞吐量的大型计算数据分析服务。然而，这种设计使开发和管理非常复杂。每个接口都需要有人开发和维护，人力成本高切容易出错。&lt;/p&gt;
 &lt;p&gt;因此，需要简化开发管理过程，还要引入低延迟的SSD，受到计算机网络分层架构的启发，盘古提出了统一的文件类型：FlatLogFile（Figure 2）。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230303201714075.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230303201714075.png&#34;
 	
 	
 	
@@ -140,7 +146,7 @@
 &lt;p&gt;为了降低延迟和延长SSD寿命，盘古基于FlatLogFile的append-only语义，选择以chunk为单位存储文件，而非block，chunk存储在chunksever中，并有独立的布局，每个chunk都保存了自己的数据和元数据信息。&lt;/p&gt;
 &lt;p&gt;chunk只需要一次操作就可以被写入到存储介质中，可以有效减少写入延迟和存储介质的寿命。&lt;/p&gt;
 &lt;p&gt;Figure 3是chunk的布局。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230304141646186.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230304141646186.png&#34;
 	
 	
 	
@@ -183,7 +189,7 @@
 &lt;h4 id=&#34;推测chunk信息进行预取&#34;&gt;推测chunk信息进行预取&lt;/h4&gt;
 &lt;p&gt;设计了一个基于贪心和统计学的预取机制来减少chunk信息的请求。&lt;/p&gt;
 &lt;p&gt;当master节点收到了来自client的读请求时，master将返回有关的chunk元数据和其他chunk的元数据。&lt;/p&gt;
-&lt;p&gt;当master收到写入请求使，master将返回多个chunk，超出client的请求数量。&lt;/p&gt;
+&lt;p&gt;当master收到写入请求时，master将返回多个chunk，超出client的请求数量。&lt;/p&gt;
 &lt;p&gt;client因此可以在不请求块的情况下切换块。&lt;/p&gt;
 &lt;h4 id=&#34;数据捎带减少往返时延&#34;&gt;数据捎带减少往返时延&lt;/h4&gt;
 &lt;p&gt;受到了QUIC和HTTP3的启发，使用数据捎带来改善写入延迟，在client从master检索到chunk地址后，他将chunk创建请求和数据写入请求合并为一个请求，然后发送给chunkserver。&lt;/p&gt;
@@ -220,13 +226,41 @@
 &lt;p&gt;通过多种机制最大化SSD性能：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;充分利用独立chunk布局，极大的减少了数据操作的次数，而不需要使用page cache和日志等机制。&lt;/li&gt;
-&lt;li&gt;不需要建立分级的索引机制（例如ext4的inode和文件目录dentries）。&lt;/li&gt;
+&lt;li&gt;不需要建立分级的索引机制（例如ext4的inode和文件目录dentries）。所有的操作会通过日志进行记录，该日志可以用来在挂载文件系统时重建元数据信息。&lt;/li&gt;
+&lt;li&gt;使用轮询机制减少中断。&lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;单个SSD的容量一般很大，并且一个chunk的大小通常是64MB，设定USSFS的最小空间分配粒度为1MB，主要考虑使用的内存大小和SSD的空间利用率。&lt;/p&gt;
 &lt;h2 id=&#34;高性能sla保障&#34;&gt;高性能SLA保障&lt;/h2&gt;
 &lt;h3 id=&#34;chasing&#34;&gt;Chasing&lt;/h3&gt;
-&lt;h3 id=&#34;non-stop-write&#34;&gt;Non-stop write&lt;/h3&gt;
+&lt;p&gt;减少系统抖动在写延迟上的影响。&lt;/p&gt;
+&lt;p&gt;当$MaxCopy$个副本中的$MinCopy$个在chunkserver中成功写入时，允许client向应用返回success。规定$2\times MinCopy\ \ \ \textgreater \ \ \ MaxCopy$。&lt;/p&gt;
+&lt;p&gt;下图Figure 4展示了Chasing在$MaxCopy=3\and MinCopy=2$情况下的工作情况：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230308133528640.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230308133528640&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;应用程序请求Client写入数据$[1,2,3]$到3个副本chunkserver中，在时间$T$时，chunkserver1和2已经向client返回了写操作success，但是chunkserver3还没有回复。此时Client将向应用程序回复success。&lt;/p&gt;
+&lt;p&gt;在Client中还需要在内存中保留写入的数据，并等待一个时间段$t$（ms级别），如果chunkserver 3在$T+t$时间以前回复了success，Client就会在内存中删除释放要写入的数据。&lt;/p&gt;
+&lt;p&gt;如果chunkserver 3没有完成写入操作，且没有完成的部分小于阈值$k$，Client将在chunkserver 3中发起重试操作；若没有完成的部分大于$k$，Client将会在chunkserver 3中封存这个chunk，保证不会收到后续追加写入的影响，Client通知master，master将从chunkserver 1或者2复制一个不同的chunk来保证总共存在3个副本，&lt;strong&gt;Client的内存中还有一个副本？&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;那么chunkserver 3中封存过的chunk怎么处理？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这种Early- Write- Acknowledgment机制，减少了写入操作的尾延迟，在盘古上部署了十多年，没发生过数据丢失。&lt;/p&gt;
+&lt;h3 id=&#34;non-stop-write-不停写&#34;&gt;Non-stop write 不停写&lt;/h3&gt;
+&lt;p&gt;减少当一个chunk写入失败导致的写入延迟。&lt;/p&gt;
+&lt;p&gt;当写入失败时，Client🐝封存chunk并且汇报master当前已经成功写入的数据长度，master使用一个新的chunk来继续写入数据。如果写入到封存的chunk中的数据损坏，会在后台使用其他已经成功写入的副本复制到一个新的chunk中。如果没有可用副本，Client将再次写入数据到一个新的chunk。&lt;/p&gt;
 &lt;h3 id=&#34;backup-read&#34;&gt;Backup read&lt;/h3&gt;
+&lt;p&gt;减少动态环境下读延迟。在收到读请求的response前，Client向其他Chunkserver发送额外的读请求作为备份。&lt;/p&gt;
+&lt;p&gt;该机制涉及两个参数，发送请求的数量和等待时间。&lt;/p&gt;
+&lt;p&gt;为此，盘古计算了不同硬盘类型和I/O大小的延迟，并使用这些信息动态调整发送备份读取请求的时间。它还限制了备份读取请求的数量，以控制系统的负载。&lt;/p&gt;
 &lt;h3 id=&#34;blacklisting&#34;&gt;Blacklisting&lt;/h3&gt;
+&lt;p&gt;为了避免向服务质量差的chunkserver发送I/O请求，盘古使用两个黑名单，&lt;strong&gt;确定黑名单&lt;/strong&gt;和&lt;strong&gt;非确定黑名单&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;当盘古确定一个chunkserver已经无法提供服务（chunkserver的SSD损坏），这个服务器将被加入确定黑名单。&lt;/p&gt;
+&lt;p&gt;如果一个chunkserver可以提供服务，但是延迟超过上限，将会被加入&lt;/p&gt;
 &lt;h2 id=&#34;评估&#34;&gt;评估&lt;/h2&gt;
 &lt;h1 id=&#34;0x03-phase-two-adapting-to-performance-oriented-business-model&#34;&gt;0x03 Phase Two: Adapting to Performance-Oriented Business Model&lt;/h1&gt;
 &lt;h1 id=&#34;0x04-operation-experiences&#34;&gt;0x04 Operation Experiences&lt;/h1&gt;

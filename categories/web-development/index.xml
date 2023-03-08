@@ -53,7 +53,7 @@
 &lt;p&gt;本地通过hugo/hexo生成静态文件后，push到远程仓库后即可自动触发服务器静态资源目录和GitHub仓库的同步，保证自动实时更新。&lt;/p&gt;
 &lt;h2 id=&#34;github-secret-kv&#34;&gt;Github Secret KV&lt;/h2&gt;
 &lt;p&gt;GitHub为每个仓库提供了Secret配置，相当于系统环境变量，防止在yml中泄露敏感信息，可以利用该功能配置服务器的host，ssh公钥，用户名等信息。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220830113741606.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220830113741606.png&#34;
 	
 	
 	
@@ -136,7 +136,7 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;此时，将该yml push到远程仓库中，即可触发同步action。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20220830114934551.png&#34; alt=&#34;image-20220830114934551&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20220830114934551.png&#34; alt=&#34;image-20220830114934551&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;如图所示，工作流全部完成。&lt;/p&gt;
 &lt;p&gt;顺便还配置了七牛云图床，Typora和PicGo配合的自动图片上传，就不用每次手动上传了图片了，写作体验有效提升。&lt;/p&gt;
 &lt;h1 id=&#34;reference&#34;&gt;Reference&lt;/h1&gt;

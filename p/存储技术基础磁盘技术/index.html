@@ -329,7 +329,7 @@
 <p>物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置</p>
 <p>根据柱面-磁头-扇区来访问</p>
 <p>右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构</p>
-<img src="https://cdn.ipandai.club/IMG_0448.jpg" alt="IMG_0448" style="zoom:50%;" />
+<img src="/img/IMG_0448.jpg" alt="IMG_0448" style="zoom:50%;" />
 <h1 id="0x01-性能评估">0x01 性能评估</h1>
 <ul>
 <li>电子设备
@@ -362,7 +362,7 @@ $$
 {\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}}
 $$</p>
 <h2 id="data-transfer-time">Data Transfer Time</h2>
-<p><img src="https://cdn.ipandai.club/image-20220921135256805.png"
+<p><img src="/img/image-20220921135256805.png"
 	
 	
 	
@@ -379,7 +379,7 @@ $$
 {\rm Transfer\ time=\frac{Block\ size}{Transfer\ rate(带宽)}}
 $$
 还有电子控制部件延迟，一般而言可以忽略，以上都是毫秒量级</p>
-<p><img src="https://cdn.ipandai.club/image-20220921135704097.png"
+<p><img src="/img/image-20220921135704097.png"
 	
 	
 	
@@ -391,7 +391,7 @@ $$
 ></p>
 <p>大部分时间开销在Seek Time，接近60%</p>
 <p>I/O Controller利用率越高，会导致平均的延迟升高</p>
-<p><img src="https://cdn.ipandai.club/image-20220921140754758.png"
+<p><img src="/img/image-20220921140754758.png"
 	
 	
 	
@@ -422,7 +422,7 @@ $$
 <h2 id="映射逻辑地址到sector">映射逻辑地址到sector</h2>
 <p>一般块大小为512bytes或4KB，块的数量为容量/块大小</p>
 <p>磁盘上的数据编址如图所示，以sector为基础，在track内连续，减少rotational latency</p>
-<img src="https://cdn.ipandai.club/image-20220921164047132.png" alt="image-20220921164047132" style="zoom:50%;" />
+<img src="/img/image-20220921164047132.png" alt="image-20220921164047132" style="zoom:50%;" />
 <p>不同盘面上的编址分为正面和背面，都会进行编址，还有以柱面为基准的编址，减少seek time。</p>
 <p>一般情况下：</p>
 <ul>

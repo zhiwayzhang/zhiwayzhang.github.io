@@ -13,7 +13,7 @@
         
         <guid>https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F%E5%A4%9A%E7%A1%AC%E7%9B%98%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</guid>
         <description>&lt;h1 id=&#34;0x00-多硬盘系统&#34;&gt;0x00 多硬盘系统&lt;/h1&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221005193755942.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221005193755942.png&#34;
 	
 	
 	
@@ -97,7 +97,7 @@
 &lt;/ul&gt;
 &lt;p&gt;磁盘镜像可以与结合条带化&lt;/p&gt;
 &lt;p&gt;先做Mirroring再做Striping (RAID 10)&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221005210811763.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221005210811763.png&#34;
 	
 	
 	
@@ -109,7 +109,7 @@
 &gt;&lt;/p&gt;
 &lt;p&gt;若有磁盘故障，会损失1/2的数据&lt;/p&gt;
 &lt;p&gt;先做Striping再做Mirroring (RAID 01)&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221005211127116.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221005211127116.png&#34;
 	
 	
 	

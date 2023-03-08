@@ -348,7 +348,7 @@
 </ul>
 <p>行为字线 word line</p>
 <p>列为位线，交点是cell 内存单元</p>
-<img src="https://cdn.ipandai.club/image-20221003154123646.png" alt="image-20221003154123646" style="zoom:70%;" />
+<img src="/img/image-20221003154123646.png" alt="image-20221003154123646" style="zoom:70%;" />
 <p>DRAM row是一个DRAM page</p>
 <p>Sense Amplifiers 也被叫做Row buffer</p>
 <p>每个地址通过<code>&lt;row,colum&gt;</code>编址</p>
@@ -369,14 +369,14 @@
 <h2 id="rank-and-module">Rank and Module</h2>
 <p>Module为DIMM内存条，连接在主板上，由一个或多个rank组成</p>
 <p>Rank由多个Chip构成，提高接口带宽，多个Chip共享地址和指令总线，有单独的数据总线</p>
-<img src="https://cdn.ipandai.club/image-20221003164422987.png" alt="image-20221003164422987" style="zoom:80%;" />
+<img src="/img/image-20221003164422987.png" alt="image-20221003164422987" style="zoom:80%;" />
 <p>多个Chip可以并行操作</p>
 <p>对于64 bit的读取，分配到多个Chip中同时读取</p>
 <p>对于多DIMM情况，可以先确定在哪根DIMM条中，再进行读取操作</p>
 <h2 id="chanel">Chanel</h2>
 <p>Bank之间为分时共享</p>
 <p>Channel为独立总线，数据可同时读写，每个Channel有一个Memory Controller</p>
-<p><img src="https://cdn.ipandai.club/image-20221003182243697.png"
+<p><img src="/img/image-20221003182243697.png"
 	
 	
 	
@@ -388,7 +388,7 @@
 ></p>
 <p>在同一个Channel中的DIMM数据分时共享</p>
 <p>一张比较清晰的结构关系图</p>
-<p><img src="https://cdn.ipandai.club/image-20221003182445252.png"
+<p><img src="/img/image-20221003182445252.png"
 	
 	
 	
@@ -429,7 +429,7 @@
 <p>提高总线带宽</p>
 <p>提高并发能力需要减少Bank和Channel的冲突问题，需要对编址策略进行优化</p>
 <p>比较直观的观察Multiple Banks优化的效果，达到Overlap的效果</p>
-<p><img src="https://cdn.ipandai.club/image-20221003204558855.png"
+<p><img src="/img/image-20221003204558855.png"
 	
 	
 	
@@ -444,7 +444,7 @@
 <p>将访问DRAM中数据的地址进行排列，包含Channel、Row、Bank、Column</p>
 <p>核心思想：调整容易产生冲突的地址，使其相对靠后，还要兼顾其他问题</p>
 <p>将Column的高8位和低3位分离</p>
-<img src="https://cdn.ipandai.club/image-20221004202109741.png" alt="image-20221004202109741" style="zoom:80%;" />
+<img src="/img/image-20221004202109741.png" alt="image-20221004202109741" style="zoom:80%;" />
 <p>提高Row Buffer的利用率，倒数第二种比较常用</p>
 <p>对OS而言，由逻辑地址Virtual Address映射到物理地址</p>
 <p><code>Virtual Page Number </code>-&gt; <code>&lt;Row,Bank&gt;</code>，可以通过调整映射算法来优化存储效率</p>
@@ -467,7 +467,7 @@
 <li>Distributed Refresh 每行以固定的时间间隔在不同的时间进行刷新</li>
 </ol>
 <p>两种方式（集中式/分布式）的示意图：</p>
-<p><img src="https://cdn.ipandai.club/image-20221004153056950.png"
+<p><img src="/img/image-20221004153056950.png"
 	
 	
 	
@@ -490,7 +490,7 @@
 <li>对请求进行调度提高性能</li>
 <li>管理电源能耗，开关Chip，管理电源模式</li>
 </ul>
-<img src="https://cdn.ipandai.club/image-20221004204322362.png" alt="image-20221004204322362" style="zoom:50%;" />
+<img src="/img/image-20221004204322362.png" alt="image-20221004204322362" style="zoom:50%;" />
 <p>由L2 Cache发送请求到Memory Controller，由一个Buffer来对请求进行缓存</p>
 <h2 id="请求调度策略">请求调度策略</h2>
 <ol>
@@ -511,7 +511,7 @@
 <p>自适应结合两种方案</p>
 <h2 id="dram-controller的设计难点">DRAM Controller的设计难点</h2>
 <p>时序约束</p>
-<img src="https://cdn.ipandai.club/image-20221005142053482.png" alt="image-20221005142053482" style="zoom:67%;" />
+<img src="/img/image-20221005142053482.png" alt="image-20221005142053482" style="zoom:67%;" />
 <p>防止冲突的发生</p>
 <p>Refresh操作</p>
 <h2 id="能耗管理">能耗管理</h2>

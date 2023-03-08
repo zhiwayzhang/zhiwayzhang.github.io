@@ -19,7 +19,7 @@
 &lt;p&gt;将SDK中的bin目录添加到system path&lt;/p&gt;
 &lt;p&gt;执行&lt;code&gt;flutter doctor&lt;/code&gt;看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装&lt;/p&gt;
 &lt;p&gt;安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221210104359404.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221210104359404.png&#34;
 	
 	
 	

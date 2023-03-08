@@ -84,7 +84,7 @@
 &lt;h2 id=&#34;image&#34;&gt;Image&lt;/h2&gt;
 &lt;h3 id=&#34;get-from-maintainer&#34;&gt;Get From Maintainer&lt;/h3&gt;
 &lt;p&gt;首先是要制作系统镜像，如果不想的话，可以直接使用作者提供的镜像，起初我打算在macOS上制作，但是貌似macOS没有给QEMU使用HyperVisor的权限，因此想去装一个Ubuntu双系统，结果Windows在硬盘末尾写了一点数据，导致SSD不能分出足够的空间来安装，最后折腾了一下磁盘碎片整理，关闭虚拟内存、使用win自带的硬盘碎片整理工具，最终还是没能成功分出足够的空间，世界名画：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/095d3446086861d74d8b96a9623f9c02.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/095d3446086861d74d8b96a9623f9c02.png&#34;
 	
 	
 	
@@ -386,7 +386,7 @@
 &lt;p&gt;该模型可以通过添加一个$T_{erase}$来模拟GC的延迟&lt;/p&gt;
 &lt;h3 id=&#34;openchannel延迟模型&#34;&gt;OpenChannel延迟模型&lt;/h3&gt;
 &lt;p&gt;OpenChannel SSD，OC使用双寄存器的plane，data register和cache register，因此在一个plane中对一个NAND page的read/write可以并行，因此效率高，下图直观的展示了二者的区别。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221125195232028.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221125195232028.png&#34;
 	
 	
 	

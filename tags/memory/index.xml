@@ -51,7 +51,7 @@
 &lt;p&gt;由于NVM和DRAM共享内存总线，因此存在干扰问题。&lt;/p&gt;
 &lt;p&gt;用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况&lt;/p&gt;
 &lt;p&gt;如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223132031882.png&#34; alt=&#34;image-20230223132031882&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223132031882.png&#34; alt=&#34;image-20230223132031882&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;从图中得出的两个结论为：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响&lt;/strong&gt;&lt;/li&gt;
@@ -66,7 +66,7 @@
 &lt;p&gt;MBA在每个物理核心和共享L3 Cache之间引入了一个可编程的请求速率控制器，控制器通过在内存请求之间插入延迟来对内存带宽的使用进行限流。&lt;/p&gt;
 &lt;p&gt;Intel要求使用Classes of Service（CLOS）为线程进行分组，然后为每个CLOS设置一个限流值。&lt;/p&gt;
 &lt;h1 id=&#34;0x02-design&#34;&gt;0x02 Design&lt;/h1&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221223002925874.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221223002925874.png&#34;
 	
 	
 	
@@ -142,11 +142,11 @@ $$&lt;/p&gt;
 &lt;/div&gt;&lt;p&gt;作者使用吞吐量降低10%的延迟作为阈值&lt;/p&gt;
 &lt;h2 id=&#34;regulator&#34;&gt;Regulator&lt;/h2&gt;
 &lt;h3 id=&#34;内存调节机制&#34;&gt;内存调节机制&lt;/h3&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223164328178.png&#34; alt=&#34;image-20230223164328178&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223164328178.png&#34; alt=&#34;image-20230223164328178&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;&lt;strong&gt;MBA&lt;/strong&gt;，通过设置限流值来对程序进行限制。MBA只支持throttling values，不能进行太精细的控制，MBA对DRAM敏感的负载的限制效果更好，对NVM-write的限制几乎没有效果，如上图b。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;CPU调度&lt;/strong&gt;，可以进行更细粒度的内存带宽调整，利用Linux Cgroup CPU子系统来对应用使用的CPU核心进行限额。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;有效性和比较&lt;/strong&gt;，作者通过对比测试后发现，CPU限流会影响应用程序的其他任务，限制其整体的效率，而MBA进对内存的访问进行限制，对程序整体的运行影响较小。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223170600388.png&#34; alt=&#34;image-20230223170600388&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223170600388.png&#34; alt=&#34;image-20230223170600388&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;h3 id=&#34;动态带宽限流&#34;&gt;动态带宽限流&lt;/h3&gt;
 &lt;h4 id=&#34;识别吵闹邻居&#34;&gt;识别吵闹邻居&lt;/h4&gt;
 &lt;p&gt;Prevention策略，所有超过带宽上限的TGroup都被视为吵闹邻居&lt;/p&gt;
@@ -159,7 +159,7 @@ $$&lt;/p&gt;
 &lt;p&gt;一旦内存干扰消失，算法就会尝试放宽带宽限制，操作过程和施加内存限制的方式相反。&lt;/p&gt;
 &lt;p&gt;当Regulator结束了一次调节/释放操作时，就会继续等待下一步操作，取决于Monitor提供的信息。&lt;/p&gt;
 &lt;p&gt;整体的工作流程在作者的Slides上有一张图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230223191251147.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223191251147.png&#34;
 	
 	
 	

@@ -355,7 +355,7 @@
 <p>由于NVM和DRAM共享内存总线，因此存在干扰问题。</p>
 <p>用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况</p>
 <p>如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）</p>
-<img src="https://cdn.ipandai.club/image-20230223132031882.png" alt="image-20230223132031882" style="zoom:67%;" />
+<img src="/img/image-20230223132031882.png" alt="image-20230223132031882" style="zoom:67%;" />
 <p>从图中得出的两个结论为：</p>
 <ol>
 <li><strong>内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响</strong></li>
@@ -370,7 +370,7 @@
 <p>MBA在每个物理核心和共享L3 Cache之间引入了一个可编程的请求速率控制器，控制器通过在内存请求之间插入延迟来对内存带宽的使用进行限流。</p>
 <p>Intel要求使用Classes of Service（CLOS）为线程进行分组，然后为每个CLOS设置一个限流值。</p>
 <h1 id="0x02-design">0x02 Design</h1>
-<p><img src="https://cdn.ipandai.club/image-20221223002925874.png"
+<p><img src="/img/image-20221223002925874.png"
 	
 	
 	
@@ -446,11 +446,11 @@ $$</p>
 </div><p>作者使用吞吐量降低10%的延迟作为阈值</p>
 <h2 id="regulator">Regulator</h2>
 <h3 id="内存调节机制">内存调节机制</h3>
-<img src="https://cdn.ipandai.club/image-20230223164328178.png" alt="image-20230223164328178" style="zoom:67%;" />
+<img src="/img/image-20230223164328178.png" alt="image-20230223164328178" style="zoom:67%;" />
 <p><strong>MBA</strong>，通过设置限流值来对程序进行限制。MBA只支持throttling values，不能进行太精细的控制，MBA对DRAM敏感的负载的限制效果更好，对NVM-write的限制几乎没有效果，如上图b。</p>
 <p><strong>CPU调度</strong>，可以进行更细粒度的内存带宽调整，利用Linux Cgroup CPU子系统来对应用使用的CPU核心进行限额。</p>
 <p><strong>有效性和比较</strong>，作者通过对比测试后发现，CPU限流会影响应用程序的其他任务，限制其整体的效率，而MBA进对内存的访问进行限制，对程序整体的运行影响较小。</p>
-<img src="https://cdn.ipandai.club/image-20230223170600388.png" alt="image-20230223170600388" style="zoom:67%;" />
+<img src="/img/image-20230223170600388.png" alt="image-20230223170600388" style="zoom:67%;" />
 <h3 id="动态带宽限流">动态带宽限流</h3>
 <h4 id="识别吵闹邻居">识别吵闹邻居</h4>
 <p>Prevention策略，所有超过带宽上限的TGroup都被视为吵闹邻居</p>
@@ -463,7 +463,7 @@ $$</p>
 <p>一旦内存干扰消失，算法就会尝试放宽带宽限制，操作过程和施加内存限制的方式相反。</p>
 <p>当Regulator结束了一次调节/释放操作时，就会继续等待下一步操作，取决于Monitor提供的信息。</p>
 <p>整体的工作流程在作者的Slides上有一张图：</p>
-<p><img src="https://cdn.ipandai.club/image-20230223191251147.png"
+<p><img src="/img/image-20230223191251147.png"
 	
 	
 	

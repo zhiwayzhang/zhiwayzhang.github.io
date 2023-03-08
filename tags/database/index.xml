@@ -53,7 +53,7 @@
 &lt;p&gt;位于闪存中的meta segments和data segments&lt;/p&gt;
 &lt;p&gt;在LSM-tree KV 文件系统方面，作者主要参考了&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;WiscKey FAST&#39;16&lt;/a&gt;，取代FTL进行GC、索引和磨损均衡&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221128145842322.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221128145842322.png&#34;
 	
 	
 	
@@ -79,7 +79,7 @@
 &lt;p&gt;同时可以直接在DRAM中进行compaction操作，无需占用闪存I/O，因为有电容的存在，无需定期刷新脏segment到闪存中&lt;/p&gt;
 &lt;h2 id=&#34;optimizing-search-path&#34;&gt;Optimizing Search Path&lt;/h2&gt;
 &lt;p&gt;在对Key进行查询时，LSM-tree将对各个Level进行二分查找&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129190239823.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221129190239823.png&#34;
 	
 	
 	
@@ -101,7 +101,7 @@
 &lt;/ol&gt;
 &lt;h2 id=&#34;speeding-up-compaction&#34;&gt;Speeding up Compaction&lt;/h2&gt;
 &lt;p&gt;在compaction阶段，引入一个硬件加速器，位于闪存和数据主总线之间，可以方便的合并两个闪存中的level&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129225719057.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221129225719057.png&#34;
 	
 	
 	
@@ -195,7 +195,7 @@
 &lt;p&gt;DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。&lt;/p&gt;
 &lt;p&gt;KV存储可以高效处理元数据和小文件的写入&lt;/p&gt;
 &lt;h2 id=&#34;lsm-tree&#34;&gt;LSM-Tree&lt;/h2&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
 &lt;p&gt;LSM Tree有多级，包括$L_1,L_2,&amp;hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i+1})&amp;gt;=T*Size(L_i)$&lt;/p&gt;
 &lt;p&gt;每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。&lt;/p&gt;
 &lt;p&gt;KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。&lt;/p&gt;
@@ -207,7 +207,7 @@
 &lt;p&gt;KEVINSSD：索引KV对象到闪存的LSM-tree&lt;/p&gt;
 &lt;h2 id=&#34;kv-command&#34;&gt;KV Command&lt;/h2&gt;
 &lt;p&gt;支持多种KV指令，同时支持事务&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102154423353.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102154423353.png&#34;
 	
 	
 	
@@ -252,7 +252,7 @@
 &lt;p&gt;KevinSSD基本实现了传统SSD 中FTL的所有功能，将KV对象映射到闪存、分配和释放闪存的空间。&lt;/p&gt;
 &lt;p&gt;FTL只做坏块管理和磨损均衡等简单工作。&lt;/p&gt;
 &lt;p&gt;每个Level维护一个内存表，来记录Flash中的KV对象。表的每个记录都有&lt;code&gt;&amp;lt;start key, end key, pointer&amp;gt;&lt;/code&gt;，其中指针指向保存KV对象的闪存页面的位置，start key和end key是页面中key的范围。key的范围可以在多个Level上重叠。为了快速查找，所有记录都按开始键排序。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102165350981.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102165350981.png&#34;
 	
 	
 	
@@ -300,7 +300,7 @@ $$
 &lt;p&gt;执行lookup系统调用时，给定一个完整的路径&lt;code&gt;/home/alice/&lt;/code&gt;，从根目录开始获取多个meta object，最终获取目标文件的inode&lt;/p&gt;
 &lt;p&gt;执行read系统调用时，将GET一个data object&lt;/p&gt;
 &lt;p&gt;执行readdir系统调用时，使用ITERATE，批量获取一组meta objects来获取inode&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102210344432.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102210344432.png&#34;
 	
 	
 	
@@ -326,7 +326,7 @@ $$
 &lt;/ul&gt;
 &lt;p&gt;但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING（如①）。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。&lt;/p&gt;
 &lt;p&gt;当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED（如②）。将提交的KV索引同步到LSM-tree中&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221103102304181.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221103102304181.png&#34;
 	
 	
 	

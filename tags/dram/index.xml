@@ -48,7 +48,7 @@
 &lt;/ul&gt;
 &lt;p&gt;行为字线 word line&lt;/p&gt;
 &lt;p&gt;列为位线，交点是cell 内存单元&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221003154123646.png&#34; alt=&#34;image-20221003154123646&#34; style=&#34;zoom:70%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221003154123646.png&#34; alt=&#34;image-20221003154123646&#34; style=&#34;zoom:70%;&#34; /&gt;
 &lt;p&gt;DRAM row是一个DRAM page&lt;/p&gt;
 &lt;p&gt;Sense Amplifiers 也被叫做Row buffer&lt;/p&gt;
 &lt;p&gt;每个地址通过&lt;code&gt;&amp;lt;row,colum&amp;gt;&lt;/code&gt;编址&lt;/p&gt;
@@ -69,14 +69,14 @@
 &lt;h2 id=&#34;rank-and-module&#34;&gt;Rank and Module&lt;/h2&gt;
 &lt;p&gt;Module为DIMM内存条，连接在主板上，由一个或多个rank组成&lt;/p&gt;
 &lt;p&gt;Rank由多个Chip构成，提高接口带宽，多个Chip共享地址和指令总线，有单独的数据总线&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221003164422987.png&#34; alt=&#34;image-20221003164422987&#34; style=&#34;zoom:80%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221003164422987.png&#34; alt=&#34;image-20221003164422987&#34; style=&#34;zoom:80%;&#34; /&gt;
 &lt;p&gt;多个Chip可以并行操作&lt;/p&gt;
 &lt;p&gt;对于64 bit的读取，分配到多个Chip中同时读取&lt;/p&gt;
 &lt;p&gt;对于多DIMM情况，可以先确定在哪根DIMM条中，再进行读取操作&lt;/p&gt;
 &lt;h2 id=&#34;chanel&#34;&gt;Chanel&lt;/h2&gt;
 &lt;p&gt;Bank之间为分时共享&lt;/p&gt;
 &lt;p&gt;Channel为独立总线，数据可同时读写，每个Channel有一个Memory Controller&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221003182243697.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221003182243697.png&#34;
 	
 	
 	
@@ -88,7 +88,7 @@
 &gt;&lt;/p&gt;
 &lt;p&gt;在同一个Channel中的DIMM数据分时共享&lt;/p&gt;
 &lt;p&gt;一张比较清晰的结构关系图&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221003182445252.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221003182445252.png&#34;
 	
 	
 	
@@ -129,7 +129,7 @@
 &lt;p&gt;提高总线带宽&lt;/p&gt;
 &lt;p&gt;提高并发能力需要减少Bank和Channel的冲突问题，需要对编址策略进行优化&lt;/p&gt;
 &lt;p&gt;比较直观的观察Multiple Banks优化的效果，达到Overlap的效果&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221003204558855.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221003204558855.png&#34;
 	
 	
 	
@@ -144,7 +144,7 @@
 &lt;p&gt;将访问DRAM中数据的地址进行排列，包含Channel、Row、Bank、Column&lt;/p&gt;
 &lt;p&gt;核心思想：调整容易产生冲突的地址，使其相对靠后，还要兼顾其他问题&lt;/p&gt;
 &lt;p&gt;将Column的高8位和低3位分离&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221004202109741.png&#34; alt=&#34;image-20221004202109741&#34; style=&#34;zoom:80%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221004202109741.png&#34; alt=&#34;image-20221004202109741&#34; style=&#34;zoom:80%;&#34; /&gt;
 &lt;p&gt;提高Row Buffer的利用率，倒数第二种比较常用&lt;/p&gt;
 &lt;p&gt;对OS而言，由逻辑地址Virtual Address映射到物理地址&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Virtual Page Number &lt;/code&gt;-&amp;gt; &lt;code&gt;&amp;lt;Row,Bank&amp;gt;&lt;/code&gt;，可以通过调整映射算法来优化存储效率&lt;/p&gt;
@@ -167,7 +167,7 @@
 &lt;li&gt;Distributed Refresh 每行以固定的时间间隔在不同的时间进行刷新&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;两种方式（集中式/分布式）的示意图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221004153056950.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221004153056950.png&#34;
 	
 	
 	
@@ -190,7 +190,7 @@
 &lt;li&gt;对请求进行调度提高性能&lt;/li&gt;
 &lt;li&gt;管理电源能耗，开关Chip，管理电源模式&lt;/li&gt;
 &lt;/ul&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221004204322362.png&#34; alt=&#34;image-20221004204322362&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221004204322362.png&#34; alt=&#34;image-20221004204322362&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;由L2 Cache发送请求到Memory Controller，由一个Buffer来对请求进行缓存&lt;/p&gt;
 &lt;h2 id=&#34;请求调度策略&#34;&gt;请求调度策略&lt;/h2&gt;
 &lt;ol&gt;
@@ -211,7 +211,7 @@
 &lt;p&gt;自适应结合两种方案&lt;/p&gt;
 &lt;h2 id=&#34;dram-controller的设计难点&#34;&gt;DRAM Controller的设计难点&lt;/h2&gt;
 &lt;p&gt;时序约束&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221005142053482.png&#34; alt=&#34;image-20221005142053482&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221005142053482.png&#34; alt=&#34;image-20221005142053482&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;防止冲突的发生&lt;/p&gt;
 &lt;p&gt;Refresh操作&lt;/p&gt;
 &lt;h2 id=&#34;能耗管理&#34;&gt;能耗管理&lt;/h2&gt;

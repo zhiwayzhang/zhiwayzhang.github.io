@@ -64,7 +64,7 @@
 &lt;h1 id=&#34;0x01-bg&#34;&gt;0x01 Bg&lt;/h1&gt;
 &lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
 &lt;p&gt;盘古是大规模分布式存储系统，由：盘古核心，盘古服务层，盘古监控系统组成（Figure 1）。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230303140052844.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230303140052844.png&#34;
 	
 	
 	
@@ -100,17 +100,23 @@
 &lt;/ul&gt;
 &lt;p&gt;私有：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;GFS（Google）[SOSP&#39;03] The Google File System&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;Tectonic (FaceBook)[FAST&#39;21] Facebook’s Tectonic Filesystem: Efficiency from Exascale&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://pdos.csail.mit.edu/6.824/papers/gfs.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GFS（Google）[SOSP&#39;03] The Google File System&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast21/presentation/pan&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Tectonic (FaceBook)[FAST&#39;21] Facebook’s Tectonic Filesystem: Efficiency from Exascale&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://aws.amazon.com/products/storage/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;AWS&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;阿里巴巴的盘古团队分享过很多盘古的设计理念，包括：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;RDMA大型部署,&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[NSDI&#39;21] When Cloud Storage Meets RDMA&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;横向扩展云存储服务的Key-Value键值存储引擎&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[SIGMOD&#39;21] A Key-Value Engine for Scalable Cloud Storage Services&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;EBS存储服务的网络和存储软件栈协同设计&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[SIGCOMM&#39;22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;namespace元数据服务的关键设计&lt;a class=&#34;link&#34; href=&#34;&#34; &gt;[FAST&#39;22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;RDMA大型部署,&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/system/files/nsdi21-gao.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[NSDI&#39;21] When Cloud Storage Meets RDMA&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;横向扩展云存储服务的Key-Value键值存储引擎&lt;a class=&#34;link&#34; href=&#34;https://dl.acm.org/doi/abs/10.1145/3448016.3457553&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[SIGMOD&#39;21] A Key-Value Engine for Scalable Cloud Storage Services&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;EBS存储服务的网络和存储软件栈协同设计&lt;a class=&#34;link&#34; href=&#34;https://dl.acm.org/doi/abs/10.1145/3544216.3544238&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[SIGCOMM&#39;22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;namespace元数据服务的关键设计&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast22/presentation/lv&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;[FAST&#39;22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h1 id=&#34;0x02-phase-one-embracing-ssd-and-rdma&#34;&gt;0x02 Phase One: Embracing SSD and RDMA&lt;/h1&gt;
 &lt;p&gt;相较于HDD和TCP，SSD和RDMA技术显著降低了I/O延迟和网络问题。&lt;/p&gt;
@@ -120,7 +126,7 @@
 &lt;h3 id=&#34;unified-append-only-persistence-layer&#34;&gt;Unified, Append-Only Persistence Layer&lt;/h3&gt;
 &lt;p&gt;盘古的持久化层为存储服务提供接口。在早期开发阶段，不同的存储服务会使用不同的接口，例如LogFile接口服务于低延迟的NAS服务，TempFile接口服务于高吞吐量的大型计算数据分析服务。然而，这种设计使开发和管理非常复杂。每个接口都需要有人开发和维护，人力成本高切容易出错。&lt;/p&gt;
 &lt;p&gt;因此，需要简化开发管理过程，还要引入低延迟的SSD，受到计算机网络分层架构的启发，盘古提出了统一的文件类型：FlatLogFile（Figure 2）。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230303201714075.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230303201714075.png&#34;
 	
 	
 	
@@ -140,7 +146,7 @@
 &lt;p&gt;为了降低延迟和延长SSD寿命，盘古基于FlatLogFile的append-only语义，选择以chunk为单位存储文件，而非block，chunk存储在chunksever中，并有独立的布局，每个chunk都保存了自己的数据和元数据信息。&lt;/p&gt;
 &lt;p&gt;chunk只需要一次操作就可以被写入到存储介质中，可以有效减少写入延迟和存储介质的寿命。&lt;/p&gt;
 &lt;p&gt;Figure 3是chunk的布局。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230304141646186.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230304141646186.png&#34;
 	
 	
 	
@@ -183,7 +189,7 @@
 &lt;h4 id=&#34;推测chunk信息进行预取&#34;&gt;推测chunk信息进行预取&lt;/h4&gt;
 &lt;p&gt;设计了一个基于贪心和统计学的预取机制来减少chunk信息的请求。&lt;/p&gt;
 &lt;p&gt;当master节点收到了来自client的读请求时，master将返回有关的chunk元数据和其他chunk的元数据。&lt;/p&gt;
-&lt;p&gt;当master收到写入请求使，master将返回多个chunk，超出client的请求数量。&lt;/p&gt;
+&lt;p&gt;当master收到写入请求时，master将返回多个chunk，超出client的请求数量。&lt;/p&gt;
 &lt;p&gt;client因此可以在不请求块的情况下切换块。&lt;/p&gt;
 &lt;h4 id=&#34;数据捎带减少往返时延&#34;&gt;数据捎带减少往返时延&lt;/h4&gt;
 &lt;p&gt;受到了QUIC和HTTP3的启发，使用数据捎带来改善写入延迟，在client从master检索到chunk地址后，他将chunk创建请求和数据写入请求合并为一个请求，然后发送给chunkserver。&lt;/p&gt;
@@ -220,13 +226,41 @@
 &lt;p&gt;通过多种机制最大化SSD性能：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;充分利用独立chunk布局，极大的减少了数据操作的次数，而不需要使用page cache和日志等机制。&lt;/li&gt;
-&lt;li&gt;不需要建立分级的索引机制（例如ext4的inode和文件目录dentries）。&lt;/li&gt;
+&lt;li&gt;不需要建立分级的索引机制（例如ext4的inode和文件目录dentries）。所有的操作会通过日志进行记录，该日志可以用来在挂载文件系统时重建元数据信息。&lt;/li&gt;
+&lt;li&gt;使用轮询机制减少中断。&lt;/li&gt;
 &lt;/ol&gt;
+&lt;p&gt;单个SSD的容量一般很大，并且一个chunk的大小通常是64MB，设定USSFS的最小空间分配粒度为1MB，主要考虑使用的内存大小和SSD的空间利用率。&lt;/p&gt;
 &lt;h2 id=&#34;高性能sla保障&#34;&gt;高性能SLA保障&lt;/h2&gt;
 &lt;h3 id=&#34;chasing&#34;&gt;Chasing&lt;/h3&gt;
-&lt;h3 id=&#34;non-stop-write&#34;&gt;Non-stop write&lt;/h3&gt;
+&lt;p&gt;减少系统抖动在写延迟上的影响。&lt;/p&gt;
+&lt;p&gt;当$MaxCopy$个副本中的$MinCopy$个在chunkserver中成功写入时，允许client向应用返回success。规定$2\times MinCopy\ \ \ \textgreater \ \ \ MaxCopy$。&lt;/p&gt;
+&lt;p&gt;下图Figure 4展示了Chasing在$MaxCopy=3\and MinCopy=2$情况下的工作情况：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230308133528640.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230308133528640&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;应用程序请求Client写入数据$[1,2,3]$到3个副本chunkserver中，在时间$T$时，chunkserver1和2已经向client返回了写操作success，但是chunkserver3还没有回复。此时Client将向应用程序回复success。&lt;/p&gt;
+&lt;p&gt;在Client中还需要在内存中保留写入的数据，并等待一个时间段$t$（ms级别），如果chunkserver 3在$T+t$时间以前回复了success，Client就会在内存中删除释放要写入的数据。&lt;/p&gt;
+&lt;p&gt;如果chunkserver 3没有完成写入操作，且没有完成的部分小于阈值$k$，Client将在chunkserver 3中发起重试操作；若没有完成的部分大于$k$，Client将会在chunkserver 3中封存这个chunk，保证不会收到后续追加写入的影响，Client通知master，master将从chunkserver 1或者2复制一个不同的chunk来保证总共存在3个副本，&lt;strong&gt;Client的内存中还有一个副本？&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;那么chunkserver 3中封存过的chunk怎么处理？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这种Early- Write- Acknowledgment机制，减少了写入操作的尾延迟，在盘古上部署了十多年，没发生过数据丢失。&lt;/p&gt;
+&lt;h3 id=&#34;non-stop-write-不停写&#34;&gt;Non-stop write 不停写&lt;/h3&gt;
+&lt;p&gt;减少当一个chunk写入失败导致的写入延迟。&lt;/p&gt;
+&lt;p&gt;当写入失败时，Client🐝封存chunk并且汇报master当前已经成功写入的数据长度，master使用一个新的chunk来继续写入数据。如果写入到封存的chunk中的数据损坏，会在后台使用其他已经成功写入的副本复制到一个新的chunk中。如果没有可用副本，Client将再次写入数据到一个新的chunk。&lt;/p&gt;
 &lt;h3 id=&#34;backup-read&#34;&gt;Backup read&lt;/h3&gt;
+&lt;p&gt;减少动态环境下读延迟。在收到读请求的response前，Client向其他Chunkserver发送额外的读请求作为备份。&lt;/p&gt;
+&lt;p&gt;该机制涉及两个参数，发送请求的数量和等待时间。&lt;/p&gt;
+&lt;p&gt;为此，盘古计算了不同硬盘类型和I/O大小的延迟，并使用这些信息动态调整发送备份读取请求的时间。它还限制了备份读取请求的数量，以控制系统的负载。&lt;/p&gt;
 &lt;h3 id=&#34;blacklisting&#34;&gt;Blacklisting&lt;/h3&gt;
+&lt;p&gt;为了避免向服务质量差的chunkserver发送I/O请求，盘古使用两个黑名单，&lt;strong&gt;确定黑名单&lt;/strong&gt;和&lt;strong&gt;非确定黑名单&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;当盘古确定一个chunkserver已经无法提供服务（chunkserver的SSD损坏），这个服务器将被加入确定黑名单。&lt;/p&gt;
+&lt;p&gt;如果一个chunkserver可以提供服务，但是延迟超过上限，将会被加入&lt;/p&gt;
 &lt;h2 id=&#34;评估&#34;&gt;评估&lt;/h2&gt;
 &lt;h1 id=&#34;0x03-phase-two-adapting-to-performance-oriented-business-model&#34;&gt;0x03 Phase Two: Adapting to Performance-Oriented Business Model&lt;/h1&gt;
 &lt;h1 id=&#34;0x04-operation-experiences&#34;&gt;0x04 Operation Experiences&lt;/h1&gt;
@@ -243,10 +277,10 @@
         <guid>https://blog.ipandai.club/p/osdi22-xrp-in-kernel-storage-functions-with-ebpf/</guid>
         <description>&lt;h1 id=&#34;0x00-intro&#34;&gt;0x00 Intro&lt;/h1&gt;
 &lt;p&gt;随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230224131538122.png&#34; alt=&#34;image-20230224131538122&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230224131538122.png&#34; alt=&#34;image-20230224131538122&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230224132654967.png&#34; alt=&#34;image-20230224132654967&#34; style=&#34;zoom: 67%;&#34; /&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230225105147344.png&#34;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230224132654967.png&#34; alt=&#34;image-20230224132654967&#34; style=&#34;zoom: 67%;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225105147344.png&#34;
 	
 	
 	
@@ -280,7 +314,7 @@
 &lt;p&gt;BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。&lt;/p&gt;
 &lt;p&gt;一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。&lt;/p&gt;
 &lt;p&gt;有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230225134629890.png&#34; alt=&#34;image-20230225134629890&#34; style=&#34;zoom: 33%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225134629890.png&#34; alt=&#34;image-20230225134629890&#34; style=&#34;zoom: 33%;&#34; /&gt;
 &lt;p&gt;在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。&lt;/p&gt;
 &lt;h3 id=&#34;io_uring&#34;&gt;io_uring&lt;/h3&gt;
 &lt;p&gt;io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。&lt;/p&gt;
@@ -303,7 +337,7 @@
 &lt;/ul&gt;
 &lt;h1 id=&#34;0x03-design--implementation&#34;&gt;0x03 Design &amp;amp;&amp;amp; Implementation&lt;/h1&gt;
 &lt;p&gt;XRP的架构图：&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230225161425201.png&#34; alt=&#34;image-20230225161425201&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225161425201.png&#34; alt=&#34;image-20230225161425201&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;h2 id=&#34;resubmission-logic&#34;&gt;Resubmission Logic&lt;/h2&gt;
 &lt;p&gt;XRP的Resubmission主要包含3个部分：&lt;/p&gt;
 &lt;ul&gt;
@@ -316,7 +350,7 @@
 &lt;p&gt;最终，XRP发起下一次NVMe请求，将请求append到相应CPU核心NVMe的SQ中完成resubmission（如上图所示）。&lt;/p&gt;
 &lt;h3 id=&#34;bpf-hook&#34;&gt;BPF Hook&lt;/h3&gt;
 &lt;p&gt;XRP引入&lt;code&gt;BPF_PROG_TYPE_XRP&lt;/code&gt;作为BPF函数的签名（函数签名一般包括函数的参数类型、个数等），符合该签名的程序可以被BPF Hook调用。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230225182708553.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225182708553.png&#34;
 	
 	
 	
@@ -348,7 +382,7 @@
 &lt;p&gt;元数据摘要共有两个函数，如下图所示。&lt;/p&gt;
 &lt;p&gt;当地址映射被更新时，&lt;strong&gt;文件系统&lt;/strong&gt;将调用update函数。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;中断处理程序&lt;/strong&gt;则负责调用lookup函数，通过接收到的inode地址，给出offset和长度获取地址映射；lookup中也会有越界检查来保证安全性。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230225205022040.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230225205022040.png&#34;
 	
 	
 	
@@ -405,14 +439,14 @@
 &lt;li&gt;&lt;code&gt;bpf_prog_load&lt;/code&gt;：加载&lt;code&gt;BPF_PROG_TYPE_XRP&lt;/code&gt;类型的BPF函数&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;read_xrp&lt;/code&gt;：将调用BPF函数应用到一个具体的请求上&lt;/li&gt;
 &lt;/ul&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230226143117688.png&#34; alt=&#34;image-20230226143117688&#34; style=&#34;zoom: 50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230226143117688.png&#34; alt=&#34;image-20230226143117688&#34; style=&#34;zoom: 50%;&#34; /&gt;
 &lt;p&gt;具体的使用实例，作者给出了两个示例。&lt;/p&gt;
 &lt;h2 id=&#34;bpf-kv&#34;&gt;BPF-KV&lt;/h2&gt;
 &lt;p&gt;作者使用B+树在磁盘组织数据，同时自行维护DRAM Cache来对块和对象进行索引。&lt;/p&gt;
 &lt;p&gt;最大请求数量限制为31，保证可以遍历一个节点的所有31个孩子。&lt;/p&gt;
 &lt;p&gt;BPF函数用于查找KV对，首先获取在scratch buffer中的查询目标key，并线性地在node中查找。&lt;/p&gt;
 &lt;p&gt;使用&lt;code&gt;read_xrp&lt;/code&gt;来实现read系统调用，BPF-KV首先为scratch buffer分配一块空间，并计算出offset来启动read。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230226152454999.png&#34; alt=&#34;image-20230226152454999&#34; style=&#34;zoom:50%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230226152454999.png&#34; alt=&#34;image-20230226152454999&#34; style=&#34;zoom:50%;&#34; /&gt;
 &lt;p&gt;BPF-KV支持范围查询，查询过程中的数据保存在scratch buffer中。&lt;/p&gt;
 &lt;p&gt;BPF-KV支持SUM、MAX、MIN此类操作&lt;/p&gt;
 &lt;h2 id=&#34;wiredtiger&#34;&gt;WiredTiger&lt;/h2&gt;
@@ -477,7 +511,7 @@
 &lt;p&gt;由于NVM和DRAM共享内存总线，因此存在干扰问题。&lt;/p&gt;
 &lt;p&gt;用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况&lt;/p&gt;
 &lt;p&gt;如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223132031882.png&#34; alt=&#34;image-20230223132031882&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223132031882.png&#34; alt=&#34;image-20230223132031882&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;从图中得出的两个结论为：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;&lt;strong&gt;内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响&lt;/strong&gt;&lt;/li&gt;
@@ -492,7 +526,7 @@
 &lt;p&gt;MBA在每个物理核心和共享L3 Cache之间引入了一个可编程的请求速率控制器，控制器通过在内存请求之间插入延迟来对内存带宽的使用进行限流。&lt;/p&gt;
 &lt;p&gt;Intel要求使用Classes of Service（CLOS）为线程进行分组，然后为每个CLOS设置一个限流值。&lt;/p&gt;
 &lt;h1 id=&#34;0x02-design&#34;&gt;0x02 Design&lt;/h1&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221223002925874.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221223002925874.png&#34;
 	
 	
 	
@@ -568,11 +602,11 @@ $$&lt;/p&gt;
 &lt;/div&gt;&lt;p&gt;作者使用吞吐量降低10%的延迟作为阈值&lt;/p&gt;
 &lt;h2 id=&#34;regulator&#34;&gt;Regulator&lt;/h2&gt;
 &lt;h3 id=&#34;内存调节机制&#34;&gt;内存调节机制&lt;/h3&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223164328178.png&#34; alt=&#34;image-20230223164328178&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223164328178.png&#34; alt=&#34;image-20230223164328178&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;p&gt;&lt;strong&gt;MBA&lt;/strong&gt;，通过设置限流值来对程序进行限制。MBA只支持throttling values，不能进行太精细的控制，MBA对DRAM敏感的负载的限制效果更好，对NVM-write的限制几乎没有效果，如上图b。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;CPU调度&lt;/strong&gt;，可以进行更细粒度的内存带宽调整，利用Linux Cgroup CPU子系统来对应用使用的CPU核心进行限额。&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;有效性和比较&lt;/strong&gt;，作者通过对比测试后发现，CPU限流会影响应用程序的其他任务，限制其整体的效率，而MBA进对内存的访问进行限制，对程序整体的运行影响较小。&lt;/p&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20230223170600388.png&#34; alt=&#34;image-20230223170600388&#34; style=&#34;zoom:67%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223170600388.png&#34; alt=&#34;image-20230223170600388&#34; style=&#34;zoom:67%;&#34; /&gt;
 &lt;h3 id=&#34;动态带宽限流&#34;&gt;动态带宽限流&lt;/h3&gt;
 &lt;h4 id=&#34;识别吵闹邻居&#34;&gt;识别吵闹邻居&lt;/h4&gt;
 &lt;p&gt;Prevention策略，所有超过带宽上限的TGroup都被视为吵闹邻居&lt;/p&gt;
@@ -585,7 +619,7 @@ $$&lt;/p&gt;
 &lt;p&gt;一旦内存干扰消失，算法就会尝试放宽带宽限制，操作过程和施加内存限制的方式相反。&lt;/p&gt;
 &lt;p&gt;当Regulator结束了一次调节/释放操作时，就会继续等待下一步操作，取决于Monitor提供的信息。&lt;/p&gt;
 &lt;p&gt;整体的工作流程在作者的Slides上有一张图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20230223191251147.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230223191251147.png&#34;
 	
 	
 	
@@ -685,7 +719,7 @@ $$&lt;/p&gt;
 &lt;p&gt;目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。&lt;/p&gt;
 &lt;h1 id=&#34;0x03-hintstor-design&#34;&gt;0x03 HintStor Design&lt;/h1&gt;
 &lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221202204914922.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221202204914922.png&#34;
 	
 	
 	
@@ -755,7 +789,7 @@ $$&lt;/p&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;classification&#34;&gt;Classification&lt;/h2&gt;
 &lt;p&gt;I/O access hints可以分为两种，分别为从操作系统动态地进行捕获和从文件系统静态地获取&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221209005726034.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221209005726034.png&#34;
 	
 	
 	
@@ -821,7 +855,7 @@ $$&lt;/p&gt;
 &lt;p&gt;位于闪存中的meta segments和data segments&lt;/p&gt;
 &lt;p&gt;在LSM-tree KV 文件系统方面，作者主要参考了&lt;a class=&#34;link&#34; href=&#34;https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;WiscKey FAST&#39;16&lt;/a&gt;，取代FTL进行GC、索引和磨损均衡&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221128145842322.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221128145842322.png&#34;
 	
 	
 	
@@ -847,7 +881,7 @@ $$&lt;/p&gt;
 &lt;p&gt;同时可以直接在DRAM中进行compaction操作，无需占用闪存I/O，因为有电容的存在，无需定期刷新脏segment到闪存中&lt;/p&gt;
 &lt;h2 id=&#34;optimizing-search-path&#34;&gt;Optimizing Search Path&lt;/h2&gt;
 &lt;p&gt;在对Key进行查询时，LSM-tree将对各个Level进行二分查找&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129190239823.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221129190239823.png&#34;
 	
 	
 	
@@ -869,7 +903,7 @@ $$&lt;/p&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;speeding-up-compaction&#34;&gt;Speeding up Compaction&lt;/h2&gt;
 &lt;p&gt;在compaction阶段，引入一个硬件加速器，位于闪存和数据主总线之间，可以方便的合并两个闪存中的level&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221129225719057.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221129225719057.png&#34;
 	
 	
 	
@@ -967,7 +1001,7 @@ $$&lt;/p&gt;
 &lt;p&gt;该模型可以通过添加一个$T_{erase}$来模拟GC的延迟&lt;/p&gt;
 &lt;h3 id=&#34;openchannel延迟模型&#34;&gt;OpenChannel延迟模型&lt;/h3&gt;
 &lt;p&gt;OpenChannel SSD，OC使用双寄存器的plane，data register和cache register，因此在一个plane中对一个NAND page的read/write可以并行，因此效率高，下图直观的展示了二者的区别。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221125195232028.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221125195232028.png&#34;
 	
 	
 	
@@ -1037,7 +1071,7 @@ $$&lt;/p&gt;
 &lt;p&gt;DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。&lt;/p&gt;
 &lt;p&gt;KV存储可以高效处理元数据和小文件的写入&lt;/p&gt;
 &lt;h2 id=&#34;lsm-tree&#34;&gt;LSM-Tree&lt;/h2&gt;
-&lt;img src=&#34;https://cdn.ipandai.club/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
+&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102145019013.png&#34; alt=&#34;image-20221102145019013&#34; style=&#34;zoom:70%;&#34; /&gt;
 &lt;p&gt;LSM Tree有多级，包括$L_1,L_2,&amp;hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i+1})&amp;gt;=T*Size(L_i)$&lt;/p&gt;
 &lt;p&gt;每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。&lt;/p&gt;
 &lt;p&gt;KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。&lt;/p&gt;
@@ -1049,7 +1083,7 @@ $$&lt;/p&gt;
 &lt;p&gt;KEVINSSD：索引KV对象到闪存的LSM-tree&lt;/p&gt;
 &lt;h2 id=&#34;kv-command&#34;&gt;KV Command&lt;/h2&gt;
 &lt;p&gt;支持多种KV指令，同时支持事务&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102154423353.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102154423353.png&#34;
 	
 	
 	
@@ -1094,7 +1128,7 @@ $$&lt;/p&gt;
 &lt;p&gt;KevinSSD基本实现了传统SSD 中FTL的所有功能，将KV对象映射到闪存、分配和释放闪存的空间。&lt;/p&gt;
 &lt;p&gt;FTL只做坏块管理和磨损均衡等简单工作。&lt;/p&gt;
 &lt;p&gt;每个Level维护一个内存表，来记录Flash中的KV对象。表的每个记录都有&lt;code&gt;&amp;lt;start key, end key, pointer&amp;gt;&lt;/code&gt;，其中指针指向保存KV对象的闪存页面的位置，start key和end key是页面中key的范围。key的范围可以在多个Level上重叠。为了快速查找，所有记录都按开始键排序。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102165350981.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102165350981.png&#34;
 	
 	
 	
@@ -1142,7 +1176,7 @@ $$
 &lt;p&gt;执行lookup系统调用时，给定一个完整的路径&lt;code&gt;/home/alice/&lt;/code&gt;，从根目录开始获取多个meta object，最终获取目标文件的inode&lt;/p&gt;
 &lt;p&gt;执行read系统调用时，将GET一个data object&lt;/p&gt;
 &lt;p&gt;执行readdir系统调用时，使用ITERATE，批量获取一组meta objects来获取inode&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221102210344432.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221102210344432.png&#34;
 	
 	
 	
@@ -1168,7 +1202,7 @@ $$
 &lt;/ul&gt;
 &lt;p&gt;但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING（如①）。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。&lt;/p&gt;
 &lt;p&gt;当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED（如②）。将提交的KV索引同步到LSM-tree中&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20221103102304181.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20221103102304181.png&#34;
 	
 	
 	
@@ -1366,7 +1400,7 @@ $$
 &lt;p&gt;​	各种仿真实验后效果不错，效率提高了22%和31%。&lt;/p&gt;
 &lt;h1 id=&#34;20-background&#34;&gt;2.0 Background&lt;/h1&gt;
 &lt;h2 id=&#34;21-存储内核栈&#34;&gt;2.1 存储内核栈&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220810145032258.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220810145032258.png&#34;
 	
 	
 	
@@ -1387,7 +1421,7 @@ $$
 &lt;p&gt;存储堆栈中，NVMe驱动发起的请求通过nvme_rw_command的形式传递到PCI/PCIe设备驱动中。&lt;/p&gt;
 &lt;p&gt;当I/O请求完成后，发送信号中断，中断直接被写入到中断处理器的中断向量中。被中断的核心选择ISR处理该中断请求，随后NVMe驱动再SQ/CQ中清空相应的记录并将结果返回至上一层（比如blk-mq和文件系统）。&lt;/p&gt;
 &lt;h2 id=&#34;22-设备固件栈&#34;&gt;2.2 设备固件栈&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220810232230437.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220810232230437.png&#34;
 	
 	
 	
@@ -1412,7 +1446,7 @@ $$
 &lt;/ol&gt;
 &lt;h1 id=&#34;30-跨层设计&#34;&gt;3.0 跨层设计&lt;/h1&gt;
 &lt;h2 id=&#34;31-快速存储的挑战&#34;&gt;3.1 快速存储的挑战&lt;/h2&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811110758918.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220811110758918.png&#34;
 	
 	
 	
@@ -1442,7 +1476,7 @@ $$
 &lt;ul&gt;
 &lt;li&gt;为每个核心创建两个SQ队列和一个CQ队列&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811173922087.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220811173922087.png&#34;
 	
 	
 	
@@ -1465,7 +1499,7 @@ $$
 &lt;h2 id=&#34;41-中断处理程序&#34;&gt;4.1 中断处理程序&lt;/h2&gt;
 &lt;p&gt;flash share仅对来自在线应用的I/O 请求使用轮询&lt;/p&gt;
 &lt;p&gt;使用信号处理离线应用&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220811231355037.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220811231355037.png&#34;
 	
 	
 	
@@ -1496,7 +1530,7 @@ $$
 &lt;li&gt;根据I/O动态划分&lt;/li&gt;
 &lt;li&gt;数据可保留&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812003132031.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220812003132031.png&#34;
 	
 	
 	
@@ -1522,7 +1556,7 @@ $$
 &lt;p&gt;8核心2GHz&lt;/p&gt;
 &lt;p&gt;L1 Cache 64KB&lt;/p&gt;
 &lt;p&gt;2GB Memory&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://cdn.ipandai.club/image-20220812191343849.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20220812191343849.png&#34;
 	
 	
 	

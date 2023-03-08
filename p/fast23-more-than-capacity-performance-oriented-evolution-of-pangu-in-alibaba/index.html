@@ -294,7 +294,7 @@
 
 
                 <time class="article-time--reading">
-                    16 minute read
+                    19 minute read
                 </time>
             </div>
         
@@ -368,7 +368,7 @@
 <h1 id="0x01-bg">0x01 Bg</h1>
 <h2 id="overview">Overview</h2>
 <p>盘古是大规模分布式存储系统，由：盘古核心，盘古服务层，盘古监控系统组成（Figure 1）。</p>
-<p><img src="https://cdn.ipandai.club/image-20230303140052844.png"
+<p><img src="/img/image-20230303140052844.png"
 	
 	
 	
@@ -404,17 +404,23 @@
 </ul>
 <p>私有：</p>
 <ul>
-<li><a class="link" href="" >GFS（Google）[SOSP'03] The Google File System</a></li>
-<li><a class="link" href="" >Tectonic (FaceBook)[FAST'21] Facebook’s Tectonic Filesystem: Efficiency from Exascale</a></li>
+<li><a class="link" href="https://pdos.csail.mit.edu/6.824/papers/gfs.pdf"  target="_blank" rel="noopener"
+    >GFS（Google）[SOSP'03] The Google File System</a></li>
+<li><a class="link" href="https://www.usenix.org/conference/fast21/presentation/pan"  target="_blank" rel="noopener"
+    >Tectonic (FaceBook)[FAST'21] Facebook’s Tectonic Filesystem: Efficiency from Exascale</a></li>
 <li><a class="link" href="https://aws.amazon.com/products/storage/"  target="_blank" rel="noopener"
     >AWS</a></li>
 </ul>
 <p>阿里巴巴的盘古团队分享过很多盘古的设计理念，包括：</p>
 <ul>
-<li>RDMA大型部署,<a class="link" href="" >[NSDI'21] When Cloud Storage Meets RDMA</a></li>
-<li>横向扩展云存储服务的Key-Value键值存储引擎<a class="link" href="" >[SIGMOD'21] A Key-Value Engine for Scalable Cloud Storage Services</a></li>
-<li>EBS存储服务的网络和存储软件栈协同设计<a class="link" href="" >[SIGCOMM'22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud</a></li>
-<li>namespace元数据服务的关键设计<a class="link" href="" >[FAST'22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems</a></li>
+<li>RDMA大型部署,<a class="link" href="https://www.usenix.org/system/files/nsdi21-gao.pdf"  target="_blank" rel="noopener"
+    >[NSDI'21] When Cloud Storage Meets RDMA</a></li>
+<li>横向扩展云存储服务的Key-Value键值存储引擎<a class="link" href="https://dl.acm.org/doi/abs/10.1145/3448016.3457553"  target="_blank" rel="noopener"
+    >[SIGMOD'21] A Key-Value Engine for Scalable Cloud Storage Services</a></li>
+<li>EBS存储服务的网络和存储软件栈协同设计<a class="link" href="https://dl.acm.org/doi/abs/10.1145/3544216.3544238"  target="_blank" rel="noopener"
+    >[SIGCOMM'22] From Luna to Solar: the Evolu- tions of the Compute-to-Storage Networks in Alibaba Cloud</a></li>
+<li>namespace元数据服务的关键设计<a class="link" href="https://www.usenix.org/conference/fast22/presentation/lv"  target="_blank" rel="noopener"
+    >[FAST'22] InfiniFS: An Efficient Metadata Service for Large-Scale Distributed Filesystems</a></li>
 </ul>
 <h1 id="0x02-phase-one-embracing-ssd-and-rdma">0x02 Phase One: Embracing SSD and RDMA</h1>
 <p>相较于HDD和TCP，SSD和RDMA技术显著降低了I/O延迟和网络问题。</p>
@@ -424,7 +430,7 @@
 <h3 id="unified-append-only-persistence-layer">Unified, Append-Only Persistence Layer</h3>
 <p>盘古的持久化层为存储服务提供接口。在早期开发阶段，不同的存储服务会使用不同的接口，例如LogFile接口服务于低延迟的NAS服务，TempFile接口服务于高吞吐量的大型计算数据分析服务。然而，这种设计使开发和管理非常复杂。每个接口都需要有人开发和维护，人力成本高切容易出错。</p>
 <p>因此，需要简化开发管理过程，还要引入低延迟的SSD，受到计算机网络分层架构的启发，盘古提出了统一的文件类型：FlatLogFile（Figure 2）。</p>
-<p><img src="https://cdn.ipandai.club/image-20230303201714075.png"
+<p><img src="/img/image-20230303201714075.png"
 	
 	
 	
@@ -444,7 +450,7 @@
 <p>为了降低延迟和延长SSD寿命，盘古基于FlatLogFile的append-only语义，选择以chunk为单位存储文件，而非block，chunk存储在chunksever中，并有独立的布局，每个chunk都保存了自己的数据和元数据信息。</p>
 <p>chunk只需要一次操作就可以被写入到存储介质中，可以有效减少写入延迟和存储介质的寿命。</p>
 <p>Figure 3是chunk的布局。</p>
-<p><img src="https://cdn.ipandai.club/image-20230304141646186.png"
+<p><img src="/img/image-20230304141646186.png"
 	
 	
 	
@@ -487,7 +493,7 @@
 <h4 id="推测chunk信息进行预取">推测chunk信息进行预取</h4>
 <p>设计了一个基于贪心和统计学的预取机制来减少chunk信息的请求。</p>
 <p>当master节点收到了来自client的读请求时，master将返回有关的chunk元数据和其他chunk的元数据。</p>
-<p>当master收到写入请求使，master将返回多个chunk，超出client的请求数量。</p>
+<p>当master收到写入请求时，master将返回多个chunk，超出client的请求数量。</p>
 <p>client因此可以在不请求块的情况下切换块。</p>
 <h4 id="数据捎带减少往返时延">数据捎带减少往返时延</h4>
 <p>受到了QUIC和HTTP3的启发，使用数据捎带来改善写入延迟，在client从master检索到chunk地址后，他将chunk创建请求和数据写入请求合并为一个请求，然后发送给chunkserver。</p>
@@ -524,13 +530,41 @@
 <p>通过多种机制最大化SSD性能：</p>
 <ol>
 <li>充分利用独立chunk布局，极大的减少了数据操作的次数，而不需要使用page cache和日志等机制。</li>
-<li>不需要建立分级的索引机制（例如ext4的inode和文件目录dentries）。</li>
+<li>不需要建立分级的索引机制（例如ext4的inode和文件目录dentries）。所有的操作会通过日志进行记录，该日志可以用来在挂载文件系统时重建元数据信息。</li>
+<li>使用轮询机制减少中断。</li>
 </ol>
+<p>单个SSD的容量一般很大，并且一个chunk的大小通常是64MB，设定USSFS的最小空间分配粒度为1MB，主要考虑使用的内存大小和SSD的空间利用率。</p>
 <h2 id="高性能sla保障">高性能SLA保障</h2>
 <h3 id="chasing">Chasing</h3>
-<h3 id="non-stop-write">Non-stop write</h3>
+<p>减少系统抖动在写延迟上的影响。</p>
+<p>当$MaxCopy$个副本中的$MinCopy$个在chunkserver中成功写入时，允许client向应用返回success。规定$2\times MinCopy\ \ \ \textgreater \ \ \ MaxCopy$。</p>
+<p>下图Figure 4展示了Chasing在$MaxCopy=3\and MinCopy=2$情况下的工作情况：</p>
+<p><img src="/img/image-20230308133528640.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20230308133528640"
+	
+	
+></p>
+<p>应用程序请求Client写入数据$[1,2,3]$到3个副本chunkserver中，在时间$T$时，chunkserver1和2已经向client返回了写操作success，但是chunkserver3还没有回复。此时Client将向应用程序回复success。</p>
+<p>在Client中还需要在内存中保留写入的数据，并等待一个时间段$t$（ms级别），如果chunkserver 3在$T+t$时间以前回复了success，Client就会在内存中删除释放要写入的数据。</p>
+<p>如果chunkserver 3没有完成写入操作，且没有完成的部分小于阈值$k$，Client将在chunkserver 3中发起重试操作；若没有完成的部分大于$k$，Client将会在chunkserver 3中封存这个chunk，保证不会收到后续追加写入的影响，Client通知master，master将从chunkserver 1或者2复制一个不同的chunk来保证总共存在3个副本，<strong>Client的内存中还有一个副本？</strong>。</p>
+<p><strong>那么chunkserver 3中封存过的chunk怎么处理？</strong></p>
+<p>这种Early- Write- Acknowledgment机制，减少了写入操作的尾延迟，在盘古上部署了十多年，没发生过数据丢失。</p>
+<h3 id="non-stop-write-不停写">Non-stop write 不停写</h3>
+<p>减少当一个chunk写入失败导致的写入延迟。</p>
+<p>当写入失败时，Client🐝封存chunk并且汇报master当前已经成功写入的数据长度，master使用一个新的chunk来继续写入数据。如果写入到封存的chunk中的数据损坏，会在后台使用其他已经成功写入的副本复制到一个新的chunk中。如果没有可用副本，Client将再次写入数据到一个新的chunk。</p>
 <h3 id="backup-read">Backup read</h3>
+<p>减少动态环境下读延迟。在收到读请求的response前，Client向其他Chunkserver发送额外的读请求作为备份。</p>
+<p>该机制涉及两个参数，发送请求的数量和等待时间。</p>
+<p>为此，盘古计算了不同硬盘类型和I/O大小的延迟，并使用这些信息动态调整发送备份读取请求的时间。它还限制了备份读取请求的数量，以控制系统的负载。</p>
 <h3 id="blacklisting">Blacklisting</h3>
+<p>为了避免向服务质量差的chunkserver发送I/O请求，盘古使用两个黑名单，<strong>确定黑名单</strong>和<strong>非确定黑名单</strong>。</p>
+<p>当盘古确定一个chunkserver已经无法提供服务（chunkserver的SSD损坏），这个服务器将被加入确定黑名单。</p>
+<p>如果一个chunkserver可以提供服务，但是延迟超过上限，将会被加入</p>
 <h2 id="评估">评估</h2>
 <h1 id="0x03-phase-two-adapting-to-performance-oriented-business-model">0x03 Phase Two: Adapting to Performance-Oriented Business Model</h1>
 <h1 id="0x04-operation-experiences">0x04 Operation Experiences</h1>
@@ -897,7 +931,7 @@
         <li><a href="#高性能sla保障">高性能SLA保障</a>
           <ol>
             <li><a href="#chasing">Chasing</a></li>
-            <li><a href="#non-stop-write">Non-stop write</a></li>
+            <li><a href="#non-stop-write-不停写">Non-stop write 不停写</a></li>
             <li><a href="#backup-read">Backup read</a></li>
             <li><a href="#blacklisting">Blacklisting</a></li>
           </ol>

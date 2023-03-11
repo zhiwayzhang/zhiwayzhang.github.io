@@ -233,8 +233,9 @@
 &lt;h2 id=&#34;高性能sla保障&#34;&gt;高性能SLA保障&lt;/h2&gt;
 &lt;h3 id=&#34;chasing&#34;&gt;Chasing&lt;/h3&gt;
 &lt;p&gt;减少系统抖动在写延迟上的影响。&lt;/p&gt;
-&lt;p&gt;当$MaxCopy$个副本中的$MinCopy$个在chunkserver中成功写入时，允许client向应用返回success。规定$2\times MinCopy\ \ \ \textgreater \ \ \ MaxCopy$。&lt;/p&gt;
-&lt;p&gt;下图Figure 4展示了Chasing在$MaxCopy=3\and MinCopy=2$情况下的工作情况：&lt;/p&gt;
+&lt;p&gt;当$MaxCopy$个副本中的$MinCopy$个在chunkserver中成功写入时，允许client向应用返回success。&lt;/p&gt;
+&lt;p&gt;规定 $2\times MinCopy\textgreater\ MaxCopy$。&lt;/p&gt;
+&lt;p&gt;下图Figure 4展示了Chasing在 $MaxCopy=3\and MinCopy=2$情况下的工作情况：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230308133528640.png&#34;
 	
 	
@@ -260,13 +261,172 @@
 &lt;h3 id=&#34;blacklisting&#34;&gt;Blacklisting&lt;/h3&gt;
 &lt;p&gt;为了避免向服务质量差的chunkserver发送I/O请求，盘古使用两个黑名单，&lt;strong&gt;确定黑名单&lt;/strong&gt;和&lt;strong&gt;非确定黑名单&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;当盘古确定一个chunkserver已经无法提供服务（chunkserver的SSD损坏），这个服务器将被加入确定黑名单。&lt;/p&gt;
-&lt;p&gt;如果一个chunkserver可以提供服务，但是延迟超过上限，将会被加入&lt;/p&gt;
+&lt;p&gt;如果一个chunkserver可以提供服务，但是延迟超过上限，将会被加入非确定黑名单，并设置其服务延迟增加的可能性。&lt;/p&gt;
+&lt;p&gt;如果chunkserver的延迟超过了所有server延迟的中位数，会将它直接加入非确定性黑名单中，可能性为1.&lt;/p&gt;
+&lt;p&gt;Client阶段性的向chunkserver发送I/O探测，以便维护非确定性黑名单。&lt;/p&gt;
+&lt;p&gt;如果在确定性黑名单中的服务器成功返回了response，会将其在黑名单中移除。&lt;/p&gt;
+&lt;p&gt;对于在非确定性黑名单中的服务器，将会基于response的响应时间来判断。&lt;/p&gt;
+&lt;p&gt;盘古同时限制黑名单中的服务数量来保证系统的可用性。对于每个服务器而言，这引入了宽限期来维护黑名单保证系统的稳定性。&lt;/p&gt;
+&lt;p&gt;盘古为RDMA和TCP两种链接分别维护了黑名单。&lt;/p&gt;
 &lt;h2 id=&#34;评估&#34;&gt;评估&lt;/h2&gt;
-&lt;h1 id=&#34;0x03-phase-two-adapting-to-performance-oriented-business-model&#34;&gt;0x03 Phase Two: Adapting to Performance-Oriented Business Model&lt;/h1&gt;
+&lt;p&gt;Figure 5为2018年双十一期间的峰值延迟，在需要进行大量事物处理的情况下，盘古2.0延迟低于280us。&lt;/p&gt;
+&lt;p&gt;Figure 6为OTS服务的延迟，在相同的请求负载下，盘古2.0的查询延迟接近降低了一个数量级。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230309135723278.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230309135723278&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Figure 7、8分别为EBS、在线搜索服务的平均的尾延迟。&lt;/p&gt;
+&lt;p&gt;EBS服务写入较多，P999尾延迟低于1ms。&lt;/p&gt;
+&lt;p&gt;在线搜索服务读取较多，P999尾延迟低于5ms。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230309135656800.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230309135656800&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;0x03-phase-two-adapting-to-performance-oriented-business-model-适配面相性能的商业模型&#34;&gt;0x03 Phase Two: Adapting to Performance-Oriented Business Model 适配面相性能的商业模型&lt;/h1&gt;
+&lt;h2 id=&#34;网络瓶颈&#34;&gt;网络瓶颈&lt;/h2&gt;
+&lt;h3 id=&#34;扩大带宽&#34;&gt;扩大带宽&lt;/h3&gt;
+&lt;p&gt;为了匹配SSD的吞吐量，将网络带宽从25Gbps升级到100Gbps。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;硬件优化&lt;/strong&gt;：采用高性能的NIC/RNCI网卡、光模块（QSFP28 DAC，QSFP28 AOC，QSFP28）、单模/多模光纤、高性能交换机。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;网络软件层&lt;/strong&gt;：采用有损RDMA，不使用暂停帧。&lt;/p&gt;
+&lt;p&gt;如果使用无损RDMA，当RDMA网络中暂停帧过多时，要在一段时间内关闭NIC端口或临时切换RDMA为TCP，这种基于流量的控制不能解决由暂停帧引发的其他问题（死锁、头阻塞）。因此盘古使用有损RDMA。&lt;/p&gt;
+&lt;h3 id=&#34;流量优化&#34;&gt;流量优化&lt;/h3&gt;
+&lt;p&gt;减少流量放大率。&lt;/p&gt;
+&lt;p&gt;流量放大率为系统中所有的流量传输量除以真实的文件大小，如Figure 9：&lt;/p&gt;
+&lt;p&gt;以EBS服务为例&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;EBS Client发送文件（1x）到盘古Client&lt;/li&gt;
+&lt;li&gt;盘古Client将文件传输到3个存储节点，并写入三个副本（3x）&lt;/li&gt;
+&lt;li&gt;GC Worker读取文件（1x）并进行GC&lt;/li&gt;
+&lt;li&gt;最终文件以EC(8,3)(1.375x)的形式写回存储节点，保证至少与3个副本同等级别的容错，并节省了空间。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230309151419443.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230309151419443&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;过程中的流量放大率为6.375x(1x+3x+1x+1.375x)。&lt;/p&gt;
+&lt;p&gt;因此提出了三个优化：&lt;/p&gt;
+&lt;h4 id=&#34;使用ec替换3个副本&#34;&gt;使用EC替换3个副本&lt;/h4&gt;
+&lt;p&gt;在保证良好容错性的情况下，有效降低流量。使用b1中的EC(4,2)，可以将流量降低为4.875x。该方法存在两个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;对于小文件的EC存储开销较大，需要填充大量的0达到规定长度。使用多种机制减少空间浪费。可以对小的写请求进行聚合，并动态切换存储策略（EC、3个副本）&lt;/li&gt;
+&lt;li&gt;计算EC引入了额外延迟，盘古采用&lt;a class=&#34;link&#34; href=&#34;https://github.com/intel/isa-l&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Intel ISA-L&lt;/a&gt;，将EC计算的延迟相较于Jerasure降低了2.5-3倍&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;压缩flatlogfile&#34;&gt;压缩FlatLogFile&lt;/h4&gt;
+&lt;p&gt;FlatLogFile存在高度冗余。盘古Client和GC Worker在进行下一步写入时压缩FlatLogFile，来减少流量。&lt;/p&gt;
+&lt;p&gt;盘古使用LZ4算法来实现高效的压缩/解压缩。&lt;/p&gt;
+&lt;h4 id=&#34;前后台流量的动态带宽调节&#34;&gt;前后台流量的动态带宽调节&lt;/h4&gt;
+&lt;p&gt;动态调整后台流量（GC等）的网络带宽。&lt;/p&gt;
+&lt;p&gt;当存储集群中流量空闲时，减少后台流量的限额，使前台应用使用更多的带宽。&lt;/p&gt;
+&lt;h2 id=&#34;内存瓶颈&#34;&gt;内存瓶颈&lt;/h2&gt;
+&lt;p&gt;内存瓶颈来自内存带宽和网卡（NIC 执行DMA）的竞争，以及接受端的应用处理（数据拷贝，复制，gc）。&lt;/p&gt;
+&lt;p&gt;NIC无法获得足够的内存带宽，使得PCIe的带宽超出NIC的处理能力，NIC buffer中都是在途数据包，导致丢包。&lt;/p&gt;
+&lt;p&gt;因拥塞控制导致的性能损失会降低30%的网络吞吐量，10%的延迟。&lt;/p&gt;
+&lt;h3 id=&#34;加内存&#34;&gt;加内存&lt;/h3&gt;
+&lt;p&gt;增加了很多小容量的DRAM（16GB），最大化Memory Channel的利用率，提高每个服务器可用的内存带宽。&lt;/p&gt;
+&lt;p&gt;使用NUMA来避免跨Sockets内存访问。&lt;/p&gt;
+&lt;h3 id=&#34;tcp-to-rdma&#34;&gt;TCP to RDMA&lt;/h3&gt;
+&lt;p&gt;TCP使用更多的内存拷贝，使用RDMA后，后台流量的内存带宽减少了75%。&lt;/p&gt;
+&lt;p&gt;为了保证前端流量的QoS，盘古设计了类似Linux tc频率控制机制，来控制后台流量发送到网络中的速率。&lt;/p&gt;
+&lt;h3 id=&#34;rdca&#34;&gt;RDCA&lt;/h3&gt;
+&lt;p&gt;使得发送端绕过接收端的内存并直接访问接收端的cache。&lt;/p&gt;
+&lt;p&gt;该池使用共享接收器队列（SRQ）来接收小消息，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;缓存驻留缓冲池：使用共享接受队列来接受小信息，并使用基于窗口（类似TCP滑动窗口？）的速率控制机制的READ缓冲区来接收大消息，因此RDMA操作所需的内存缓冲区可以放入缓存中&lt;/li&gt;
+&lt;li&gt;快速缓存回收：为了在少量LLC二级Cache下达到100Gbps NIC线性速率操作，设计两种机制减少数据通过NIC的时间跨度：
+&lt;ol&gt;
+&lt;li&gt;在一个流水线下平行处理数据&lt;/li&gt;
+&lt;li&gt;通过硬件卸载和轻量化的序列化/反序列化 优化数据处理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;缓存压力感知的逃逸机制：解决性能抖动，逃逸机制监控LLC的使用并执行响应的策略
+&lt;ol&gt;
+&lt;li&gt;通过向缓存驻留缓冲池添加一个新的缓冲区来替换掉队数据的缓存缓冲区，这样RDCA中用于适应新到达的请求的可用缓存的大小保持不变&lt;/li&gt;
+&lt;li&gt;如果发生太多替换，则主动将运行缓慢的应用程序的数据复制到内存中，这样其他应用程序可以使用RDCA缓冲池，并且该池不会占用太多缓存&lt;/li&gt;
+&lt;li&gt;让NIC在&lt;strong&gt;拥塞通知包&lt;/strong&gt;中标记显式&lt;strong&gt;拥塞通知&lt;/strong&gt;（ECN），如果复制到内存失败或不足以释放缓存压力，则指示拥塞&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;cpu瓶颈&#34;&gt;CPU瓶颈&lt;/h2&gt;
+&lt;p&gt;数据的序列化和反序列化、数据压缩、数据CRC校验产生了大量的CPU开销&lt;/p&gt;
+&lt;h3 id=&#34;混合rpc&#34;&gt;混合RPC&lt;/h3&gt;
+&lt;p&gt;盘古通过Protobuf（Google gRPC）发送RPC请求，该框架需要对数据进行序列化/反序列化，产生了30%的CPU开销。&lt;/p&gt;
+&lt;p&gt;盘古内部的数据通路只有少量为RPC，因此，为了不需要序列化即可发送数据，盘古使用一种类似FlatBuffer的原生结构取代数据通路操作。&lt;/p&gt;
+&lt;p&gt;得益于Protobuf灵活性，盘古继续使用Protobuf来进行控制操作。&lt;/p&gt;
+&lt;p&gt;每个CPU核心的网络吞吐量增加了59%。&lt;/p&gt;
+&lt;h3 id=&#34;使用cpu-wait支持超线程&#34;&gt;使用CPU wait支持超线程&lt;/h3&gt;
+&lt;p&gt;hyper-threading（HT）超线程技术有两个主要问题&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;两个HT在一个无力核心上执行需要上下文切换&lt;/li&gt;
+&lt;li&gt;一个HT影响其他HT的执行，会使整体的延迟升高&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;盘古提出了CPU wait指令，包括&lt;strong&gt;monitor&lt;/strong&gt;和&lt;strong&gt;mwait&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;例如：网络空闲轮询线程将监控的内存地址，执行mwait，直到内存地址被其他线程修改时才被唤醒。&lt;/p&gt;
+&lt;p&gt;在mwait过程中，它运行的HT进入&lt;strong&gt;空闲睡眠状态&lt;/strong&gt;（C-States中的除C0之外的一个状态），因此不会干扰其他HT。&lt;/p&gt;
+&lt;p&gt;执行CPU wait的时间开销小于5ms，唤醒一个HT的开销也是ms级别。&lt;/p&gt;
+&lt;p&gt;对比没有CPU wait，网络吞吐量提高了31.6%。&lt;/p&gt;
+&lt;h3 id=&#34;软硬件co-desgin&#34;&gt;软硬件Co-Desgin&lt;/h3&gt;
+&lt;p&gt;将一些任务卸载到可编程硬件。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;数据压缩&lt;/strong&gt;：卸载到基于FPGA的可计算存储，达到3GB/s的吞吐量，可以节省10个物理核心。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;CRC计算&lt;/strong&gt;：卸载到RDMA-总线 NIC网卡，为每个数据块计算CRC，CPU会汇总这些CRC并执行轻量化的检查，保证了CPU的低负载和上层应用的数据集成。节省了30%的CPU开销。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;评估-1&#34;&gt;评估&lt;/h2&gt;
+&lt;p&gt;标准化的有效吞吐量：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://blog.ipandai.club/img/image-20230311205320296.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20230311205320296&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;从左到右：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;盘古使用2*25GBps网络带宽和4TB-SDD&lt;/li&gt;
+&lt;li&gt;SSD增加到更高性能的8TB，使用100Gbps网络（PCIe gen3）&lt;/li&gt;
+&lt;li&gt;优化了内存带宽&lt;/li&gt;
+&lt;li&gt;使用PCIe gen4，网络带宽增加到2*100Gbps，存在流量放大问题。&lt;/li&gt;
+&lt;li&gt;Client采取EC(4,2)，数据压缩等优化缓解了流量放大问题&lt;/li&gt;
+&lt;li&gt;卸载数据压缩和CRC到外置硬件&lt;/li&gt;
+&lt;/ol&gt;
 &lt;h1 id=&#34;0x04-operation-experiences&#34;&gt;0x04 Operation Experiences&lt;/h1&gt;
+&lt;p&gt;介绍了在开发运营过程中遇到的一些案例研究&lt;/p&gt;
 &lt;h1 id=&#34;0x05-lessons&#34;&gt;0x05 Lessons&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;user-space system：
+&lt;ul&gt;
+&lt;li&gt;在user space开发节省人力并且容易监控和调整参数&lt;/li&gt;
+&lt;li&gt;user space开发需要学习kernel space开发&lt;/li&gt;
+&lt;li&gt;独立chunk布局还优化了HDD的写入效率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;tradeoff：成本和性能的平衡，提高资源利用率&lt;/li&gt;
+&lt;li&gt;PMem：Intel放弃了PMem的业务&lt;/li&gt;
+&lt;li&gt;hardware offloading：付出了大量成本解决这一问题，收益明显&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h1 id=&#34;0x06-conclusion&#34;&gt;0x06 Conclusion&lt;/h1&gt;
-&lt;h1 id=&#34;0x07-reference&#34;&gt;0x07 Reference&lt;/h1&gt;
+&lt;p&gt;文章介绍了盘古从1.0版本到2.0版本的整体演进过程，有非常大的实战经验，给出了对于分布式文件系统、面向性能的服务模式、CPU瓶颈、内存带宽的实现方案。文章个别地方没有很详细的描述，阿里云团队也发表过多篇学术论文，本文还是总结为主。&lt;/p&gt;
 </description>
         </item>
         

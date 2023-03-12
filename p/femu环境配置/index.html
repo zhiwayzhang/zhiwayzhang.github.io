@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有'><title>汇编语言笔记</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本文主要参考FEMU仓库README 0x00 Intro FEMU架构图 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &#43;--------------------&#43; | VM / Guest OS | | | | | | NVMe Block Device | &#43;--------^^----------&#43; || PCIe/NVMe || &#43;------------------------------vv----------------------------&#43; | &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;------&#43; |'><title>FEMU环境配置</title>
 
-<link rel='canonical' href='https://blog.ipandai.club/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/'>
+<link rel='canonical' href='https://blog.ipandai.club/p/femu%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/'>
 
-<link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='汇编语言笔记'>
-<meta property='og:description' content='简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有'>
-<meta property='og:url' content='https://blog.ipandai.club/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/'>
+<link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='FEMU环境配置'>
+<meta property='og:description' content='本文主要参考FEMU仓库README 0x00 Intro FEMU架构图 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &#43;--------------------&#43; | VM / Guest OS | | | | | | NVMe Block Device | &#43;--------^^----------&#43; || PCIe/NVMe || &#43;------------------------------vv----------------------------&#43; | &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;------&#43; |'>
+<meta property='og:url' content='https://blog.ipandai.club/p/femu%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/'>
 <meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='汇编语言' /><meta property='article:published_time' content='2021-03-16T10:29:27&#43;00:00'/><meta property='article:modified_time' content='2021-03-16T10:29:27&#43;00:00'/>
-<meta name="twitter:title" content="汇编语言笔记">
-<meta name="twitter:description" content="简介 本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='FEMU' /><meta property='article:tag' content='QEMU' /><meta property='article:published_time' content='2022-12-11T16:10:32&#43;08:00'/><meta property='article:modified_time' content='2022-12-11T16:10:32&#43;08:00'/>
+<meta name="twitter:title" content="FEMU环境配置">
+<meta name="twitter:description" content="本文主要参考FEMU仓库README 0x00 Intro FEMU架构图 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &#43;--------------------&#43; | VM / Guest OS | | | | | | NVMe Block Device | &#43;--------^^----------&#43; || PCIe/NVMe || &#43;------------------------------vv----------------------------&#43; | &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;---------&#43; &#43;------&#43; |">
     </head>
     <body class="
     article-page
@@ -256,7 +256,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/">汇编语言笔记</a>
+            <a href="/p/femu%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">FEMU环境配置</a>
         </h2>
     
         
@@ -275,7 +275,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Mar 16, 2021</time>
+                <time class="article-time--published">Dec 11, 2022</time>
             </div>
         
 
@@ -290,7 +290,7 @@
 
 
                 <time class="article-time--reading">
-                    2 minute read
+                    5 minute read
                 </time>
             </div>
         
@@ -307,136 +307,10 @@
     <section class="article-content">
     
     
-    <h2 id="简介">简介</h2>
-<p>本学期选了汇编语言这门选修课，我认为还是有很大的学习价值的，虽然学习的还是年代久远的8086CPU指令集，但对后续接触更多汇编语言还是有很大帮助，方便我们调试程序，多了一种查错的方式。
-其实关于调试自己很久之前就想学了，高中的时候看紫书，发现lrj老师讲了一段的gdb调试方法，当时感觉一点都看不懂，现在借此机会学习一下gdb的调试。
-本文除了将总结一些汇编语言学习过程中的笔记之外，还计划穿插一些cs213/CSAPP 的内容以及bomb lab的解析。</p>
-<!-- more -->
-<h2 id="准备工作">准备工作</h2>
-<p>dos系统现在以及年代久远，想使用8086CPU指令集调试的话需要借助DosBox来实现。
-<a class="link" href="https://www.dosbox.com/"  target="_blank" rel="noopener"
-    >DosBox官网</a></p>
-<p>由于macOS下没有DOSbox需要的调试工具，因此下载之后需要挂载debug.exe等Windows下的调试工具
-在DOSbox中输入</p>
+    <p>本文主要参考FEMU仓库README</p>
+<h1 id="0x00-intro">0x00 Intro</h1>
+<p>FEMU架构图</p>
 <div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mount C ~/dos
-</span></span><span class="line"><span class="cl">C:
-</span></span><span class="line"><span class="cl">debug
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>即可进入debug模式</p>
-<h2 id="实验1">实验1</h2>
-<h3 id="前置知识">前置知识</h3>
-<p>几条汇编指令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mov 目标操作对象,源操作数
-</span></span><span class="line"><span class="cl">add 目标操作对象,源操作数
-</span></span><span class="line"><span class="cl">jmp 寄存器 //修改IP寄存器的值
-</span></span><span class="line"><span class="cl">or 
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">jmp CS:IP
-</span></span><span class="line"><span class="cl">eg: jmp ax == (let IP = ax)
-</span></span><span class="line"><span class="cl">    jmp 2AE3:3 == let CS = 2AE3H and let IP = 0003H
-</span></span><span class="line"><span class="cl">sub ax,bx
-</span></span><span class="line"><span class="cl">ax = ax - bx
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">inc and dec
-</span></span><span class="line"><span class="cl">inc 操作对象 
-</span></span><span class="line"><span class="cl">eg: inc ax == ax+=1
-</span></span><span class="line"><span class="cl">    dec ax == ax-=1
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>注意：不可用mov指令修改段寄存器的值。（代码段寄存器CS，指令指针寄存器IP）
-CPU中识别<code>CS:IP</code>为执行指令
-操作对象可以是寄存器，也可以是地址</p>
-<p>Debug命令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">r: 看查寄存器内容，或者修改寄存器内容
-</span></span><span class="line"><span class="cl">d: 看查内存内容
-</span></span><span class="line"><span class="cl">e: 改写内存内容
-</span></span><span class="line"><span class="cl">u: 将机器指令翻译为汇编指令
-</span></span><span class="line"><span class="cl">t: 执行下一条汇编指令
-</span></span><span class="line"><span class="cl">a: 写入汇编指令
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>编译指令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">masm test
-</span></span><span class="line"><span class="cl">link test.obj
-</span></span><span class="line"><span class="cl">debug test.exe
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="lab1">lab1</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">WORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="mi">1100</span><span class="p">],</span><span class="mi">3445</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">WORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="mi">1102</span><span class="p">],</span><span class="mi">5678</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">WORD</span> <span class="no">PTR</span> <span class="p">[</span><span class="mi">1106</span><span class="p">],</span><span class="mi">6732</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="no">AX</span><span class="p">,[</span><span class="mi">1100</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">SUB</span> <span class="no">AX</span><span class="p">,[</span><span class="mi">1102</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">ADD</span> <span class="no">AX</span><span class="p">,[</span><span class="mi">1106</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span> <span class="p">[</span><span class="mi">1104</span><span class="p">],</span><span class="no">AX</span>
-</span></span><span class="line"><span class="cl"><span class="nf">HLT</span> <span class="c1">//使CPU停止工作
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -450,23 +324,313 @@ CPU中识别<code>CS:IP</code>为执行指令
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">AX</span><span class="p">,</span><span class="mi">1234</span> 
-</span></span><span class="line"><span class="cl"><span class="no">MOV</span>	<span class="p">[</span><span class="mi">1000</span><span class="p">],</span><span class="no">AX</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">BX</span><span class="p">,</span><span class="mi">1002</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">BYTE</span> <span class="no">PTR</span><span class="p">[</span><span class="no">BX</span><span class="p">],</span><span class="mi">20</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">DL</span><span class="p">,</span><span class="mi">39</span>
-</span></span><span class="line"><span class="cl"><span class="nf">INC</span>	<span class="no">BX</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="p">[</span><span class="no">BX</span><span class="p">],</span><span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">DEC</span>	<span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">SI</span><span class="p">,</span><span class="mi">3</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="p">[</span><span class="no">BX</span><span class="err">+</span><span class="no">SI</span><span class="p">],</span><span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="p">[</span><span class="no">BX</span><span class="err">+</span><span class="no">SI</span><span class="err">+</span><span class="mi">1</span><span class="p">],</span><span class="no">DL</span>
-</span></span><span class="line"><span class="cl"><span class="nf">MOV</span>	<span class="no">WORD</span> <span class="no">PTR</span><span class="p">[</span><span class="no">BX</span><span class="err">+</span><span class="no">SI</span><span class="err">+</span><span class="mi">2</span><span class="p">],</span><span class="mi">2846</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">                        +--------------------+
+</span></span><span class="line"><span class="cl">                        |    VM / Guest OS   |
+</span></span><span class="line"><span class="cl">                        |                    |
+</span></span><span class="line"><span class="cl">                        |                    |
+</span></span><span class="line"><span class="cl">                        |  NVMe Block Device |
+</span></span><span class="line"><span class="cl">                        +--------^^----------+
+</span></span><span class="line"><span class="cl">                                 ||
+</span></span><span class="line"><span class="cl">                              PCIe/NVMe
+</span></span><span class="line"><span class="cl">                                 ||
+</span></span><span class="line"><span class="cl">  +------------------------------vv----------------------------+
+</span></span><span class="line"><span class="cl">  |  +---------+ +---------+ +---------+ +---------+ +------+  |
+</span></span><span class="line"><span class="cl">  |  | Blackbox| |  OCSSD  | | ZNS-SSD | |  NoSSD  | | ...  |  |
+</span></span><span class="line"><span class="cl">  |  +---------+ +---------+ +---------+ +---------+ +------+  |
+</span></span><span class="line"><span class="cl">  |                    FEMU NVMe SSD Controller                |
+</span></span><span class="line"><span class="cl">  +------------------------------------------------------------+
 </span></span></code></pre></td></tr></table>
 </div>
+</div><p>FEMU是弗吉尼亚理工学院的<strong>Huaicheng LI</strong>教授团队开发的一款SSD模拟器，FEMU的论文此前进行过总结[[<a class="link" href="https://blog.ipandai.club/p/fast18-femu%e9%97%aa%e5%ad%98%e6%a8%a1%e6%8b%9f%e7%b3%bb%e7%bb%9f%e4%bb%8b%e7%bb%8d/"  target="_blank" rel="noopener"
+    >FAST'18] FEMU闪存模拟系统介绍</a>](https://blog.ipandai.club/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/)</p>
+<p>综合来说，FEMU是通过修改QEMU的基础框架，实现了对SSD性能的监控、控制，同时支持自行对FTL进行设计，对于VM而言，FEMU就是一个NVMe协议块设备，支持多种SSD研究模式：</p>
+<ul>
+<li>白盒模式 Open Chanel SSD：例如软件定义闪存SDF，OCSSD，主机端运行FTL</li>
+<li>黑盒模式 BBSSD：FTL位于存储设备，实现了内部映射表，模拟目前的消费级SSD</li>
+<li>ZNS SSD：向OS暴露NVMe Zone接口，便于OS直接发起read/write请求</li>
+<li>NoSSD：模拟超低延迟的NVMe设备，例如SCM、Optane、Z-NAND SSD</li>
+</ul>
+<p>FEMU使用的一些注意事项：</p>
+<ol>
+<li>
+<p>尽量让FEMU单独运行，以便有较低的误差</p>
+</li>
+<li>
+<p>FEMU默认使用8个核心来轮训NVMe队列，FTL额外使用一个核心，VM使用少量的虚拟CPU，默认配置会为VM保留4个宿主机CPU。FEMU对轮询线程的数量可以自行配置，使用<code>-device femu,queues=1,devsz_mb=xxx,femu_mode=xxx</code>进行设置，即：</p>
+<p><code>FEMU轮询线程+1个FTL线程+FEMU虚拟机虚拟CPU数量+宿主机使用1-2个CPU&lt;=宿主机中的CPU核心数</code></p>
+</li>
+<li>
+<p>FEMU会将整个SSD存储到DRAM中来确保精准的延迟和对闪存的模拟，必须确保有大于存储设备容量的空闲内存，宿主机和VM需要保留2-4GB的内存，一个比较直观的公式表达就是：</p>
+<p><code>FEMU SSD大小+虚拟机DRAM大小+宿主机DRAM大小&lt;=总DRAM大小</code></p>
+<p>$\rm FEMU \ \ SSD\ \ Size + VM\ \ DRAM\ \ Size+Host\ \  DRAM\ \ Size \leq Total\ \ DRAM \ \ Size$</p>
+</li>
+<li>
+<p>FEMU只支持4.14及以上的Linux内核版本</p>
+</li>
+</ol>
+<p>更多详细信息可以参考<a class="link" href="https://github.com/vtess/FEMU/wiki"  target="_blank" rel="noopener"
+    >FEMU wiki</a></p>
+<h1 id="0x01-usage">0x01 Usage</h1>
+<h2 id="image">Image</h2>
+<h3 id="get-from-maintainer">Get From Maintainer</h3>
+<p>首先是要制作系统镜像，如果不想的话，可以直接使用作者提供的镜像，起初我打算在macOS上制作，但是貌似macOS没有给QEMU使用HyperVisor的权限，因此想去装一个Ubuntu双系统，结果Windows在硬盘末尾写了一点数据，导致SSD不能分出足够的空间来安装，最后折腾了一下磁盘碎片整理，关闭虚拟内存、使用win自带的硬盘碎片整理工具，最终还是没能成功分出足够的空间，世界名画：</p>
+<p><img src="/img/095d3446086861d74d8b96a9623f9c02.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="095d3446086861d74d8b96a9623f9c02"
+	
+	
+></p>
+<p>最后只能借助WSL，制作出来了Ubuntu Server的镜像，几经周折上传到服务器之后，发现启动失败，用md5sum看了一下，结果上传过程中发生了错误，于是压缩了镜像重新上传，此时学长告知可以直接使用作者提供的镜像（ubuntu 20.04.1 server版本，内核版本5.4），看了一下README发现填写问卷即可，<a class="link" href="https://docs.google.com/forms/d/e/1FAIpQLSdCyNTU7n-hwW1ODJ3i_q1vmS6eTT-V3c4vCL8ouYocNLhxvA/viewform"  target="_blank" rel="noopener"
+    >镜像下载Google 问卷</a>，只有邮箱中就会收到下载地址</p>
+<p>下载地址为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget http://people.cs.uchicago.edu/~huaicheng/femu/femu-vm.tar.xz
+</span></span><span class="line"><span class="cl">tar xJvf femu-vm.tar.xz
+</span></span></code></pre></td></tr></table>
 </div>
+</div><p>下载后解压，然后记得检查一下md5，不然会变得不幸</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">md5sum u20s.qcow2 &gt; tmp.md5sum
+</span></span><span class="line"><span class="cl">diff md5sum u20s.md5sum
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虚拟机的用户名和密码为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">username: femu
+</span></span><span class="line"><span class="cl">passwd: femu
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="make-it-yourself">Make It Yourself</h3>
+<p>在ubuntu官网或者各大高校镜像站下载live-server即可，然后使用qemu-system-x86启动VM安装程序，这里作者要求是最好使用GUI模式来操作，我尝试了nographic发现并不能正确的进入安装程序，顺便提一下，退出QEMU的方式是</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">修饰键：Ctrl+A 命令键：x
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是先按下Ctrl+A，再按下x，类似tmux～～</p>
+<p>启动指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo qemu-system-x86_64 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-cdrom ubuntu-22.04.1-live-server-amd64.iso <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-hda femu.qcow2 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-boot d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-net nic -net user <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-m <span class="m">8192</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-rtc <span class="nv">base</span><span class="o">=</span>localtime -smp <span class="m">8</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-cpu host <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-enable-kvm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>作者文档中使用的为<code>-localtime</code>，目前的QEMU版本已经移除了该方式，改为了<code>-rtc base=localtime</code></p>
+<p>一路安装下来之后，使用如下指令进入VM中（去掉挂载iso的参数）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo qemu-system-x86_64 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-hda femu.qcow2 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-boot d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-net nic -net user <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-m <span class="m">8192</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-rtc <span class="nv">base</span><span class="o">=</span>localtime -smp <span class="m">8</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-cpu host <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-enable-kvm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>进入VM后，编辑<code>/etc/default/grub</code>，写入以下启动选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">GRUB_CMDLINE_LINUX</span><span class="o">=</span><span class="s2">&#34;ip=dhcp console=ttyS0,115200 console=tty console=ttyS0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">GRUB_TERMINAL</span><span class="o">=</span>serial
+</span></span><span class="line"><span class="cl"><span class="nv">GRUB_SERIAL_COMMAND</span><span class="o">=</span><span class="s2">&#34;serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过以上指令设置-nographic模式的启动选项，同时设置了ip的获取方式</p>
+<p>保存退出后，更新grub，并退出vm</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo update-grub
+</span></span><span class="line"><span class="cl">sudo shutdown -h now
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时镜像就制作成功了，可以通过FEMU来启动进行</p>
+<h2 id="run-qemu">Run Qemu</h2>
+<p>针对不同的研究方向，可以通过运行不同的启动脚本来运行FEMU</p>
+<p>例如：</p>
+<p>运行黑盒模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-blackbox.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行白盒模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-whitebox.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行NoSSD模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-nossd.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行ZNSSD模式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./run-zns.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以黑盒模式的运行为例，脚本主要内容即FEMU的运行，这里使用的qemu-system-x86_64是FEMU的编译产物，可以通过修改脚本的配置来使FEMU适配自己的机器，参数修改参考上文或者FEMU Wiki</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1"># Huaicheng Li &lt;huaicheng@cs.uchicago.edu&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Run FEMU as a black-box SSD (FTL managed by the device)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># image directory</span>
+</span></span><span class="line"><span class="cl"><span class="nv">IMGDIR</span><span class="o">=</span><span class="nv">$HOME</span>/images
+</span></span><span class="line"><span class="cl"><span class="c1"># Virtual machine disk image</span>
+</span></span><span class="line"><span class="cl"><span class="nv">OSIMGF</span><span class="o">=</span><span class="nv">$IMGDIR</span>/u20s.qcow2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[[</span> ! -e <span class="s2">&#34;</span><span class="nv">$OSIMGF</span><span class="s2">&#34;</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;VM disk image couldn&#39;t be found ...&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;Please prepare a usable VM image and place it as </span><span class="nv">$OSIMGF</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;Once VM disk image is ready, please rerun this script again&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">exit</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo x86_64-softmmu/qemu-system-x86_64 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -name <span class="s2">&#34;FEMU-BBSSD-VM&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -enable-kvm <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -cpu host <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -smp <span class="m">4</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -m 4G <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -device virtio-scsi-pci,id<span class="o">=</span>scsi0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -device scsi-hd,drive<span class="o">=</span>hd0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -drive <span class="nv">file</span><span class="o">=</span><span class="nv">$OSIMGF</span>,if<span class="o">=</span>none,aio<span class="o">=</span>native,cache<span class="o">=</span>none,format<span class="o">=</span>qcow2,id<span class="o">=</span>hd0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -device femu,devsz_mb<span class="o">=</span>4096,femu_mode<span class="o">=</span><span class="m">1</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -net user,hostfwd<span class="o">=</span>tcp::8080-:22 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -net nic,model<span class="o">=</span>virtio <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -nographic <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -qmp unix:./qmp-sock,server,nowait 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> tee log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>后续进行一些具体实验后再补充一些FEMU在实际研究过程中的使用步骤</p>
+<h1 id="reference">Reference</h1>
+<ol>
+<li><a class="link" href="https://github.com/vtess/FEMU"  target="_blank" rel="noopener"
+    >https://github.com/vtess/FEMU</a></li>
+<li><a class="link" href="https://github.com/vtess/FEMU/wiki"  target="_blank" rel="noopener"
+    >https://github.com/vtess/FEMU/wiki</a></li>
+<li><a class="link" href="https://www.qemu.org/docs/master/about/removed-features.html#localtime-removed-in-3-1"  target="_blank" rel="noopener"
+    >https://www.qemu.org/docs/master/about/removed-features.html#localtime-removed-in-3-1</a></li>
+</ol>
+
 </section>
 
 
@@ -474,7 +638,9 @@ CPU中识别<code>CS:IP</code>为执行指令
     
     <section class="article-tags">
         
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a>
+            <a href="/tags/femu/">FEMU</a>
+        
+            <a href="/tags/qemu/">QEMU</a>
         
     </section>
 
@@ -531,12 +697,12 @@ CPU中识别<code>CS:IP</code>为执行指令
             
                 
 <article class="">
-    <a href="/p/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86%E7%AC%94%E8%AE%B0/">
+    <a href="/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">编译原理笔记</h2>
+            <h2 class="article-title">[FEMU] FEMU Blackbox SSD源码阅读</h2>
         </div>
     </a>
 </article>
@@ -544,12 +710,12 @@ CPU中识别<code>CS:IP</code>为执行指令
             
                 
 <article class="">
-    <a href="/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
+    <a href="/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">[FEMU] FEMU Blackbox SSD源码阅读</h2>
+            <h2 class="article-title">[FAST&#39;18] FEMU闪存模拟系统介绍</h2>
         </div>
     </a>
 </article>
@@ -764,18 +930,19 @@ CPU中识别<code>CS:IP</code>为执行指令
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li>
+    <li><a href="#0x00-intro">0x00 Intro</a></li>
+    <li><a href="#0x01-usage">0x01 Usage</a>
       <ol>
-        <li><a href="#简介">简介</a></li>
-        <li><a href="#准备工作">准备工作</a></li>
-        <li><a href="#实验1">实验1</a>
+        <li><a href="#image">Image</a>
           <ol>
-            <li><a href="#前置知识">前置知识</a></li>
-            <li><a href="#lab1">lab1</a></li>
+            <li><a href="#get-from-maintainer">Get From Maintainer</a></li>
+            <li><a href="#make-it-yourself">Make It Yourself</a></li>
           </ol>
         </li>
+        <li><a href="#run-qemu">Run Qemu</a></li>
       </ol>
     </li>
+    <li><a href="#reference">Reference</a></li>
   </ol>
 </nav>
         </div>

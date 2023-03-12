@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='本文记录FEMU blackbox ssd（ssd对主机透明）的源码阅读。 bb.c 用于注册bbssd，在hw/femu/femu.c&amp;gt;nvme_registe'><title>[FEMU] FEMU Blackbox SSD源码阅读</title>
+
+<link rel='canonical' href='https://blog.ipandai.club/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/'>
+
+<link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='[FEMU] FEMU Blackbox SSD源码阅读'>
+<meta property='og:description' content='本文记录FEMU blackbox ssd（ssd对主机透明）的源码阅读。 bb.c 用于注册bbssd，在hw/femu/femu.c&amp;gt;nvme_registe'>
+<meta property='og:url' content='https://blog.ipandai.club/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/'>
+<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='FEMU' /><meta property='article:tag' content='QEMU' /><meta property='article:published_time' content='2023-03-12T12:36:08&#43;08:00'/><meta property='article:modified_time' content='2023-03-12T12:36:08&#43;08:00'/>
+<meta name="twitter:title" content="[FEMU] FEMU Blackbox SSD源码阅读">
+<meta name="twitter:description" content="本文记录FEMU blackbox ssd（ssd对主机透明）的源码阅读。 bb.c 用于注册bbssd，在hw/femu/femu.c&amp;gt;nvme_registe">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8a3d9192938a940b103f152e82f8d0c1_176069_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🐼</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
+            <h2 class="site-description">Coding Panda.</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://space.bilibili.com/38920489'
+                        target="_blank"
+                        title="Bilibili"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1664723478952" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2240" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2241" fill="#BFBFBF"></path></svg>
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/zhiwayzhang'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/notes/" >
+                Notes
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">[FEMU] FEMU Blackbox SSD源码阅读</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 12, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+        
+        
+
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>本文记录FEMU blackbox ssd（ssd对主机透明）的源码阅读。</p>
+<h1 id="bbc">bb.c</h1>
+<p>用于注册bbssd，在<code>hw/femu/femu.c&gt;nvme_register_extesions()</code>中执行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="nf">nvme_register_extensions</span><span class="p">(</span><span class="n">FemuCtrl</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">OCSSD</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">...</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  	<span class="p">...</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">BBSSD</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">nvme_register_bbssd</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">...</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个<code>FemuCtrl *n</code>结构包含了很多内容，本质上是一个用于线程之间同步/传值的结构</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">nvme_register_bbssd</span><span class="p">(</span><span class="n">FemuCtrl</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span><span class="o">-&gt;</span><span class="n">ext_ops</span> <span class="o">=</span> <span class="p">(</span><span class="n">FemuExtCtrlOps</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">state</span>            <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">init</span>             <span class="o">=</span> <span class="n">bb_init</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">exit</span>             <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">rw_check_req</span>     <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">admin_cmd</span>        <span class="o">=</span> <span class="n">bb_admin_cmd</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">io_cmd</span>           <span class="o">=</span> <span class="n">bb_io_cmd</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">get_log</span>          <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>初始化bbssd的有关结构，最终执行<code>ssd_init()</code>来初始化ssd</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/* bb &lt;=&gt; black-box */</span>
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">bb_init</span><span class="p">(</span><span class="n">FemuCtrl</span> <span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">Error</span> <span class="o">**</span><span class="n">errp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ssd</span> <span class="o">*</span><span class="n">ssd</span> <span class="o">=</span> <span class="n">n</span><span class="o">-&gt;</span><span class="n">ssd</span> <span class="o">=</span> <span class="n">g_malloc0</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">ssd</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">bb_init_ctrl_str</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">ssd</span><span class="o">-&gt;</span><span class="n">dataplane_started_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">n</span><span class="o">-&gt;</span><span class="n">dataplane_started</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd</span><span class="o">-&gt;</span><span class="n">ssdname</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">n</span><span class="o">-&gt;</span><span class="n">devname</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">femu_debug</span><span class="p">(</span><span class="s">&#34;Starting FEMU in Blackbox-SSD mode ...</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd_init</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">uint16_t</span> <span class="nf">bb_admin_cmd</span><span class="p">(</span><span class="n">FemuCtrl</span> <span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">NvmeCmd</span> <span class="o">*</span><span class="n">cmd</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="n">cmd</span><span class="o">-&gt;</span><span class="n">opcode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nl">NVME_ADM_CMD_FEMU_FLIP</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bb_flip</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">cmd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">NVME_SUCCESS</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">NVME_INVALID_OPCODE</span> <span class="o">|</span> <span class="n">NVME_DNR</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行bbssd的I/O操作，调用<code>bb_nvme_rw()</code>将数据写入到DRAM</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">uint16_t</span> <span class="nf">bb_io_cmd</span><span class="p">(</span><span class="n">FemuCtrl</span> <span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">NvmeNamespace</span> <span class="o">*</span><span class="n">ns</span><span class="p">,</span> <span class="n">NvmeCmd</span> <span class="o">*</span><span class="n">cmd</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                          <span class="n">NvmeRequest</span> <span class="o">*</span><span class="n">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="n">cmd</span><span class="o">-&gt;</span><span class="n">opcode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nl">NVME_CMD_READ</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nl">NVME_CMD_WRITE</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">bb_nvme_rw</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">req</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">NVME_INVALID_OPCODE</span> <span class="o">|</span> <span class="n">NVME_DNR</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="ftlh">ftl.h</h1>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">ssd</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">ssdname</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ssdparams</span> <span class="n">sp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ssd_channel</span> <span class="o">*</span><span class="n">ch</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ppa</span> <span class="o">*</span><span class="n">maptbl</span><span class="p">;</span> <span class="cm">/* page level mapping table */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span> <span class="o">*</span><span class="n">rmap</span><span class="p">;</span>     <span class="cm">/* reverse mapptbl, assume it&#39;s stored in OOB */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">write_pointer</span> <span class="n">wp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">line_mgmt</span> <span class="n">lm</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* lockless ring for communication with NVMe IO thread */</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* 无锁ring寄存器 */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">rte_ring</span> <span class="o">**</span><span class="n">to_ftl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">rte_ring</span> <span class="o">**</span><span class="n">to_poller</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="o">*</span><span class="n">dataplane_started_ptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">QemuThread</span> <span class="n">ftl_thread</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>SSD通过ssd_init()函数初始化</p>
+<h1 id="ftlc">ftl.c</h1>
+<h2 id="init">init</h2>
+<p>Ssd_init首先完成对SSD的初始化操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">ssd_init</span><span class="p">(</span><span class="n">FemuCtrl</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ssd</span> <span class="o">*</span><span class="n">ssd</span> <span class="o">=</span> <span class="n">n</span><span class="o">-&gt;</span><span class="n">ssd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ssdparams</span> <span class="o">*</span><span class="n">spp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">ssd</span><span class="o">-&gt;</span><span class="n">sp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">ftl_assert</span><span class="p">(</span><span class="n">ssd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">ssd_init_params</span><span class="p">(</span><span class="n">spp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* initialize ssd internal layout architecture */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd</span><span class="o">-&gt;</span><span class="n">ch</span> <span class="o">=</span> <span class="n">g_malloc0</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">ssd_channel</span><span class="p">)</span> <span class="o">*</span> <span class="n">spp</span><span class="o">-&gt;</span><span class="n">nchs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">spp</span><span class="o">-&gt;</span><span class="n">nchs</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssd_init_ch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ssd</span><span class="o">-&gt;</span><span class="n">ch</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">spp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* initialize maptbl */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd_init_maptbl</span><span class="p">(</span><span class="n">ssd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* initialize rmap */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd_init_rmap</span><span class="p">(</span><span class="n">ssd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* initialize all the lines */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd_init_lines</span><span class="p">(</span><span class="n">ssd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* initialize write pointer, this is how we allocate new pages for writes */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ssd_init_write_pointer</span><span class="p">(</span><span class="n">ssd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">qemu_thread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ssd</span><span class="o">-&gt;</span><span class="n">ftl_thread</span><span class="p">,</span> <span class="s">&#34;FEMU-FTL-Thread&#34;</span><span class="p">,</span> <span class="n">ftl_thread</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                       <span class="n">QEMU_THREAD_JOINABLE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>初始化流程：</p>
+<ul>
+<li>根据设定的参数，分配SSD所使用的内存</li>
+<li>初始化$ssd\  Chanel\to nand \ logic \ unit\to plane\to blk\to nand page$</li>
+<li>初始化Mapping Table，初始化ppa（物理页的地址）</li>
+<li>初始化rmap，反向的映射表Physical 2 Logic，存储在OOB</li>
+<li>初始化lines</li>
+<li>初始化写指针，指向下一个写入的地址</li>
+<li>创建FEMU FTL线程，维持FTL的运行</li>
+</ul>
+<h2 id="ftl-thread">ftl thread</h2>
+<p>首先初始化ssd的两个队列</p>
+<p>这两个队列会在<code>hw/femu/nvme-io.c&gt;nvme_create_poller()</code>中创建</p>
+<ul>
+<li><code>to_ftl</code>:host发送到ssd的nvme req（sq）</li>
+<li><code>to_poller</code>:ssd等待host轮询的队列（cq）</li>
+</ul>
+<p>ftl thread主要为一个while循环，从<code>femu_ring_dequeue</code>中获取NVMe请求，执行相应的NVMe Write/Read/DSM指令。</p>
+<p>在执行NVMe Write/Read时，函数内部会模拟操作的延迟并返回给ftl thread，最终汇总到NVMe request的总延迟中，并将NVMe request加入cq。</p>
+<p>每次操作结束后会调用<code>should_gc()</code>来判断是否要执行<code>do_gc()</code>操作。</p>
+<h2 id="nvme-operation">NVMe Operation</h2>
+<p>主要执行NVMe Write/Read</p>
+<p>先看一下一个NVMe请求的结构：</p>
+<p><code>hw/femu/nvme.h&gt;NvmeRequest</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">NvmeRequest</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">NvmeSQueue</span>       <span class="o">*</span><span class="n">sq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">NvmeCQueue</span>       <span class="o">*</span><span class="n">cq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">NvmeNamespace</span>    <span class="o">*</span><span class="n">ns</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint16_t</span>                <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span>                <span class="n">slba</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint16_t</span>                <span class="n">is_write</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint16_t</span>                <span class="n">nlb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint16_t</span>                <span class="n">ctrl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span>                <span class="n">meta_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span>                <span class="n">mptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span>                    <span class="o">*</span><span class="n">meta_buf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span>                <span class="n">oc12_slba</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span>                <span class="o">*</span><span class="n">oc12_ppa_list</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">NvmeCmd</span>                 <span class="n">cmd</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">NvmeCqe</span>                 <span class="n">cqe</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint8_t</span>                 <span class="n">cmd_opcode</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">QEMUSGList</span>              <span class="n">qsg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">QEMUIOVector</span>            <span class="n">iov</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">QTAILQ_ENTRY</span><span class="p">(</span><span class="n">NvmeRequest</span><span class="p">)</span><span class="n">entry</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span>                 <span class="n">stime</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span>                 <span class="n">reqlat</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span>                 <span class="n">gcrt</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int64_t</span>                 <span class="n">expire_time</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* OC2.0: sector offset relative to slba where reads become invalid */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span> <span class="n">predef</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* ZNS */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span>                    <span class="o">*</span><span class="n">opaque</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* position in the priority queue for delay emulation */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size_t</span>                  <span class="n">pos</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">NvmeRequest</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>NVMeRequest的cmd.opcode用于判断操作类型</p>
+<hr>
+<h3 id="write">Write</h3>
+<p>执行Write时，要获取lba（Logical Block Address）、nlb（Number of logic block）</p>
+<p>基于lba和nlb和ssd的参数，计算出要写入的起止lpn（Logical Page Number）</p>
+<p>执行写入操作前，需要先执行<code>should_gc_high()</code>直到可以执行写入</p>
+<p>从start lpn一直到end lpn，对于每个lpn：</p>
+<ul>
+<li>获取ppa，判断是否有映射信息，若有则先标记ppa的page status和为Invalid，并移除RMAP映射信息</li>
+<li>通过ssd写指针获得写入的ppa</li>
+<li>更新mapping table和RMAP，将page标记为valid</li>
+<li>ssd写指针移动到下一个有效位置</li>
+<li>基于nvme req的开始时间，通过<code>ssd_advance_status()</code>获取延迟curlat(current latency)</li>
+<li>$maxlat= \max(maxlat,curlat)$</li>
+</ul>
+<p>最终返回maxlat</p>
+<h3 id="read">Read</h3>
+<p>执行read操作时，同样获取lba和nlb，计算起止的lpn</p>
+<p>后面的过程相比Write流程要简单一些</p>
+<p>对于每个lpn：</p>
+<ul>
+<li>获取ppa，判断是否有映射信息或当前ppa是否有效，若无信息或当前状态为invalid则跳过该lpn</li>
+<li>计算延迟</li>
+</ul>
+<p>返回maxlat</p>
+<hr>
+<p>注意到，其实这里的Write/Read都没有真正去执行写入，femu中仅模拟延迟，在<a class="link" href="https://github.com/vtess/FEMU/issues/84"  target="_blank" rel="noopener"
+    >FEMU issues #84</a>中作者提到，有关数据I/O的操作在NVMe层中进行模拟，位于<code>hw/femu/nvme-io.c&gt;nvme_rw()</code>函数中，最终由<code>backend_rw()</code>通过DMA写入内存。</p>
+<h2 id="ssd_advance_status">ssd_advance_status()</h2>
+<p>更新ssd的状态，根据闪存读写擦的操作来更新SSD的时间戳，即lun的<code>next_lun_avail_time</code></p>
+<h2 id="gc">GC</h2>
+<p><code>do_gc()</code>有force参数</p>
+<p>首先通过<code>select_victim_line()</code>选取victim line，victim line由line mgmt维护的优先队列中获得，取出队头，若队列为空则返回NULL，若force为False，并且invalid page count in this line小于每个line上的page数量/8，同样返回NULL。进行队列维护操作后返回victim line。</p>
+<p>遍历所有的channel，这里没太看懂，主要是推进ssd的状态，以便计算延迟。</p>
+<p>最后将该line标记为free。</p>
+<h1 id="其他要补充的">其他要补充的</h1>
+<p>对于bbssd，如果要修改sector size，需要手动修改源码</p>
+<p>在ftl.c line 239</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">static void ssd_init_params(struct ssdparams *spp)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    spp-&gt;secsz = 512;
+</span></span><span class="line"><span class="cl">    spp-&gt;secs_per_pg = 8;
+</span></span><span class="line"><span class="cl">    ....
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="link" href="https://github.com/vtess/FEMU/blob/ad786ad152e6113057799f2d3edc0ef3295423bf/hw/femu/bbssd/ftl.c#L239"  target="_blank" rel="noopener"
+    >https://github.com/vtess/FEMU/blob/ad786ad152e6113057799f2d3edc0ef3295423bf/hw/femu/bbssd/ftl.c#L239</a></p>
+<h1 id="梳理bbssd中的结构">梳理bbssd中的结构</h1>
+<p>对于我们日常使用的SSD，包含以下几个结构，下图来自<a class="link" href="https://safari.ethz.ch/projects_and_seminars/spring2022/lib/exe/fetch.php?media=pns_modern_ssds_fs2022_2nd_after_meeting.pdf"  target="_blank" rel="noopener"
+    >ETH Zürich</a></p>
+<p><img src="/img/image-20230312200340198.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20230312200340198"
+	
+	
+></p>
+<p><strong>NAND Packages</strong>就是SSD上可以看到的NAND闪存颗粒，每个<strong>NAND Packages</strong>包含多个<strong>LUN/Die</strong>。</p>
+<p>下图来自《深入浅出SSD》</p>
+<p><strong>LUN</strong>，或称之为<strong>Die、Chip</strong>，每个LUN上又包含若干个<strong>Plane</strong>。</p>
+<p><strong>Plane</strong>中则包含SSD擦除的基本单元<strong>Block</strong>，每个<strong>Plane</strong>中有寄存器和Cache，用于并行。</p>
+<p><strong>Block</strong>中包含读写的基本单元<strong>Page</strong>。</p>
+<p><strong>Page</strong>的几个状态：</p>
+<ul>
+<li>无效页 Invalid：数据已删除，但还没有擦除数据</li>
+<li>有效页 valid：数据已写入但未删除</li>
+<li>空闲页 free：可直接写入数据</li>
+</ul>
+<p>不同的<strong>LUN</strong>之间通过<strong>Channel</strong>进行连接。</p>
+<p><img src="/img/image-20230312192729605.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20230312192729605"
+	
+	
+></p>
+<p>对应femu bbssd ftl中的结构</p>
+<p>将SSD划分为多个Channel</p>
+<ul>
+<li>
+<p>每个Channel之中包含多个LUN单元（nluns）</p>
+<ul>
+<li>单个Channel之间无法并行，有busy字段（虽然femu有busy字段，但是除了初始化阶段并没有使用过，用next avail time就够了）</li>
+<li>有next_ch_avail_time</li>
+<li>有gc_endtime</li>
+</ul>
+</li>
+<li>
+<p>每个LUN之间包含多个Plane单元（npls）</p>
+<ul>
+<li>有next_lun_avail_time</li>
+<li>有gc_endtime</li>
+</ul>
+</li>
+<li>
+<p>每个Plane单元包含多个block单元（nblks）</p>
+<ul>
+<li>Plane之间由于有寄存器，可以并行</li>
+</ul>
+</li>
+<li>
+<p>每个block单元包含多个page单元（npgs）</p>
+<ul>
+<li>包含有效页无效页的统计
+<ul>
+<li>ipc：invalid page count</li>
+<li>vpc：valid page count</li>
+</ul>
+</li>
+<li>erase_cnt：应该是用于寿命估计/磨损均衡</li>
+<li>wp：当前的写指针，对于写指针的移动有一套控制算法</li>
+</ul>
+</li>
+<li>
+<p>page单元划分多个logical sector</p>
+<ul>
+<li>nand_sec_status_t（int）：记录每个logical sector状态</li>
+<li>nsecs：每个page内logical sector的数量，读写的基本单位了</li>
+<li>status：即page的状态 valid/invalid/free</li>
+</ul>
+</li>
+</ul>
+<p>至此，FEMU bbssd中涉及ssd组成的部分已梳理完毕。</p>
+<p>ftl.c还有一个line的概念，这个和NAND Flash中word line和bit line的概念并不相同，根据<a class="link" href="https://github.com/vtess/FEMU/issues/86"  target="_blank" rel="noopener"
+    >FEMU issues #86</a>，像是作者为了实现gc自己设计的结构。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">A line is a superblock, which is essentially striped across blocks from all parallel flash chips with the same offset within the chip, e.g., line 0 is the union of all block 0s from each chip.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>一个line包含在一个LUN中所有并行的Plane中block的偏移量，如下图</p>
+<p><img src="/img/image-20230312230005951.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20230312230005951"
+	
+	
+></p>
+<p>因此line的结构很简单，维护了相应的offset/block id，和valid/invalid page统计</p>
+<p><code>QTAILQ_ENTRY</code>维护了一个循环链表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define QTAILQ_ENTRY(type)                                              
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">union</span> <span class="p">{</span>                                                                 
+</span></span><span class="line"><span class="cl">        <span class="k">struct</span> <span class="n">type</span> <span class="o">*</span><span class="n">tqe_next</span><span class="p">;</span>        <span class="cm">/* next element */</span>                
+</span></span><span class="line"><span class="cl">        <span class="n">QTailQLink</span> <span class="n">tqe_circ</span><span class="p">;</span>          <span class="cm">/* link for circular backwards list */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">line</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>  <span class="cm">/* line id, the same as corresponding block id */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">ipc</span><span class="p">;</span> <span class="cm">/* invalid page count in this line */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">vpc</span><span class="p">;</span> <span class="cm">/* valid page count in this line */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">QTAILQ_ENTRY</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="n">entry</span><span class="p">;</span> <span class="cm">/* in either {free,victim,full} list */</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* position in the priority queue for victim lines */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size_t</span>                  <span class="n">pos</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">line</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同时还有相应的line management</p>
+<p>line主要用来gc选中victim line并执行一些选中、擦除操作。</p>
+<h1 id="reference">Reference</h1>
+<ol>
+<li>
+<p><a class="link" href="https://github.com/vtess/FEMU/issues/84"  target="_blank" rel="noopener"
+    >FEMU issues #84</a></p>
+</li>
+<li>
+<p><a class="link" href="https://safari.ethz.ch/projects_and_seminars/spring2022/lib/exe/fetch.php?media=pns_modern_ssds_fs2022_2nd_after_meeting.pdf"  target="_blank" rel="noopener"
+    >ETH Zürich</a></p>
+</li>
+<li>
+<p>《深入浅出SSD》</p>
+</li>
+<li>
+<p><a class="link" href="https://blog.ipandai.club/p/%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98/#%E9%97%AA%E5%AD%98"  target="_blank" rel="noopener"
+    >固态硬盘基础知识</a></p>
+</li>
+<li>
+<p><a class="link" href="https://willendless.github.io/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/2021/08/29/%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F-%E4%B8%80/"  target="_blank" rel="noopener"
+    >CMU18-746笔记 NAND-based SSD</a></p>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/femu/">FEMU</a>
+        
+            <a href="/tags/qemu/">QEMU</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/femu%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">FEMU环境配置</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/fast18-femu%E9%97%AA%E5%AD%98%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[FAST&#39;18] FEMU闪存模拟系统介绍</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/fast23-more-than-capacity-performance-oriented-evolution-of-pangu-in-alibaba/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[FAST&#39;23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/osdi22-xrp-in-kernel-storage-functions-with-ebpf/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/fast22-mt2-memory-bandwidth-regulation-on-hybrid-nvm/dram-platforms/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[FAST&#39;22] MT^2: Memory Bandwidth Regulation on Hybrid NVM/DRAM Platforms</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "coding-pandas" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2019 - 
+        
+        2023 Coding_Panda&#39;s Blog
+    </section>
+    
+    
+    <section class="powerby">
+        ICP备案： <a href="https://beian.miit.gov.cn">鲁ICP备2021030271号</a> <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#bbc">bb.c</a></li>
+    <li><a href="#ftlh">ftl.h</a></li>
+    <li><a href="#ftlc">ftl.c</a>
+      <ol>
+        <li><a href="#init">init</a></li>
+        <li><a href="#ftl-thread">ftl thread</a></li>
+        <li><a href="#nvme-operation">NVMe Operation</a>
+          <ol>
+            <li><a href="#write">Write</a></li>
+            <li><a href="#read">Read</a></li>
+          </ol>
+        </li>
+        <li><a href="#ssd_advance_status">ssd_advance_status()</a></li>
+        <li><a href="#gc">GC</a></li>
+      </ol>
+    </li>
+    <li><a href="#其他要补充的">其他要补充的</a></li>
+    <li><a href="#梳理bbssd中的结构">梳理bbssd中的结构</a></li>
+    <li><a href="#reference">Reference</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

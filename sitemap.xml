@@ -3,15 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://blog.ipandai.club/</loc>
-    <lastmod>2023-03-17T23:30:48+08:00</lastmod>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/categories/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/cgroups/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/linux/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/post/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/tags/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/categories/tech/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.ipandai.club/p/using-cgroups-v2-to-limit-system-i/o-resources/</loc>
+    <lastmod>2023-04-07T19:51:41+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/p/fast23-hadafs-a-file-system-bridging-the-local-and-shared-burst-buffer-for-exascale-supercomputers/</loc>
     <lastmod>2023-03-17T23:30:48+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/burst-buffer/</loc>
-    <lastmod>2023-03-17T23:30:48+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/categories/</loc>
     <lastmod>2023-03-17T23:30:48+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/fast/</loc>
@@ -26,9 +44,6 @@
     <loc>https://blog.ipandai.club/tags/paper/</loc>
     <lastmod>2023-03-17T23:30:48+08:00</lastmod>
   </url><url>
-    <loc>https://blog.ipandai.club/post/</loc>
-    <lastmod>2023-03-17T23:30:48+08:00</lastmod>
-  </url><url>
     <loc>https://blog.ipandai.club/tags/sns/</loc>
     <lastmod>2023-03-17T23:30:48+08:00</lastmod>
   </url><url>
@@ -36,9 +51,6 @@
     <lastmod>2023-03-17T23:30:48+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/supercomputer/</loc>
-    <lastmod>2023-03-17T23:30:48+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/</loc>
     <lastmod>2023-03-17T23:30:48+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/</loc>
@@ -84,9 +96,6 @@
     <lastmod>2023-02-09T14:51:48+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/p/fast22-mt2-memory-bandwidth-regulation-on-hybrid-nvm/dram-platforms/</loc>
-    <lastmod>2022-12-19T16:50:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/cgroups/</loc>
     <lastmod>2022-12-19T16:50:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/tags/memory/</loc>
@@ -145,9 +154,6 @@
   </url><url>
     <loc>https://blog.ipandai.club/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2022-10-11T13:44:49+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.ipandai.club/tags/linux/</loc>
-    <lastmod>2022-10-09T13:44:18+08:00</lastmod>
   </url><url>
     <loc>https://blog.ipandai.club/p/linux-block-i/o-stack%E7%AE%80%E4%BB%8B/</loc>
     <lastmod>2022-10-09T13:44:18+08:00</lastmod>

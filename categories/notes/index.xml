@@ -7201,6 +7201,9 @@ $Z_i=X_i\oplus Y_i \oplus C_i$
 $$
 \frac{\sum_{i=1}^Nf(x_i)}{\int_1^\infin \frac{1}{e^x}}
 $$&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;533&#34; marginheight=&#34;0&#34; marginwidth=&#34;0&#34; src=&#34;https://zhiwayzhang.github.io/Paper-Slides/demo.html&#34;&gt;
+	reveal js slides test.
+&lt;/iframe&gt;
 </description>
         </item>
         

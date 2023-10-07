@@ -1,65 +1,34 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>MySQL on Coding_Panda&#39;s Blog</title>
-        <link>https://blog.ipandai.club/tags/mysql/</link>
-        <description>Recent content in MySQL on Coding_Panda&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator>
-        <language>en-us</language>
-        <lastBuildDate>Mon, 17 Jan 2022 23:16:08 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/mysql/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Mysql学习笔记</title>
-        <link>https://blog.ipandai.club/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-        <pubDate>Mon, 17 Jan 2022 23:16:08 +0000</pubDate>
-        
-        <guid>https://blog.ipandai.club/p/mysql%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-        <description>&lt;h1 id=&#34;基础知识&#34;&gt;基础知识&lt;/h1&gt;
-&lt;p&gt;单进程多线程，线程之间共享内存&lt;/p&gt;
-&lt;p&gt;OLTP Online Transaction Processing 在线事务处理&lt;/p&gt;
-&lt;h1 id=&#34;innodb&#34;&gt;InnoDB&lt;/h1&gt;
-&lt;h2 id=&#34;overview&#34;&gt;overview&lt;/h2&gt;
-&lt;p&gt;特点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;行级锁&lt;/li&gt;
-&lt;li&gt;支持外键&lt;/li&gt;
-&lt;li&gt;支持事务&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读&lt;/p&gt;
-&lt;p&gt;四种隔离级别：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;REPEATABLE 默认&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID&lt;/p&gt;
-&lt;h2 id=&#34;后台线程&#34;&gt;后台线程&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;Master Thread 缓冲区数据异步更新到磁盘&lt;/li&gt;
-&lt;li&gt;IO Thread innodb使用异步IO，提高数据库性能，负责接受回调&lt;/li&gt;
-&lt;li&gt;Purge Thread 事务提交后回收undolog页&lt;/li&gt;
-&lt;li&gt;Page Cleaner Thread 脏页刷新&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞&lt;/p&gt;
-&lt;h2 id=&#34;内存&#34;&gt;内存&lt;/h2&gt;
-&lt;p&gt;用页管理记录&lt;/p&gt;
-&lt;p&gt;缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池&lt;code&gt;fix&lt;/code&gt;，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。&lt;/p&gt;
-&lt;p&gt;配置参数&lt;code&gt;innodb_buffer_pool_size&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等&lt;/p&gt;
-&lt;p&gt;允许有多个缓冲池&lt;/p&gt;
-&lt;h3 id=&#34;内存管理&#34;&gt;内存管理&lt;/h3&gt;
-&lt;h4 id=&#34;lru-list&#34;&gt;LRU List&lt;/h4&gt;
-&lt;p&gt;频繁使用的在列表前，不频繁的在列表后，先释放尾部的页&lt;/p&gt;
-&lt;p&gt;页默认大小16KB&lt;/p&gt;
-&lt;p&gt;innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。&lt;/p&gt;
-&lt;p&gt;Free列表保存空闲页&lt;/p&gt;
-&lt;h1 id=&#34;myisam&#34;&gt;MyISAM&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;表锁&lt;/li&gt;
-&lt;li&gt;全文索引&lt;/li&gt;
-&lt;li&gt;不支持事务&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;缓冲区只缓存索引文件，不缓冲数据&lt;/p&gt;
-&lt;p&gt;MYD保存数据，MYI保存索引文件&lt;/p&gt;
-&lt;p&gt;myisampack使用Huffman编码压缩MYD，压缩后只读&lt;/p&gt;
-</description>
-        </item>
-        
-    </channel>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>MySQL - Tag - Coding Panda&#39;s Blog</title>
+    <link>https://zhiwayzhang.github.io/tags/mysql/</link>
+    <description>MySQL - Tag - Coding Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Mon, 17 Jan 2022 23:16:08 &#43;0000</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/mysql/" rel="self" type="application/rss+xml" /><item>
+  <title>Mysql学习笔记</title>
+  <link>https://zhiwayzhang.github.io/posts/mysql/</link>
+  <pubDate>Mon, 17 Jan 2022 23:16:08 &#43;0000</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/mysql/</guid>
+  <description><![CDATA[基础知识 单进程多线程，线程之间共享内存
+OLTP Online Transaction Processing 在线事务处理
+InnoDB overview 特点：
+行级锁 支持外键 支持事务 MVCC并发控制，插入缓冲，二次写，自适应哈希索引，预读
+四种隔离级别：
+REPEATABLE 默认 聚集方式保存数据，按主键顺序存放，没有主键则生成6字节的ROWID
+后台线程 Master Thread 缓冲区数据异步更新到磁盘 IO Thread innodb使用异步IO，提高数据库性能，负责接受回调 Purge Thread 事务提交后回收undolog页 Page Cleaner Thread 脏页刷新 主要都是为了减轻Master的负担，提高性能，减少对用户查询线程的阻塞
+内存 用页管理记录
+缓冲池：通过内存来弥补低速硬盘的影响，数据库读取页，从磁盘获取页放入缓冲池fix，读取时先判断缓冲区，命中后直接读取；修改时先修改缓冲池的页，然后通过checkpoint机制刷新到磁盘上。基本上和虚拟内存一样。
+配置参数innodb_buffer_pool_size
+数据页分类：索引页，数据页，undo页，插入缓冲，自适应哈希索引，innodb锁信息，数据字典信息等
+允许有多个缓冲池
+内存管理 LRU List 频繁使用的在列表前，不频繁的在列表后，先释放尾部的页
+页默认大小16KB
+innodb会把新读取的页放入midpoint位置，为列表长度的$$\frac{5}{8}$$，midpoint之后为old，之前为new，如果放在首部会导致某些sql导致缓冲池页被刷新，如全表扫描遍历全表。防止一条指令拖慢其他指令效率。
+Free列表保存空闲页
+MyISAM 表锁 全文索引 不支持事务 缓冲区只缓存索引文件，不缓冲数据
+MYD保存数据，MYI保存索引文件
+myisampack使用Huffman编码压缩MYD，压缩后只读]]></description>
+</item>
+</channel>
 </rss>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>【存储技术基础】概述 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="0x00 Intro 对于场景制定存储方案：
+存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计
+0x01 现状 存储的挑战 数据量激增
+存储是什么 分层的存储架构
+L0-L1-L2-DRAM-Disk
+存储的特性 可靠性：
+多副本 纠删码 一致性：
+原子&#43;持久化 数据保护 容灾和备份：
+解决单点故障 0x02 存储历史与发展 硬件上的发展 1956&ndash;HDD
+1984&ndash;Flash Memory 早期用于嵌入式
+2010s&ndash;Persistent Memory 3D-Point Intel
+SSD NAND Flash：
+SLC，MLC，TLC，QLC存储单元中电平的等级
+对比HDD和SSD：
+对于NAND，需要先擦出，再写
+NAND Flash有擦除，HDD只能覆盖写
+SSD多个颗粒可以并行I/O，总体上速度快
+软件上的发展 网络存储 远程挂载目录NAS
+分布式文件系统GFS，Hadoop HDFS
+键值存储Key-Value
+云存储 数据存在远端，商业化，软件协作Office
+Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？" /><meta name="keywords" content='Storage' /><meta itemprop="name" content="【存储技术基础】概述">
+<meta itemprop="description" content="0x00 Intro 对于场景制定存储方案：
+存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计
+0x01 现状 存储的挑战 数据量激增
+存储是什么 分层的存储架构
+L0-L1-L2-DRAM-Disk
+存储的特性 可靠性：
+多副本 纠删码 一致性：
+原子&#43;持久化 数据保护 容灾和备份：
+解决单点故障 0x02 存储历史与发展 硬件上的发展 1956&ndash;HDD
+1984&ndash;Flash Memory 早期用于嵌入式
+2010s&ndash;Persistent Memory 3D-Point Intel
+SSD NAND Flash：
+SLC，MLC，TLC，QLC存储单元中电平的等级
+对比HDD和SSD：
+对于NAND，需要先擦出，再写
+NAND Flash有擦除，HDD只能覆盖写
+SSD多个颗粒可以并行I/O，总体上速度快
+软件上的发展 网络存储 远程挂载目录NAS
+分布式文件系统GFS，Hadoop HDFS
+键值存储Key-Value
+云存储 数据存在远端，商业化，软件协作Office
+Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？"><meta itemprop="datePublished" content="2022-09-20T14:41:57+08:00" />
+<meta itemprop="dateModified" content="2022-09-20T14:41:57+08:00" />
+<meta itemprop="wordCount" content="55">
+<meta itemprop="keywords" content="Storage," /><meta property="og:title" content="【存储技术基础】概述" />
+<meta property="og:description" content="0x00 Intro 对于场景制定存储方案：
+存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计
+0x01 现状 存储的挑战 数据量激增
+存储是什么 分层的存储架构
+L0-L1-L2-DRAM-Disk
+存储的特性 可靠性：
+多副本 纠删码 一致性：
+原子&#43;持久化 数据保护 容灾和备份：
+解决单点故障 0x02 存储历史与发展 硬件上的发展 1956&ndash;HDD
+1984&ndash;Flash Memory 早期用于嵌入式
+2010s&ndash;Persistent Memory 3D-Point Intel
+SSD NAND Flash：
+SLC，MLC，TLC，QLC存储单元中电平的等级
+对比HDD和SSD：
+对于NAND，需要先擦出，再写
+NAND Flash有擦除，HDD只能覆盖写
+SSD多个颗粒可以并行I/O，总体上速度快
+软件上的发展 网络存储 远程挂载目录NAS
+分布式文件系统GFS，Hadoop HDFS
+键值存储Key-Value
+云存储 数据存在远端，商业化，软件协作Office
+Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/storage/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-09-20T14:41:57+08:00" />
+<meta property="article:modified_time" content="2022-09-20T14:41:57+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="【存储技术基础】概述"/>
+<meta name="twitter:description" content="0x00 Intro 对于场景制定存储方案：
+存储结构 存储大小 可靠性和容错 文件访问类型，读/写频率 要学习硬件的选择和文件系统设计
+0x01 现状 存储的挑战 数据量激增
+存储是什么 分层的存储架构
+L0-L1-L2-DRAM-Disk
+存储的特性 可靠性：
+多副本 纠删码 一致性：
+原子&#43;持久化 数据保护 容灾和备份：
+解决单点故障 0x02 存储历史与发展 硬件上的发展 1956&ndash;HDD
+1984&ndash;Flash Memory 早期用于嵌入式
+2010s&ndash;Persistent Memory 3D-Point Intel
+SSD NAND Flash：
+SLC，MLC，TLC，QLC存储单元中电平的等级
+对比HDD和SSD：
+对于NAND，需要先擦出，再写
+NAND Flash有擦除，HDD只能覆盖写
+SSD多个颗粒可以并行I/O，总体上速度快
+软件上的发展 网络存储 远程挂载目录NAS
+分布式文件系统GFS，Hadoop HDFS
+键值存储Key-Value
+云存储 数据存在远端，商业化，软件协作Office
+Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/storage/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/github_workflow/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/disktechnology/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "【存储技术基础】概述",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/storage\/"
+    },"genre": "posts","keywords": "Storage","wordcount":  55 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/storage\/","datePublished": "2022-09-20T14:41:57+08:00","dateModified": "2022-09-20T14:41:57+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>【存储技术基础】概述</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-09-20 14:41:57"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-20">2022-09-20</time></span>&nbsp;<span title="Updated on 2022-09-20 14:41:57"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-20">2022-09-20</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>55 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-intro">0x00 Intro</a></li>
+    <li><a href="#0x01-现状">0x01 现状</a>
+      <ul>
+        <li><a href="#存储的挑战">存储的挑战</a></li>
+        <li><a href="#存储是什么">存储是什么</a></li>
+        <li><a href="#存储的特性">存储的特性</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-存储历史与发展">0x02 存储历史与发展</a>
+      <ul>
+        <li><a href="#硬件上的发展">硬件上的发展</a></li>
+        <li><a href="#软件上的发展">软件上的发展</a></li>
+      </ul>
+    </li>
+    <li><a href="#assignment">Assignment</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="0x00-intro">0x00 Intro</h1>
+<p>对于场景制定存储方案：</p>
+<ul>
+<li>存储结构</li>
+<li>存储大小</li>
+<li>可靠性和容错</li>
+<li>文件访问类型，读/写频率</li>
+</ul>
+<p>要学习硬件的选择和文件系统设计</p>
+<h1 id="0x01-现状">0x01 现状</h1>
+<h2 id="存储的挑战">存储的挑战</h2>
+<p>数据量激增</p>
+<h2 id="存储是什么">存储是什么</h2>
+<p>分层的存储架构</p>
+<p>L0-L1-L2-DRAM-Disk</p>
+<h2 id="存储的特性">存储的特性</h2>
+<p>可靠性：</p>
+<ul>
+<li>多副本</li>
+<li>纠删码</li>
+</ul>
+<p>一致性：</p>
+<ul>
+<li>原子+持久化</li>
+</ul>
+<p>数据保护 容灾和备份：</p>
+<ul>
+<li>解决单点故障</li>
+</ul>
+<h1 id="0x02-存储历史与发展">0x02 存储历史与发展</h1>
+<h2 id="硬件上的发展">硬件上的发展</h2>
+<p>1956&ndash;HDD</p>
+<p>1984&ndash;Flash Memory 早期用于嵌入式</p>
+<p>2010s&ndash;Persistent Memory 3D-Point Intel</p>
+<p>SSD NAND Flash：</p>
+<p>SLC，MLC，TLC，QLC存储单元中电平的等级</p>
+<p>对比HDD和SSD：</p>
+<ul>
+<li>
+<p>对于NAND，需要先擦出，再写</p>
+</li>
+<li>
+<p>NAND Flash有擦除，HDD只能覆盖写</p>
+</li>
+<li>
+<p>SSD多个颗粒可以并行I/O，总体上速度快</p>
+</li>
+</ul>
+<h2 id="软件上的发展">软件上的发展</h2>
+<p>网络存储 远程挂载目录NAS</p>
+<p>分布式文件系统GFS，Hadoop HDFS</p>
+<p>键值存储Key-Value</p>
+<p>云存储 数据存在远端，商业化，软件协作Office</p>
+<h1 id="assignment">Assignment</h1>
+<p>有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-09-20 14:41:57">Updated on 2022-09-20&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/storage/" data-title="【存储技术基础】概述" data-hashtags="Storage"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/storage/" data-hashtag="Storage"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/storage/" data-title="【存储技术基础】概述"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/github_workflow/" class="post-nav-item" rel="prev" title="使用GitHub Workflow工作流自动部署静态博客"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>使用GitHub Workflow工作流自动部署静态博客</a>
+      <a href="/posts/disktechnology/" class="post-nav-item" rel="next" title="【存储技术基础】磁盘技术">【存储技术基础】磁盘技术<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

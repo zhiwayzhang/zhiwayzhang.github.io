@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Bilibili视频网站排行榜评分的线性回归分析 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
+Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
+本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
+完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。" /><meta name="keywords" content='线性回归, 数学建模' /><meta itemprop="name" content="Bilibili视频网站排行榜评分的线性回归分析">
+<meta itemprop="description" content="Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
+Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
+本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
+完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。"><meta itemprop="datePublished" content="2021-07-02T14:05:48+00:00" />
+<meta itemprop="dateModified" content="2021-07-02T14:05:48+00:00" />
+<meta itemprop="wordCount" content="765">
+<meta itemprop="keywords" content="线性回归,数学建模," /><meta property="og:title" content="Bilibili视频网站排行榜评分的线性回归分析" />
+<meta property="og:description" content="Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
+Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
+本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
+完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/bilibili/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-02T14:05:48+00:00" />
+<meta property="article:modified_time" content="2021-07-02T14:05:48+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Bilibili视频网站排行榜评分的线性回归分析"/>
+<meta name="twitter:description" content="Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。
+Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。
+本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。
+完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/bilibili/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/equtaion/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/localhost/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Bilibili视频网站排行榜评分的线性回归分析",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/bilibili\/"
+    },"genre": "posts","keywords": "线性回归, 数学建模","wordcount":  765 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/bilibili\/","datePublished": "2021-07-02T14:05:48+00:00","dateModified": "2021-07-02T14:05:48+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Bilibili视频网站排行榜评分的线性回归分析</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2021-07-02 14:05:48"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2021-07-02">2021-07-02</time></span>&nbsp;<span title="Updated on 2021-07-02 14:05:48"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2021-07-02">2021-07-02</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>765 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>4 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#数据获取">数据获取</a></li>
+    <li><a href="#数据分析">数据分析</a></li>
+    <li><a href="#多元线性回归">多元线性回归</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>Bilibili（哔哩哔哩）是当下最热门的视频播放网站，人们在该网站对视频进行浏览，会根据自己喜好对视频进行点赞、投币、收藏、分享、回复等操作，Bilibili同时还有一个排行榜机制，记录了近期比较热门的视频，并给出了一个评分，排行榜的排序规则即根据该评分，本文将根据这些排行榜视频的各项数据，进行线性回归分析，结合实际情况找出对评分影响最大的数据。</p>
+<p>Bilibili提供了获取排行榜数据的API，因此我们可以利用该API获取实时的排行榜数据，获取的数据为json格式，经过解析，已将数据保存至Bilibili.csv文件中。</p>
+<p>本文的思路即为多元线性回归，在统计学中，线性回归（linear regression）是利用称为线性回归方程的最小二乘函数对一个或多个自变量和因变量之间关系进行建模的一种回归分析。这种函数是一个或多个称为回归系数的模型参数的线性组合。只有一个自变量的情况称为简单回归，大于一个自变量情况的叫做多元回归（multivariable linear regression）。</p>
+<p>完成了对各个自变量权重的计算，找出了对评分影响权重最高的因素，并得到了验证。</p>
+<h1 id="数据获取">数据获取</h1>
+<p>在哔哩哔哩官网首页处获取排行榜信息的API，得到为</p>
+<p><a href="https://api.bilibili.com/x/web-interface/ranking/v2?rid=0"target="_blank" rel="external nofollow noopener noreferrer">https://api.bilibili.com/x/web-interface/ranking/v2?rid=0</a></p>
+<p>请求参数为</p>
+<ul>
+<li>rid 分类，0代表全部分类</li>
+</ul>
+<p>返回格式为json格式，json中的data字段为视频信息数组。</p>
+<p>为了防止请求次数过多增加服务器压力，导致本机IP禁止访问哔哩哔哩，先将请求的response保存到data.txt文件中。</p>
+<p>使用python的json包进行解析</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;videos&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;tid&#34;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;tname&#34;</span><span class="p">:</span> <span class="s2">&#34;单机游戏&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;copyright&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;pic&#34;</span><span class="p">:</span> <span class="s2">&#34;http://i0.hdslb.com/bfs/archive/85005893d4c4959ff096d6fb061040e223842bcb.jpg&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="s2">&#34;史上最骚魔法师！(第二集)&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;pubdate&#34;</span><span class="p">:</span> <span class="mi">1621566911</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;ctime&#34;</span><span class="p">:</span> <span class="mi">1621566912</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;desc&#34;</span><span class="p">:</span> <span class="s2">&#34;本期请到了Warma参与配音！鼓掌！！！！！\n游戏：Darkside Detective\n第一集：BV1M64y1m7gA\n各位如果看得开心，希望三连支持一下！&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;state&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;duration&#34;</span><span class="p">:</span> <span class="mi">658</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;mission_id&#34;</span><span class="p">:</span> <span class="mi">24025</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;rights&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;bp&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;elec&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;download&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;movie&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;pay&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;hd5&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;no_reprint&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;autoplay&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;ugc_pay&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;is_cooperation&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;ugc_pay_preview&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;no_background&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;owner&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;mid&#34;</span><span class="p">:</span> <span class="mi">546195</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;老番茄&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;face&#34;</span><span class="p">:</span> <span class="s2">&#34;http://i0.hdslb.com/bfs/face/bc5ca101313d4db223c395d64779e76eb3482d60.jpg&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;stat&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;aid&#34;</span><span class="p">:</span> <span class="mi">375696064</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;view&#34;</span><span class="p">:</span> <span class="mi">1149043</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;danmaku&#34;</span><span class="p">:</span> <span class="mi">7300</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;reply&#34;</span><span class="p">:</span> <span class="mi">3278</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;favorite&#34;</span><span class="p">:</span> <span class="mi">37490</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;coin&#34;</span><span class="p">:</span> <span class="mi">98319</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;share&#34;</span><span class="p">:</span> <span class="mi">1780</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;now_rank&#34;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;his_rank&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;like&#34;</span><span class="p">:</span> <span class="mi">210211</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;dislike&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;dynamic&#34;</span><span class="p">:</span> <span class="s2">&#34;用魔法击败魔法&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;cid&#34;</span><span class="p">:</span> <span class="mi">341808079</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;dimension&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;width&#34;</span><span class="p">:</span> <span class="mi">1920</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;height&#34;</span><span class="p">:</span> <span class="mi">1080</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;rotate&#34;</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;short_link&#34;</span><span class="p">:</span> <span class="s2">&#34;https://b23.tv/BV1jo4y117Vf&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;short_link_v2&#34;</span><span class="p">:</span> <span class="s2">&#34;https://b23.tv/BV1jo4y117Vf&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;bvid&#34;</span><span class="p">:</span> <span class="s2">&#34;BV1jo4y117Vf&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&#34;score&#34;</span><span class="p">:</span> <span class="mi">2446535</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过解析json格式文件并整理得到bilibili.csv</p>
+<p>数据处理的代码如下</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">urllib</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">getDataFromFile</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;./data.txt&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&#34;file not exist&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./data.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">text</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">getResponse</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.8    5 Safari/537.36&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&amp;type=all&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">res</span> <span class="o">=</span> <span class="n">getDataFromFile</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">jsonData</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">title</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 标题</span>
+</span></span><span class="line"><span class="cl"><span class="n">author</span><span class="o">=</span> <span class="p">[]</span> <span class="c1"># up🐷</span>
+</span></span><span class="line"><span class="cl"><span class="n">view</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 播放量</span>
+</span></span><span class="line"><span class="cl"><span class="n">danmu</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 弹幕数</span>
+</span></span><span class="line"><span class="cl"><span class="n">coins</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 投币</span>
+</span></span><span class="line"><span class="cl"><span class="n">share</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 分享</span>
+</span></span><span class="line"><span class="cl"><span class="n">like</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 点赞</span>
+</span></span><span class="line"><span class="cl"><span class="n">score</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 分数</span>
+</span></span><span class="line"><span class="cl"><span class="n">favor</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 收藏</span>
+</span></span><span class="line"><span class="cl"><span class="n">reply</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 评论</span>
+</span></span><span class="line"><span class="cl"><span class="n">rank</span>  <span class="o">=</span> <span class="p">[]</span> <span class="c1"># 排名</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">104</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">temp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">videoData</span> <span class="o">=</span> <span class="n">jsonData</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">title</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">author</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">videoStat</span> <span class="o">=</span> <span class="n">videoData</span><span class="p">[</span><span class="s1">&#39;stat&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">danmu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;danmaku&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">view</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rank</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;his_rank&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reply</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;reply&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">favor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;favorite&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">coins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;coin&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">share</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">like</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">videoStat</span><span class="p">[</span><span class="s1">&#39;like&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">outfile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&#34;title&#34;</span><span class="p">:</span> <span class="n">title</span> <span class="p">,</span><span class="s2">&#34;author&#34;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span> <span class="s2">&#34;rank&#34;</span><span class="p">:</span> <span class="n">rank</span><span class="p">,</span> <span class="s2">&#34;score&#34;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&#34;view&#34;</span><span class="p">:</span> <span class="n">view</span><span class="p">,</span> <span class="s2">&#34;coins&#34;</span><span class="p">:</span> <span class="n">coins</span><span class="p">,</span> <span class="s2">&#34;favorite&#34;</span><span class="p">:</span> <span class="n">favor</span><span class="p">,</span> <span class="s2">&#34;reply&#34;</span><span class="p">:</span> <span class="n">reply</span><span class="p">,</span> <span class="s2">&#34;danmu&#34;</span><span class="p">:</span> <span class="n">danmu</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="n">outfile</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&#34;bilibili2.csv&#34;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="数据分析">数据分析</h1>
+<p>数据加载</p>
+<div class="highlight" id="id-3"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># csv文件读写分析</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># 线性代数</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># 制图</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./bilibili.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 评分</span>
+</span></span><span class="line"><span class="cl"><span class="n">score</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 播放量</span>
+</span></span><span class="line"><span class="cl"><span class="n">view</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 投币</span>
+</span></span><span class="line"><span class="cl"><span class="n">coins</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;coins&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 收藏</span>
+</span></span><span class="line"><span class="cl"><span class="n">favor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;favorite&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 评论</span>
+</span></span><span class="line"><span class="cl"><span class="n">reply</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;reply&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 点赞</span>
+</span></span><span class="line"><span class="cl"><span class="n">like</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;like&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 弹幕数量</span>
+</span></span><span class="line"><span class="cl"><span class="n">danmu</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;danmu&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 分享次数</span>
+</span></span><span class="line"><span class="cl"><span class="n">share</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;share&#39;</span><span class="p">]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>绘制图像，观察数据之前的关系
+<a href="https://imgtu.com/i/R2qfcn"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qfcn.png" srcset="https://z3.ax1x.com/2021/07/03/R2qfcn.png, https://z3.ax1x.com/2021/07/03/R2qfcn.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qfcn.png 2x" sizes="auto" data-title="R2qfcn.png" data-alt="R2qfcn.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qW1s"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qW1s.png" srcset="https://z3.ax1x.com/2021/07/03/R2qW1s.png, https://z3.ax1x.com/2021/07/03/R2qW1s.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qW1s.png 2x" sizes="auto" data-title="R2qW1s.png" data-alt="R2qW1s.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qhXq"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qhXq.png" srcset="https://z3.ax1x.com/2021/07/03/R2qhXq.png, https://z3.ax1x.com/2021/07/03/R2qhXq.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qhXq.png 2x" sizes="auto" data-title="R2qhXq.png" data-alt="R2qhXq.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qRpj"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qRpj.png" srcset="https://z3.ax1x.com/2021/07/03/R2qRpj.png, https://z3.ax1x.com/2021/07/03/R2qRpj.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qRpj.png 2x" sizes="auto" data-title="R2qRpj.png" data-alt="R2qRpj.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qghQ"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qghQ.png" srcset="https://z3.ax1x.com/2021/07/03/R2qghQ.png, https://z3.ax1x.com/2021/07/03/R2qghQ.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qghQ.png 2x" sizes="auto" data-title="R2qghQ.png" data-alt="R2qghQ.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2q5n0"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2q5n0.png" srcset="https://z3.ax1x.com/2021/07/03/R2q5n0.png, https://z3.ax1x.com/2021/07/03/R2q5n0.png 1.5x, https://z3.ax1x.com/2021/07/03/R2q5n0.png 2x" sizes="auto" data-title="R2q5n0.png" data-alt="R2q5n0.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qIBV"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qIBV.png" srcset="https://z3.ax1x.com/2021/07/03/R2qIBV.png, https://z3.ax1x.com/2021/07/03/R2qIBV.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qIBV.png 2x" sizes="auto" data-title="R2qIBV.png" data-alt="R2qIBV.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qo7T"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qo7T.png" srcset="https://z3.ax1x.com/2021/07/03/R2qo7T.png, https://z3.ax1x.com/2021/07/03/R2qo7T.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qo7T.png 2x" sizes="auto" data-title="R2qo7T.png" data-alt="R2qo7T.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+由图像可以得出，b站综合打分的评分和各个数据之前有一定的相关性，主要为正相关。</p>
+<h1 id="多元线性回归">多元线性回归</h1>
+<p>我们的目的是得到
+$f(x_i) = w^{T} x_i + b $
+类似的，使用最小二乘法估计w和b</p>
+<p>利用求解公式
+$ \hat w^{} = (X^{T}X)^{-1}X^{T}y$</p>
+<div class="highlight" id="id-4"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 计算系数矩阵w-hat</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取b矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取w系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>看查w的值</p>
+<div class="highlight" id="id-5"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[[</span> <span class="mf">0.53588246</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">2.01063732</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">5.79443124</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="o">-</span><span class="mf">4.91889223</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">17.51523907</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="o">-</span><span class="mf">3.73019387</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">0.89537493</span><span class="p">]]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里发现w系数矩阵中出现了负值，经检查发现该项目对应的自变量为like和reply，即视频的点赞次数和评论数，这与实际情况是不符的，猜测是因为该自变量对结果的影响过小，导致预测出现了偏差，同时发现弹幕数量对视频评分的影响过大，远超于其他参数，显然与实际生活不符，并且作为对视频质量的估计，弹幕数也的确不能作为一个重要的参数。</p>
+<p>因此我们对弹幕数进行剔除重新进行拟合。</p>
+<div class="highlight" id="id-6"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 获取自变量矩阵，剔除弹幕数</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取因变量矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 生成设计矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">om</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算系数矩阵w-hat</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取b矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取w系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>得到w的值为</p>
+<div class="highlight" id="id-7"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[[</span> <span class="mf">0.60269881</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">2.82157809</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">5.35461617</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">3.04630747</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="o">-</span><span class="mf">3.9125348</span> <span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span> <span class="mf">0.33063835</span><span class="p">]]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>观察发现此时各项参数对于评分的影响已经较为接近正常水平。但是share，视频分享数对于评分的影响仍为负值，依然根据上述猜测，share对于总分的影响过小，导致拟合的结果差，因此再次剔除share字段。</p>
+<div class="highlight" id="id-8"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 获取自变量矩阵，剔除弹幕数，分享数</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取因变量矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 生成设计矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">om</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">om</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算系数矩阵w-hat</span>
+</span></span><span class="line"><span class="cl"><span class="n">w_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">)),</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取b矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取w系数矩阵</span>
+</span></span><span class="line"><span class="cl"><span class="n">w</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">X_test</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+</span></span><span class="line"><span class="cl"><span class="n">Y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>得到w矩阵为</p>
+<div class="highlight" id="id-9"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[[</span><span class="mf">0.59149795</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>绘制预测值与实际值图像
+<a href="https://imgtu.com/i/R2q7AU"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2q7AU.png" srcset="https://z3.ax1x.com/2021/07/03/R2q7AU.png, https://z3.ax1x.com/2021/07/03/R2q7AU.png 1.5x, https://z3.ax1x.com/2021/07/03/R2q7AU.png 2x" sizes="auto" data-title="R2q7AU.png" data-alt="R2q7AU.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qHNF"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qHNF.png" srcset="https://z3.ax1x.com/2021/07/03/R2qHNF.png, https://z3.ax1x.com/2021/07/03/R2qHNF.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qHNF.png 2x" sizes="auto" data-title="R2qHNF.png" data-alt="R2qHNF.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a>
+<a href="https://imgtu.com/i/R2qbh4"target="_blank" rel="external nofollow noopener noreferrer"><img loading="lazy" src="https://z3.ax1x.com/2021/07/03/R2qbh4.png" srcset="https://z3.ax1x.com/2021/07/03/R2qbh4.png, https://z3.ax1x.com/2021/07/03/R2qbh4.png 1.5x, https://z3.ax1x.com/2021/07/03/R2qbh4.png 2x" sizes="auto" data-title="R2qbh4.png" data-alt="R2qbh4.png" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></p>
+<p>观察预测值与实际值的差距，发现拟合的趋势基本吻合，但仍有较大的误差</p>
+<p>分析得出，该线性模型的拟合误差较为集中，集中在[0, 181348.81788162683]即平均误差之间。</p>
+<div class="highlight" id="id-10"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="p">[</span><span class="mf">0.59149795</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">2.85961313</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">4.47955342</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.34492927</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="mf">0.35243338</span><span class="p">]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据权重分析各个数据对总分的影响，可以发现，收藏对于视频总评分的影响占比最高，其次是硬币数，播放数，说明哔哩哔哩对与视频的质量高低评判有一定的综合考量，播放量属于可以由视频制作人通过其他方式刷取，但是收藏量是由用户对于视频质量的高低做出的决定，因而更具代表性，更有说服力。反观实际观看体验中，有些视频制作人会以视频收藏满几万后，更新下一期视频，因为该项对视频的收益影响最大，更能给视频制作人带来实际收益。</p>
+<p>本次线性回归的拟合可以较为准确的判断出各各数据对于视频评分的影响，但是对于视频评分的预测误差较大，但是仍能较准确的判断出视频评分所影响的视频排名，认为有如下原因：</p>
+<ul>
+<li>数据量过少，导致拟合程度不足</li>
+<li>评分规则非线形模型，应该更换模型</li>
+<li>还有其他未考虑的因素
+如果要更准确的对视频评分进行预测，应该综合分析数据的特性，或者采用机器学习等更优秀的手段来进行求解和预测，线性回归仍有一定的局限性。</li>
+</ul></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2021-07-02 14:05:48">Updated on 2021-07-02&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/bilibili/" data-title="Bilibili视频网站排行榜评分的线性回归分析" data-hashtags="线性回归,数学建模"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/bilibili/" data-hashtag="线性回归"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/bilibili/" data-title="Bilibili视频网站排行榜评分的线性回归分析"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/' class="post-tag">线性回归</a><a href='/tags/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/' class="post-tag">数学建模</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/equtaion/" class="post-nav-item" rel="prev" title="方程求根的迭代法"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>方程求根的迭代法</a>
+      <a href="/posts/localhost/" class="post-nav-item" rel="next" title="127.0.0.1,localhost和0.0.0.0暨🐼一次两次的神神秘秘的debug记录">127.0.0.1,localhost和0.0.0.0暨🐼一次两次的神神秘秘的debug记录<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

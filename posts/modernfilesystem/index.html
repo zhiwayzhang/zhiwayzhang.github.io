@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>[OSDI&#39;21] Modernizing File System through In-Storage Indexing - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="Questions 核心思想部分需要再思考和梳理下，
+为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文件系统哪些地方做了什么以优化？ 论文试图解决的问题：
+随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。
+文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。
+核心思想：
+使用Key-Value存储接口取代传统的快设备接口。
+具体实现：
+提出Kevin，分为Kevin=KevinFS &#43; KevinSSD
+KevinFS
+维护文件和目录到KV对象的映射关系 将POSIX系统调用转译成KV操作指令 保证KV-SSD的一致性 KevinSSD
+在存储设备中索引KV对象 对多个KV对象提供事务操作 0x00 Intro Kevin避免了大量元数据的维护带来的I/O放大
+不需要日志即可完成崩溃一致性的维护
+可以抵御文件分段后造成的性能下降
+存储的文件块通过LSM进行分部排序和索引
+0x01 BG &amp;&amp; Related Work 传统块设备 提供块粒度（512B or 4KB）的访问
+HDD通过维护一个间接表来处理坏块
+基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。
+现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量
+DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。
+KV存储可以高效处理元数据和小文件的写入
+LSM-Tree LSM Tree有多级，包括$L_1,L_2,&hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i&#43;1})&gt;=T*Size(L_i)$
+每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。
+KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。
+为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储&lt;key, value pointer&gt;形式。对于失效的value要考虑垃圾回收问题。
+在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li&#43;1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。
+0x02 Architecture KEVIN分为两个部分
+KEVINFS：维护文件、目录到KV对象映射的文件系统
+KEVINSSD：索引KV对象到闪存的LSM-tree
+KV Command 支持多种KV指令，同时支持事务" /><meta name="keywords" content='Paper, File System, LSM-tree, K/V, Database' /><meta itemprop="name" content="[OSDI&#39;21] Modernizing File System through In-Storage Indexing">
+<meta itemprop="description" content="Questions 核心思想部分需要再思考和梳理下，
+为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文件系统哪些地方做了什么以优化？ 论文试图解决的问题：
+随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。
+文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。
+核心思想：
+使用Key-Value存储接口取代传统的快设备接口。
+具体实现：
+提出Kevin，分为Kevin=KevinFS &#43; KevinSSD
+KevinFS
+维护文件和目录到KV对象的映射关系 将POSIX系统调用转译成KV操作指令 保证KV-SSD的一致性 KevinSSD
+在存储设备中索引KV对象 对多个KV对象提供事务操作 0x00 Intro Kevin避免了大量元数据的维护带来的I/O放大
+不需要日志即可完成崩溃一致性的维护
+可以抵御文件分段后造成的性能下降
+存储的文件块通过LSM进行分部排序和索引
+0x01 BG &amp;&amp; Related Work 传统块设备 提供块粒度（512B or 4KB）的访问
+HDD通过维护一个间接表来处理坏块
+基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。
+现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量
+DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。
+KV存储可以高效处理元数据和小文件的写入
+LSM-Tree LSM Tree有多级，包括$L_1,L_2,&hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i&#43;1})&gt;=T*Size(L_i)$
+每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。
+KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。
+为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储&lt;key, value pointer&gt;形式。对于失效的value要考虑垃圾回收问题。
+在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li&#43;1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。
+0x02 Architecture KEVIN分为两个部分
+KEVINFS：维护文件、目录到KV对象映射的文件系统
+KEVINSSD：索引KV对象到闪存的LSM-tree
+KV Command 支持多种KV指令，同时支持事务"><meta itemprop="datePublished" content="2022-10-29T16:48:32+08:00" />
+<meta itemprop="dateModified" content="2022-10-29T16:48:32+08:00" />
+<meta itemprop="wordCount" content="232">
+<meta itemprop="keywords" content="Paper,File System,LSM-tree,K/V,Database," /><meta property="og:title" content="[OSDI&#39;21] Modernizing File System through In-Storage Indexing" />
+<meta property="og:description" content="Questions 核心思想部分需要再思考和梳理下，
+为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文件系统哪些地方做了什么以优化？ 论文试图解决的问题：
+随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。
+文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。
+核心思想：
+使用Key-Value存储接口取代传统的快设备接口。
+具体实现：
+提出Kevin，分为Kevin=KevinFS &#43; KevinSSD
+KevinFS
+维护文件和目录到KV对象的映射关系 将POSIX系统调用转译成KV操作指令 保证KV-SSD的一致性 KevinSSD
+在存储设备中索引KV对象 对多个KV对象提供事务操作 0x00 Intro Kevin避免了大量元数据的维护带来的I/O放大
+不需要日志即可完成崩溃一致性的维护
+可以抵御文件分段后造成的性能下降
+存储的文件块通过LSM进行分部排序和索引
+0x01 BG &amp;&amp; Related Work 传统块设备 提供块粒度（512B or 4KB）的访问
+HDD通过维护一个间接表来处理坏块
+基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。
+现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量
+DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。
+KV存储可以高效处理元数据和小文件的写入
+LSM-Tree LSM Tree有多级，包括$L_1,L_2,&hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i&#43;1})&gt;=T*Size(L_i)$
+每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。
+KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。
+为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储&lt;key, value pointer&gt;形式。对于失效的value要考虑垃圾回收问题。
+在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li&#43;1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。
+0x02 Architecture KEVIN分为两个部分
+KEVINFS：维护文件、目录到KV对象映射的文件系统
+KEVINSSD：索引KV对象到闪存的LSM-tree
+KV Command 支持多种KV指令，同时支持事务" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/modernfilesystem/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-10-29T16:48:32+08:00" />
+<meta property="article:modified_time" content="2022-10-29T16:48:32+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[OSDI&#39;21] Modernizing File System through In-Storage Indexing"/>
+<meta name="twitter:description" content="Questions 核心思想部分需要再思考和梳理下，
+为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？ 其中，利用了 KV SSD 的什么特性？ 对文件系统哪些地方做了什么以优化？ 论文试图解决的问题：
+随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。
+文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。
+核心思想：
+使用Key-Value存储接口取代传统的快设备接口。
+具体实现：
+提出Kevin，分为Kevin=KevinFS &#43; KevinSSD
+KevinFS
+维护文件和目录到KV对象的映射关系 将POSIX系统调用转译成KV操作指令 保证KV-SSD的一致性 KevinSSD
+在存储设备中索引KV对象 对多个KV对象提供事务操作 0x00 Intro Kevin避免了大量元数据的维护带来的I/O放大
+不需要日志即可完成崩溃一致性的维护
+可以抵御文件分段后造成的性能下降
+存储的文件块通过LSM进行分部排序和索引
+0x01 BG &amp;&amp; Related Work 传统块设备 提供块粒度（512B or 4KB）的访问
+HDD通过维护一个间接表来处理坏块
+基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。
+现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量
+DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。
+KV存储可以高效处理元数据和小文件的写入
+LSM-Tree LSM Tree有多级，包括$L_1,L_2,&hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i&#43;1})&gt;=T*Size(L_i)$
+每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。
+KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。
+为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储&lt;key, value pointer&gt;形式。对于失效的value要考虑垃圾回收问题。
+在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li&#43;1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。
+0x02 Architecture KEVIN分为两个部分
+KEVINFS：维护文件、目录到KV对象映射的文件系统
+KEVINSSD：索引KV对象到闪存的LSM-tree
+KV Command 支持多种KV指令，同时支持事务"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/modernfilesystem/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/filesystem/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/newwhutacm/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "[OSDI'21] Modernizing File System through In-Storage Indexing",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/modernfilesystem\/"
+    },"genre": "posts","keywords": "Paper, File System, LSM-tree, K\/V, Database","wordcount":  232 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/modernfilesystem\/","datePublished": "2022-10-29T16:48:32+08:00","dateModified": "2022-10-29T16:48:32+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>[OSDI&#39;21] Modernizing File System through In-Storage Indexing</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-10-29 16:48:32"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-10-29">2022-10-29</time></span>&nbsp;<span title="Updated on 2022-10-29 16:48:32"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-10-29">2022-10-29</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>232 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#questions">Questions</a></li>
+    <li><a href="#0x00-intro">0x00 Intro</a></li>
+    <li><a href="#0x01-bg--related-work">0x01 BG &amp;&amp; Related Work</a>
+      <ul>
+        <li><a href="#传统块设备">传统块设备</a></li>
+        <li><a href="#lsm-tree">LSM-Tree</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-architecture">0x02 Architecture</a>
+      <ul>
+        <li><a href="#kv-command">KV Command</a></li>
+        <li><a href="#文件和目录的映射">文件和目录的映射</a></li>
+        <li><a href="#kv对象索引">KV对象索引</a>
+          <ul>
+            <li><a href="#meta-object">Meta object</a></li>
+            <li><a href="#data-object">Data object</a></li>
+          </ul>
+        </li>
+        <li><a href="#缓解索引负载">缓解索引负载</a>
+          <ul>
+            <li><a href="#压缩操作的开销">压缩操作的开销</a></li>
+            <li><a href="#层级查找的开销">层级查找的开销</a></li>
+            <li><a href="#分散的对象带来的开销">分散的对象带来的开销</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#0x03-implement-vfs">0x03 Implement VFS</a>
+      <ul>
+        <li><a href="#write">write</a></li>
+        <li><a href="#read">read</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-crash-consistency">0x04 Crash Consistency</a>
+      <ul>
+        <li><a href="#一致性维护">一致性维护</a></li>
+        <li><a href="#kv事务的实现">KV事务的实现</a></li>
+        <li><a href="#recovery">Recovery</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion--thinking">Conclusion &amp;&amp; Thinking</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="questions">Questions</h1>
+<p>核心思想部分需要再思考和梳理下，</p>
+<ol>
+<li>为什么采用 KV SSD 替代传统 block SSD 能够解决上述问题？</li>
+<li>其中，利用了 KV SSD 的什么特性？</li>
+<li>对文件系统哪些地方做了什么以优化？</li>
+</ol>
+<p>论文试图解决的问题：</p>
+<p>随着存储设备的不断发展，存储设备的性能越来越高，但当前操作系统内核的文件系统在一些操作上并不能够充分利用如今存储设备的性能。</p>
+<p>文件系统在执行数据写入时，需要执行大量操作维护元数据、进行硬盘的空间管理、维护文件系统的一致性，工作量大。</p>
+<p>核心思想：</p>
+<p>使用Key-Value存储接口取代传统的快设备接口。</p>
+<p>具体实现：</p>
+<p>提出Kevin，分为Kevin=KevinFS + KevinSSD</p>
+<p>KevinFS</p>
+<ul>
+<li>维护文件和目录到KV对象的映射关系</li>
+<li>将POSIX系统调用转译成KV操作指令</li>
+<li>保证KV-SSD的一致性</li>
+</ul>
+<p>KevinSSD</p>
+<ul>
+<li>在存储设备中索引KV对象</li>
+<li>对多个KV对象提供事务操作</li>
+</ul>
+<h1 id="0x00-intro">0x00 Intro</h1>
+<p>Kevin避免了大量元数据的维护带来的I/O放大</p>
+<p>不需要日志即可完成崩溃一致性的维护</p>
+<p>可以抵御文件分段后造成的性能下降</p>
+<p>存储的文件块通过LSM进行分部排序和索引</p>
+<h1 id="0x01-bg--related-work">0x01 BG &amp;&amp; Related Work</h1>
+<h2 id="传统块设备">传统块设备</h2>
+<p>提供块粒度（512B or 4KB）的访问</p>
+<p>HDD通过维护一个间接表来处理坏块</p>
+<p>基于闪存的SSD通过FTL来维护逻辑块到物理地址的映射索引表，以便在异地更新的NAND上模拟可重写介质并且排除坏块。</p>
+<p>现有研究缓解了I/O调度、文件碎片化、日志相关问题，没能消除元数据的修改带来的I/O流量</p>
+<p>DevFS实现了在存储设备内部的文件系统，直接将接口暴露给应用，调用时不用发生Trap，对于元数据的维护都在存储设备端执行，移除了I/O 栈减少了通信接口的开销。缺点是需要大量的DRAM和多核心的CPU、能提供的功能有限，还限制了快照、重复数据删除等文件系统高级功能的实现。</p>
+<p>KV存储可以高效处理元数据和小文件的写入</p>
+<h2 id="lsm-tree">LSM-Tree</h2>
+<img src="/img/image-20221102145019013.png" alt="image-20221102145019013" style="zoom:70%;" />
+<p>LSM Tree有多级，包括$L_1,L_2,&hellip;,L_{h-1},L_{h}$，h是树的高度，对于各级的大小有如下关系，$Size(L_{i+1})&gt;=T*Size(L_i)$</p>
+<p>每层都有按Key排序的唯一KV对象。各层之间的Key范围可能会出现重叠。</p>
+<p>KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV对象将刷新到L1中进行持久化，当L1不为空时，KV对象刷新到L2中，依此类推。在刷新过程中会执行压缩操作来对两层之间的KV对象进行合并和排序，在排序后写回磁盘中。</p>
+<p>为了改善压缩操作的I/O开销，可以将所有的value存储在value log中，在LSM tree中只保存value指针，存储<code>&lt;key, value pointer&gt;</code>形式。对于失效的value要考虑垃圾回收问题。</p>
+<p>在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li+1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。</p>
+<h1 id="0x02-architecture">0x02 Architecture</h1>
+<p>KEVIN分为两个部分</p>
+<p>KEVINFS：维护文件、目录到KV对象映射的文件系统</p>
+<p>KEVINSSD：索引KV对象到闪存的LSM-tree</p>
+<h2 id="kv-command">KV Command</h2>
+<p>支持多种KV指令，同时支持事务</p>
+<p><img loading="lazy" src="/img/image-20221102154423353.png" srcset="/img/image-20221102154423353.png, /img/image-20221102154423353.png 1.5x, /img/image-20221102154423353.png 2x" sizes="auto" data-title="image-20221102154423353" data-alt="image-20221102154423353" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>作者将Key限制为256B，value大小没有限制</p>
+<h2 id="文件和目录的映射">文件和目录的映射</h2>
+<p>KevinFS只使用三个类型的KV对象：</p>
+<ul>
+<li>$superblock$：保存文件系统的信息，大小128B</li>
+<li>$meta$：保存文件、目录的元数据，大小256B</li>
+<li>$data$：保存文件数据，unlimited，不超过文件大小</li>
+</ul>
+<p>对于目录的遍历通过ITERATE</p>
+<p>Key的命名遵循如下规则：</p>
+<ol>
+<li>meta对象的key组成：
+<ul>
+<li>前缀<code>m:</code></li>
+<li>父目录的inode number</li>
+<li>分隔符<code>:</code></li>
+<li>文件/目录名</li>
+</ul>
+</li>
+<li>data对象的key组成：
+<ul>
+<li>前缀<code>d:</code></li>
+<li>文件的inode number</li>
+</ul>
+</li>
+</ol>
+<p>Key命名规范参考了其他论文（Kai Ren and Garth Gibson. TABLEFS: Enhancing Metadata Efficiency in the Local File System. In Proceedings of the USENIX Annual Technical Conference, pages 145–156, 2013.），本篇文章将其扩展到了存储设备层面</p>
+<p>KevinFS没有实现dentry，如果需要访问一个目录内的所有项目，可以通过<code>ITERATE(m:50:, 2)</code>，来获取两个父目录inode为50（前缀匹配给定的pattern）的子目录/文件的元数据。</p>
+<p>一个优化：为了防止ITERATE消耗太长时间，建议指定cnt</p>
+<p>一个优化：为了高效处理小文件，KevinFS将总体小于4KB的小文件的元数据和数据内容打包，I/O直接操作meta对象GET/SET来进行读写</p>
+<p>@TODO 一个优化：使用全路径索引来取代基于inode的索引，这提高了基于排序算法的KV存储的扫描性能，主要对seek time开销大的HDD优化比较明显</p>
+<h2 id="kv对象索引">KV对象索引</h2>
+<p>KevinSSD基本实现了传统SSD 中FTL的所有功能，将KV对象映射到闪存、分配和释放闪存的空间。</p>
+<p>FTL只做坏块管理和磨损均衡等简单工作。</p>
+<p>每个Level维护一个内存表，来记录Flash中的KV对象。表的每个记录都有<code>&lt;start key, end key, pointer&gt;</code>，其中指针指向保存KV对象的闪存页面的位置，start key和end key是页面中key的范围。key的范围可以在多个Level上重叠。为了快速查找，所有记录都按开始键排序。</p>
+<p><img loading="lazy" src="/img/image-20221102165350981.png" srcset="/img/image-20221102165350981.png, /img/image-20221102165350981.png 1.5x, /img/image-20221102165350981.png 2x" sizes="auto" data-title="image-20221102165350981" data-alt="image-20221102165350981" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>meta和data对象的Key和Value会被分离存储。通过<code>&lt;key, value pointer&gt;</code>的方式进行存储，会有专门的flash page来分别存储这些信息（meta和data对象使用不同的flash page），key-index pages</p>
+<h3 id="meta-object">Meta object</h3>
+<p>在对KV对象进行检索时，可能需要在多级进行查找，当在Li不匹配时，查找Li+1。为了减少多级查找的读取，可以使用布隆过滤器进行优化，当检索到目标KV对象时，LSM tree将会返回相应的value，KV分离存储的情况下，将会额外去读一次value log。</p>
+<p>对目录项的更新只需要修改其元数据即可完成，而不需要修改4KB的块</p>
+<h3 id="data-object">Data object</h3>
+<p>为了避免对大数据的小范围更新带来的I/O高负载，KevinSSD将data object分割为4KB大小的子对象，使用单独的后缀来对他们进行表示，后缀从0开始，拼接在原始的data object Key后，因此data object的key最终构成为
+$$
+d:{inode\ \ \ number}:{subobject \ \ number,start\ with \ 0}
+$$
+不需要中间表进行索引，只需要通过偏移量即可定位要修改的对象</p>
+<p>Data object同样使用保存指针的方式将映射存储在key-index pages中，key-index pages会对键进行排序，因此属于同一个文件的subobject一般会在同一个flash page中。</p>
+<p>==优化==：在查找指针时，会将一整个闪存页内的数据全部取出，存储在控制器的DRAM中，减轻后续查找可能带来的负载</p>
+<h2 id="缓解索引负载">缓解索引负载</h2>
+<p>使用LSM-tree由于多级查找带来额外的I/O，传统FTL的映射都保存在DRAM，因此没有额外开销。作者介绍了三种主要原因和解决方案。</p>
+<h3 id="压缩操作的开销">压缩操作的开销</h3>
+<p>同上文介绍的方案，通过分离Value可以显著缓解I/O的数据传输负载，对data进行分片我个人感觉反而会加大压缩操作的合并过程，即使分片后键值都是有序的。</p>
+<h3 id="层级查找的开销">层级查找的开销</h3>
+<p>由于LSM-tree的特性，需要逐层进行查找，为了防止大量的顺序查找，作者使用布隆过滤器进行了优化。</p>
+<p>同时还缓存了热点K2V索引数据（与目标索引处在同一个flash page中的）</p>
+<p>为了利用大容量SSD中提供的超大DRAM，作者采用压缩存储K2V索引，并在其中插入没有压缩的K2V索引来作为二分查找的参照物。（快速在缓存中查找？不如继续用布隆过滤器）</p>
+<h3 id="分散的对象带来的开销">分散的对象带来的开销</h3>
+<p>LSM-tree允许各层之间的key范围重叠，因此有同一个前缀的目录或者文件可能被分配到不同的Level中，对于获取一个目录中所有目录、文件的操作，需要对多个闪存页进行访问。这个问题作者没有给出一个明确的方案（在压缩合并时隐式解决），但是提供了一个用户工具来主动触发合并，效率较高。</p>
+<p>作者对比了各种方法在随机读、局部读（？）、顺序读情况下对闪存页的读取次数，使用布隆过滤器的时候稳定会有一次读取</p>
+<p>使用了KevinSSD后对于SSD而言，I/O延迟有轻微的增加，整体而言效率提高了</p>
+<h1 id="0x03-implement-vfs">0x03 Implement VFS</h1>
+<h2 id="write">write</h2>
+<p>所有的写相关系统调用可以通过SET和DELETE来实现。</p>
+<p>例如unlink，只需要两次DELETE指令，移除meta和data object。</p>
+<p>SET时现在Memtable中保存一个KV对象，然后持久化到flash中，若Key已存在则丢弃旧的对象</p>
+<p>DELETE时在树上写入一个4B大小的墓碑</p>
+<p>失效的对象（被SET覆盖）和删除的对象在压缩期间被永久删除</p>
+<h2 id="read">read</h2>
+<p>通过GET和ITERATE实现</p>
+<p>如下图所示</p>
+<p>执行open系统调用时，查询meta object获取文件的inode，通过GET命令实现</p>
+<p>执行lookup系统调用时，给定一个完整的路径<code>/home/alice/</code>，从根目录开始获取多个meta object，最终获取目标文件的inode</p>
+<p>执行read系统调用时，将GET一个data object</p>
+<p>执行readdir系统调用时，使用ITERATE，批量获取一组meta objects来获取inode</p>
+<p><img loading="lazy" src="/img/image-20221102210344432.png" srcset="/img/image-20221102210344432.png, /img/image-20221102210344432.png 1.5x, /img/image-20221102210344432.png 2x" sizes="auto" data-title="image-20221102210344432" data-alt="image-20221102210344432" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>相较于Ext4，KevinFS可以更好的防止文件碎片化带来的影响。</p>
+<h1 id="0x04-crash-consistency">0x04 Crash Consistency</h1>
+<h2 id="一致性维护">一致性维护</h2>
+<p>通过事务即可实现原子化的操作</p>
+<p>在传统的日志结构中，由于事务的大小受日志大小的限制，一个系统调用可能会被划分到多个事务中。KVFS通过强制限制对一个文件的操作驻留在同一个事务中来确保原子性。</p>
+<p>事务的隔离？对==fsync==指令单独创建一个小型事务来提高效率。</p>
+<p>KevinFS基于KV事务的特性来维护一致性，不使用日志系统。</p>
+<h2 id="kv事务的实现">KV事务的实现</h2>
+<p>使用了三个数据结构：</p>
+<ul>
+<li>事务表$TxTable$：记录事务基本信息</li>
+<li>事务日志$TxLogs$：维护事务对象的K2V索引，存储在DRAM或者闪存中</li>
+<li>恢复日志$TxRecovery$：用于恢复和终止事务</li>
+</ul>
+<p>但是收到BeginTx指令时，KevinSSD在TxTable中创建一个对象，包含TID，当前事务的状态，与事务相关K2V索引的位置，初始状态为RUNNING（如①）。当后续指令到达后，KevinSSD将KV索引记录在TxLogs，并缓存在Memtable中。</p>
+<p>当收到EndTx指令后，完成事务的提交，标记事务状态为COMMITTED（如②）。将提交的KV索引同步到LSM-tree中</p>
+<p><img loading="lazy" src="/img/image-20221103102304181.png" srcset="/img/image-20221103102304181.png, /img/image-20221103102304181.png 1.5x, /img/image-20221103102304181.png 2x" sizes="auto" data-title="image-20221103102304181" data-alt="image-20221103102304181" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>为了减少在COMMITTED阶段，将TxLogs中的KV索引同步到LSM tree L1中时的负载，对每个事务在DRAM中维护了一个Skiplist，便于快速查找KV对象在TxLogs中的索引，在L1和L2需要进行压缩时再将skiplist中的数据同步到checkpoint，当同步完成后，事务的状态将变为CHECKPOINTED（如③），最终即将对DRAM中的TxTable和TxLogs进行回收。</p>
+<h2 id="recovery">Recovery</h2>
+<p>若发生掉电，KVSSD会利用电容将KV索引持久化到闪存中的TxLogs，TxTable更新内部的指针，在TxRecovery中进行记录。在系统重启时，KVSSD会扫描Tx Recovery，加载最新的TxTable，对于处于COMMITTED状态的事务，将其TxLogs索引加载到Skiplist中，对于处于RUNNING状态的事务，直接进行Abort并回收其资源。</p>
+<h1 id="conclusion--thinking">Conclusion &amp;&amp; Thinking</h1>
+<p>本文提出了一种基于K/V存储架构的文件系统，通过对Key的设计保证了在I/O操作中的高效性。通过本文了解了一些KV存储的trick，对于KV存储的各种场景，无论是在Redis中还是在KV文件系统中，对于Key的设计都至关重要，好的设计往往能够带来极大的效率提升，例如布隆过滤器的应用，有很多经验值得学习。同时了解了对事务的一些控制机制。</p>
+<p>此篇论文让我惊讶于文件系统还能通过KV存储来实现的通知，还让我回想起了TiDB，通过KV存储系统来实现了分布式关系型数据库，并完全兼容MySQL，说明在利用好KV存储的特性的情况下，可以有效的解决问题，要多去学习他们的设计思想。</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-10-29 16:48:32">Updated on 2022-10-29&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/modernfilesystem/" data-title="[OSDI&#39;21] Modernizing File System through In-Storage Indexing" data-hashtags="Paper,File System,LSM-tree,K/V,Database"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/modernfilesystem/" data-hashtag="Paper"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/modernfilesystem/" data-title="[OSDI&#39;21] Modernizing File System through In-Storage Indexing"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/lsm-tree/' class="post-tag">LSM-tree</a><a href='/tags/k/v/' class="post-tag">K/V</a><a href='/tags/database/' class="post-tag">Database</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/filesystem/" class="post-nav-item" rel="prev" title="【存储系统】文件系统"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>【存储系统】文件系统</a>
+      <a href="/posts/newwhutacm/" class="post-nav-item" rel="next" title="WHUT新生赛游记（二）">WHUT新生赛游记（二）<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

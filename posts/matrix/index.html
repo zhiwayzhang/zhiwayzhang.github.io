@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>迭代法求解线性方程组 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="求解线性方程组 在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。
+以线性方程组：
+$ \left[ \begin{matrix} 10 &amp; -1 &amp; -2 \ -1 &amp; 10 &amp; -2 \ -1 &amp; -1 &amp; 5 \end{matrix} \right] x = \left[ \begin{matrix} 7.2 \ 8.3 \ 4.2 \end{matrix} \right] $ 为例
+Jacobi迭代法 考虑线性方程组$Ax=b$
+用L和U分别表示严格下三角矩阵和严格上三角矩阵
+可以利用迭代公式
+$x^{k&#43;1}=D^{-1}(b-(L&#43;U)x^{k}))$
+进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。
+迭代法需要给定解列向量的初值，因此初值的选取也很重要。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 import numpy as np def Jacobi(A, B, N, x): # Ax=B N为迭代次数 # 获得对角矩阵的数组 D = np." /><meta name="keywords" content='Math, Numpy' /><meta itemprop="name" content="迭代法求解线性方程组">
+<meta itemprop="description" content="求解线性方程组 在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。
+以线性方程组：
+$ \left[ \begin{matrix} 10 &amp; -1 &amp; -2 \ -1 &amp; 10 &amp; -2 \ -1 &amp; -1 &amp; 5 \end{matrix} \right] x = \left[ \begin{matrix} 7.2 \ 8.3 \ 4.2 \end{matrix} \right] $ 为例
+Jacobi迭代法 考虑线性方程组$Ax=b$
+用L和U分别表示严格下三角矩阵和严格上三角矩阵
+可以利用迭代公式
+$x^{k&#43;1}=D^{-1}(b-(L&#43;U)x^{k}))$
+进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。
+迭代法需要给定解列向量的初值，因此初值的选取也很重要。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 import numpy as np def Jacobi(A, B, N, x): # Ax=B N为迭代次数 # 获得对角矩阵的数组 D = np."><meta itemprop="datePublished" content="2021-04-25T00:38:16+00:00" />
+<meta itemprop="dateModified" content="2021-04-25T00:38:16+00:00" />
+<meta itemprop="wordCount" content="283">
+<meta itemprop="keywords" content="Math,Numpy," /><meta property="og:title" content="迭代法求解线性方程组" />
+<meta property="og:description" content="求解线性方程组 在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。
+以线性方程组：
+$ \left[ \begin{matrix} 10 &amp; -1 &amp; -2 \ -1 &amp; 10 &amp; -2 \ -1 &amp; -1 &amp; 5 \end{matrix} \right] x = \left[ \begin{matrix} 7.2 \ 8.3 \ 4.2 \end{matrix} \right] $ 为例
+Jacobi迭代法 考虑线性方程组$Ax=b$
+用L和U分别表示严格下三角矩阵和严格上三角矩阵
+可以利用迭代公式
+$x^{k&#43;1}=D^{-1}(b-(L&#43;U)x^{k}))$
+进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。
+迭代法需要给定解列向量的初值，因此初值的选取也很重要。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 import numpy as np def Jacobi(A, B, N, x): # Ax=B N为迭代次数 # 获得对角矩阵的数组 D = np." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/matrix/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-04-25T00:38:16+00:00" />
+<meta property="article:modified_time" content="2021-04-25T00:38:16+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="迭代法求解线性方程组"/>
+<meta name="twitter:description" content="求解线性方程组 在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。
+以线性方程组：
+$ \left[ \begin{matrix} 10 &amp; -1 &amp; -2 \ -1 &amp; 10 &amp; -2 \ -1 &amp; -1 &amp; 5 \end{matrix} \right] x = \left[ \begin{matrix} 7.2 \ 8.3 \ 4.2 \end{matrix} \right] $ 为例
+Jacobi迭代法 考虑线性方程组$Ax=b$
+用L和U分别表示严格下三角矩阵和严格上三角矩阵
+可以利用迭代公式
+$x^{k&#43;1}=D^{-1}(b-(L&#43;U)x^{k}))$
+进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。
+迭代法需要给定解列向量的初值，因此初值的选取也很重要。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 import numpy as np def Jacobi(A, B, N, x): # Ax=B N为迭代次数 # 获得对角矩阵的数组 D = np."/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/matrix/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/ode/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/equtaion/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "迭代法求解线性方程组",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/matrix\/"
+    },"genre": "posts","keywords": "Math, Numpy","wordcount":  283 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/matrix\/","datePublished": "2021-04-25T00:38:16+00:00","dateModified": "2021-04-25T00:38:16+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>迭代法求解线性方程组</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/algorithm/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Algorithm</a></span></div>
+      <div class="post-meta-line"><span title="published on 2021-04-25 00:38:16"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2021-04-25">2021-04-25</time></span>&nbsp;<span title="Updated on 2021-04-25 00:38:16"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2021-04-25">2021-04-25</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>283 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#求解线性方程组">求解线性方程组</a></li>
+    <li><a href="#jacobi迭代法">Jacobi迭代法</a></li>
+    <li><a href="#gauss-seidel迭代法">Gauss Seidel迭代法</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="求解线性方程组">求解线性方程组</h1>
+<p>在线性代数中，有一类经典问题，就是求解线性方程组，我们熟知的解法有高斯消元法，但是高斯消元法属于直接求解的方法，不适合编程计算，因此引入更适合计算机求解的迭代法。</p>
+<p>以线性方程组：</p>
+<p>$
+\left[
+\begin{matrix}
+10 &amp; -1 &amp; -2 \
+-1 &amp; 10 &amp; -2 \
+-1 &amp; -1 &amp; 5
+\end{matrix}
+\right] x =
+\left[
+\begin{matrix}
+7.2  \
+8.3  \
+4.2
+\end{matrix}
+\right]
+$
+为例</p>
+<h1 id="jacobi迭代法">Jacobi迭代法</h1>
+<p>考虑线性方程组$Ax=b$</p>
+<p>用L和U分别表示严格下三角矩阵和严格上三角矩阵</p>
+<p>可以利用迭代公式</p>
+<p>$x^{k+1}=D^{-1}(b-(L+U)x^{k}))$</p>
+<p>进行迭代求解，可以通过精度控制迭代次数，还需要控制迭代是否收敛，不然迭代次数再多也无法求解。</p>
+<p>迭代法需要给定解列向量的初值，因此初值的选取也很重要。</p>
+<!-- more -->
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">Jacobi</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Ax=B N为迭代次数</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获得对角矩阵的数组</span>
+</span></span><span class="line"><span class="cl">    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获得L+U矩阵，减去对角矩阵即可</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># diagflat为D数组转为对角矩阵</span>
+</span></span><span class="line"><span class="cl">    <span class="n">R</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># R = L + U</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="n">D</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 迭代过程，可以直接/D表示逆矩阵</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">D</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>    <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">8.3</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 设定迭代初始值</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">answer</span> <span class="o">=</span> <span class="n">Jacobi</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>求解结果为
+x = [1.1, 1.2, 1.3]</p>
+<h1 id="gauss-seidel迭代法">Gauss Seidel迭代法</h1>
+<p>Gauss Seidel法使用了另一种迭代格式，获得了快的收敛速度</p>
+<p>首先我们利用迭代求解的特性，新得到的值总会比老值更优，因此使用新值来进行迭代，即</p>
+<p>$x^{k+1}=D^{-1}(b+Lx^{k+1}+Ux^k)$</p>
+<p>化简</p>
+<p>$x^{k+1}=(D-L)^{-1}(Ux^k+b)$</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">GaussSeidel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 下三角矩阵</span>
+</span></span><span class="line"><span class="cl">    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 严格上三角矩阵</span>
+</span></span><span class="line"><span class="cl">    <span class="n">U</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">L</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 获得对角矩阵</span>
+</span></span><span class="line"><span class="cl">    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagflat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">LL</span> <span class="o">=</span> <span class="n">L</span> <span class="o">-</span> <span class="n">D</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># x^{k+1} = (D + L)^-1 (b - Ux^{k})</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 输出迭代矩阵</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">D</span><span class="o">-</span><span class="n">LL</span><span class="p">),</span> <span class="n">U</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 使用linalg包中的inv函数求出L矩阵的逆矩阵</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 使用上述迭代公式求解</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">B</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>    <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">8.3</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 设定迭代初始值</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">answer</span> <span class="o">=</span> <span class="n">GaussSeidel</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>解得x = [1.1, 1.2, 1.3]</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2021-04-25 00:38:16">Updated on 2021-04-25&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/matrix/" data-title="迭代法求解线性方程组" data-hashtags="Math,Numpy"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/matrix/" data-hashtag="Math"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/matrix/" data-title="迭代法求解线性方程组"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/math/' class="post-tag">Math</a><a href='/tags/numpy/' class="post-tag">Numpy</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/ode/" class="post-nav-item" rel="prev" title="常微分方程初值问题求解方法"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>常微分方程初值问题求解方法</a>
+      <a href="/posts/equtaion/" class="post-nav-item" rel="next" title="方程求根的迭代法">方程求根的迭代法<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,152 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>HTTP on Coding_Panda&#39;s Blog</title>
-        <link>https://blog.ipandai.club/tags/http/</link>
-        <description>Recent content in HTTP on Coding_Panda&#39;s Blog</description>
-        <generator>Hugo -- gohugo.io</generator>
-        <language>en-us</language>
-        <lastBuildDate>Sun, 16 Jan 2022 22:25:00 +0000</lastBuildDate><atom:link href="https://blog.ipandai.club/tags/http/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>图解HTTP读书笔记</title>
-        <link>https://blog.ipandai.club/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-        <pubDate>Sun, 16 Jan 2022 22:25:00 +0000</pubDate>
-        
-        <guid>https://blog.ipandai.club/p/%E5%9B%BE%E8%A7%A3http%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-        <description>&lt;p&gt;图解HTTP读书笔记&lt;/p&gt;
-&lt;h1 id=&#34;web及网络基础&#34;&gt;Web及网络基础&lt;/h1&gt;
-&lt;p&gt;&lt;code&gt;HTTP/0.9&lt;/code&gt; 不是http的正式标准，临时版本&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;HTTP/1.0&lt;/code&gt; RFC1945&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;HTTP/1.1&lt;/code&gt; 目前应用较广 RFC2616&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;HTTP/2.0&lt;/code&gt; 大幅提高了web性能&lt;/p&gt;
-&lt;h2 id=&#34;tcpip&#34;&gt;TCP/IP&lt;/h2&gt;
-&lt;p&gt;互联网运行与TCP IP协议族之上，HTTP包含于其中&lt;/p&gt;
-&lt;p&gt;ip，dns，udp，ftp，http，tcp。。。&lt;/p&gt;
-&lt;p&gt;TCP/IP的分层管理&lt;/p&gt;
-&lt;p&gt;应用层：决定了向用户提供服务时通信的活动，ftp，dns，http&lt;/p&gt;
-&lt;p&gt;传输层：对应用层提供连接的两台计算机的数据传输，TCP Transmission Control Protocol传输控制协议和UDP User Data Protocol用户数据报协议&lt;/p&gt;
-&lt;p&gt;网络层：处理网络上的数据包，数据包是网络传输的最小数据单位，规定如何传输路线，传输数据包&lt;/p&gt;
-&lt;p&gt;数据链路层：处理连接网络的硬件，网络适配器NIC网卡&lt;/p&gt;
-&lt;p&gt;物理层&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;层次化好处：1.设计好接口，每个层次内部的设计可以自由改动 2.使设计变得更简单，应用层上的应用不需要考虑接收方的地理位置等&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&#34;iptcpdns&#34;&gt;IP、TCP、DNS&lt;/h2&gt;
-&lt;h3 id=&#34;ip&#34;&gt;IP&lt;/h3&gt;
-&lt;p&gt;IP协议位于网络层&lt;/p&gt;
-&lt;p&gt;mac地址为网卡的固定地址，使用ARP协议（address resolution Protocol地址解析协议）凭借mac地址进行通信，解析ip到mac地址&lt;/p&gt;
-&lt;p&gt;选择传输路线叫做路由选择&lt;/p&gt;
-&lt;h3 id=&#34;tcp协议的可靠性&#34;&gt;TCP协议的可靠性&lt;/h3&gt;
-&lt;p&gt;位于传输层&lt;/p&gt;
-&lt;p&gt;将大数据块分割为报文段segment确保传输准确可靠&lt;/p&gt;
-&lt;p&gt;将请求报文按照序号分为多个报文段，将每个报文段可靠的传输，收到后再根据序列号重组报文&lt;/p&gt;
-&lt;p&gt;确保数据可到达：&lt;/p&gt;
-&lt;p&gt;三次握手three way handshaking&lt;/p&gt;
-&lt;p&gt;TCP标志 SYN synchronize和ACK acknowledgement&lt;/p&gt;
-&lt;p&gt;具体过程：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;发送端发送一个带有SYN标志的数据包&lt;/li&gt;
-&lt;li&gt;接收端收到后回传带有SYN/ACK标志的数据包&lt;/li&gt;
-&lt;li&gt;发送端传回带有ACK标志的数据包，握手结束&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;如果握手中的某个阶段中断，TCP协议会再次发送相同的数据包&lt;/p&gt;
-&lt;h3 id=&#34;dns&#34;&gt;DNS&lt;/h3&gt;
-&lt;p&gt;域名解析&lt;/p&gt;
-&lt;h2 id=&#34;uri和url&#34;&gt;URI和URL&lt;/h2&gt;
-&lt;p&gt;URL是URI的子集&lt;/p&gt;
-&lt;h1 id=&#34;http协议&#34;&gt;HTTP协议&lt;/h1&gt;
-&lt;p&gt;http是无状态协议&lt;/p&gt;
-&lt;p&gt;使用cookie管理状态&lt;/p&gt;
-&lt;p&gt;使用URI定位资源&lt;/p&gt;
-&lt;p&gt;持久连接：任意一端未提出断开，则保持tcp连接状态，减少tcp连接重复建立和断开的开销&lt;/p&gt;
-&lt;p&gt;HTTP 1.1中，所有连接默认为持久连接&lt;/p&gt;
-&lt;p&gt;pipeline技术：连续发送请求，不必等待上一个请求返回&lt;/p&gt;
-&lt;h2 id=&#34;cookie&#34;&gt;Cookie&lt;/h2&gt;
-&lt;p&gt;服务器响应报文中Set-Cookie header字段，告知客户端保存&lt;/p&gt;
-&lt;p&gt;客户端再次请求时自动在header中加入cookie&lt;/p&gt;
-&lt;h1 id=&#34;http报文&#34;&gt;HTTP报文&lt;/h1&gt;
-&lt;p&gt;换行符CR+LF，CR回车符&lt;code&gt;0x0d&lt;/code&gt;，LF换行符&lt;code&gt;0x0a&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;header + CR+LF + Body&lt;/p&gt;
-&lt;p&gt;报文message是通信基本单位，8位组字节流&lt;/p&gt;
-&lt;p&gt;实体entity 请求或响应的在和，包含实体header和实体body&lt;/p&gt;
-&lt;p&gt;传输过程中可以对实体进行压缩&lt;/p&gt;
-&lt;p&gt;实体可以分割传输&lt;/p&gt;
-&lt;h2 id=&#34;获取部分内容的请求&#34;&gt;获取部分内容的请求&lt;/h2&gt;
-&lt;p&gt;传输中断的恢复机制&lt;/p&gt;
-&lt;p&gt;在header中加Range&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;Range: bytes= 1-5000&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;断点续传&lt;/p&gt;
-&lt;h1 id=&#34;http状态码&#34;&gt;HTTP状态码&lt;/h1&gt;
-&lt;p&gt;1XX，正在处理 信息性状态
-2XX，处理完毕 成功
-3XX，重定向状态码
-4XX，客户端错误状态码
-5XX，服务器错误状态码&lt;/p&gt;
-&lt;p&gt;200 OK&lt;/p&gt;
-&lt;p&gt;HEAD方法不会返回body&lt;/p&gt;
-&lt;p&gt;204 No Content 处理成功，但是response中不包含实体&lt;/p&gt;
-&lt;p&gt;206 Partial Content 客户端进行了范围请求&lt;/p&gt;
-&lt;p&gt;301 Moved Permanently 永久重定向，资源分配了新的URI&lt;/p&gt;
-&lt;p&gt;302 Found 临时重定向&lt;/p&gt;
-&lt;p&gt;303 See Other 客户端用GET，临时重定向（比如POST访问时返回303，需要改GET方法重定向到另一个URI）&lt;/p&gt;
-&lt;p&gt;304 Not modified 我有你要的资源但是不让你访问&lt;/p&gt;
-&lt;p&gt;307 Temporary Redirect 临时重定向&lt;/p&gt;
-&lt;p&gt;400 Bad request&lt;/p&gt;
-&lt;p&gt;401 Unauthorized&lt;/p&gt;
-&lt;p&gt;403 Forbidden 不允许访问&lt;/p&gt;
-&lt;p&gt;404 Not Found 找不到资源&lt;/p&gt;
-&lt;p&gt;500 Internal Server Error 内部错误&lt;/p&gt;
-&lt;p&gt;503 Service Unavailable 服务器超负荷&lt;/p&gt;
-&lt;h1 id=&#34;web服务器&#34;&gt;Web服务器&lt;/h1&gt;
-&lt;h2 id=&#34;虚拟主机&#34;&gt;虚拟主机&lt;/h2&gt;
-&lt;p&gt;一台服务器可以绑定多个域名&lt;/p&gt;
-&lt;p&gt;通过dns解析&lt;/p&gt;
-&lt;h2 id=&#34;代理-网关-隧道&#34;&gt;代理 网关 隧道&lt;/h2&gt;
-&lt;h3 id=&#34;代理&#34;&gt;代理&lt;/h3&gt;
-&lt;p&gt;转发中间人&lt;/p&gt;
-&lt;p&gt;每次转发会追加写入via首部&lt;/p&gt;
-&lt;p&gt;代理服务功能：缓存技术，访问控制，获取日志&lt;/p&gt;
-&lt;p&gt;缓存代理：将资源缓存在代理服务器上，不从原服务器获取（有点像redis&lt;/p&gt;
-&lt;p&gt;透明代理：转发请求和响应，不添加其他内容&lt;/p&gt;
-&lt;h3 id=&#34;网关&#34;&gt;网关&lt;/h3&gt;
-&lt;p&gt;转发客户端请求到实际程序&lt;/p&gt;
-&lt;p&gt;网关与服务器使用非http通信&lt;/p&gt;
-&lt;h3 id=&#34;隧道&#34;&gt;隧道&lt;/h3&gt;
-&lt;p&gt;在客户端和服务器直接中转，保持双方的通信连接&lt;/p&gt;
-&lt;p&gt;本身不解析http请求，只传输&lt;/p&gt;
-&lt;h2 id=&#34;缓存&#34;&gt;缓存&lt;/h2&gt;
-&lt;p&gt;客户端缓存和服务器缓存&lt;/p&gt;
-&lt;p&gt;客户端缓存存储在浏览器&lt;/p&gt;
-&lt;p&gt;各种header的作用&lt;/p&gt;
-&lt;h2 id=&#34;cookie相关header&#34;&gt;Cookie相关header&lt;/h2&gt;
-&lt;p&gt;Set-Cookie: 后跟name=value的序列&lt;/p&gt;
-&lt;p&gt;Cookie: 发送cookie&lt;/p&gt;
-&lt;h1 id=&#34;https&#34;&gt;HTTPS&lt;/h1&gt;
-&lt;p&gt;http缺点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;明文被窃听&lt;/li&gt;
-&lt;li&gt;不验证双方身份，可伪装&lt;/li&gt;
-&lt;li&gt;无法验证完整性，可以篡改&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;使用SSL secure socket layer或TLS transport layer security安全层传输协议&lt;/p&gt;
-&lt;p&gt;SSL使用证书确定身份&lt;/p&gt;
-&lt;p&gt;防止篡改：使用md5或sha-1等校验方法校验报文完整性&lt;/p&gt;
-&lt;p&gt;HTTP+通信加密+证书+完整性保护&lt;/p&gt;
-&lt;p&gt;通信接口部分用ssl和tls协议代替&lt;/p&gt;
-&lt;p&gt;http先和ssl通信，ssl再和tcp通信&lt;/p&gt;
-&lt;p&gt;非对称加密 公钥进行加密，私钥进行解密&lt;/p&gt;
-&lt;h2 id=&#34;通信步骤&#34;&gt;通信步骤&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;客户端发送client hello开始ssl通信&lt;/li&gt;
-&lt;li&gt;服务器响应server hello&lt;/li&gt;
-&lt;li&gt;服务器发送certificate报文，包含公钥证书&lt;/li&gt;
-&lt;li&gt;服务器发送server hello done&lt;/li&gt;
-&lt;li&gt;客户端发送client key exchange报文响应，ssl握手部分结束&lt;/li&gt;
-&lt;li&gt;客户端发送change cipher spec&lt;/li&gt;
-&lt;li&gt;客户端发送finished&lt;/li&gt;
-&lt;li&gt;服务器发送change cipher spec&lt;/li&gt;
-&lt;li&gt;ssl连接建立成功，开始进行http请求&lt;/li&gt;
-&lt;/ol&gt;</description>
-        </item>
-        
-    </channel>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>HTTP - Tag - Coding Panda&#39;s Blog</title>
+    <link>https://zhiwayzhang.github.io/tags/http/</link>
+    <description>HTTP - Tag - Coding Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Sun, 16 Jan 2022 22:25:00 &#43;0000</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/http/" rel="self" type="application/rss+xml" /><item>
+  <title>图解HTTP读书笔记</title>
+  <link>https://zhiwayzhang.github.io/posts/tujiehttp/</link>
+  <pubDate>Sun, 16 Jan 2022 22:25:00 &#43;0000</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/tujiehttp/</guid>
+  <description><![CDATA[<p>图解HTTP读书笔记</p>]]></description>
+</item>
+</channel>
 </rss>

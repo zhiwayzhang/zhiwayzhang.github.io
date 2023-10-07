@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Go语言学习笔记 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="Go语言源码阅读与原理分析" /><meta name="keywords" content='Golang' /><meta itemprop="name" content="Go语言学习笔记">
+<meta itemprop="description" content="Go语言源码阅读与原理分析"><meta itemprop="datePublished" content="2022-01-25T20:14:16+00:00" />
+<meta itemprop="dateModified" content="2022-01-25T20:14:16+00:00" />
+<meta itemprop="wordCount" content="247">
+<meta itemprop="keywords" content="Golang," /><meta property="og:title" content="Go语言学习笔记" />
+<meta property="og:description" content="Go语言源码阅读与原理分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/godesign/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-25T20:14:16+00:00" />
+<meta property="article:modified_time" content="2022-01-25T20:14:16+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言学习笔记"/>
+<meta name="twitter:description" content="Go语言源码阅读与原理分析"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/godesign/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/mysql/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/network/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Go语言学习笔记",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/godesign\/"
+    },"genre": "posts","keywords": "Golang","wordcount":  247 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/godesign\/","datePublished": "2022-01-25T20:14:16+00:00","dateModified": "2022-01-25T20:14:16+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Go语言学习笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-01-25 20:14:16"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-25">2022-01-25</time></span>&nbsp;<span title="Updated on 2022-01-25 20:14:16"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-25">2022-01-25</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>247 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#go的编译">Go的编译</a></li>
+    <li><a href="#数据结构">数据结构</a>
+      <ul>
+        <li><a href="#数组">数组</a>
+          <ul>
+            <li><a href="#review">review</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#切片">切片</a>
+      <ul>
+        <li><a href="#初始化">初始化</a>
+          <ul>
+            <li><a href="#切片slicelr">切片<code>slice[l:r]</code></a></li>
+            <li><a href="#字面量">字面量</a></li>
+            <li><a href="#make">make</a></li>
+            <li><a href="#访问">访问</a></li>
+            <li><a href="#append和扩容">append和扩容</a>
+              <ul>
+                <li><a href="#growslice">growslice</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#copy">copy</a></li>
+      </ul>
+    </li>
+    <li><a href="#哈希">哈希</a>
+      <ul>
+        <li><a href="#解决冲突">解决冲突</a>
+          <ul>
+            <li><a href="#开放寻址">开放寻址</a></li>
+            <li><a href="#拉链法">拉链法</a></li>
+          </ul>
+        </li>
+        <li><a href="#struct">struct</a></li>
+        <li><a href="#初始化-1">初始化</a>
+          <ul>
+            <li><a href="#字面量-1">字面量</a></li>
+            <li><a href="#运行时">运行时</a></li>
+          </ul>
+        </li>
+        <li><a href="#读写">读写</a>
+          <ul>
+            <li><a href="#扩容">扩容</a></li>
+          </ul>
+        </li>
+        <li><a href="#删除">删除</a></li>
+      </ul>
+    </li>
+    <li><a href="#字符串">字符串</a></li>
+    <li><a href="#函数调用">函数调用</a>
+      <ul>
+        <li><a href="#参数传递方式">参数传递方式</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>Go语言源码阅读与原理分析</p>
+<h1 id="go的编译">Go的编译</h1>
+<h1 id="数据结构">数据结构</h1>
+<h2 id="数组">数组</h2>
+<p>声明</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="p">[</span><span class="mi">3</span><span class="p">]{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">...</span><span class="p">]{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span><span class="nx">语法糖</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>第二种编译器会进行转换成第一种</p>
+<p>上限推导</p>
+<p>语句转换</p>
+<p>由字面量（具体整数，浮点数，字符串）组成的数组，根据长度进行优化</p>
+<ul>
+<li>元素数量<code>&lt;=</code>4，元素放在栈上</li>
+<li><code>&gt;</code>4时，元素保存在静态区，运行时取出</li>
+</ul>
+<p>元素数量<code>&lt;=</code>4时，简化为赋值表达式</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">arr</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nx">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">=</span> <span class="mi">3</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="review">review</h3>
+<p>编译之后的二进制文件包含：栈，堆，数据段，代码段</p>
+<p>堆栈为动态区域，数据段和代码段为静态区域</p>
+<p>栈：编译器自动分配释放，存放参数值，局部变量等</p>
+<p>堆：程序动态申请的内存，malloc，用链表实现</p>
+<p>代码区：函数体的二进制代码</p>
+<p>数据段：包含</p>
+<ol>
+<li>只读数据段 const</li>
+<li>已初始化的读写数据段 初始化的全局变量，初始化的静态局部变量static</li>
+<li>未初始化段 未初始化的全局变量和静态变量</li>
+</ol>
+<p>当数组元素个数大于四个时</p>
+<p>获取一个唯一的staticname，在静态存储区进行初始化，之后再拷贝到栈上</p>
+<p>访问和赋值</p>
+<p>编译器的静态类型检查时检测数组越界，索引是否为非负整数，索引越界</p>
+<p>使用变量作为索引时，无法编译检查，需要<strong>运行时</strong>阻止，出发panic</p>
+<p>发现数组切片字符串越界时通过运行时的<code>runtime.panicIndex</code>和<code>runtime.goPanicIndex</code>触发panic</p>
+<p>下标没有越界时，编译器获取数组的内存地址和访问下标，计算出目标地址，使用Load将元素加载到内存中</p>
+<p>编译时插入运行时越界检查函数</p>
+<p>赋值时先确定目标元素地址，使用Store指令将数据存入地址，在编译阶段而不是运行时</p>
+<h1 id="切片">切片</h1>
+<p>编译时确定类型，存储在Extra字段</p>
+<p>数据结构</p>
+<div class="highlight" id="id-3"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">Data</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Len</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Cap</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>切片只在运行时确定内容</p>
+<h2 id="初始化">初始化</h2>
+<h3 id="切片slicelr">切片<code>slice[l:r]</code></h3>
+<p>调用SliceMake函数，参数为 元素类型，数组指针，切片大小和容量</p>
+<p>这样初始化的切片创建了指向原切片的结构体</p>
+<h3 id="字面量">字面量</h3>
+<p>编译时：</p>
+<p>对字面量数组做大小推断，初始化为数组</p>
+<p>创建一个数组指针，指向静态数组</p>
+<p>使用<code>[:]</code>通过指针创建切片</p>
+<h3 id="make">make</h3>
+<p><code>make([]int, len, cap)</code>
+会做参数校验，<code>cap &gt;= len</code></p>
+<ol>
+<li>判断切片大小和容量是否足够</li>
+<li>切片是否发生了逃逸，最终在堆上初始化</li>
+</ol>
+<p>切片太大时也会在堆上初始化，使用运行时makeslice</p>
+<p>makeslice会在堆上申请连续的内存</p>
+<p>可能的运行时错误：</p>
+<ol>
+<li>内存空间大小发生了溢出</li>
+<li>申请内存大于最大可分配内存</li>
+<li>传入的<code>len&lt;0 or len &gt; cap</code></li>
+</ol>
+<h3 id="访问">访问</h3>
+<p>对len和cap的访问会在编译时替换为常量</p>
+<p>使用index获取元素会直接转换为对地址的访问</p>
+<h3 id="append和扩容">append和扩容</h3>
+<p>如果append之后<strong>不需要</strong>赋值给原有变量：</p>
+<p>判断append之后的大小和容量触发扩容</p>
+<p>如果append之后<strong>需要</strong>赋值给原有变量：</p>
+<p>append后的切片覆盖原切片，编译器优化为不发生拷贝，直接操作原切片</p>
+<h4 id="growslice">growslice</h4>
+<p>先确定新切片容量，扩容策略：</p>
+<ol>
+<li>如果期望容量大于当前的两倍，就会使用期望容量</li>
+<li>当前切片长度小于1024会将容量翻倍</li>
+<li>如果当前的切片长度大于1024每次增加25%的容量，直到新容量大于期望容量</li>
+</ol>
+<p>扩容之后进行内存对齐，提高内存分配效率，减少碎片</p>
+<p>使用预制的内存大小数组向上取整，然后通过该内存大小重新计算cap</p>
+<p>对于非指针切片，将原数组内容拷贝至新内存</p>
+<p>growslice返回的是一个新的切片，都是新的 slice(p, len, newcap)</p>
+<h2 id="copy">copy</h2>
+<p><code>copy(a,b)</code></p>
+<p>编译时会直接使用memmove拷贝到内存</p>
+<p>运行时会直接进行合法性检查</p>
+<p>大切片性能开销比较大</p>
+<h1 id="哈希">哈希</h1>
+<h2 id="解决冲突">解决冲突</h2>
+<h3 id="开放寻址">开放寻址</h3>
+<p>从index处向后寻找空闲位置，读取会从index处向后匹配相等元素</p>
+<p><code>装载因子=元素数量/数组大小</code></p>
+<p>装载因子增大，线性探测法的平均用时增加，最坏到On</p>
+<h3 id="拉链法">拉链法</h3>
+<p>使用链表数组，每个数组是一个桶，通过index访问</p>
+<p><code>装载因子=元素数量/桶数量</code></p>
+<p>一般情况下不超过1，装载因子太大会触发扩容</p>
+<h2 id="struct">struct</h2>
+<p>runtime hmap</p>
+<p>保存对数，桶的数量都是2的倍数</p>
+<p>包含runtime bmap，能存储8个键值对，超过8个时会使用extra.nextOverflow中的溢出桶存</p>
+<p>bmap中存储key哈希的高八位tophash uint8</p>
+<h2 id="初始化-1">初始化</h2>
+<h3 id="字面量-1">字面量</h3>
+<p>当哈希表的元素<code>&lt;=25</code>个时，将初始化转化为</p>
+<div class="highlight" id="id-4"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;1&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;2&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">to</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;1&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">hash</span><span class="p">[</span><span class="s">&#34;2&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="mi">2</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>超过时会转换为两个切片循环加入hash</p>
+<h3 id="运行时">运行时</h3>
+<p>当桶的数量小于$2^4$，不创建溢出桶</p>
+<p>否则创建$2^{B-4}$个溢出桶</p>
+<h2 id="读写">读写</h2>
+<p>遍历使用for range</p>
+<p>删除<code>delete(hash, key)</code></p>
+<p>bmap的实际存储是tophash为一个连续的空间，keys，values 。。。</p>
+<p>访问时限获取哈希值，再获取哈希的高8位</p>
+<p>通过哈希的最低几位获取桶序号</p>
+<blockquote>
+<p>这里因为哈希计算出来并不在桶范围内，在二进制中体现出来是取高几位和低几位，低几位就是取模之后的值，因此可以有效避免桶中有大量重复tophash</p>
+</blockquote>
+<p>在bmap中先比较哈希高8位，加速访问</p>
+<p>匹配成功会根据指针和偏移量获取key进行比较，匹配成功再获取value</p>
+<p><strong>尽量使用双值接收结果，防止实际的value是nil</strong></p>
+<p>写入时会遍历正常桶和溢出桶，溢出桶也包含tophash</p>
+<p>如果桶满，创建新的桶护着在溢出桶中保存</p>
+<p>获取存储地址后，将值拷贝到内存</p>
+<h3 id="扩容">扩容</h3>
+<p>在写入时，触发扩容</p>
+<ol>
+<li>装载因子超过6.5</li>
+<li>哈希使用了太多溢出桶，容易产生内存泄露</li>
+</ol>
+<p>扩容非原子过程，扩容前判断是否正在扩容</p>
+<p>溢出桶太多触发等量扩容，新桶保存数据，回收旧桶（大量的写入删除操作）</p>
+<p>翻倍扩容，随着写操作增量进行，不会产生性能的巨大抖动，创建一组新桶和溢出桶，将原来的桶组设置到oldbuckets，溢出桶也设置到oldoverflow上</p>
+<p>数据迁移发生在运行时 evacuate，对传入桶的元素再分配，每个旧桶元素分流到两个新桶</p>
+<p>分流逻辑：原来通过取模得到的桶掩码为<code>0b11</code>，扩容翻倍之后将变为<code>0b111</code>，因此该数据被分流到3号和7号桶</p>
+<p>当旧桶完全被分流后清除oldbuckets和oldoverflow，通过计数器控制</p>
+<p>扩容期间访问时，若oldbuckets存在，并且旧桶没有被分流时会先去旧桶寻找</p>
+<p>扩容期间写入赋值时，会触发增量拷贝，向新桶分流</p>
+<h2 id="删除">删除</h2>
+<p>扩容期间删除，会分流桶中的元素，然后找到桶中的目标键值对删除</p>
+<p>与写入类似</p>
+<p>访问，写入删除都是运行时处理</p>
+<h1 id="字符串">字符串</h1>
+<p><strong>只读</strong>的字节数组，使用连续空间</p>
+<p>data和len</p>
+<p>分配在只读的内存空间，修改需要和<code>[]byte</code>相互转换</p>
+<ol>
+<li>拷贝内存到栈或者堆</li>
+<li>将变量修改为<code>[]byte</code>然后修改字节数据</li>
+<li>修改字节数组转回<code>string</code></li>
+</ol>
+<div class="highlight" id="id-5"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;hello\&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">str</span> <span class="o">:=</span> <span class="s">`
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;name&#34; : &#34;panda&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">    &#34;tags&#34; : [&#34;panda&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">`</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>赋值时使用scanner解析字符串成token流</p>
+<p><code>strconv.Unquote</code>去除引号</p>
+<p>使用+拼接，拼接字符串的数量小于等于五个时，使用concatstring{2,3,4,5}，否则使用runtime.concatstrings，传入数组切片，最终通过运行时过滤空字符串计算拼接后长度，如果非空字符串数量为1，并且不在栈上，则直接返回</p>
+<p>拷贝到目标地址空间</p>
+<p>类型转换有性能损失，需要拷贝数据</p>
+<h1 id="函数调用">函数调用</h1>
+<p>c语言使用寄存器传参数，小于等于六个时使用寄存器，大于6个的参数使用栈传递，使用寄存器传递返回值，并且只使用一个寄存器，因此只能有一个返回值。</p>
+<p>go语言使用栈传递参数和返回值，因此存在性能损失，但是可以支持多返回值，便于维护编译器，不需要考虑寄存器数量和命名。</p>
+<h2 id="参数传递方式">参数传递方式</h2>
+<p>传值，基本类型，结构体，指针，对参数进行拷贝</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-01-25 20:14:16">Updated on 2022-01-25&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/godesign/" data-title="Go语言学习笔记" data-hashtags="Golang"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/godesign/" data-hashtag="Golang"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/godesign/" data-title="Go语言学习笔记"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/golang/' class="post-tag">Golang</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/mysql/" class="post-nav-item" rel="prev" title="Mysql学习笔记"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Mysql学习笔记</a>
+      <a href="/posts/network/" class="post-nav-item" rel="next" title="计算机网络自顶向下">计算机网络自顶向下<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

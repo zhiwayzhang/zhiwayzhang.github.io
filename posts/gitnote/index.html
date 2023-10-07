@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Git学习笔记 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。" /><meta name="keywords" content='git' /><meta itemprop="name" content="Git学习笔记">
+<meta itemprop="description" content="对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。"><meta itemprop="datePublished" content="2021-04-02T22:33:25+00:00" />
+<meta itemprop="dateModified" content="2021-04-02T22:33:25+00:00" />
+<meta itemprop="wordCount" content="149">
+<meta itemprop="keywords" content="git," /><meta property="og:title" content="Git学习笔记" />
+<meta property="og:description" content="对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/gitnote/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-04-02T22:33:25+00:00" />
+<meta property="article:modified_time" content="2021-04-02T22:33:25+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Git学习笔记"/>
+<meta name="twitter:description" content="对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/gitnote/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/godeploy/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/debugnote/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Git学习笔记",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/gitnote\/"
+    },"genre": "posts","keywords": "git","wordcount":  149 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/gitnote\/","datePublished": "2021-04-02T22:33:25+00:00","dateModified": "2021-04-02T22:33:25+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Git学习笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2021-04-02 22:33:25"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2021-04-02">2021-04-02</time></span>&nbsp;<span title="Updated on 2021-04-02 22:33:25"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2021-04-02">2021-04-02</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>149 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#about-git">About Git</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#commit--push">Commit &amp;&amp; Push</a></li>
+    <li><a href="#dangerous-pull-ing">Dangerous Pull ing</a></li>
+    <li><a href="#branch">Branch</a></li>
+    <li><a href="#gitignore">.gitignore</a></li>
+    <li><a href="#end">End</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>对于git，很早很早就在用了，但是还没有系统整理过，并且有些命令使用时需要注意的事项，在此也一并标出。</p>
+<h1 id="about-git">About Git</h1>
+<p><code>git</code>是一个分布式版本控制工具，如果你是一个程序猿，那你必须要学会如何使用<code>git</code>来管理你的代码或者项目。
+可能更多人所熟知的是GitHub，顾名思义，按照英语的命名特点，GitHub就是所有git上传的枢纽，汇聚到一起，你可以开源你的代码，指定一款开源协议共享给所有需要的人，也可以将仓库设为私有，只有自己或者受到邀请的人可见或者进行编辑。
+除了GitHub，世界上还有很多这种代码托管平台，比如国内的gitee,coding等，国外还有gitlab等平台提供代码托管服务。</p>
+<h1 id="setup">Setup</h1>
+<p>在一个目录中，你可以使用<code>git init</code>来初始化这个目录，git会把这个文件夹变为一个git目录，</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">&gt; GitTest git init
+</span></span><span class="line"><span class="cl">Initialized empty Git repository in /Users/username/GitTest/.git/</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用<code>git remote add origin {your repo url}</code>
+即可添加远程的仓库地址。</p>
+<h1 id="commit--push">Commit &amp;&amp; Push</h1>
+<p>对于一个采用迭代式开发或者其他开发模式的项目来说，都避免不了后续对代码进行修改或者添加一些新的文件，对于每一次这样的操作，都要对添加或者修改的文件指定一个commit。
+例如：修改了项目功能中的bug，文件名字为<code>a.cpp</code>
+可以使用</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">git add a.cpp
+</span></span><span class="line"><span class="cl">git commit -m &#34;fix: the bug in xxx&#34;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样就可以将此次更改添加到提交的队列中
+如果使用<code>git add .</code>，git将添加所有监控的文件到缓冲区
+再使用<code>git push</code>就可以将修改添加到远程仓库中</p>
+<p>对与一个团队而言，有标准规范的commit格式是很重要的，例如以下格式</p>
+<div class="highlight" id="id-3"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">feat: 新功能feature
+</span></span><span class="line"><span class="cl">fix: 解决bug
+</span></span><span class="line"><span class="cl">add: 添加模块
+</span></span><span class="line"><span class="cl">update: 更新模块
+</span></span><span class="line"><span class="cl">... 等等</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="dangerous-pull-ing">Dangerous Pull ing</h1>
+<p>如果是多人协作开发，那么必然会导致本地文件之间存在着不一致，为了解决这个问题，可以使用<code>git pull</code>，执行该命令后将同步仓库中存在并且与本地不同的文件。
+这个操作看似简单，但是有时候如果使用了&ndash;force强制执行的话，会覆盖掉本地的文件，属于非常危险的操作，所以无论在什么时候使用&ndash;force之前都要思考清楚自己在干什么。</p>
+<h1 id="branch">Branch</h1>
+<p>我觉得git很强大的一个功能就是对分支的管理，在不同分支中切换可以让项目的代码得到更有效的管理，例如在main主分支中保存可以稳定运行的版本，在另一个dev分支中保存正在开发的非稳定版，后续改进之后可以将dev分支合并到main分支中去。
+如果更新过后的主分支依然出现问题，也是可以通过回滚的方式回到之前某个稳定的版本。
+分支的创建也非常简单</p>
+<div class="highlight" id="id-4"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">git branch name
+</span></span><span class="line"><span class="cl">git checkout name</span></span></code></pre></td></tr></table>
+</div>
+</div><p>切换后git所有的操作将在新的分支进行</p>
+<h1 id="gitignore">.gitignore</h1>
+<p>顾名思义，肯定是让git去忽略某些项目，比如文件夹，或者是单个文件，添加到gitignore之后git将不在追踪这些文件的变化，因此我们可以将例如npm庞大的node_modules这种文件夹添加到其中，或者是编译器调试产生的临时文件，优化仓库的存储结构。</p>
+<div class="highlight" id="id-5"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">git status</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用该命令看查目前项目的改动</p>
+<div class="highlight" id="id-6"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">On branch dev
+</span></span><span class="line"><span class="cl">Untracked files:
+</span></span><span class="line"><span class="cl">  (use &#34;git add &lt;file&gt;...&#34; to include in what will be committed)
+</span></span><span class="line"><span class="cl">	b.cpp
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">nothing added to commit but untracked files present (use &#34;git add&#34; to track)</span></span></code></pre></td></tr></table>
+</div>
+</div><p>git监控到了文件b.cpp的产生，我们将b.cpp添加到.gitignore中</p>
+<div class="highlight" id="id-7"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">On branch dev
+</span></span><span class="line"><span class="cl">nothing to commit, working tree clean</span></span></code></pre></td></tr></table>
+</div>
+</div><p>再次使用git status看查，发现b.cpp已经不再被监控了，在.gitignore中还可以使用文件夹名忽略整个文件夹的项目，或者使用通配忽略包含特定后缀名的文件等。</p>
+<h1 id="end">End</h1>
+<p>随着开发工具的现代化，很多时候我们已经用不到这些git命令了，很多繁琐的命令早已被图形化的界面取代，但不乏还有git爱好者们做出的努力，如<a href="https://github.com/jesseduffield/lazygit"target="_blank" rel="external nofollow noopener noreferrer">lazygit</a>等工具。
+当你接收一台崭新的服务器时，这些命令又显得格为重要了。因此，在简便的工具的包裹下，他们背后的原理才是最值得我们去了解的，就如同学习汇编语言一样，给力我们另一种看待程序的方式。
+很早就像总结一下git了，拖了这么久终于写完了，后续还想再添加一些更具体的内容，希望能给初入git的同学一些启发。</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2021-04-02 22:33:25">Updated on 2021-04-02&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/gitnote/" data-title="Git学习笔记" data-hashtags="git"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/gitnote/" data-hashtag="git"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/gitnote/" data-title="Git学习笔记"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/git/' class="post-tag">git</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/godeploy/" class="post-nav-item" rel="prev" title="记录一次Go项目的部署"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>记录一次Go项目的部署</a>
+      <a href="/posts/debugnote/" class="post-nav-item" rel="next" title="OJ部署debug记录">OJ部署debug记录<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,1251 +1,243 @@
 <!DOCTYPE html>
-<html lang="en-us" dir="ltr">
-    <head>
-	<meta name="generator" content="Hugo 0.104.2" /><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Coding Panda.'><title>Coding_Panda&#39;s Blog</title>
-
-<link rel='canonical' href='https://blog.ipandai.club/'>
-
-<link rel="stylesheet" href="/scss/style.min.b37b59a00b9f88b0e52d2ce1b15620b35b8e67131689b1bbdf480ce548f8b94a.css"><meta property='og:title' content='Coding_Panda&#39;s Blog'>
-<meta property='og:description' content='Coding Panda.'>
-<meta property='og:url' content='https://blog.ipandai.club/'>
-<meta property='og:site_name' content='Coding_Panda&#39;s Blog'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2023-04-07T19:51:41&#43;08:00 '/>
-<meta name="twitter:title" content="Coding_Panda&#39;s Blog">
-<meta name="twitter:description" content="Coding Panda."><link rel="alternate" type="application/rss&#43;xml" href="https://blog.ipandai.club/index.xml">
-    </head>
-    <body class="">
-    <script>
-        (function() {
-            const colorSchemeKey = 'StackColorScheme';
-            if(!localStorage.getItem(colorSchemeKey)){
-                localStorage.setItem(colorSchemeKey, "auto");
-            }
-        })();
-    </script><script>
-    (function() {
-        const colorSchemeKey = 'StackColorScheme';
-        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
-        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
-
-        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
-            
-
-            document.documentElement.dataset.scheme = 'dark';
-        } else {
-            document.documentElement.dataset.scheme = 'light';
-        }
-    })();
-</script>
-<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
-    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
-        <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-        </span>
-    </button>
-
-    <header>
-        
-            
-            <figure class="site-avatar">
-                <a href="/">
-                
-                    
-                    
-                    
-                        
-                        <img src="/img/avatar_hu8a3d9192938a940b103f152e82f8d0c1_176069_300x0_resize_box_3.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
-                
-                </a>
-                
-                    <span class="emoji">🐼</span>
-                
-            </figure>
-            
-        
-        
-        <div class="site-meta">
-            <h1 class="site-name"><a href="/">Coding_Panda&#39;s Blog</a></h1>
-            <h2 class="site-description">Coding Panda.</h2>
-        </div>
-    </header><ol class="social-menu">
-            
-                <li>
-                    <a 
-                        href='https://space.bilibili.com/38920489'
-                        target="_blank"
-                        title="Bilibili"
-                    >
-                        
-                        
-                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1664723478952" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2240" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 0 1 60.373333 60.373333L700.330667 256H789.333333A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.856L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 0 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666667-42.666667z" p-id="2241" fill="#BFBFBF"></path></svg>
-                        
-                    </a>
-                </li>
-            
-                <li>
-                    <a 
-                        href='https://github.com/zhiwayzhang'
-                        target="_blank"
-                        title="GitHub"
-                    >
-                        
-                        
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
-</svg>
-
-
-
-                        
-                    </a>
-                </li>
-            
-        </ol><ol class="menu" id="main-menu">
-        
-        
-        
-
-        <li  class='current' >
-            <a href='/' >
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+	<meta name="generator" content="Hugo 0.119.0">
+    
+      <meta name="theme" content='FixIt v0.2.18'>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="" /><meta name="keywords" content='Hugo, FixIt' /><meta itemprop="name" content="Coding Panda&#39;s Blog">
+<meta itemprop="description" content=""><meta property="og:title" content="Coding Panda&#39;s Blog" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Coding Panda&#39;s Blog"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="Coding Panda&#39;s Blog">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Coding Panda&#39;s Blog"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "url": "https:\/\/zhiwayzhang.github.io\/","inLanguage": "en","author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"name": "Coding Panda's Blog"
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item active">
+              <a
+                class="menu-link"
+                href="/"
                 
                 
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-</svg>
-
-
-
-                
-                <span>Home</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/about/' >
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
                 
                 
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="7" r="4" />
-  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-</svg>
-
-
-
-                
-                <span>About</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/archives/' >
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
                 
                 
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <rect x="3" y="4" width="18" height="4" rx="2" />
-  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
-  <line x1="10" y1="12" x2="14" y2="12" />
-</svg>
-
-
-
-                
-                <span>Archives</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/categories/' >
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
                 
                 
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
-                
-                <span>Categories</span>
-            </a>
-        </li>
-        
-        
-
-        <li >
-            <a href='/search/' >
-                
-                
-                
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-                
-                <span>Search</span>
-            </a>
-        </li>
-        
-
-        <div class="menu-bottom-section">
-            
-            
-                <li id="dark-mode-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="8" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="16" cy="12" r="2" />
-  <rect x="2" y="6" width="20" height="12" rx="6" />
-</svg>
-
-
-
-                    <span>Dark Mode</span>
-                </li>
-            
-        </div>
-    </ol>
-</aside>
-<main class="main full-width">
-    
-    
-    
-    
-
-    <section class="article-list">
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/tech/" >
-                Tech
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/using-cgroups-v2-to-limit-system-i/o-resources/">Using Cgroups v2 to limit system I/O resources</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Apr 07, 2023</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    6 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/storage/" >
-                Storage
-            </a>
-        
-            <a href="/categories/notes/" >
-                Notes
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/fast23-hadafs-a-file-system-bridging-the-local-and-shared-burst-buffer-for-exascale-supercomputers/">[FAST&#39;23] HadaFS: A File System Bridging the Local and Shared Burst Buffer for Exascale Supercomputers</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Mar 17, 2023</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    17 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/notes/" >
-                Notes
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/femu-femu-blackbox-ssd%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">[FEMU] FEMU Blackbox SSD源码阅读</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Mar 12, 2023</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    7 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/storage/" >
-                Storage
-            </a>
-        
-            <a href="/categories/notes/" >
-                Notes
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/fast23-more-than-capacity-performance-oriented-evolution-of-pangu-in-alibaba/">[FAST&#39;23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Mar 02, 2023</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    25 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/storage/" >
-                Storage
-            </a>
-        
-            <a href="/categories/notes/" >
-                Notes
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/osdi22-xrp-in-kernel-storage-functions-with-ebpf/">[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Feb 09, 2023</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    13 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/storage/" >
-                Storage
-            </a>
-        
-            <a href="/categories/notes/" >
-                Notes
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/fast22-mt2-memory-bandwidth-regulation-on-hybrid-nvm/dram-platforms/">[FAST&#39;22] MT^2: Memory Bandwidth Regulation on Hybrid NVM/DRAM Platforms</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Dec 19, 2022</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    12 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-    <header class="article-category">
-        
-            <a href="/categories/notes/" >
-                Notes
-            </a>
-        
-    </header>
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/femu%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">FEMU环境配置</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">Dec 11, 2022</time>
-            </div>
-        
-
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="12" cy="12" r="9" />
-  <polyline points="12 7 12 12 15 15" />
-</svg>
-
-
-
-                <time class="article-time--reading">
-                    5 minute read
-                </time>
-            </div>
-        
-        
-        
-
-    </footer>
-    
-
-    
-</div>
-</header>
-</article>
-        
-    </section>
-    <nav class='pagination'>
-        
-        
-
-        
-            
-                <span class='page-link current'>1</span>
-                
-            
-            
-                    <a class='page-link' href='/page/2/'>2</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/page/10/'>10</a>
-                
-            
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
     </nav>
-
-<footer class="site-footer">
-    <section class="copyright">
-        &copy; 
-        
-            2019 - 
-        
-        2023 Coding_Panda&#39;s Blog
-    </section>
-    
-    
-    <section class="powerby">
-        ICP备案： <a href="https://beian.miit.gov.cn">鲁ICP备2021030271号</a> <br/>
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.14.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
-    </section>
-</footer>
-
-            </main>
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                <form action="/search/" class="search-form widget" >
-        <p>
-            <label>Search</label>
-            <input name="keyword" required placeholder="Type something..." />
-        
-            <button title="Search">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-            </button>
-        </p>
-    </form>
-            
-        
-            
-                <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-infinity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M9.828 9.172a4 4 0 1 0 0 5.656 a10 10 0 0 0 2.172 -2.828a10 10 0 0 1 2.172 -2.828 a4 4 0 1 1 0 5.656a10 10 0 0 1 -2.172 -2.828a10 10 0 0 0 -2.172 -2.828" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title">Archives</h2>
-
-        
-        
-        
-        
-        
-        <div class="widget-archive--list">
-            <div class="archives-year">
-                    <a href="/archives/#2023">
-                        
-                            <span class="year">2023</span>
-                            <span class="count">5</span>
-                        
-                    </a> 
-                </div>
-            <div class="archives-year">
-                    <a href="/archives/#2022">
-                        
-                            <span class="year">2022</span>
-                            <span class="count">28</span>
-                        
-                    </a> 
-                </div>
-            <div class="archives-year">
-                    <a href="/archives/#2021">
-                        
-                            <span class="year">2021</span>
-                            <span class="count">19</span>
-                        
-                    </a> 
-                </div>
-            <div class="archives-year">
-                    <a href="/archives/#2020">
-                        
-                            <span class="year">2020</span>
-                            <span class="count">8</span>
-                        
-                    </a> 
-                </div>
-            <div class="archives-year">
-                    <a href="/archives/#2019">
-                        
-                            <span class="year">2019</span>
-                            <span class="count">5</span>
-                        
-                    </a> 
-                </div>
-            
-        </div>
-    </section>
-            
-        
-            
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <line x1="5" y1="9" x2="19" y2="9" />
-  <line x1="5" y1="15" x2="19" y2="15" />
-  <line x1="11" y1="4" x2="7" y2="20" />
-  <line x1="17" y1="4" x2="13" y2="20" />
-</svg>
-
-
-
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
     </div>
-    <h2 class="widget-title section-title">Categories</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/categories/notes/" class="font_size_36">
-                Notes
-            </a>
-        
-            <a href="/categories/algorithm/" class="font_size_19">
-                Algorithm
-            </a>
-        
-            <a href="/categories/storage/" class="font_size_10">
-                Storage
-            </a>
-        
-            <a href="/categories/web-development/" class="font_size_5">
-                Web Development
-            </a>
-        
-            <a href="/categories/diary/" class="font_size_3">
-                Diary
-            </a>
-        
-            <a href="/categories/tech/" class="font_size_1">
-                Tech
-            </a>
-        
-    </div>
-</section>
-
-            
-        
-            
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">Tags</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/acm/" class="font_size_13">
-                ACM
-            </a>
-        
-            <a href="/tags/math/" class="font_size_12">
-                Math
-            </a>
-        
-            <a href="/tags/paper/" class="font_size_10">
-                Paper
-            </a>
-        
-            <a href="/tags/file-system/" class="font_size_8">
-                File System
-            </a>
-        
-            <a href="/tags/storage/" class="font_size_8">
-                Storage
-            </a>
-        
-            <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" class="font_size_7">
-                操作系统
-            </a>
-        
-            <a href="/tags/csapp/" class="font_size_6">
-                CSAPP
-            </a>
-        
-            <a href="/tags/i/o/" class="font_size_5">
-                I/O
-            </a>
-        
-            <a href="/tags/linux/" class="font_size_5">
-                Linux
-            </a>
-        
-            <a href="/tags/numpy/" class="font_size_5">
-                Numpy
-            </a>
-        
-            <a href="/tags/ssd/" class="font_size_4">
-                SSD
-            </a>
-        
-            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="font_size_4">
-                计算机网络
-            </a>
-        
-            <a href="/tags/database/" class="font_size_3">
-                Database
-            </a>
-        
-            <a href="/tags/femu/" class="font_size_3">
-                FEMU
-            </a>
-        
-            <a href="/tags/k/v/" class="font_size_3">
-                K/V
-            </a>
-        
-            <a href="/tags/nvm/" class="font_size_3">
-                NVM
-            </a>
-        
-            <a href="/tags/qemu/" class="font_size_3">
-                QEMU
-            </a>
-        
-            <a href="/tags/cgroups/" class="font_size_2">
-                Cgroups
-            </a>
-        
-            <a href="/tags/docker/" class="font_size_2">
-                Docker
-            </a>
-        
-            <a href="/tags/fast/" class="font_size_2">
-                FAST
-            </a>
-        
-            <a href="/tags/git/" class="font_size_2">
-                git
-            </a>
-        
-            <a href="/tags/golang/" class="font_size_2">
-                Golang
-            </a>
-        
-            <a href="/tags/leetcode/" class="font_size_2">
-                leetcode
-            </a>
-        
-            <a href="/tags/lsm-tree/" class="font_size_2">
-                LSM-tree
-            </a>
-        
-            <a href="/tags/whut/" class="font_size_2">
-                WHUT
-            </a>
-        
-            <a href="/tags/%E6%95%B0%E8%AE%BA/" class="font_size_2">
-                数论
-            </a>
-        
-            <a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="font_size_2">
-                汇编语言
-            </a>
-        
-            <a href="/tags/%E6%B8%B8%E8%AE%B0/" class="font_size_2">
-                游记
-            </a>
-        
-            <a href="/tags/alibaba/" class="font_size_1">
-                Alibaba
-            </a>
-        
-            <a href="/tags/blog/" class="font_size_1">
-                Blog
-            </a>
-        
-            <a href="/tags/burst-buffer/" class="font_size_1">
-                Burst Buffer
-            </a>
-        
-            <a href="/tags/ci/cd/" class="font_size_1">
-                CI/CD
-            </a>
-        
-            <a href="/tags/dart/" class="font_size_1">
-                Dart
-            </a>
-        
-            <a href="/tags/diary/" class="font_size_1">
-                Diary
-            </a>
-        
-            <a href="/tags/distribute-system/" class="font_size_1">
-                Distribute System
-            </a>
-        
-            <a href="/tags/dram/" class="font_size_1">
-                DRAM
-            </a>
-        
-            <a href="/tags/ebpf/" class="font_size_1">
-                eBPF
-            </a>
-        
-            <a href="/tags/gfs/" class="font_size_1">
-                GFS
-            </a>
-        
-            <a href="/tags/http/" class="font_size_1">
-                HTTP
-            </a>
-        
-            <a href="/tags/io_uring/" class="font_size_1">
-                io_uring
-            </a>
-        
-            <a href="/tags/lucas%E5%AE%9A%E7%90%86/" class="font_size_1">
-                Lucas定理
-            </a>
-        
-            <a href="/tags/memory/" class="font_size_1">
-                Memory
-            </a>
-        
-            <a href="/tags/mongodb/" class="font_size_1">
-                MongoDB
-            </a>
-        
-            <a href="/tags/mysql/" class="font_size_1">
-                MySQL
-            </a>
-        
-            <a href="/tags/nginx/" class="font_size_1">
-                nginx
-            </a>
-        
-            <a href="/tags/nodejs/" class="font_size_1">
-                nodejs
-            </a>
-        
-            <a href="/tags/note/" class="font_size_1">
-                Note
-            </a>
-        
-            <a href="/tags/nvme/" class="font_size_1">
-                NVMe
-            </a>
-        
-            <a href="/tags/pangu/" class="font_size_1">
-                Pangu
-            </a>
-        
-            <a href="/tags/raid/" class="font_size_1">
-                RAID
-            </a>
-        
-            <a href="/tags/rdma/" class="font_size_1">
-                RDMA
-            </a>
-        
-            <a href="/tags/redis/" class="font_size_1">
-                Redis
-            </a>
-        
-            <a href="/tags/shell/" class="font_size_1">
-                Shell
-            </a>
-        
-            <a href="/tags/sns/" class="font_size_1">
-                SNS
-            </a>
-        
-            <a href="/tags/stack/" class="font_size_1">
-                Stack
-            </a>
-        
-            <a href="/tags/supercomputer/" class="font_size_1">
-                Supercomputer
-            </a>
-        
-            <a href="/tags/web/" class="font_size_1">
-                Web
-            </a>
-        
-            <a href="/tags/wiredtiger/" class="font_size_1">
-                WiredTiger
-            </a>
-        
-            <a href="/tags/%E4%B8%AD%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="font_size_1">
-                中缀表达式
-            </a>
-        
-            <a href="/tags/%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C/" class="font_size_1">
-                奇偶校验
-            </a>
-        
-            <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="font_size_1">
-                字符串
-            </a>
-        
-            <a href="/tags/%E6%80%9D%E7%BB%B4/" class="font_size_1">
-                思维
-            </a>
-        
-            <a href="/tags/%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1/" class="font_size_1">
-                数学建模
-            </a>
-        
-            <a href="/tags/%E6%A0%88/" class="font_size_1">
-                栈
-            </a>
-        
-            <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" class="font_size_1">
-                线性回归
-            </a>
-        
-            <a href="/tags/%E8%8E%AB%E9%98%9F/" class="font_size_1">
-                莫队
-            </a>
-        
-            <a href="/tags/%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95/" class="font_size_1">
-                计算几何
-            </a>
-        
-            <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" class="font_size_1">
-                计算机组成原理
-            </a>
-        
-            <a href="/tags/%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/" class="font_size_1">
-                费马小定理
-            </a>
-        
-            <a href="/tags/%E9%9A%8F%E7%AC%94/" class="font_size_1">
-                随笔
-            </a>
-        
-    </div>
-</section>
-            
-        
-    </aside>
-
-
-        </div>
-        <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
-                
-                >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
-<script>
-    (function () {
-        const customFont = document.createElement('link');
-        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
-
-        customFont.type = "text/css";
-        customFont.rel = "stylesheet";
-
-        document.head.appendChild(customFont);
-    }());
-</script>
-
-    </body>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item active"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/cgroups/">Using Cgroups v2 to limit system I/O resources</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-04-07 19:51:41'>published on <time datetime="2023-04-07">2023-04-07</time></span>&nbsp;<span class="post-category">included in <a href="/categories/tech/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Tech</a></span></div><div class="content">Introduction to Cgroups Cgroups, which called control group in Linux to limit system resources for specify process group, is comonly used in many container tech, such as Docker, Kubernetes, iSulad etc.
+The cgroup architecture is comprised of two main components:
+the cgroup core: which contains a pseudo-filesystem cgroupfs, the subsystem controllers: thresholds for system resources, such as memory, CPU, I/O, PIDS, RDMA, etc. The hierarchy of Cgroups In Cgroups v1, per-resource (memory, cpu, blkio) have it&rsquo;s own hierarchy, where each resource hierarchy contains cgroups for that resource.</div><div class="post-footer">
+    <a href="/posts/cgroups/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/linux/' class="post-tag">Linux</a><a href='/tags/cgroups/' class="post-tag">Cgroups</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/hadafs/">[FAST&#39;23] HadaFS: A File System Bridging the Local and Shared Burst Buffer for Exascale Supercomputers</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-03-17 23:30:48'>published on <time datetime="2023-03-17">2023-03-17</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">HadaFS，一个为超算提供本地和共享Burst Buffer的文件系统
+0x00 Intro 现代的超算通过SSD来实现Burst Buffer（BB）layer。
+根据部署位置，BB可以分为两种：
+Local BB，作为本地硬盘部署在每个计算节点上，有高伸缩性和性能 Shared BB，部署在专用节点上，可以被多个计算节点访问，可以共享数据，部署成本低 HadaFS已经部署在了神威新一代超算（Sunway New- generation Supercomputer，SNS）中。支持最大600000用户，最大I/O带宽3.1TB/s。
+Burst Buffer作为数据加速层，一般使用SSD。自2016年起，越来越多的超算开始使用Burst Buffer。
+对于local BB，有一些局限性：
+由于难以进行数据共享，Local BB不适用于所有场景，例如N-1 I/O mode，所有进程共享一个文件、workflow 由于超算程序之间的I/O负载差异较大，而数据密集型应用的比例较低，造成了大量的资源浪费 随着超算规模的扩大，local BB的部署成本未来会急剧升高 相比于Local BB，Share BB便于数据共享，部署成本低，但是在超算上部署也面临许多问题。LPCC将SSD集成到Lustre FS Client，提高read/write性能的一种缓存技术，LPCC存储在Lustre client SSD中的数据必须先刷新到Lustre server才能进行共享。BeeOND类似于LPCC，继承了BeeGFS的可伸缩性和缓存共享限制。
+超算的发展使得并行I/O需求增加，BB架构相较于传统GFS有着同样的高性能，但是容量较小，因此BB要与GFS进行整合。目前的BB架构数据迁移的效率很低，浪费了很多计算资源，因此高伸缩性的BB数据管理和迁移也是目前要解决的问题。
+为了解决这个问题，作者提出了BB File System&ndash;HadaFS。
+基于share BB，结合了local BB的伸缩性、性能优势和share BB的数据共享、部署成本低的优点。
+HadaFS提供Localized Triage Architecture（LTA）局部分类架构，解决了shared BB伸缩性不足的问题，实现了超大规模的扩展和数据共享，LTA将所有HadaFS server构建为一个共享存储池，可以在client和server之间灵活的控制并发问题，来保证数据共享。 HadaFS提出了一个运行时的user-level接口，来保证来自client的I/O请求可以被最近的server处理，类似local BB。 为了解决由POSIX接口强一致性导致的性能问题，HadaFS提出了一种包含三种元数据同步机制的全路径索引方法，来解决传统文件系统在复杂元数据的管理上的问题，以及文件系统和应用I/O行为不匹配的问题。使用KV的方法来代替传统的目录树结构。 HadaFS集成了数据管理工具，帮助用户管理BB中的数据，完成BB和GFS之间的高效数据迁移。 提出Hadash，在BB中提供高效的数据查询，加速BB和传统超算存储的数据迁移。 0x01 Motivation &amp;&amp; Bg Motivation BB可伸缩性和应用行为的矛盾 随着超算百亿亿次计算记录的打破，尖端超算中的I/O并行可以达到数十万，加大了BB在伸缩性上的压力。
+目前的一些顶尖超算：
+Frontier使用独立的硬件来分别构造local BB和shared BB，需要使用大量的SSD和高昂的建设维护成本。 Fugaku使用shared BB，使用软件来提供存储服务，local BB和shared BB使用不同的name space。这种方式是静态的，很难控制在高并发情况下的I/O竞态问题。 Summit部署local BB，支持数据在应用之间的共享，基于GFS，效率较低。 由于shared BB既可以用于计算节点，也可以用于数据转发节点，作者相信shared BB更适合超级计算机。</div><div class="post-footer">
+    <a href="/posts/hadafs/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/fast/' class="post-tag">FAST</a><a href='/tags/gfs/' class="post-tag">GFS</a><a href='/tags/sns/' class="post-tag">SNS</a><a href='/tags/burst-buffer/' class="post-tag">Burst Buffer</a><a href='/tags/supercomputer/' class="post-tag">Supercomputer</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/femu-bbssd/">[FEMU] FEMU Blackbox SSD源码阅读</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-03-12 12:36:08'>published on <time datetime="2023-03-12">2023-03-12</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">本文记录FEMU blackbox ssd（ssd对主机透明）的源码阅读。
+bb.c 用于注册bbssd，在hw/femu/femu.c&gt;nvme_register_extesions()中执行
+1 2 3 4 5 6 7 8 9 10 11 12 static int nvme_register_extensions(FemuCtrl *n) { if (OCSSD(n)) { ... } ... } else if (BBSSD(n)) { nvme_register_bbssd(n); } ... return 0; } 这个FemuCtrl *n结构包含了很多内容，本质上是一个用于线程之间同步/传值的结构
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 int nvme_register_bbssd(FemuCtrl *n) { n-&gt;ext_ops = (FemuExtCtrlOps) { .state = NULL, .init = bb_init, .exit = NULL, .</div><div class="post-footer">
+    <a href="/posts/femu-bbssd/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/femu/' class="post-tag">FEMU</a><a href='/tags/qemu/' class="post-tag">QEMU</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/pangu/">[FAST&#39;23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-03-02 15:11:40'>published on <time datetime="2023-03-02">2023-03-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">[FAST'23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba
+FAST'23 会议论文翻译，《不仅仅是容量:盘古面向性能的演变》
+本论文讲述了Pangu存储系统是如何随着硬件及商业需求，去演变提供更高的性能的，存储服务的I/O延迟达到了100-us。盘古的演变主要有两个部分：
+Phase 1: 盘古通过优化文件系统并设计了用户端的存储操作系统，积极引入高速SSD和Remote Direct Memory Access(RDMA)网络技术。因此，盘古在有效降低了I/O延迟的同时，还提高了吞吐量和IOPS。 Phase 2: 盘古从面向卷的存储供应商转变为面向性能。为了适应这一商业模式的改变，盘古使用足够多的SSD和25Gbps-100Gbps的RDMA带宽更新了基础设施。这引入了一些列的关键设计，包括减少流量放大，远程直接缓存访问，和CPU计算卸载，来保证盘古完全获得基于硬件升级所带来的性能提升。 除了技术上的创新，作者还分享了盘古发展过程中的运营经验，并讨论了其中的重要教训。
+0x00 Intro 盘古的开发始于2009年，目前已经是阿里巴巴集团和阿里云统一存储平台。盘古为阿里的核心业务提供了可伸缩性、高性能和可靠性。
+Elastic Block Storage(EBS), Object Storage Service(OSS), Network-Attached Storage(NAS), PolarDB, MaxCompute这些云服务基于盘古建立。经过十几年的发展，盘古已经成为了一个拥有ExaBytes并管理万亿文件的全局存储系统。
+盘古 1.0: 提供存储容量 Pangu 1.0设计于2009-2015年，通过高性能的CPU和HDD组成，可以提供ms毫秒级别的I/O延迟和Gbps级别的数据中心带宽。
+Pangu 1.0基于Linux Ext4设计了一个分布式的内核文件系统和内核TCP，并给予不同种类的存储服务提供多种文件类型支持（Tempfile，LogFile，Random Access file）。
+此时正处于云计算的初始阶段，性能受限于HDD性能和网络带宽，相较于更快的访问速度，用户更关注存储容量。
+新的硬件，新的设计 自2015年起，为了引入新兴的SSD和RDMA技术，盘古2.0开始设计和开发。盘古2.0的目标是提供100us级别I/O延迟的高性能的存储服务。尽管SSD和RDMA在存储和网络中实现低延迟、高性能的I/O，团队发现：
+盘古1.0中使用的多种文件类型，特别是允许随机访问的文件类型，在固态硬盘上的表现很差，而固态硬盘在顺序操作上可以实现高吞吐量和IOPS。 由于数据复制和频繁的中断，内核空间的软件栈无法跟上SSD和RDMA的高IOPS和低I/O延迟。 从以服务器为中心的数据中心架构向资源分散的数据中心架构的范式转变，对实现低I/O延迟提出了额外的挑战。 盘古2.0 Phase 1: 通过重构文件系统与用户空间的存储操作系统来拥抱SSD和RDMA 为了实现高性能和低I/O延迟，盘古2.0首先在其文件系统中的关键组件提出了新的设计。为了简化整个系统的开发和管理，盘古设计了一个统一、追加写入的持久化层。它还引入了一个独立的分块布局，以减少文件写入操作的I/O延迟。
+盘古2.0设计了一个用户空间的存储操作系统（USSOS），USSOSS使用一个RTC(Run to completion)线程模型来实现用户空间存储栈和用户空间网络栈的高效协作。它还为高效的CPU和内存资源分配提出了一个用户空间的调度机制。
+盘古2.0部署了在动态环境下提供SLA保证的机制。通过这些创新，盘古2.0实现了毫秒级别的P999 I/O延迟。
+盘古2.0 Phase 2: 通过基础设施更新和突破网络/内存/CPU瓶颈，适应以性能为导向的业务模式 2018年起，盘古逐渐从容量导向的商业模式转变为性能导向。这是因为越来越多的企业用户将他们的业务转移到了阿里云并且他们对存储性能的延迟和性能有很严格的要求。这在COVID-19疫情爆发之后变得越来越快，为了适应这一商业模式转变和日益增长的用户，盘古2.0需要继续升级基础设施。
+用原有的服务器和交换机沿着基于CLOS架构的拓扑结构来对基础设施进行扩容是不经济的，包括高昂的总成本（机架空间、电力、散热、人力成本）和更高的碳排放/环境问题。因此，盘古开发来室内高容量存储服务器（每个服务器96TB SSD）并且升级到了25Gbps-100Gbps的网络带宽。
+为了完全获得这些升级带来的性能提升，盘古2.0提出了一系列的技术来处理在{网络/内存/CPU}的性能瓶颈并充分利用其强大的硬件资源。具体来说，盘古2.0通过减少网络流量放大率和动态调整不同流量的优先级来优化网络带宽；通过提出Remote Direct Cache Access(RDCA)来处理内存瓶颈；通过消除数据序列化/反序列化的开销并引入CPU等待指令来同步超线程，以此来解决CPU瓶颈问题。</div><div class="post-footer">
+    <a href="/posts/pangu/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/pangu/' class="post-tag">Pangu</a><a href='/tags/alibaba/' class="post-tag">Alibaba</a><a href='/tags/rdma/' class="post-tag">RDMA</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/distribute-system/' class="post-tag">Distribute System</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/xrp/">[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-02-09 14:51:48'>published on <time datetime="2023-02-09">2023-02-09</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Intro 随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。
+观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。
+因此可以考虑跳过内核中一系列的数据传递，即Kernel Bypass。目前现有的研究大都对内核进行了激进的修改策略，或引入了新的硬件，Kernel Bypass主要使用SPDK，直接对硬件设备进行访问，而SPDK会强制开发者实现自己的文件系统，需要自行维护隔离性和安全性。
+在等待I/O完成时，往往会进行轮询，给CPU带来了一些性能损失。有研究表明当可调度的线程数量超过了CPU核心数量时，使用SPDK会提高平均延迟和尾延迟，严重降低了吞吐量。
+因此作者的核心思想为既可以完成Kernel Bypass，也不需要引入额外硬件并不对内核和文件系统进行很大的修改，作者借助BPF(Berkeley Packet Filter)来实现，BPF允许应用程序下放部分工作到内核中，同时还能保证隔离性，允许多线程共享一个CPU核心，提高利用率。
+许多I/O负载需要多次调用函数访问硬盘上的大型数据结构（B+ tree），作者称之为resubmission。
+作者提出了eXpress Resubmission Path，XRP在NVMe驱动中的中断处理器上添加了一个hook，使得XRP可以在I/O完成时直接从NVMe驱动层来发起BPF函数调用，快速启动I/O的重新提交。
+XRP的主要贡献为：
+首次使用BPF来卸载I/O任务到内核 将B-tree的查找吞吐量提高了2.5倍 XRP提供了接近Kernel Bypass的延迟，而且允许线程和进程高效地共享CPU核心 XRP适用于多种不同用例，支持不同类型数据结构以及存储操作 0x01 Bg &amp;&amp; Motivation I/O是目前的瓶颈 时间都去哪了 作者通过实验发现延迟的部分来源是软件层面，即系统内核部分中block I/O的传递
+为什么不单纯的kernel bypass 大部分bypass的方法都是直接对NVMe driver发起请求，此类方案不能实现细粒度的隔离或者再不同应用之间共享数据，同时不能有效的去接收I/O完成产生的中断，需要应用不断轮询，因此CPU就被某个应用独占，不能得到共享。而且当多个轮询线程共享一个CPU处理器时，他们之间对CPU的竞争同时缺少同步会导致尾延迟升高和吞吐量的降低。
+BPF Berkeley Packet Filter允许用户将一些简单函数下放到内核层来执行，起初是用于TCP的数据包过滤、负载均衡、数据包转发，目前推出了eBPF扩展。
+BPF可以验证函数的安全性，主要检查是否超出内存地址空间、是否有死循环、指令是否太多。
+BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。
+一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。
+有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。
+在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。
+io_uring io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。
+0x02 Challenges &amp;&amp; Principles Challenges 地址转换和安全问题：NVMe Driver不能访问文件系统的元数据，因此不能完成逻辑地址到物理地址的转换；BPF可以访问其他文件和用户的任何block。 并发和缓存问题：对于从文件系统发起的并发读写很难维护。从文件系统发出的写请求将写入到page cache中，对于XRP不可见；同时对于硬盘上数据结构布局的修改，例如改变某一个指针，将会导致XRP获取到错误的数据，虽然可以进行加锁，但是从NVMe中断访问锁的开销太大。 Observation 作者研究发现，大部分的存储引擎的硬盘数据结构都是稳定的，或不会进行就地更新。
+例如在LSM-tree中，进行索引的写入操作，写入到文件SSTables中，这些文件为不可变，直至其被删除，不可变文件还降低了文件并发访问的成本。B-tree的索引虽然可以就地更新，但是在实际测试中（24小时YCSB读写改实验）发现，索引的修改次数很少，因此也不需要在NVMe Driver中频繁的更新文件系统的元数据。
+同时，索引一般存储在少量的大文件中，并且每个索引不会跨越多个文件。
+Design Principles 一次只访问一个文件：可以简化地址转换和访问控制，还最小化了需要传递给NVMe driver的元数据 面向于稳定的数据结构：XRP以不会频繁更新的数据结构为目标RocksDB、LevelDB、TokuDB、WiredTiger，不支持需要锁来访问的数据结构 用户管理缓存：XRP无法直接访问Page Cache，因此如果block位于Page Cache中，XRP函数不能安全的并发执行，而大多数存储引擎都是在用户空间自行管理Cache。 错误处理：如果访问失败（映射信息过期），需要程序在用户空间重试或回滚。 0x03 Design &amp;&amp; Implementation XRP的架构图：</div><div class="post-footer">
+    <a href="/posts/xrp/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/ebpf/' class="post-tag">eBPF</a><a href='/tags/wiredtiger/' class="post-tag">WiredTiger</a><a href='/tags/mongodb/' class="post-tag">MongoDB</a><a href='/tags/io_uring/' class="post-tag">io_uring</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/mt2/">[FAST&#39;22] MT^2: Memory Bandwidth Regulation on Hybrid NVM/DRAM Platforms</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-12-19 16:50:00'>published on <time datetime="2022-12-19">2022-12-19</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Intro NVM和DRAM共享内存总线，二者之间的负载相互干扰，给混合NVM/DRAM平台的带宽分配带来了挑战
+本文提出了MT2，可以在混合NVM/DRAM平台中管理并发程序间的内存带宽。
+MT2首先检查内存流量间的干扰并通过硬件监视器和软件汇报从混合流量监控不同类型的内存带宽
+然后MT2利用一个动态的带宽流量调节算法基于多种方式来管理内存带宽
+为了能够更好的管理不同程序，MT2被集成到了cgroup中，添加了一个用于带宽分配的cgroup subsystem
+新兴的NVM存储器逐渐被用来做为可持久化内存来使用，基于NVM，提出了NVM文件系统，NVM编程库，NVM数据结构、NVM数据库，NVM作为大容量内存或者快速的字节寻址存储设备用于数据中心。
+然而NVM/DRAM混合平台加剧了吵闹邻居问题。在云存储环境中，多个用户常常共享一个服务器，不同用户的不同应用程序共享主机的一条总线，某些应用可能会过度使用内存带宽。在NVM/DRAM中，NVM和DRAM共享同一个总线，因此不同的应用程序将竞争有限的内存带宽，影响整体的性能
+在NVM/DRAM中调节带宽有如下几个问题：
+内存带宽不对称，在NVM/DRAM，不同的内存访问（如DRAM read，DRAM write，NVM read和NVM write）会产生不同的最大内存带宽。内存的实际可用带宽主要取决于负载中不同类型访问的占比。同时设置静态的内存带宽而不考虑实际的I/O访问占比是不正确的做法。同时NVM最大带宽通常小于DRAM。而且不同类型的内存访问的干扰程度不同，因此不能单纯将所有内存==访问延迟==视为相等 NVM和DRAM共享内存总线，NVM流量和DRAM流量不可避免地会混合并且很难区分。对于混合的流量，监控不同种类的内存带宽。由于内存流量混合，几乎不可能在每个进程的基础上监控不同类型的内存带宽，这使为DRAM设计的现有硬件和软件调节方法无效。 内存调节的硬件和软件机制不足。由于NVM和DRAM都可以通过CPU负载/存储指令直接访问，因此为了性能，对每个内存访问进行计算和限流是不切实际的。CPU供应商，如英特尔，支持硬件机制来调节内存带宽。然而，带宽限制是粗粒度和定性迭代的，这不足以精确的内存带宽调节。其他一些方法，如频率缩放和CPU调度，可能会提供相对细粒度的带宽调整。然而，它们也是定性的，并减慢了计算和内存访问的速度，因此对整个平台性能缺乏影响。 MT2作为Linux Cgroup中的一个Subsystem，用于减轻吵闹邻居问题。在内存带宽分配和云SLO保证方面提高效率。本文的主要贡献：
+发现了导致NVM/DRAM混合平台上内存密集型应用程序显著性能流失的内存带宽干扰问题 首次对在NVM/DRAM平台现存的硬件和软件带宽分配机制进行研究 高效有效地调节具有线程级粒度的NVM/DRAM混合平台上的内存带宽 在英特尔Optane SSD上进行了测试和分析 以下简称NVM/DRAM
+0x01 BG MT^2 持久内存（PM）/ 非易失性内存（NVM）的出现正改变着存储系统的金字塔层次结构。本文发现，由于 NVM 和 DRAM 共享同一条内存总线，带宽干扰问题变得更为严重和复杂，甚至会显著降低系统的总带宽。本工作介绍了对内存带宽干扰的分析，对现有软硬件技术进行了深入调研，并提出了一种在 NVM/DRAM 混合平台上监控调节并发应用的内存带宽的设计（MT^2）。MT^2 以线程为粒度准确监测来自混合流量的不同类型的内存带宽，使用软硬件结合技术控制内存带宽。在多个不同的用例中，MT^2 能够有效限制“吵闹邻居”（noisy neighbors），消除带宽干扰，保证高优先级应用的性能。
+Noisy Neighbors 在多租户的云环境中，内存带宽对应用程序的性能有很大影响。
+两种可以减轻吵闹邻居问题的方法是：
+Prevention：主动为应用程序设置带宽限制（固定的） Remedy：系统检测吵闹邻居情况的出现并识别出吵闹的“邻居”对其进行限制 这些方法需要去监控应用的带宽使用情况
+NVM NVM得益于其存储容量大，访问速度快的特性，正在逐步作为内存使用于商业服务器中。得益于PMDK（Persistent Memory Development Kit）同时还涌现出了大量基于NVM Memory的应用程序，如PmemKV，Pmem-RocksDB。
+NVM可以直接通过CPU的load/store指令进行访问
+Memory Bandwidth Interference 由于NVM和DRAM共享内存总线，因此存在干扰问题。
+用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况
+如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）
+从图中得出的两个结论为：
+内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响 NVM的访问比DRAM访问对其他任务的影响更大，例如图中NVM Read列和DRAM Read列的对比，说明执行NVM write较多的应用更可能成为影响其他任务 作者还做了Task B进行NVM Write，Task A的延迟和吞吐量的变化，发现了随着带宽的逐渐降低，Task A的延迟逐渐增加。</div><div class="post-footer">
+    <a href="/posts/mt2/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/nvm/' class="post-tag">NVM</a><a href='/tags/memory/' class="post-tag">Memory</a><a href='/tags/cgroups/' class="post-tag">Cgroups</a></div></div>
+</article>
+<ul class="pagination"><li class="page-item active">
+          <span class="page-link">
+            <a href="/">1</a>
+          </span>
+        </li><li class="page-item">
+          <span class="page-link">
+            <a href="/page/2/">2</a>
+          </span>
+        </li><li class="page-item">
+          <span class="page-link">
+            <a href="/page/3/">3</a>
+          </span>
+        </li><li class="page-item">
+          <span class="page-link" aria-hidden="true">&hellip;</span>
+        </li><li class="page-item">
+          <span class="page-link">
+            <a href="/page/11/">11</a>
+          </span>
+        </li></ul></div></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
 </html>

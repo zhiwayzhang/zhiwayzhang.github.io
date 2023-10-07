@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>WHUT新生赛游记（二） - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢
+Day 0 体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线4&#39;19，今年跑了5&#39;00，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。
+Day 1 比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。
+不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。
+配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，尽量保证体验一致吧然而线上没有零食吃。
+志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。
+整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。
+从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。
+Return 0 " /><meta name="keywords" content='游记, ACM, WHUT' /><meta itemprop="name" content="WHUT新生赛游记（二）">
+<meta itemprop="description" content="大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢
+Day 0 体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线4&#39;19，今年跑了5&#39;00，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。
+Day 1 比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。
+不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。
+配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，尽量保证体验一致吧然而线上没有零食吃。
+志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。
+整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。
+从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。
+Return 0 "><meta itemprop="datePublished" content="2022-11-21T09:46:56+08:00" />
+<meta itemprop="dateModified" content="2022-11-21T09:46:56+08:00" />
+<meta itemprop="wordCount" content="15">
+<meta itemprop="keywords" content="游记,ACM,WHUT," /><meta property="og:title" content="WHUT新生赛游记（二）" />
+<meta property="og:description" content="大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢
+Day 0 体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线4&#39;19，今年跑了5&#39;00，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。
+Day 1 比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。
+不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。
+配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，尽量保证体验一致吧然而线上没有零食吃。
+志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。
+整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。
+从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。
+Return 0 " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/newwhutacm/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-21T09:46:56+08:00" />
+<meta property="article:modified_time" content="2022-11-21T09:46:56+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="WHUT新生赛游记（二）"/>
+<meta name="twitter:description" content="大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢
+Day 0 体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线4&#39;19，今年跑了5&#39;00，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。
+Day 1 比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。
+不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。
+配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，尽量保证体验一致吧然而线上没有零食吃。
+志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。
+整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。
+从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。
+Return 0 "/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/newwhutacm/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/modernfilesystem/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/femu-paper/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "WHUT新生赛游记（二）",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/newwhutacm\/"
+    },"genre": "posts","keywords": "游记, ACM, WHUT","wordcount":  15 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/newwhutacm\/","datePublished": "2022-11-21T09:46:56+08:00","dateModified": "2022-11-21T09:46:56+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>WHUT新生赛游记（二）</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/diary/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Diary</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-11-21 09:46:56"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-21">2022-11-21</time></span>&nbsp;<span title="Updated on 2022-11-21 09:46:56"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-21">2022-11-21</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>15 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#day-0">Day 0</a></li>
+    <li><a href="#day-1">Day 1</a></li>
+    <li><a href="#return-0">Return 0</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢</p>
+<h1 id="day-0">Day 0</h1>
+<p>体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线<code>4'19</code>，今年跑了<code>5'00</code>，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。</p>
+<h1 id="day-1">Day 1</h1>
+<p>比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。</p>
+<p>不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。</p>
+<p>配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，<del>尽量保证体验一致吧</del>然而线上没有零食吃。</p>
+<p>志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。</p>
+<p>整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。</p>
+<p>从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。</p>
+<h1 id="return-0">Return 0</h1>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-11-21 09:46:56">Updated on 2022-11-21&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/newwhutacm/" data-title="WHUT新生赛游记（二）" data-hashtags="游记,ACM,WHUT"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/newwhutacm/" data-hashtag="游记"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/newwhutacm/" data-title="WHUT新生赛游记（二）"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/%E6%B8%B8%E8%AE%B0/' class="post-tag">游记</a><a href='/tags/acm/' class="post-tag">ACM</a><a href='/tags/whut/' class="post-tag">WHUT</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/modernfilesystem/" class="post-nav-item" rel="prev" title="[OSDI&#39;21] Modernizing File System through In-Storage Indexing"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[OSDI&#39;21] Modernizing File System through In-Storage Indexing</a>
+      <a href="/posts/femu-paper/" class="post-nav-item" rel="next" title="[FAST&#39;18] FEMU闪存模拟系统介绍">[FAST&#39;18] FEMU闪存模拟系统介绍<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

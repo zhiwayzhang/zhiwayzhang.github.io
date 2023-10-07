@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="0x00 Everyday English preferable 更可取的
+consequently 因此
+inevitably 必然的
+conventional 常规的、传统的
+exacerbates 加剧
+deteriorates 恶化
+deterministic 确定性
+0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
+传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
+单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
+尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
+PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
+由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
+GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
+在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
+0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
+作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
+0x03 Design Pink有四个主要的数据结构
+位于DRAM中的level lists和Skiplist
+位于闪存中的meta segments和data segments
+在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST&#39;16，取代FTL进行GC、索引和磨损均衡
+Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
+当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
+Level list 用于跟踪闪存中每个level的meta segment" /><meta name="keywords" content='Paper, File System, LSM-tree, K/V, Database' /><meta itemprop="name" content="[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails">
+<meta itemprop="description" content="0x00 Everyday English preferable 更可取的
+consequently 因此
+inevitably 必然的
+conventional 常规的、传统的
+exacerbates 加剧
+deteriorates 恶化
+deterministic 确定性
+0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
+传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
+单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
+尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
+PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
+由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
+GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
+在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
+0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
+作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
+0x03 Design Pink有四个主要的数据结构
+位于DRAM中的level lists和Skiplist
+位于闪存中的meta segments和data segments
+在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST&#39;16，取代FTL进行GC、索引和磨损均衡
+Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
+当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
+Level list 用于跟踪闪存中每个level的meta segment"><meta itemprop="datePublished" content="2022-11-26T13:40:59+08:00" />
+<meta itemprop="dateModified" content="2022-11-26T13:40:59+08:00" />
+<meta itemprop="wordCount" content="143">
+<meta itemprop="keywords" content="Paper,File System,LSM-tree,K/V,Database," /><meta property="og:title" content="[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails" />
+<meta property="og:description" content="0x00 Everyday English preferable 更可取的
+consequently 因此
+inevitably 必然的
+conventional 常规的、传统的
+exacerbates 加剧
+deteriorates 恶化
+deterministic 确定性
+0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
+传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
+单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
+尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
+PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
+由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
+GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
+在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
+0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
+作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
+0x03 Design Pink有四个主要的数据结构
+位于DRAM中的level lists和Skiplist
+位于闪存中的meta segments和data segments
+在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST&#39;16，取代FTL进行GC、索引和磨损均衡
+Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
+当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
+Level list 用于跟踪闪存中每个level的meta segment" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/pinkkv/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-26T13:40:59+08:00" />
+<meta property="article:modified_time" content="2022-11-26T13:40:59+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails"/>
+<meta name="twitter:description" content="0x00 Everyday English preferable 更可取的
+consequently 因此
+inevitably 必然的
+conventional 常规的、传统的
+exacerbates 加剧
+deteriorates 恶化
+deterministic 确定性
+0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
+传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
+单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
+尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
+PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
+由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
+GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
+在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
+0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
+作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
+0x03 Design Pink有四个主要的数据结构
+位于DRAM中的level lists和Skiplist
+位于闪存中的meta segments和data segments
+在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST&#39;16，取代FTL进行GC、索引和磨损均衡
+Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
+当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
+Level list 用于跟踪闪存中每个level的meta segment"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/pinkkv/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/femu-paper/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/hintstor/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "[ATC'20] PinK: High-speed In-storage Key-value Store with Bounded Tails",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/pinkkv\/"
+    },"genre": "posts","keywords": "Paper, File System, LSM-tree, K\/V, Database","wordcount":  143 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/pinkkv\/","datePublished": "2022-11-26T13:40:59+08:00","dateModified": "2022-11-26T13:40:59+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-11-26 13:40:59"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-26">2022-11-26</time></span>&nbsp;<span title="Updated on 2022-11-26 13:40:59"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-26">2022-11-26</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>143 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-everyday-english">0x00 Everyday English</a></li>
+    <li><a href="#0x01-intro">0x01 Intro</a></li>
+    <li><a href="#0x02-bg">0x02 Bg</a></li>
+    <li><a href="#0x03-design">0x03 Design</a>
+      <ul>
+        <li><a href="#skiplist">Skiplist</a></li>
+        <li><a href="#level-list">Level list</a></li>
+        <li><a href="#level-pinning">Level Pinning</a></li>
+        <li><a href="#optimizing-search-path">Optimizing Search Path</a></li>
+        <li><a href="#speeding-up-compaction">Speeding up Compaction</a></li>
+        <li><a href="#optimizing-gc">Optimizing GC</a></li>
+        <li><a href="#durability--scalability">Durability &amp;&amp; Scalability</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion--thinking">Conclusion &amp;&amp; Thinking</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="0x00-everyday-english">0x00 Everyday English</h1>
+<p>preferable 更可取的</p>
+<p>consequently 因此</p>
+<p>inevitably 必然的</p>
+<p>conventional 常规的、传统的</p>
+<p>exacerbates 加剧</p>
+<p>deteriorates 恶化</p>
+<p>deterministic 确定性</p>
+<h1 id="0x01-intro">0x01 Intro</h1>
+<p>本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化</p>
+<p>传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销</p>
+<p>单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：</p>
+<ul>
+<li>尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题</li>
+<li>写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担</li>
+<li>布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降</li>
+</ul>
+<p>本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。</p>
+<ol>
+<li>
+<p>PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中</p>
+</li>
+<li>
+<p>由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化</p>
+</li>
+<li>
+<p>GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销</p>
+</li>
+<li>
+<p>在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本</p>
+</li>
+</ol>
+<h1 id="0x02-bg">0x02 Bg</h1>
+<p>了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较</p>
+<p>作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中</p>
+<h1 id="0x03-design">0x03 Design</h1>
+<p>Pink有四个主要的数据结构</p>
+<p>位于DRAM中的level lists和Skiplist</p>
+<p>位于闪存中的meta segments和data segments</p>
+<p>在LSM-tree KV 文件系统方面，作者主要参考了<a href="https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu"target="_blank" rel="external nofollow noopener noreferrer">WiscKey FAST'16</a>，取代FTL进行GC、索引和磨损均衡</p>
+<p><img loading="lazy" src="/img/image-20221128145842322.png" srcset="/img/image-20221128145842322.png, /img/image-20221128145842322.png 1.5x, /img/image-20221128145842322.png 2x" sizes="auto" data-title="image-20221128145842322" data-alt="image-20221128145842322" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="skiplist">Skiplist</h2>
+<p>Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：<code>&lt;key size, key, value size, value&gt;</code></p>
+<p>当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC</p>
+<h2 id="level-list">Level list</h2>
+<p>用于跟踪闪存中每个level的meta segment</p>
+<p>每个level list是一个保存固定大小的指针对的数组，每个指针4B，第一个指针指向meta segment在闪存中的物理地址，第二个指针指向meta segment的start key</p>
+<p>meta segment的start key单独存储在DRAM中，可以支持动态大小的key，同时可以实现在level list查找meta segment时进行二分查找</p>
+<p>如果LSM-tree有5个Level，即h=5，除了L0之外，每个level都会有一个level list</p>
+<p>L0和Level list通过电容来保护，Pink不需要使用日志来维护原子性和数据的持久性</p>
+<h2 id="level-pinning">Level Pinning</h2>
+<p>消除尾延迟，将$top-k\ \  level(k&lt;=h-1)$ 的meta segment保存在DRAM中，减少了read过程的尾部延迟</p>
+<p>当处理GET指令时，首先在DRAM中对Key进行查找，当DRAM中没有命中时，将对剩余的几个level在闪存中进行查找，在使用布隆过滤器时，最坏的查询时间复杂度为$O(h-1)$，该策略下可以优化为$O(h-k-1)$</p>
+<p>因此LSM-tree各level按照参数T进行增长，因此topk策略下空间占用不会过大</p>
+<p>同时可以直接在DRAM中进行compaction操作，无需占用闪存I/O，因为有电容的存在，无需定期刷新脏segment到闪存中</p>
+<h2 id="optimizing-search-path">Optimizing Search Path</h2>
+<p>在对Key进行查询时，LSM-tree将对各个Level进行二分查找</p>
+<p><img loading="lazy" src="/img/image-20221129190239823.png" srcset="/img/image-20221129190239823.png, /img/image-20221129190239823.png 1.5x, /img/image-20221129190239823.png 2x" sizes="auto" data-title="image-20221129190239823" data-alt="image-20221129190239823" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>朴素的LSM-tree最坏的查询时间复杂度为$O(h^2\cdot log(T))$，使用布隆过滤器的情况下可以更低</p>
+<ol>
+<li>
+<p>PinK通过prefix来减少字符串比较的开销，并且先比较key的前4个字节，如果匹配成功才会比较后面的部分</p>
+</li>
+<li>
+<p>在level list上每个记录引入一个4字节的范围指针，实现多级cascading范围查找</p>
+<p>指针指向下一级有最大的start key同时key 小于等于上一级中的记录，在一级一级的传递中不断减少搜索的范围，如上图b所示，平均时间复杂度为$O(h\cdot log(T))$</p>
+</li>
+</ol>
+<h2 id="speeding-up-compaction">Speeding up Compaction</h2>
+<p>在compaction阶段，引入一个硬件加速器，位于闪存和数据主总线之间，可以方便的合并两个闪存中的level</p>
+<p><img loading="lazy" src="/img/image-20221129225719057.png" srcset="/img/image-20221129225719057.png, /img/image-20221129225719057.png 1.5x, /img/image-20221129225719057.png 2x" sizes="auto" data-title="image-20221129225719057" data-alt="image-20221129225719057" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>工作流程：</p>
+<ol>
+<li>
+<p>PinK向加速器发起compaction请求，请求参数为：</p>
+<ul>
+<li>两个level的meta segment的闪存地址$(L_i,L_{i+1})$</li>
+<li>回写的闪存地址$L_{i+1}$</li>
+</ul>
+</li>
+<li>
+<p>向多个闪存发起读取请求，同时还要对不同channel返回的数据进行重新排序，序列化meta segment</p>
+</li>
+<li>
+<p>上图中灰色的比较器，会不断的获取两个level中的数据，输出key较小的那一个</p>
+</li>
+<li>
+<p>对于无效的key，将通知PinK进行GC</p>
+</li>
+<li>
+<p>输出的排序后结果将保存在write buffer中进行回写</p>
+</li>
+<li>
+<p>操作结束后，加速器通知PinK当前$L_{i+1}$使用的闪存页的数量，便于和此前提供的进行比较，用于GC</p>
+</li>
+</ol>
+<p>PinK在DRAM的pinned level中也使用了类似的加速器，基于DMA</p>
+<h2 id="optimizing-gc">Optimizing GC</h2>
+<p>需要针对meta/data segment分别制定GC策略</p>
+<h2 id="durability--scalability">Durability &amp;&amp; Scalability</h2>
+<p>使用电容来保护整个DRAM，对于比较低端的SSD，没有足够的电容来维持，只能继续使用定期写回到闪存的机制（要保护level lists，pinned level，L0），同时还要记录日志，由于LSM-tree的特性，该操作比基于hash的KV-SSD开销略小</p>
+<h1 id="conclusion--thinking">Conclusion &amp;&amp; Thinking</h1>
+<ul>
+<li>与之前阅读的KV-SSD相比，PinK将部分Level固定到DRAM中，一定程度上降低了延迟</li>
+<li>PinK弃用了布隆过滤器，使用一种层级缩小查找范围的方式，优化查询效率</li>
+<li>引入了一个加速器来减少LSM-tree compaction操作的开销</li>
+<li>论文都提高了布隆过滤器使用时重建的开销略高，是否可以考虑使用布谷鸟过滤器，这部分主要着眼于LSM-tree的优化，可能并不是真正的性能瓶颈</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-11-26 13:40:59">Updated on 2022-11-26&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/pinkkv/" data-title="[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails" data-hashtags="Paper,File System,LSM-tree,K/V,Database"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/pinkkv/" data-hashtag="Paper"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/pinkkv/" data-title="[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/lsm-tree/' class="post-tag">LSM-tree</a><a href='/tags/k/v/' class="post-tag">K/V</a><a href='/tags/database/' class="post-tag">Database</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/femu-paper/" class="post-nav-item" rel="prev" title="[FAST&#39;18] FEMU闪存模拟系统介绍"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[FAST&#39;18] FEMU闪存模拟系统介绍</a>
+      <a href="/posts/hintstor/" class="post-nav-item" rel="next" title="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage">[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

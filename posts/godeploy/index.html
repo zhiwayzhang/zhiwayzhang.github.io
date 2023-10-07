@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>记录一次Go项目的部署 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp; 解释： &gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&gt;&amp;1将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+1 2 3 4 5 6 ~&gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:" /><meta name="keywords" content='Golang, Linux, Shell' /><meta itemprop="name" content="记录一次Go项目的部署">
+<meta itemprop="description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp; 解释： &gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&gt;&amp;1将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+1 2 3 4 5 6 ~&gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:"><meta itemprop="datePublished" content="2021-03-30T12:23:42+00:00" />
+<meta itemprop="dateModified" content="2021-03-30T12:23:42+00:00" />
+<meta itemprop="wordCount" content="248">
+<meta itemprop="keywords" content="Golang,Linux,Shell," /><meta property="og:title" content="记录一次Go项目的部署" />
+<meta property="og:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp; 解释： &gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&gt;&amp;1将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+1 2 3 4 5 6 ~&gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/godeploy/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-03-30T12:23:42+00:00" />
+<meta property="article:modified_time" content="2021-03-30T12:23:42+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="记录一次Go项目的部署"/>
+<meta name="twitter:description" content="最近写了一个go项目，需要部署到服务器进行测试，如果只是go run main.go难免也太麻烦了点，于是学习了项目部署的相关知识。 项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。
+系统信息 系统信息: CentOS Linux release 8.3.2011 x86_64 Go version: go version go1.14.12 linux/amd64
+几条命令的介绍 nohup nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。 语法格式： nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp; 解释： &gt; xxx.log表示将输出重定向至该文件，可以记录运行时的日志 2&gt;&amp;1将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件
+git pull git pull origin dev 为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。
+ps ps命令为 process status,可以查看系统当前的进程状态
+例如
+1 2 3 4 5 6 ~&gt; ps PID TTY TIME CMD 255873 pts/0 00:00:02 zsh 258517 pts/0 00:00:00 sh 258519 pts/0 00:00:00 OnlineJudge 263021 pts/0 00:00:00 ps 我们将用ps命令与grep等命令筛选出项目的pid ps命令有很多参数选择，这里介绍一下用到的两条命令:"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/godeploy/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/gitnote/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "记录一次Go项目的部署",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/godeploy\/"
+    },"genre": "posts","keywords": "Golang, Linux, Shell","wordcount":  248 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/godeploy\/","datePublished": "2021-03-30T12:23:42+00:00","dateModified": "2021-03-30T12:23:42+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>记录一次Go项目的部署</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/web-development/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Web Development</a></span></div>
+      <div class="post-meta-line"><span title="published on 2021-03-30 12:23:42"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2021-03-30">2021-03-30</time></span>&nbsp;<span title="Updated on 2021-03-30 12:23:42"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2021-03-30">2021-03-30</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>248 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#系统信息">系统信息</a></li>
+    <li><a href="#几条命令的介绍">几条命令的介绍</a>
+      <ul>
+        <li><a href="#nohup">nohup</a></li>
+        <li><a href="#git-pull">git pull</a></li>
+        <li><a href="#ps">ps</a></li>
+        <li><a href="#grep">grep</a></li>
+        <li><a href="#awk">awk</a></li>
+        <li><a href="#kill">kill</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell脚本">Shell脚本</a></li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>最近写了一个go项目，需要部署到服务器进行测试，如果只是<code>go run main.go</code>难免也太麻烦了点，于是学习了项目部署的相关知识。
+项目的部署有多种方式，Jenkins,nginx等方式，本文只讲解一下简单的shell脚本部署。</p>
+<!-- more -->
+<h1 id="系统信息">系统信息</h1>
+<p>系统信息: <code>CentOS Linux release 8.3.2011 x86_64</code>
+Go version: <code>go version go1.14.12 linux/amd64</code></p>
+<h1 id="几条命令的介绍">几条命令的介绍</h1>
+<h2 id="nohup">nohup</h2>
+<p>nohup命令的全称为no hang up不挂起，可以在系统后台不挂断的运行命令，退出终端后程序也会正常运行。
+语法格式：
+<code>nohup ./xxx &gt; xxx.log 2&gt;&amp;1 &amp;</code>
+解释：
+<code>&gt; xxx.log</code>表示将输出重定向至该文件，可以记录运行时的日志
+<code>2&gt;&amp;1</code>将标准错误2重定向到标准输出&amp;1，然后标准输出&amp;1再被重定向至xxx.log文件</p>
+<h2 id="git-pull">git pull</h2>
+<p><code>git pull origin dev</code>
+为了方便项目的及时更新，使用改名了保证运行时与上游仓库的代码保持一致。</p>
+<h2 id="ps">ps</h2>
+<p>ps命令为 process status,可以查看系统当前的进程状态</p>
+<p>例如</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">~&gt; ps
+</span></span><span class="line"><span class="cl">    PID TTY          TIME CMD
+</span></span><span class="line"><span class="cl"> <span class="m">255873</span> pts/0    00:00:02 zsh
+</span></span><span class="line"><span class="cl"> <span class="m">258517</span> pts/0    00:00:00 sh
+</span></span><span class="line"><span class="cl"> <span class="m">258519</span> pts/0    00:00:00 OnlineJudge
+</span></span><span class="line"><span class="cl"> <span class="m">263021</span> pts/0    00:00:00 ps</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们将用ps命令与grep等命令筛选出项目的pid
+ps命令有很多参数选择，这里介绍一下用到的两条命令:</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -e  列出所有进程
+</span></span><span class="line"><span class="cl">ps -f  显示进程的全部信息</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="grep">grep</h2>
+<p>grep命令可以查找文本中符合条件的字符串，用于匹配进程的名称，
+还可以匹配文本中的各种信息，本文不再具体展开，后续打算更一篇具体记录Linux命令的博客。</p>
+<h2 id="awk">awk</h2>
+<p>用于处理文本提取信息，将使用grep查询到的进程信息提取出pid
+查询到的结果为
+<code>root      263948  263946  0 12:49 pts/0    00:00:00 ./OnlineJudge</code>
+我们只需要第二项的pid，使用
+<code>awk {print $2}</code>
+即可提取出进程的pid 263948</p>
+<h2 id="kill">kill</h2>
+<p><code>kill pid</code>杀死进程</p>
+<h1 id="shell脚本">Shell脚本</h1>
+<div class="highlight" id="id-3"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;*** Online_Judge ***\n&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;*** 检查上游代码中 ***\n&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">git pull origin dev
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;*** 编译中 ***\n&#34;</span>
+</span></span><span class="line"><span class="cl">go build
+</span></span><span class="line"><span class="cl">chmod -R <span class="m">777</span> OnlineJudge
+</span></span><span class="line"><span class="cl"><span class="nv">pid</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="nv">$pid</span><span class="s2">\n&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">kill</span> <span class="nv">$pid</span> <span class="o">&amp;&amp;</span> nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">&amp;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">pid2</span><span class="o">=</span><span class="sb">`</span>ps -ef<span class="p">|</span>grep OnlineJudge<span class="p">|</span>grep -v grep<span class="p">|</span>awk <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;项目部署成功***进程ID为:</span><span class="nv">$pid2</span><span class="s2">&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>将脚本保存至项目目录，赋予执行权限
+<code>chmod +x setup.sh</code>
+执行脚本</p>
+<div class="highlight" id="id-4"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">➜ git:<span class="o">(</span>dev<span class="o">)</span> ✗ ./setup.sh         
+</span></span><span class="line"><span class="cl">*** Online_Judge ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** 检查上游代码中 ***
+</span></span><span class="line"><span class="cl">From url
+</span></span><span class="line"><span class="cl"> * branch            dev        -&gt; FETCH_HEAD
+</span></span><span class="line"><span class="cl">Already up to date.
+</span></span><span class="line"><span class="cl">*** 编译中 ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** 添加权限 ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">添加权限成功
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** kill进程 ***
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">258519</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">./setup.sh: line 18: <span class="m">258519</span> Terminated              nohup ./OnlineJudge &gt; OnlineJudge.log 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">项目部署成功***进程ID为:263948</span></span></code></pre></td></tr></table>
+</div>
+</div><p>至此项目即可部署成功
+上述shell中的视个人情况而修改</p>
+<h1 id="reference">Reference</h1>
+<p><a href="https://www.runoob.com/linux/linux-command-manual.html"target="_blank" rel="external nofollow noopener noreferrer">Linux命令大全</a>
+<a href="https://blog.csdn.net/w425772719/article/details/115241722"target="_blank" rel="external nofollow noopener noreferrer">如何优雅的通过Shell脚本一键部署GO项目到服务器？
+</a></p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2021-03-30 12:23:42">Updated on 2021-03-30&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/godeploy/" data-title="记录一次Go项目的部署" data-hashtags="Golang,Linux,Shell"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/godeploy/" data-hashtag="Golang"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/godeploy/" data-title="记录一次Go项目的部署"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/golang/' class="post-tag">Golang</a><a href='/tags/linux/' class="post-tag">Linux</a><a href='/tags/shell/' class="post-tag">Shell</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%AC%94%E8%AE%B0/" class="post-nav-item" rel="prev" title="汇编语言笔记"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>汇编语言笔记</a>
+      <a href="/posts/gitnote/" class="post-nav-item" rel="next" title="Git学习笔记">Git学习笔记<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

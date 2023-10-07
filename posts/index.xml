@@ -1,0 +1,229 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>All Posts - Coding Panda&#39;s Blog</title>
+    <link>https://zhiwayzhang.github.io/posts/</link>
+    <description>All Posts | Coding Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Fri, 07 Apr 2023 19:51:41 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+  <title>Using Cgroups v2 to limit system I/O resources</title>
+  <link>https://zhiwayzhang.github.io/posts/cgroups/</link>
+  <pubDate>Fri, 07 Apr 2023 19:51:41 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/cgroups/</guid>
+  <description><![CDATA[Introduction to Cgroups Cgroups, which called control group in Linux to limit system resources for specify process group, is comonly used in many container tech, such as Docker, Kubernetes, iSulad etc.
+The cgroup architecture is comprised of two main components:
+the cgroup core: which contains a pseudo-filesystem cgroupfs, the subsystem controllers: thresholds for system resources, such as memory, CPU, I/O, PIDS, RDMA, etc. The hierarchy of Cgroups In Cgroups v1, per-resource (memory, cpu, blkio) have it&rsquo;s own hierarchy, where each resource hierarchy contains cgroups for that resource.]]></description>
+</item>
+<item>
+  <title>[FAST&#39;23] HadaFS: A File System Bridging the Local and Shared Burst Buffer for Exascale Supercomputers</title>
+  <link>https://zhiwayzhang.github.io/posts/hadafs/</link>
+  <pubDate>Fri, 17 Mar 2023 23:30:48 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/hadafs/</guid>
+  <description><![CDATA[HadaFS，一个为超算提供本地和共享Burst Buffer的文件系统
+0x00 Intro 现代的超算通过SSD来实现Burst Buffer（BB）layer。
+根据部署位置，BB可以分为两种：
+Local BB，作为本地硬盘部署在每个计算节点上，有高伸缩性和性能 Shared BB，部署在专用节点上，可以被多个计算节点访问，可以共享数据，部署成本低 HadaFS已经部署在了神威新一代超算（Sunway New- generation Supercomputer，SNS）中。支持最大600000用户，最大I/O带宽3.1TB/s。
+Burst Buffer作为数据加速层，一般使用SSD。自2016年起，越来越多的超算开始使用Burst Buffer。
+对于local BB，有一些局限性：
+由于难以进行数据共享，Local BB不适用于所有场景，例如N-1 I/O mode，所有进程共享一个文件、workflow 由于超算程序之间的I/O负载差异较大，而数据密集型应用的比例较低，造成了大量的资源浪费 随着超算规模的扩大，local BB的部署成本未来会急剧升高 相比于Local BB，Share BB便于数据共享，部署成本低，但是在超算上部署也面临许多问题。LPCC将SSD集成到Lustre FS Client，提高read/write性能的一种缓存技术，LPCC存储在Lustre client SSD中的数据必须先刷新到Lustre server才能进行共享。BeeOND类似于LPCC，继承了BeeGFS的可伸缩性和缓存共享限制。
+超算的发展使得并行I/O需求增加，BB架构相较于传统GFS有着同样的高性能，但是容量较小，因此BB要与GFS进行整合。目前的BB架构数据迁移的效率很低，浪费了很多计算资源，因此高伸缩性的BB数据管理和迁移也是目前要解决的问题。
+为了解决这个问题，作者提出了BB File System&ndash;HadaFS。
+基于share BB，结合了local BB的伸缩性、性能优势和share BB的数据共享、部署成本低的优点。
+HadaFS提供Localized Triage Architecture（LTA）局部分类架构，解决了shared BB伸缩性不足的问题，实现了超大规模的扩展和数据共享，LTA将所有HadaFS server构建为一个共享存储池，可以在client和server之间灵活的控制并发问题，来保证数据共享。 HadaFS提出了一个运行时的user-level接口，来保证来自client的I/O请求可以被最近的server处理，类似local BB。 为了解决由POSIX接口强一致性导致的性能问题，HadaFS提出了一种包含三种元数据同步机制的全路径索引方法，来解决传统文件系统在复杂元数据的管理上的问题，以及文件系统和应用I/O行为不匹配的问题。使用KV的方法来代替传统的目录树结构。 HadaFS集成了数据管理工具，帮助用户管理BB中的数据，完成BB和GFS之间的高效数据迁移。 提出Hadash，在BB中提供高效的数据查询，加速BB和传统超算存储的数据迁移。 0x01 Motivation &amp;&amp; Bg Motivation BB可伸缩性和应用行为的矛盾 随着超算百亿亿次计算记录的打破，尖端超算中的I/O并行可以达到数十万，加大了BB在伸缩性上的压力。
+目前的一些顶尖超算：
+Frontier使用独立的硬件来分别构造local BB和shared BB，需要使用大量的SSD和高昂的建设维护成本。 Fugaku使用shared BB，使用软件来提供存储服务，local BB和shared BB使用不同的name space。这种方式是静态的，很难控制在高并发情况下的I/O竞态问题。 Summit部署local BB，支持数据在应用之间的共享，基于GFS，效率较低。 由于shared BB既可以用于计算节点，也可以用于数据转发节点，作者相信shared BB更适合超级计算机。]]></description>
+</item>
+<item>
+  <title>[FEMU] FEMU Blackbox SSD源码阅读</title>
+  <link>https://zhiwayzhang.github.io/posts/femu-bbssd/</link>
+  <pubDate>Sun, 12 Mar 2023 12:36:08 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/femu-bbssd/</guid>
+  <description><![CDATA[本文记录FEMU blackbox ssd（ssd对主机透明）的源码阅读。
+bb.c 用于注册bbssd，在hw/femu/femu.c&gt;nvme_register_extesions()中执行
+1 2 3 4 5 6 7 8 9 10 11 12 static int nvme_register_extensions(FemuCtrl *n) { if (OCSSD(n)) { ... } ... } else if (BBSSD(n)) { nvme_register_bbssd(n); } ... return 0; } 这个FemuCtrl *n结构包含了很多内容，本质上是一个用于线程之间同步/传值的结构
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 int nvme_register_bbssd(FemuCtrl *n) { n-&gt;ext_ops = (FemuExtCtrlOps) { .state = NULL, .init = bb_init, .exit = NULL, .]]></description>
+</item>
+<item>
+  <title>[FAST&#39;23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba</title>
+  <link>https://zhiwayzhang.github.io/posts/pangu/</link>
+  <pubDate>Thu, 02 Mar 2023 15:11:40 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/pangu/</guid>
+  <description><![CDATA[[FAST'23] More Than Capacity: Performance-oriented Evolution of Pangu in Alibaba
+FAST'23 会议论文翻译，《不仅仅是容量:盘古面向性能的演变》
+本论文讲述了Pangu存储系统是如何随着硬件及商业需求，去演变提供更高的性能的，存储服务的I/O延迟达到了100-us。盘古的演变主要有两个部分：
+Phase 1: 盘古通过优化文件系统并设计了用户端的存储操作系统，积极引入高速SSD和Remote Direct Memory Access(RDMA)网络技术。因此，盘古在有效降低了I/O延迟的同时，还提高了吞吐量和IOPS。 Phase 2: 盘古从面向卷的存储供应商转变为面向性能。为了适应这一商业模式的改变，盘古使用足够多的SSD和25Gbps-100Gbps的RDMA带宽更新了基础设施。这引入了一些列的关键设计，包括减少流量放大，远程直接缓存访问，和CPU计算卸载，来保证盘古完全获得基于硬件升级所带来的性能提升。 除了技术上的创新，作者还分享了盘古发展过程中的运营经验，并讨论了其中的重要教训。
+0x00 Intro 盘古的开发始于2009年，目前已经是阿里巴巴集团和阿里云统一存储平台。盘古为阿里的核心业务提供了可伸缩性、高性能和可靠性。
+Elastic Block Storage(EBS), Object Storage Service(OSS), Network-Attached Storage(NAS), PolarDB, MaxCompute这些云服务基于盘古建立。经过十几年的发展，盘古已经成为了一个拥有ExaBytes并管理万亿文件的全局存储系统。
+盘古 1.0: 提供存储容量 Pangu 1.0设计于2009-2015年，通过高性能的CPU和HDD组成，可以提供ms毫秒级别的I/O延迟和Gbps级别的数据中心带宽。
+Pangu 1.0基于Linux Ext4设计了一个分布式的内核文件系统和内核TCP，并给予不同种类的存储服务提供多种文件类型支持（Tempfile，LogFile，Random Access file）。
+此时正处于云计算的初始阶段，性能受限于HDD性能和网络带宽，相较于更快的访问速度，用户更关注存储容量。
+新的硬件，新的设计 自2015年起，为了引入新兴的SSD和RDMA技术，盘古2.0开始设计和开发。盘古2.0的目标是提供100us级别I/O延迟的高性能的存储服务。尽管SSD和RDMA在存储和网络中实现低延迟、高性能的I/O，团队发现：
+盘古1.0中使用的多种文件类型，特别是允许随机访问的文件类型，在固态硬盘上的表现很差，而固态硬盘在顺序操作上可以实现高吞吐量和IOPS。 由于数据复制和频繁的中断，内核空间的软件栈无法跟上SSD和RDMA的高IOPS和低I/O延迟。 从以服务器为中心的数据中心架构向资源分散的数据中心架构的范式转变，对实现低I/O延迟提出了额外的挑战。 盘古2.0 Phase 1: 通过重构文件系统与用户空间的存储操作系统来拥抱SSD和RDMA 为了实现高性能和低I/O延迟，盘古2.0首先在其文件系统中的关键组件提出了新的设计。为了简化整个系统的开发和管理，盘古设计了一个统一、追加写入的持久化层。它还引入了一个独立的分块布局，以减少文件写入操作的I/O延迟。
+盘古2.0设计了一个用户空间的存储操作系统（USSOS），USSOSS使用一个RTC(Run to completion)线程模型来实现用户空间存储栈和用户空间网络栈的高效协作。它还为高效的CPU和内存资源分配提出了一个用户空间的调度机制。
+盘古2.0部署了在动态环境下提供SLA保证的机制。通过这些创新，盘古2.0实现了毫秒级别的P999 I/O延迟。
+盘古2.0 Phase 2: 通过基础设施更新和突破网络/内存/CPU瓶颈，适应以性能为导向的业务模式 2018年起，盘古逐渐从容量导向的商业模式转变为性能导向。这是因为越来越多的企业用户将他们的业务转移到了阿里云并且他们对存储性能的延迟和性能有很严格的要求。这在COVID-19疫情爆发之后变得越来越快，为了适应这一商业模式转变和日益增长的用户，盘古2.0需要继续升级基础设施。
+用原有的服务器和交换机沿着基于CLOS架构的拓扑结构来对基础设施进行扩容是不经济的，包括高昂的总成本（机架空间、电力、散热、人力成本）和更高的碳排放/环境问题。因此，盘古开发来室内高容量存储服务器（每个服务器96TB SSD）并且升级到了25Gbps-100Gbps的网络带宽。
+为了完全获得这些升级带来的性能提升，盘古2.0提出了一系列的技术来处理在{网络/内存/CPU}的性能瓶颈并充分利用其强大的硬件资源。具体来说，盘古2.0通过减少网络流量放大率和动态调整不同流量的优先级来优化网络带宽；通过提出Remote Direct Cache Access(RDCA)来处理内存瓶颈；通过消除数据序列化/反序列化的开销并引入CPU等待指令来同步超线程，以此来解决CPU瓶颈问题。]]></description>
+</item>
+<item>
+  <title>[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</title>
+  <link>https://zhiwayzhang.github.io/posts/xrp/</link>
+  <pubDate>Thu, 09 Feb 2023 14:51:48 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/xrp/</guid>
+  <description><![CDATA[0x00 Intro 随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。
+观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。
+因此可以考虑跳过内核中一系列的数据传递，即Kernel Bypass。目前现有的研究大都对内核进行了激进的修改策略，或引入了新的硬件，Kernel Bypass主要使用SPDK，直接对硬件设备进行访问，而SPDK会强制开发者实现自己的文件系统，需要自行维护隔离性和安全性。
+在等待I/O完成时，往往会进行轮询，给CPU带来了一些性能损失。有研究表明当可调度的线程数量超过了CPU核心数量时，使用SPDK会提高平均延迟和尾延迟，严重降低了吞吐量。
+因此作者的核心思想为既可以完成Kernel Bypass，也不需要引入额外硬件并不对内核和文件系统进行很大的修改，作者借助BPF(Berkeley Packet Filter)来实现，BPF允许应用程序下放部分工作到内核中，同时还能保证隔离性，允许多线程共享一个CPU核心，提高利用率。
+许多I/O负载需要多次调用函数访问硬盘上的大型数据结构（B+ tree），作者称之为resubmission。
+作者提出了eXpress Resubmission Path，XRP在NVMe驱动中的中断处理器上添加了一个hook，使得XRP可以在I/O完成时直接从NVMe驱动层来发起BPF函数调用，快速启动I/O的重新提交。
+XRP的主要贡献为：
+首次使用BPF来卸载I/O任务到内核 将B-tree的查找吞吐量提高了2.5倍 XRP提供了接近Kernel Bypass的延迟，而且允许线程和进程高效地共享CPU核心 XRP适用于多种不同用例，支持不同类型数据结构以及存储操作 0x01 Bg &amp;&amp; Motivation I/O是目前的瓶颈 时间都去哪了 作者通过实验发现延迟的部分来源是软件层面，即系统内核部分中block I/O的传递
+为什么不单纯的kernel bypass 大部分bypass的方法都是直接对NVMe driver发起请求，此类方案不能实现细粒度的隔离或者再不同应用之间共享数据，同时不能有效的去接收I/O完成产生的中断，需要应用不断轮询，因此CPU就被某个应用独占，不能得到共享。而且当多个轮询线程共享一个CPU处理器时，他们之间对CPU的竞争同时缺少同步会导致尾延迟升高和吞吐量的降低。
+BPF Berkeley Packet Filter允许用户将一些简单函数下放到内核层来执行，起初是用于TCP的数据包过滤、负载均衡、数据包转发，目前推出了eBPF扩展。
+BPF可以验证函数的安全性，主要检查是否超出内存地址空间、是否有死循环、指令是否太多。
+BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。
+一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。
+有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。
+在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。
+io_uring io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。
+0x02 Challenges &amp;&amp; Principles Challenges 地址转换和安全问题：NVMe Driver不能访问文件系统的元数据，因此不能完成逻辑地址到物理地址的转换；BPF可以访问其他文件和用户的任何block。 并发和缓存问题：对于从文件系统发起的并发读写很难维护。从文件系统发出的写请求将写入到page cache中，对于XRP不可见；同时对于硬盘上数据结构布局的修改，例如改变某一个指针，将会导致XRP获取到错误的数据，虽然可以进行加锁，但是从NVMe中断访问锁的开销太大。 Observation 作者研究发现，大部分的存储引擎的硬盘数据结构都是稳定的，或不会进行就地更新。
+例如在LSM-tree中，进行索引的写入操作，写入到文件SSTables中，这些文件为不可变，直至其被删除，不可变文件还降低了文件并发访问的成本。B-tree的索引虽然可以就地更新，但是在实际测试中（24小时YCSB读写改实验）发现，索引的修改次数很少，因此也不需要在NVMe Driver中频繁的更新文件系统的元数据。
+同时，索引一般存储在少量的大文件中，并且每个索引不会跨越多个文件。
+Design Principles 一次只访问一个文件：可以简化地址转换和访问控制，还最小化了需要传递给NVMe driver的元数据 面向于稳定的数据结构：XRP以不会频繁更新的数据结构为目标RocksDB、LevelDB、TokuDB、WiredTiger，不支持需要锁来访问的数据结构 用户管理缓存：XRP无法直接访问Page Cache，因此如果block位于Page Cache中，XRP函数不能安全的并发执行，而大多数存储引擎都是在用户空间自行管理Cache。 错误处理：如果访问失败（映射信息过期），需要程序在用户空间重试或回滚。 0x03 Design &amp;&amp; Implementation XRP的架构图：]]></description>
+</item>
+<item>
+  <title>[FAST&#39;22] MT^2: Memory Bandwidth Regulation on Hybrid NVM/DRAM Platforms</title>
+  <link>https://zhiwayzhang.github.io/posts/mt2/</link>
+  <pubDate>Mon, 19 Dec 2022 16:50:00 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/mt2/</guid>
+  <description><![CDATA[0x00 Intro NVM和DRAM共享内存总线，二者之间的负载相互干扰，给混合NVM/DRAM平台的带宽分配带来了挑战
+本文提出了MT2，可以在混合NVM/DRAM平台中管理并发程序间的内存带宽。
+MT2首先检查内存流量间的干扰并通过硬件监视器和软件汇报从混合流量监控不同类型的内存带宽
+然后MT2利用一个动态的带宽流量调节算法基于多种方式来管理内存带宽
+为了能够更好的管理不同程序，MT2被集成到了cgroup中，添加了一个用于带宽分配的cgroup subsystem
+新兴的NVM存储器逐渐被用来做为可持久化内存来使用，基于NVM，提出了NVM文件系统，NVM编程库，NVM数据结构、NVM数据库，NVM作为大容量内存或者快速的字节寻址存储设备用于数据中心。
+然而NVM/DRAM混合平台加剧了吵闹邻居问题。在云存储环境中，多个用户常常共享一个服务器，不同用户的不同应用程序共享主机的一条总线，某些应用可能会过度使用内存带宽。在NVM/DRAM中，NVM和DRAM共享同一个总线，因此不同的应用程序将竞争有限的内存带宽，影响整体的性能
+在NVM/DRAM中调节带宽有如下几个问题：
+内存带宽不对称，在NVM/DRAM，不同的内存访问（如DRAM read，DRAM write，NVM read和NVM write）会产生不同的最大内存带宽。内存的实际可用带宽主要取决于负载中不同类型访问的占比。同时设置静态的内存带宽而不考虑实际的I/O访问占比是不正确的做法。同时NVM最大带宽通常小于DRAM。而且不同类型的内存访问的干扰程度不同，因此不能单纯将所有内存==访问延迟==视为相等 NVM和DRAM共享内存总线，NVM流量和DRAM流量不可避免地会混合并且很难区分。对于混合的流量，监控不同种类的内存带宽。由于内存流量混合，几乎不可能在每个进程的基础上监控不同类型的内存带宽，这使为DRAM设计的现有硬件和软件调节方法无效。 内存调节的硬件和软件机制不足。由于NVM和DRAM都可以通过CPU负载/存储指令直接访问，因此为了性能，对每个内存访问进行计算和限流是不切实际的。CPU供应商，如英特尔，支持硬件机制来调节内存带宽。然而，带宽限制是粗粒度和定性迭代的，这不足以精确的内存带宽调节。其他一些方法，如频率缩放和CPU调度，可能会提供相对细粒度的带宽调整。然而，它们也是定性的，并减慢了计算和内存访问的速度，因此对整个平台性能缺乏影响。 MT2作为Linux Cgroup中的一个Subsystem，用于减轻吵闹邻居问题。在内存带宽分配和云SLO保证方面提高效率。本文的主要贡献：
+发现了导致NVM/DRAM混合平台上内存密集型应用程序显著性能流失的内存带宽干扰问题 首次对在NVM/DRAM平台现存的硬件和软件带宽分配机制进行研究 高效有效地调节具有线程级粒度的NVM/DRAM混合平台上的内存带宽 在英特尔Optane SSD上进行了测试和分析 以下简称NVM/DRAM
+0x01 BG MT^2 持久内存（PM）/ 非易失性内存（NVM）的出现正改变着存储系统的金字塔层次结构。本文发现，由于 NVM 和 DRAM 共享同一条内存总线，带宽干扰问题变得更为严重和复杂，甚至会显著降低系统的总带宽。本工作介绍了对内存带宽干扰的分析，对现有软硬件技术进行了深入调研，并提出了一种在 NVM/DRAM 混合平台上监控调节并发应用的内存带宽的设计（MT^2）。MT^2 以线程为粒度准确监测来自混合流量的不同类型的内存带宽，使用软硬件结合技术控制内存带宽。在多个不同的用例中，MT^2 能够有效限制“吵闹邻居”（noisy neighbors），消除带宽干扰，保证高优先级应用的性能。
+Noisy Neighbors 在多租户的云环境中，内存带宽对应用程序的性能有很大影响。
+两种可以减轻吵闹邻居问题的方法是：
+Prevention：主动为应用程序设置带宽限制（固定的） Remedy：系统检测吵闹邻居情况的出现并识别出吵闹的“邻居”对其进行限制 这些方法需要去监控应用的带宽使用情况
+NVM NVM得益于其存储容量大，访问速度快的特性，正在逐步作为内存使用于商业服务器中。得益于PMDK（Persistent Memory Development Kit）同时还涌现出了大量基于NVM Memory的应用程序，如PmemKV，Pmem-RocksDB。
+NVM可以直接通过CPU的load/store指令进行访问
+Memory Bandwidth Interference 由于NVM和DRAM共享内存总线，因此存在干扰问题。
+用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况
+如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）
+从图中得出的两个结论为：
+内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响 NVM的访问比DRAM访问对其他任务的影响更大，例如图中NVM Read列和DRAM Read列的对比，说明执行NVM write较多的应用更可能成为影响其他任务 作者还做了Task B进行NVM Write，Task A的延迟和吞吐量的变化，发现了随着带宽的逐渐降低，Task A的延迟逐渐增加。]]></description>
+</item>
+<item>
+  <title>FEMU环境配置</title>
+  <link>https://zhiwayzhang.github.io/posts/femu-demo/</link>
+  <pubDate>Sun, 11 Dec 2022 16:10:32 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/femu-demo/</guid>
+  <description><![CDATA[本文主要参考FEMU仓库README
+0x00 Intro FEMU架构图
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 +--------------------+ | VM / Guest OS | | | | | | NVMe Block Device | +--------^^----------+ || PCIe/NVMe || +------------------------------vv----------------------------+ | +---------+ +---------+ +---------+ +---------+ +------+ | | | Blackbox| | OCSSD | | ZNS-SSD | | NoSSD | | ... | | | +---------+ +---------+ +---------+ +---------+ +------+ | | FEMU NVMe SSD Controller | +------------------------------------------------------------+ FEMU是弗吉尼亚理工学院的Huaicheng LI教授团队开发的一款SSD模拟器，FEMU的论文此前进行过总结[[FAST'18] FEMU闪存模拟系统介绍](https://blog.]]></description>
+</item>
+<item>
+  <title>Dart学习笔记</title>
+  <link>https://zhiwayzhang.github.io/posts/darttour/</link>
+  <pubDate>Fri, 09 Dec 2022 22:20:03 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/darttour/</guid>
+  <description><![CDATA[A Tour Of Dart 在macOS上搭建Dart/Flutter环境
+在Flutter官网下载SDK
+将SDK中的bin目录添加到system path
+执行flutter doctor看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装
+安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。
+安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入.zshrc中
+1 2 export ANDROID_HOME=&#34;/Users/***/Library/Android/sdk&#34; export PATH=&#34;$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH&#34; 然后执行source ~/.zshrc，再执行flutter doctor，可以看到要求接受android licenses
+运行flutter doctor --android-licenses，一路按y接受
+此时flutter全部的配置基本就完成了
+如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行:CocInstall coc-flutter
+两个有关flutter的coc.nvim扩展：
+coc-flutter
+coc-flutter-tools
+Important Concepts Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object
+Dart是强类型语言，但是var可以推导变量类型
+null safety开启后，变量不会包含null，使用int?声明变量可以使得变量可为null，在赋值的字面量后添加!可以保证变量不为null
+1 2 int? NullableNumber = 3; int unNullableNumber = 3!; Object可以用来作为范型的模版
+Dart的函数可以不依赖任何class，top-level
+Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定
+Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
+Dart包含warnings和errors机制，errors主要在编译时和运行时
+Variables ]]></description>
+</item>
+<item>
+  <title>[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage</title>
+  <link>https://zhiwayzhang.github.io/posts/hintstor/</link>
+  <pubDate>Wed, 30 Nov 2022 10:58:22 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/hintstor/</guid>
+  <description><![CDATA[0x00 Everyday English Heterogeneous 各种各样的
+semantic 语义上的
+conservative 保守的、传统的 &mdash;aggressive 激进的
+aggregate 合计
+orchestrate 精心策划
+proactive 积极主动的
+by means of 通过，借助于
+off-the-shelf 现成的
+elaborate 详细阐述
+0x01 Intro 随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统
+异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成
+在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次
+这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中
+本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints
+设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：
+新的app/user层面的接口允许用户定义和配置新的hint VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统 在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略 作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：
+使用文件系统内部的数据进行分类（元数据，文件数据，文件大小） Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上 云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。 I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分 0x02 Bg 在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。
+目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，fadvise()和inoice()系统调用可以改善prefetching，但是不能解决数据移动问题。
+MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。
+目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。
+0x03 HintStor Design Overview HintStor的架构图如上图所示
+Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
+整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
+在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能：]]></description>
+</item>
+<item>
+  <title>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</title>
+  <link>https://zhiwayzhang.github.io/posts/pinkkv/</link>
+  <pubDate>Sat, 26 Nov 2022 13:40:59 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/pinkkv/</guid>
+  <description><![CDATA[0x00 Everyday English preferable 更可取的
+consequently 因此
+inevitably 必然的
+conventional 常规的、传统的
+exacerbates 加剧
+deteriorates 恶化
+deterministic 确定性
+0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
+传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
+单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
+尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
+PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
+由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
+GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
+在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
+0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
+作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
+0x03 Design Pink有四个主要的数据结构
+位于DRAM中的level lists和Skiplist
+位于闪存中的meta segments和data segments
+在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST'16，取代FTL进行GC、索引和磨损均衡
+Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
+当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
+Level list 用于跟踪闪存中每个level的meta segment]]></description>
+</item>
+</channel>
+</rss>

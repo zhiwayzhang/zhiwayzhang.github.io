@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>【存储技术基础】主存 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="0x00 主存 当前面临的问题：
+容量问题、带宽问题、QoS保证
+多核处理器、数据密集应用、云计算、GPU
+HDFS（GFS）基于外存储器
+Spark 内存中数据处理
+能耗功率问题
+40%功耗在DRAM，Refresh操作耗能
+DRAM发展遇到瓶颈
+制成方式限制
+改进：
+3D-Stack DRAM 提供更高的带宽 低延迟DRAM 低功耗DRAM NVM（e.g. PCM）容量更大，延迟较高 0x01 DRAM的组成 Channel DIMM 内存条 Rank 二维阵列最小单元 Chip 芯片 Bank Row/Column 行为字线 word line
+列为位线，交点是cell 内存单元
+DRAM row是一个DRAM page
+Sense Amplifiers 也被叫做Row buffer
+每个地址通过&lt;row,colum&gt;编址
+访问一个closed row的过程：
+Activate：将row放到row buffer中 Read/Write：读写row buffer中的column Precharge：从row buffer中的数据写回到选中的row中 Bank Operation 给定Row Address通过Row decoder选中一行
+将行加载到Row Buffer
+若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据
+若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据
+Chip 由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）
+每次只能读4或16 Bit
+Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个rank组成" /><meta name="keywords" content='Storage, DRAM, NVM' /><meta itemprop="name" content="【存储技术基础】主存">
+<meta itemprop="description" content="0x00 主存 当前面临的问题：
+容量问题、带宽问题、QoS保证
+多核处理器、数据密集应用、云计算、GPU
+HDFS（GFS）基于外存储器
+Spark 内存中数据处理
+能耗功率问题
+40%功耗在DRAM，Refresh操作耗能
+DRAM发展遇到瓶颈
+制成方式限制
+改进：
+3D-Stack DRAM 提供更高的带宽 低延迟DRAM 低功耗DRAM NVM（e.g. PCM）容量更大，延迟较高 0x01 DRAM的组成 Channel DIMM 内存条 Rank 二维阵列最小单元 Chip 芯片 Bank Row/Column 行为字线 word line
+列为位线，交点是cell 内存单元
+DRAM row是一个DRAM page
+Sense Amplifiers 也被叫做Row buffer
+每个地址通过&lt;row,colum&gt;编址
+访问一个closed row的过程：
+Activate：将row放到row buffer中 Read/Write：读写row buffer中的column Precharge：从row buffer中的数据写回到选中的row中 Bank Operation 给定Row Address通过Row decoder选中一行
+将行加载到Row Buffer
+若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据
+若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据
+Chip 由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）
+每次只能读4或16 Bit
+Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个rank组成"><meta itemprop="datePublished" content="2022-09-24T18:26:22+08:00" />
+<meta itemprop="dateModified" content="2022-09-24T18:26:22+08:00" />
+<meta itemprop="wordCount" content="259">
+<meta itemprop="keywords" content="Storage,DRAM,NVM," /><meta property="og:title" content="【存储技术基础】主存" />
+<meta property="og:description" content="0x00 主存 当前面临的问题：
+容量问题、带宽问题、QoS保证
+多核处理器、数据密集应用、云计算、GPU
+HDFS（GFS）基于外存储器
+Spark 内存中数据处理
+能耗功率问题
+40%功耗在DRAM，Refresh操作耗能
+DRAM发展遇到瓶颈
+制成方式限制
+改进：
+3D-Stack DRAM 提供更高的带宽 低延迟DRAM 低功耗DRAM NVM（e.g. PCM）容量更大，延迟较高 0x01 DRAM的组成 Channel DIMM 内存条 Rank 二维阵列最小单元 Chip 芯片 Bank Row/Column 行为字线 word line
+列为位线，交点是cell 内存单元
+DRAM row是一个DRAM page
+Sense Amplifiers 也被叫做Row buffer
+每个地址通过&lt;row,colum&gt;编址
+访问一个closed row的过程：
+Activate：将row放到row buffer中 Read/Write：读写row buffer中的column Precharge：从row buffer中的数据写回到选中的row中 Bank Operation 给定Row Address通过Row decoder选中一行
+将行加载到Row Buffer
+若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据
+若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据
+Chip 由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）
+每次只能读4或16 Bit
+Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个rank组成" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/mainmemory/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-09-24T18:26:22+08:00" />
+<meta property="article:modified_time" content="2022-09-24T18:26:22+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="【存储技术基础】主存"/>
+<meta name="twitter:description" content="0x00 主存 当前面临的问题：
+容量问题、带宽问题、QoS保证
+多核处理器、数据密集应用、云计算、GPU
+HDFS（GFS）基于外存储器
+Spark 内存中数据处理
+能耗功率问题
+40%功耗在DRAM，Refresh操作耗能
+DRAM发展遇到瓶颈
+制成方式限制
+改进：
+3D-Stack DRAM 提供更高的带宽 低延迟DRAM 低功耗DRAM NVM（e.g. PCM）容量更大，延迟较高 0x01 DRAM的组成 Channel DIMM 内存条 Rank 二维阵列最小单元 Chip 芯片 Bank Row/Column 行为字线 word line
+列为位线，交点是cell 内存单元
+DRAM row是一个DRAM page
+Sense Amplifiers 也被叫做Row buffer
+每个地址通过&lt;row,colum&gt;编址
+访问一个closed row的过程：
+Activate：将row放到row buffer中 Read/Write：读写row buffer中的column Precharge：从row buffer中的数据写回到选中的row中 Bank Operation 给定Row Address通过Row decoder选中一行
+将行加载到Row Buffer
+若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据
+若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据
+Chip 由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）
+每次只能读4或16 Bit
+Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个rank组成"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/mainmemory/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/storagessd/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/multidisksystems/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "【存储技术基础】主存",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/mainmemory\/"
+    },"genre": "posts","keywords": "Storage, DRAM, NVM","wordcount":  259 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/mainmemory\/","datePublished": "2022-09-24T18:26:22+08:00","dateModified": "2022-09-24T18:26:22+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>【存储技术基础】主存</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-09-24 18:26:22"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-24">2022-09-24</time></span>&nbsp;<span title="Updated on 2022-09-24 18:26:22"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-24">2022-09-24</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>259 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-主存">0x00 主存</a></li>
+    <li><a href="#0x01-dram的组成">0x01 DRAM的组成</a>
+      <ul>
+        <li><a href="#bank-operation">Bank Operation</a></li>
+        <li><a href="#chip">Chip</a></li>
+        <li><a href="#rank-and-module">Rank and Module</a></li>
+        <li><a href="#chanel">Chanel</a></li>
+        <li><a href="#从cpu访问角度观察">从CPU访问角度观察</a></li>
+        <li><a href="#multiple-banks">Multiple Banks</a></li>
+        <li><a href="#multiple-channels">Multiple Channels</a></li>
+        <li><a href="#address-mapping">Address Mapping</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-dram-refresh">0x02 DRAM Refresh</a>
+      <ul>
+        <li><a href="#性能影响">性能影响</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-memory-controller">0x03 Memory Controller</a>
+      <ul>
+        <li><a href="#请求调度策略">请求调度策略</a></li>
+        <li><a href="#row-buffer管理策略">Row Buffer管理策略</a></li>
+        <li><a href="#dram-controller的设计难点">DRAM Controller的设计难点</a></li>
+        <li><a href="#能耗管理">能耗管理</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-nvm">0x04 NVM</a>
+      <ul>
+        <li><a href="#pcm">PCM</a>
+          <ul>
+            <li><a href="#写">写</a></li>
+            <li><a href="#读">读</a></li>
+          </ul>
+        </li>
+        <li><a href="#优势">优势</a>
+          <ul>
+            <li><a href="#mlc-pcm">MLC-PCM</a></li>
+          </ul>
+        </li>
+        <li><a href="#stt-mram">STT-MRAM</a>
+          <ul>
+            <li><a href="#优势-1">优势</a></li>
+          </ul>
+        </li>
+        <li><a href="#memristorsrramreram">Memristors/RRAM/ReRAM</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="0x00-主存">0x00 主存</h1>
+<p>当前面临的问题：</p>
+<ul>
+<li>
+<p>容量问题、带宽问题、QoS保证</p>
+<p>多核处理器、数据密集应用、云计算、GPU</p>
+<p>HDFS（GFS）基于外存储器</p>
+<p>Spark 内存中数据处理</p>
+</li>
+<li>
+<p>能耗功率问题</p>
+<p>40%功耗在DRAM，Refresh操作耗能</p>
+</li>
+<li>
+<p>DRAM发展遇到瓶颈</p>
+<p>制成方式限制</p>
+<p>改进：</p>
+<ul>
+<li>3D-Stack DRAM 提供更高的带宽</li>
+<li>低延迟DRAM</li>
+<li>低功耗DRAM</li>
+<li>NVM（e.g. PCM）容量更大，延迟较高</li>
+</ul>
+</li>
+</ul>
+<h1 id="0x01-dram的组成">0x01 DRAM的组成</h1>
+<ul>
+<li>Channel</li>
+<li>DIMM 内存条</li>
+<li>Rank 二维阵列最小单元</li>
+<li>Chip 芯片</li>
+<li>Bank</li>
+<li>Row/Column</li>
+</ul>
+<p>行为字线 word line</p>
+<p>列为位线，交点是cell 内存单元</p>
+<img src="/img/image-20221003154123646.png" alt="image-20221003154123646" style="zoom:70%;" />
+<p>DRAM row是一个DRAM page</p>
+<p>Sense Amplifiers 也被叫做Row buffer</p>
+<p>每个地址通过<code>&lt;row,colum&gt;</code>编址</p>
+<p>访问一个<code>closed row</code>的过程：</p>
+<ul>
+<li>Activate：将row放到row buffer中</li>
+<li>Read/Write：读写row buffer中的column</li>
+<li>Precharge：从row buffer中的数据写回到选中的row中</li>
+</ul>
+<h2 id="bank-operation">Bank Operation</h2>
+<p>给定Row Address通过Row decoder选中一行</p>
+<p>将行加载到Row Buffer</p>
+<p>若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据</p>
+<p>若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据</p>
+<h2 id="chip">Chip</h2>
+<p>由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）</p>
+<p>每次只能读4或16 Bit</p>
+<h2 id="rank-and-module">Rank and Module</h2>
+<p>Module为DIMM内存条，连接在主板上，由一个或多个rank组成</p>
+<p>Rank由多个Chip构成，提高接口带宽，多个Chip共享地址和指令总线，有单独的数据总线</p>
+<img src="/img/image-20221003164422987.png" alt="image-20221003164422987" style="zoom:80%;" />
+<p>多个Chip可以并行操作</p>
+<p>对于64 bit的读取，分配到多个Chip中同时读取</p>
+<p>对于多DIMM情况，可以先确定在哪根DIMM条中，再进行读取操作</p>
+<h2 id="chanel">Chanel</h2>
+<p>Bank之间为分时共享</p>
+<p>Channel为独立总线，数据可同时读写，每个Channel有一个Memory Controller</p>
+<p><img loading="lazy" src="/img/image-20221003182243697.png" srcset="/img/image-20221003182243697.png, /img/image-20221003182243697.png 1.5x, /img/image-20221003182243697.png 2x" sizes="auto" data-title="image-20221003182243697" data-alt="image-20221003182243697" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>在同一个Channel中的DIMM数据分时共享</p>
+<p>一张比较清晰的结构关系图</p>
+<p><img loading="lazy" src="/img/image-20221003182445252.png" srcset="/img/image-20221003182445252.png, /img/image-20221003182445252.png 1.5x, /img/image-20221003182445252.png 2x" sizes="auto" data-title="image-20221003182445252" data-alt="image-20221003182445252" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>同一个Channel可以连接多个DIMM条</p>
+<h2 id="从cpu访问角度观察">从CPU访问角度观察</h2>
+<p>Memory Channel中，在DIMM中Chip Selection选择访问的Rank，通过地址确定访问的数据</p>
+<p>Rank中的8个Chip每个都提供8 bit，共提供8 Byte访问</p>
+<p>由每个Chip中的bank选择器从8个bank中选择一个获取8 bit</p>
+<p>Bank中通过Row-Buffer来获取数据</p>
+<blockquote>
+<p>延迟的产生：</p>
+<ul>
+<li>CPU到controller的传输时间</li>
+<li>Controller延迟，请求队列和调度</li>
+<li>Controller到DRAM的传输时间（总线）</li>
+<li>DRAM 中Bank的延迟
+<ul>
+<li>选择某一行 Activate</li>
+<li>读取的时间</li>
+<li>Precharge</li>
+</ul>
+</li>
+<li>DRAM到CPU的传输时间</li>
+</ul>
+<p>主要关注Bank中的延迟</p>
+</blockquote>
+<h2 id="multiple-banks">Multiple Banks</h2>
+<p>使DRAM访问并行</p>
+<p>由于不同Bank分时共享，可以使得Bank提前将row加载到Row Buffer中，提高利用率</p>
+<h2 id="multiple-channels">Multiple Channels</h2>
+<p>更容易实现</p>
+<p>提高总线带宽</p>
+<p>提高并发能力需要减少Bank和Channel的冲突问题，需要对编址策略进行优化</p>
+<p>比较直观的观察Multiple Banks优化的效果，达到Overlap的效果</p>
+<p><img loading="lazy" src="/img/image-20221003204558855.png" srcset="/img/image-20221003204558855.png, /img/image-20221003204558855.png 1.5x, /img/image-20221003204558855.png 2x" sizes="auto" data-title="image-20221003204558855" data-alt="image-20221003204558855" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="address-mapping">Address Mapping</h2>
+<p>地址映射对DRAM并发能力的影响</p>
+<p>将访问DRAM中数据的地址进行排列，包含Channel、Row、Bank、Column</p>
+<p>核心思想：调整容易产生冲突的地址，使其相对靠后，还要兼顾其他问题</p>
+<p>将Column的高8位和低3位分离</p>
+<img src="/img/image-20221004202109741.png" alt="image-20221004202109741" style="zoom:80%;" />
+<p>提高Row Buffer的利用率，倒数第二种比较常用</p>
+<p>对OS而言，由逻辑地址Virtual Address映射到物理地址</p>
+<p><code>Virtual Page Number </code>-&gt; <code>&lt;Row,Bank&gt;</code>，可以通过调整映射算法来优化存储效率</p>
+<h1 id="0x02-dram-refresh">0x02 DRAM Refresh</h1>
+<p>由于电容中的电子持续泄漏，每隔一段时间重新写入数据，读取到row buffer再写回，刷新间隔一般为64ms</p>
+<blockquote>
+<p>负面影响：</p>
+<ul>
+<li>能耗增加</li>
+<li>性能减少，Refresh中内存不可用</li>
+<li>QoS影响，不能保证平稳</li>
+<li>刷新率使得DRAM容量的扩展受限</li>
+</ul>
+</blockquote>
+<h2 id="性能影响">性能影响</h2>
+<p>刷新时Bank变得不可用，Row Buffer的占用</p>
+<p>在刷新结束前有长时间的暂定，有两种优化策略：</p>
+<ol>
+<li>Burst Refresh 所有的行依次全部刷新</li>
+<li>Distributed Refresh 每行以固定的时间间隔在不同的时间进行刷新</li>
+</ol>
+<p>两种方式（集中式/分布式）的示意图：</p>
+<p><img loading="lazy" src="/img/image-20221004153056950.png" srcset="/img/image-20221004153056950.png, /img/image-20221004153056950.png 1.5x, /img/image-20221004153056950.png 2x" sizes="auto" data-title="image-20221004153056950" data-alt="image-20221004153056950" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>Distributed Refresh减少了等待时间</p>
+<p>随着设备容量的增加，消耗在Refresh上的时间/能耗占比越来越大</p>
+<p>目前应用的策略：Auto Refresh，每次只Refresh其中几行</p>
+<p>一些探索：刷新间隔的调整，64ms保证在最坏情况下的可靠性，在容忍存储单元出故障的前提下，可以适当提高刷新间隔，对于出错的单元采用更低的刷新间隔（不同存储单元采用不同刷新频率）</p>
+<h1 id="0x03-memory-controller">0x03 Memory Controller</h1>
+<p>位于CPU中</p>
+<p>基本功能：</p>
+<ul>
+<li>保证DRAM的正确性，刷新和时序timing</li>
+<li>遵循一定的时序约束（bank，总线，channel的冲突）来完成DRAM请求，转换请求为DRAM Command</li>
+<li>对请求进行调度提高性能</li>
+<li>管理电源能耗，开关Chip，管理电源模式</li>
+</ul>
+<img src="/img/image-20221004204322362.png" alt="image-20221004204322362" style="zoom:50%;" />
+<p>由L2 Cache发送请求到Memory Controller，由一个Buffer来对请求进行缓存</p>
+<h2 id="请求调度策略">请求调度策略</h2>
+<ol>
+<li>
+<p>FCFS</p>
+</li>
+<li>
+<p>FR-FCFS,First Ready</p>
+<ul>
+<li>Row-Hit First，优先调度命中Row Buffer的请求，提高命中率</li>
+<li>FCFS 防止饥饿</li>
+</ul>
+</li>
+</ol>
+<h2 id="row-buffer管理策略">Row Buffer管理策略</h2>
+<p>Open Row 不预先执行Precharge回写</p>
+<p>Closed Row 预先回写</p>
+<p>自适应结合两种方案</p>
+<h2 id="dram-controller的设计难点">DRAM Controller的设计难点</h2>
+<p>时序约束</p>
+<img src="/img/image-20221005142053482.png" alt="image-20221005142053482" style="zoom:67%;" />
+<p>防止冲突的发生</p>
+<p>Refresh操作</p>
+<h2 id="能耗管理">能耗管理</h2>
+<p>在不访问chip时切断供电</p>
+<p>厂商提供多种不同功耗的工作状态</p>
+<p>状态过渡时Chip无法被访问，因此会产生延迟</p>
+<h1 id="0x04-nvm">0x04 NVM</h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">读</th>
+<th style="text-align:center">写</th>
+<th style="text-align:center">特点</th>
+<th style="text-align:center">e.g.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Charge Memory电荷存储器</td>
+<td style="text-align:center">通过检测电压V读取数据</td>
+<td style="text-align:center">通过捕获电荷Q写入数据</td>
+<td style="text-align:center">通过写放大器来读写，体积不能太小</td>
+<td style="text-align:center">DRAM, Flash</td>
+</tr>
+<tr>
+<td style="text-align:center">Resistive Memory电阻式存储器</td>
+<td style="text-align:center">通过检测电阻R</td>
+<td style="text-align:center">通过脉冲电流$\frac{dQ}{dt}$写入数据</td>
+<td style="text-align:center">写数据调整阻抗</td>
+<td style="text-align:center">PCM, STT-MRAM，memristors</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pcm">PCM</h2>
+<p>通电加热会改变状态结晶态/非晶态，阻抗发生变化，表示0/1</p>
+<h3 id="写">写</h3>
+<p>两个状态：</p>
+<ul>
+<li>SET：保持低电压，将介质变为结晶态</li>
+<li>RESET：提高温度变为非晶态</li>
+</ul>
+<h3 id="读">读</h3>
+<p>检测结晶态($10^3-10^4\Omega$)/非晶态($10^6-10^7\Omega$)的阻抗，两者数量级差距较大</p>
+<h2 id="优势">优势</h2>
+<p>比DRAM，Flash有更高的扩展能力，存储密度</p>
+<p>每个单元的存储密度提高</p>
+<p>Non-Volatile，不通电情况下可以保存10年以上（85摄氏度）</p>
+<p>不需要Refresh操作，低功耗</p>
+<h3 id="mlc-pcm">MLC-PCM</h3>
+<p>根据电阻划分多个bit，控制距离间隔</p>
+<p>延迟相较于DRAM高</p>
+<p>动态能耗高于DRAM</p>
+<p>写寿命较低</p>
+<h2 id="stt-mram">STT-MRAM</h2>
+<p>自旋距磁存储器</p>
+<p>电流改变磁介质方向，改变阻抗</p>
+<p>Reference Layer和Free Layer方向相同表示0，相反时表示1</p>
+<h3 id="优势-1">优势</h3>
+<p>容量大，造价低</p>
+<p>非易失</p>
+<p>功耗低</p>
+<p>缺点类似于PCM</p>
+<h2 id="memristorsrramreram">Memristors/RRAM/ReRAM</h2>
+<p>改变原子结构</p>
+<h1 id="reference">Reference</h1>
+<p><a href="https://www.bilibili.com/video/BV1xE411T7Dy"target="_blank" rel="external nofollow noopener noreferrer">存储技术基础—Main Memory I</a></p>
+<p><a href="https://www.bilibili.com/video/BV1xE411T7Dy"target="_blank" rel="external nofollow noopener noreferrer">存储技术基础—Main Memory II</a></p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-09-24 18:26:22">Updated on 2022-09-24&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/mainmemory/" data-title="【存储技术基础】主存" data-hashtags="Storage,DRAM,NVM"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/mainmemory/" data-hashtag="Storage"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/mainmemory/" data-title="【存储技术基础】主存"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/dram/' class="post-tag">DRAM</a><a href='/tags/nvm/' class="post-tag">NVM</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/storagessd/" class="post-nav-item" rel="prev" title="【存储技术基础】固态硬盘"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>【存储技术基础】固态硬盘</a>
+      <a href="/posts/multidisksystems/" class="post-nav-item" rel="next" title="【存储系统】多硬盘存储系统">【存储系统】多硬盘存储系统<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

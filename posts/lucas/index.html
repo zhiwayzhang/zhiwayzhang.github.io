@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>DP? 素数筛&#43;Lucas定理&#43;费马小定理 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &lt; 1e4$
+Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到费马小定理
+费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
+已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
+对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
+可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
+1 2 3 4 long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; } 有了这些工具之后就可以预处理阶乘和逆元了" /><meta name="keywords" content='Lucas定理, 费马小定理, ACM, Math, 数论' /><meta itemprop="name" content="DP? 素数筛&#43;Lucas定理&#43;费马小定理">
+<meta itemprop="description" content="Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &lt; 1e4$
+Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到费马小定理
+费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
+已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
+对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
+可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
+1 2 3 4 long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; } 有了这些工具之后就可以预处理阶乘和逆元了"><meta itemprop="datePublished" content="2019-12-13T18:57:13+00:00" />
+<meta itemprop="dateModified" content="2019-12-13T18:57:13+00:00" />
+<meta itemprop="wordCount" content="467">
+<meta itemprop="keywords" content="Lucas定理,费马小定理,ACM,Math,数论," /><meta property="og:title" content="DP? 素数筛&#43;Lucas定理&#43;费马小定理" />
+<meta property="og:description" content="Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &lt; 1e4$
+Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到费马小定理
+费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
+已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
+对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
+可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
+1 2 3 4 long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; } 有了这些工具之后就可以预处理阶乘和逆元了" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/lucas/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-12-13T18:57:13+00:00" />
+<meta property="article:modified_time" content="2019-12-13T18:57:13+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="DP? 素数筛&#43;Lucas定理&#43;费马小定理"/>
+<meta name="twitter:description" content="Description 在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有T组询问，$T \leq 100000$， $0 \leq k \leq n \leq 1e9$, 保证$p$是质数， 其中$p &lt; 1e4$
+Solution 名字虽然是DP，但是可以找出最优方案。 优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$ 再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}&#43;C_{n-k&#43;1}^{1}&#43;C_{n-k&#43;2}^{2}&#43;&hellip;&#43;C_{n}^{k}=C_{n&#43;1}^{k}$ 通过变换$C_{n-k}^{0} = C_{n-k&#43;1}{0}$ 再通过公式$C_{n}^{m}=C_{n-1}^{m}&#43;C_{n-1}^{m-1}$可将上述公式合并 得到$C_{n&#43;1}^{k}$ 所以答案为$C_{n&#43;1}^{k}&#43;n-k$ 当$k &gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况 又发现题目涉及组合数取模，所以要用到费马小定理
+费马小定理: 假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$
+已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元 然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁套老鹅(TLE)，于是借助Lucas定理
+对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \ mod \ p$
+可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$
+1 2 3 4 long long Lucas(long long n, long long m, long long p) { if (m == 0) return 1; return (C(n % p, m % p, p) * Lucas(n / p, m / p, p)) % p; } 有了这些工具之后就可以预处理阶乘和逆元了"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/lucas/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/catalan/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/fib/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "DP? 素数筛+Lucas定理+费马小定理",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/lucas\/"
+    },"genre": "posts","keywords": "Lucas定理, 费马小定理, ACM, Math, 数论","wordcount":  467 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/lucas\/","datePublished": "2019-12-13T18:57:13+00:00","dateModified": "2019-12-13T18:57:13+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>DP? 素数筛&#43;Lucas定理&#43;费马小定理</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/algorithm/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Algorithm</a></span></div>
+      <div class="post-meta-line"><span title="published on 2019-12-13 18:57:13"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2019-12-13">2019-12-13</time></span>&nbsp;<span title="Updated on 2019-12-13 18:57:13"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2019-12-13">2019-12-13</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>467 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>3 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#description">Description</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#code">Code</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="description">Description</h1>
+<p>在杨辉三角中，从第一行第一列$(0,0)$开始，每次可选择向正下方走或向右下方走，走到第$n$行时不能超过第$n$行第$k$个元素，询问所经过路径的值的和的最小值$mod(p)$，一共有<code>T</code>组询问，$T \leq 100000$，  $0 \leq k \leq n \leq 1e9$,  保证$p$是质数， 其中$p &lt; 1e4$</p>
+<!-- more -->
+<h1 id="solution">Solution</h1>
+<p>名字虽然是DP，但是可以找出最优方案。
+优先考虑$k \leq \frac{n}{2}$的情况，先向下走$n-k$步到达$(n-k-1,0)$
+再一路沿着右下方走，直到到达底部，即有$C_{n-k}^{0}+C_{n-k+1}^{1}+C_{n-k+2}^{2}+&hellip;+C_{n}^{k}=C_{n+1}^{k}$
+通过变换$C_{n-k}^{0} = C_{n-k+1}{0}$
+再通过公式$C_{n}^{m}=C_{n-1}^{m}+C_{n-1}^{m-1}$可将上述公式合并
+得到$C_{n+1}^{k}$
+所以答案为$C_{n+1}^{k}+n-k$
+当$k &gt; \frac{n}{2}$时，根据对称性，令$k=n-k$即可转化成上一种情况
+又发现题目涉及组合数取模，所以要用到<strong>费马小定理</strong></p>
+<blockquote>
+<p>费马小定理:
+假如$a$是一个整数，$p$是一个质数，且$gcd(a,p)=1$，即$a,p$互质，那么有$a^{p−1}≡1(modp)$</p>
+</blockquote>
+<p>已知$a^{p-1}≡1$，可以得到$a \cdot a^{p-2}≡1$，我们称$a$和$a^{p-2}$为在$mod(p)$意义下的乘法逆元
+然而这只解决了除法取模的问题，注意到$n$的范围在$1e9$直接计算组合数又是铁<strong>套老鹅</strong>(TLE)，于是借助<strong>Lucas定理</strong></p>
+<p>对于质数$p$,有$C_n^m\ mod \ p = C_{\lfloor \frac{n}{p} \rfloor}^{\lfloor \frac{m}{p} \rfloor} \cdot C_{n\ mod\ p}^{m\ mod\ p} \  mod \  p$</p>
+<p>可知$n\ mod\ p$和$m\ mod\ p$一定是小于$p$的数，可直接求解，其余部分继续用Lucas定理求解，当$m=0$的时候返回$1$</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">long</span> <span class="kt">long</span> <span class="nf">Lucas</span><span class="p">(</span><span class="kt">long</span> <span class="kt">long</span> <span class="n">n</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">m</span><span class="p">,</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">(</span><span class="n">C</span><span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">p</span><span class="p">,</span> <span class="n">m</span> <span class="o">%</span> <span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">Lucas</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="n">p</span><span class="p">,</span> <span class="n">m</span> <span class="o">/</span> <span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span> <span class="o">%</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>有了这些工具之后就可以预处理阶乘和逆元了</p>
+<h1 id="code">Code</h1>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;cstdio&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;cstring&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;queue&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">LL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">int</span> <span class="n">MAXN</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">LL</span> <span class="n">N</span><span class="p">,</span><span class="n">K</span><span class="p">,</span><span class="n">MOD</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">bool</span> <span class="n">isnotp</span><span class="p">[</span><span class="n">MAXN</span> <span class="o">+</span> <span class="mi">10</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">LL</span> <span class="n">pri</span><span class="p">[</span><span class="mi">1500</span><span class="p">],</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//素数表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="n">f</span><span class="p">[</span><span class="mi">1300</span><span class="p">][</span><span class="n">MAXN</span><span class="p">];</span><span class="c1">//阶乘
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="n">inv</span><span class="p">[</span><span class="mi">1300</span><span class="p">][</span><span class="n">MAXN</span><span class="p">];</span><span class="c1">//逆元
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">Euler</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">isnotp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">memset</span><span class="p">(</span><span class="n">isnotp</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">isnotp</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isnotp</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">pri</span><span class="p">[</span><span class="o">++</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">&amp;&amp;</span> <span class="n">i</span><span class="o">*</span><span class="n">pri</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">MAXN</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">isnotp</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">pri</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="n">pri</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">LL</span> <span class="nf">fffpow</span><span class="p">(</span><span class="n">LL</span> <span class="n">x</span><span class="p">,</span> <span class="n">LL</span> <span class="n">y</span><span class="p">,</span> <span class="n">LL</span> <span class="n">pp</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LL</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LL</span> <span class="n">a</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span> <span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">y</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">sum</span> <span class="o">=</span> <span class="p">(</span><span class="n">sum</span><span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="o">%</span> <span class="n">pp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="p">)</span><span class="o">%</span><span class="n">pp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">y</span><span class="o">&gt;&gt;=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="p">(</span><span class="n">sum</span><span class="p">)</span><span class="o">%</span><span class="n">pp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">inline</span> <span class="n">LL</span> <span class="nf">Lucas</span><span class="p">(</span><span class="kt">int</span> <span class="n">N</span><span class="p">,</span><span class="kt">int</span> <span class="n">M</span><span class="p">,</span><span class="kt">int</span> <span class="n">o</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">LL</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">ans</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span><span class="p">(</span><span class="n">N</span> <span class="o">&amp;&amp;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">a</span> <span class="o">=</span> <span class="n">N</span><span class="o">%</span><span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">b</span> <span class="o">=</span> <span class="n">M</span><span class="o">%</span><span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">)</span><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ans</span> <span class="o">=</span> <span class="n">ans</span><span class="o">*</span><span class="n">f</span><span class="p">[</span><span class="n">o</span><span class="p">][</span><span class="n">a</span><span class="p">]</span><span class="o">%</span><span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">]</span><span class="o">*</span><span class="n">inv</span><span class="p">[</span><span class="n">o</span><span class="p">][</span><span class="n">b</span><span class="p">]</span><span class="o">%</span><span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">]</span><span class="o">*</span><span class="n">inv</span><span class="p">[</span><span class="n">o</span><span class="p">][</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">]</span><span class="o">%</span><span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="n">N</span> <span class="o">/=</span> <span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">M</span> <span class="o">/=</span> <span class="n">pri</span><span class="p">[</span><span class="n">o</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>	
+</span></span><span class="line"><span class="cl">	<span class="n">Euler</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      	<span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      	<span class="n">inv</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">inv</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">pri</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">j</span> <span class="o">%</span> <span class="n">pri</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">          <span class="n">inv</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">fffpow</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">pri</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">pri</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span> <span class="p">(</span><span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">N</span> <span class="o">&gt;&gt;</span> <span class="n">K</span> <span class="o">&gt;&gt;</span> <span class="n">MOD</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">LL</span> <span class="n">ans</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span><span class="p">(</span><span class="n">K</span> <span class="o">&gt;</span> <span class="n">N</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="n">K</span> <span class="o">=</span> <span class="n">N</span> <span class="o">-</span> <span class="n">K</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      	<span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">1229</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      	<span class="k">while</span><span class="p">(</span><span class="n">l</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        	<span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        	<span class="k">if</span><span class="p">(</span><span class="n">MOD</span> <span class="o">&lt;</span> <span class="n">pri</span><span class="p">[</span><span class="n">mid</span><span class="p">])</span> <span class="n">r</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        	<span class="k">else</span> <span class="n">l</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="n">ans</span> <span class="o">=</span> <span class="p">(</span><span class="n">Lucas</span><span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">N</span> <span class="o">-</span> <span class="n">K</span><span class="p">)</span><span class="o">%</span><span class="n">MOD</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">printf</span><span class="p">(</span><span class="s">&#34;Case #%d: %lld</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">++</span><span class="n">cnt</span><span class="p">,</span> <span class="n">ans</span><span class="p">);</span>	
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2019-12-13 18:57:13">Updated on 2019-12-13&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/lucas/" data-title="DP? 素数筛&#43;Lucas定理&#43;费马小定理" data-hashtags="Lucas定理,费马小定理,ACM,Math,数论"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/lucas/" data-hashtag="Lucas定理"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/lucas/" data-title="DP? 素数筛&#43;Lucas定理&#43;费马小定理"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/lucas%E5%AE%9A%E7%90%86/' class="post-tag">Lucas定理</a><a href='/tags/%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86/' class="post-tag">费马小定理</a><a href='/tags/acm/' class="post-tag">ACM</a><a href='/tags/math/' class="post-tag">Math</a><a href='/tags/%E6%95%B0%E8%AE%BA/' class="post-tag">数论</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/catalan/" class="post-nav-item" rel="prev" title="小兔的棋盘 组合数学"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>小兔的棋盘 组合数学</a>
+      <a href="/posts/fib/" class="post-nav-item" rel="next" title="Triangle Fibonacci&#43;二分查找">Triangle Fibonacci&#43;二分查找<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

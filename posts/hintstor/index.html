@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="0x00 Everyday English Heterogeneous 各种各样的
+semantic 语义上的
+conservative 保守的、传统的 &mdash;aggressive 激进的
+aggregate 合计
+orchestrate 精心策划
+proactive 积极主动的
+by means of 通过，借助于
+off-the-shelf 现成的
+elaborate 详细阐述
+0x01 Intro 随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统
+异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成
+在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次
+这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中
+本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints
+设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：
+新的app/user层面的接口允许用户定义和配置新的hint VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统 在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略 作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：
+使用文件系统内部的数据进行分类（元数据，文件数据，文件大小） Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上 云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。 I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分 0x02 Bg 在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。
+目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，fadvise()和inoice()系统调用可以改善prefetching，但是不能解决数据移动问题。
+MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。
+目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。
+0x03 HintStor Design Overview HintStor的架构图如上图所示
+Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
+整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
+在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能：" /><meta name="keywords" content='Paper, I/O' /><meta itemprop="name" content="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage">
+<meta itemprop="description" content="0x00 Everyday English Heterogeneous 各种各样的
+semantic 语义上的
+conservative 保守的、传统的 &mdash;aggressive 激进的
+aggregate 合计
+orchestrate 精心策划
+proactive 积极主动的
+by means of 通过，借助于
+off-the-shelf 现成的
+elaborate 详细阐述
+0x01 Intro 随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统
+异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成
+在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次
+这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中
+本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints
+设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：
+新的app/user层面的接口允许用户定义和配置新的hint VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统 在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略 作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：
+使用文件系统内部的数据进行分类（元数据，文件数据，文件大小） Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上 云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。 I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分 0x02 Bg 在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。
+目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，fadvise()和inoice()系统调用可以改善prefetching，但是不能解决数据移动问题。
+MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。
+目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。
+0x03 HintStor Design Overview HintStor的架构图如上图所示
+Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
+整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
+在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能："><meta itemprop="datePublished" content="2022-11-30T10:58:22+08:00" />
+<meta itemprop="dateModified" content="2022-11-30T10:58:22+08:00" />
+<meta itemprop="wordCount" content="163">
+<meta itemprop="keywords" content="Paper,I/O," /><meta property="og:title" content="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage" />
+<meta property="og:description" content="0x00 Everyday English Heterogeneous 各种各样的
+semantic 语义上的
+conservative 保守的、传统的 &mdash;aggressive 激进的
+aggregate 合计
+orchestrate 精心策划
+proactive 积极主动的
+by means of 通过，借助于
+off-the-shelf 现成的
+elaborate 详细阐述
+0x01 Intro 随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统
+异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成
+在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次
+这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中
+本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints
+设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：
+新的app/user层面的接口允许用户定义和配置新的hint VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统 在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略 作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：
+使用文件系统内部的数据进行分类（元数据，文件数据，文件大小） Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上 云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。 I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分 0x02 Bg 在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。
+目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，fadvise()和inoice()系统调用可以改善prefetching，但是不能解决数据移动问题。
+MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。
+目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。
+0x03 HintStor Design Overview HintStor的架构图如上图所示
+Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
+整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
+在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/hintstor/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-30T10:58:22+08:00" />
+<meta property="article:modified_time" content="2022-11-30T10:58:22+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage"/>
+<meta name="twitter:description" content="0x00 Everyday English Heterogeneous 各种各样的
+semantic 语义上的
+conservative 保守的、传统的 &mdash;aggressive 激进的
+aggregate 合计
+orchestrate 精心策划
+proactive 积极主动的
+by means of 通过，借助于
+off-the-shelf 现成的
+elaborate 详细阐述
+0x01 Intro 随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统
+异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成
+在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次
+这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中
+本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints
+设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：
+新的app/user层面的接口允许用户定义和配置新的hint VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统 在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略 作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：
+使用文件系统内部的数据进行分类（元数据，文件数据，文件大小） Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上 云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。 I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分 0x02 Bg 在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。
+目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，fadvise()和inoice()系统调用可以改善prefetching，但是不能解决数据移动问题。
+MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。
+目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。
+0x03 HintStor Design Overview HintStor的架构图如上图所示
+Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
+整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
+在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能："/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/hintstor/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/pinkkv/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/darttour/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/hintstor\/"
+    },"genre": "posts","keywords": "Paper, I\/O","wordcount":  163 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/hintstor\/","datePublished": "2022-11-30T10:58:22+08:00","dateModified": "2022-11-30T10:58:22+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-11-30 10:58:22"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-30">2022-11-30</time></span>&nbsp;<span title="Updated on 2022-11-30 10:58:22"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-30">2022-11-30</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>163 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-everyday-english">0x00 Everyday English</a></li>
+    <li><a href="#0x01-intro">0x01 Intro</a></li>
+    <li><a href="#0x02-bg">0x02 Bg</a></li>
+    <li><a href="#0x03-hintstor-design">0x03 HintStor Design</a>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#interface">Interface</a></li>
+        <li><a href="#file-system-plugin">File System Plugin</a></li>
+        <li><a href="#block-storage-data-manager">Block Storage Data Manager</a></li>
+        <li><a href="#classification">Classification</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion--thinking">Conclusion &amp;&amp; Thinking</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="0x00-everyday-english">0x00 Everyday English</h1>
+<p>Heterogeneous 各种各样的</p>
+<p>semantic 语义上的</p>
+<p>conservative 保守的、传统的 &mdash;aggressive 激进的</p>
+<p>aggregate 合计</p>
+<p>orchestrate 精心策划</p>
+<p>proactive 积极主动的</p>
+<p>by means of 通过，借助于</p>
+<p>off-the-shelf 现成的</p>
+<p>elaborate 详细阐述</p>
+<h1 id="0x01-intro">0x01 Intro</h1>
+<p>随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统</p>
+<p>异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成</p>
+<p>在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次</p>
+<p>这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中</p>
+<p>本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints</p>
+<p>设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：</p>
+<ul>
+<li>新的app/user层面的接口允许用户定义和配置新的hint</li>
+<li>VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统</li>
+<li>在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略</li>
+</ul>
+<p>作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：</p>
+<ul>
+<li>使用文件系统内部的数据进行分类（元数据，文件数据，文件大小）</li>
+<li>Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上</li>
+<li>云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。</li>
+<li>I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分</li>
+</ul>
+<h1 id="0x02-bg">0x02 Bg</h1>
+<p>在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。</p>
+<p>目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，<code>fadvise()</code>和<code>inoice()</code>系统调用可以改善prefetching，但是不能解决数据移动问题。</p>
+<p>MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。</p>
+<p>目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。</p>
+<h1 id="0x03-hintstor-design">0x03 HintStor Design</h1>
+<h2 id="overview">Overview</h2>
+<p><img loading="lazy" src="/img/image-20221202204914922.png" srcset="/img/image-20221202204914922.png, /img/image-20221202204914922.png 1.5x, /img/image-20221202204914922.png 2x" sizes="auto" data-title="image-20221202204914922" data-alt="image-20221202204914922" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>HintStor的架构图如上图所示</p>
+<p>Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射</p>
+<p>整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件</p>
+<ul>
+<li>在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints</li>
+<li>为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局</li>
+<li>为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略</li>
+</ul>
+<p>在Device Mapper中实现了两个功能：</p>
+<ul>
+<li>Redirector 将I/O请求转发到相应的设备</li>
+<li>Migrator 提供块设备间的异步数据拷贝，为了防止拷贝过程中对带宽的占用，会对流量进行限制，迁移后会通过一个flag来决定是否删除拷贝的原始数据</li>
+</ul>
+<h2 id="interface">Interface</h2>
+<p>HintStor使用sysfs接口为I/O请求设置一些属性，与块设备和文件系统通信，类似于一个伪文件系统，可以从其他内核的子系统中提取信息。</p>
+<p>在内核实现了部分系统调用，使用JSON格式的请求进行通信，JSON的编解码可能有性能损失？</p>
+<p>一些应用程序可能要对代码进行少量修改</p>
+<h2 id="file-system-plugin">File System Plugin</h2>
+<p>HintStor可以获取与请求相关的data block信息，提前触发数据迁移，优化后续的访问</p>
+<p>HintStor可以区分前台和后台I/O ，优先对前台I/O进行满足</p>
+<p>HintStor在VFS提供了一个FS_HINT调用，用于获取文件的数据布局信息，获取文件系统元数据，该接口供用户空间和应用进行调用，同时支持查询多个文件的映射。</p>
+<p>该功能提供在ext2、ext4和btrfs等Linux中主流的文件系统中</p>
+<p>FS_HINT会维护ext4预分配的block group，btrfs可以将一个块设备挂载为sub-Volume，用于跨设备管理数据</p>
+<p>通过ioctl接口来获取文件的边界，来触发数据迁移或者I/O调度</p>
+<h2 id="block-storage-data-manager">Block Storage Data Manager</h2>
+<p>主要包含：</p>
+<p>chunk的映射表：</p>
+<ul>
+<li>维护LBA到Physical Block Address的映射</li>
+<li>chunk size 可自定义</li>
+</ul>
+<p>chunk-level I/O 分析器：</p>
+<ul>
+<li>用于监控每个chunk上的I/O访问统计信息</li>
+<li>估算每个chunk的访问频率，生成热力图，该信息用于周期性的进行数据迁移</li>
+<li>虽然这些信息可能不准确，仍然可以用来作为数据移动的正确性评估指标</li>
+<li>当chunk被迁移到更低速的层次，访问频率可能会升高，进而将数据转移到更快的层次</li>
+</ul>
+<p>chunk 调度器：</p>
+<ul>
+<li>用于评估不同任务的优先级进行调度</li>
+<li>目前支持一个工作队列和一个等待队列，默认使用FIFO机制来维护原有的请求顺序</li>
+<li>当任务优先级相关的Hint发起时，会将低优先级的请求放到等待队列尾部</li>
+<li>应用可以设置一个定时器来调用一个请求，用于将接近deadline的请求从等待队列移动到工作队列</li>
+</ul>
+<p>access hinit原子操作的分类模型：</p>
+<ul>
+<li>HintStor将数据的布局和移动视作改善异构存储系统的基本功能</li>
+<li>每一个access hint指令是一个四元组<code>(op,chunk_id,src_addr,dest_addr)</code>，包括操作类型、chunk ID、在逻辑卷中的源地址和目的地址</li>
+<li>共有四个原子操作：
+<ul>
+<li>Redirect：当最初请求的原地址被重定向到其他地址时触发，例如在一个由多个SSD和HDD组成的逻辑卷中，可以将存储到HDD上的较小的文件重定向到SSD中。该处理函数会调用DM中的驱动并管理被重定向的请求，当bio到达DM时，将对data chunk重新赋值为目的地址</li>
+<li>Migrate：作为HintStor中关键的部分，在后台会保留一个migration daemon后台驻留程序，起初当数据块存放于不同的存储设备时，数据的访问频率会时不时发生变化，Migration操作通过调用DM中的migrator target driver，将data chunk从原有的位置转移到目的位置。为了保证一致性，迁移过程中该chunk将加锁进行保护，忽略对chunk的访问。HintStor提供主动和策略两种迁移方式，主动即用户主动触发，同时实现了基于时间的启发式迁移策略，可以配置为每两个小时迁移top-k访问最频繁的chunk到更快的存储设备中</li>
+<li>Replicate：用于将数据的副本进行保留，使用DM中的migrator target driver，保留原来数据的指针，使得热点数据分布在多个存储设备上，提高数据访问的平均时间，同时可以利用Replicate创建数据的多个副本，需要加锁</li>
+<li>Prefetch：类似于Buffering， HintStor预留一个buffer space空间用于预取，将data chunk加载到buffer space中，实现类似于Migrate和Replicate，主要区别是Prefetch在拷贝时不需要加锁进行保护</li>
+</ul>
+</li>
+</ul>
+<h2 id="classification">Classification</h2>
+<p>I/O access hints可以分为两种，分别为从操作系统动态地进行捕获和从文件系统静态地获取</p>
+<p><img loading="lazy" src="/img/image-20221209005726034.png" srcset="/img/image-20221209005726034.png, /img/image-20221209005726034.png 1.5x, /img/image-20221209005726034.png 2x" sizes="auto" data-title="image-20221209005726034" data-alt="image-20221209005726034" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>动态的access hints主要帮助块存储设备在运行时管理数据的布局，对于冷数据，便于文件系统进行预取。</p>
+<p>HintStor在chunk级别处理I/O请求，并且绑定一些额外的信息，例如文件结构和用户的提示，任务调度则在进程level实现</p>
+<h1 id="conclusion--thinking">Conclusion &amp;&amp; Thinking</h1>
+<ul>
+<li>对比Flash Share，HintStor主要针对Linux I/O栈和文件系统层面，Flash Share 还考虑到了NVMe协议方面和SSD层面</li>
+<li>在处理前台/后台I/O部分二者比较类似</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-11-30 10:58:22">Updated on 2022-11-30&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/hintstor/" data-title="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage" data-hashtags="Paper,I/O"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/hintstor/" data-hashtag="Paper"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/hintstor/" data-title="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/i/o/' class="post-tag">I/O</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/pinkkv/" class="post-nav-item" rel="prev" title="[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</a>
+      <a href="/posts/darttour/" class="post-nav-item" rel="next" title="Dart学习笔记">Dart学习笔记<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="Intro 优化I/O的方法
+用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈 使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制 Related Work 减少内核的开销
+减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销 修改存储接口
+分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号 改善fsync
+冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行 用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建 目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统 For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求
+由于文件系统带来的三次IO操作
+数据块写 jbd2发起写入日志Block I/O 提交Block I/O 这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。
+For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
+因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低" /><meta name="keywords" content='File System, SSD, Storage, Paper' /><meta itemprop="name" content="[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs">
+<meta itemprop="description" content="Intro 优化I/O的方法
+用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈 使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制 Related Work 减少内核的开销
+减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销 修改存储接口
+分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号 改善fsync
+冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行 用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建 目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统 For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求
+由于文件系统带来的三次IO操作
+数据块写 jbd2发起写入日志Block I/O 提交Block I/O 这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。
+For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
+因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低"><meta itemprop="datePublished" content="2022-08-17T10:30:41+08:00" />
+<meta itemprop="dateModified" content="2022-08-17T10:30:41+08:00" />
+<meta itemprop="wordCount" content="139">
+<meta itemprop="keywords" content="File System,SSD,Storage,Paper," /><meta property="og:title" content="[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs" />
+<meta property="og:description" content="Intro 优化I/O的方法
+用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈 使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制 Related Work 减少内核的开销
+减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销 修改存储接口
+分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号 改善fsync
+冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行 用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建 目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统 For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求
+由于文件系统带来的三次IO操作
+数据块写 jbd2发起写入日志Block I/O 提交Block I/O 这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。
+For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
+因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/asyncio/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-08-17T10:30:41+08:00" />
+<meta property="article:modified_time" content="2022-08-17T10:30:41+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs"/>
+<meta name="twitter:description" content="Intro 优化I/O的方法
+用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈 使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制 Related Work 减少内核的开销
+减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销 修改存储接口
+分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号 改善fsync
+冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行 用户层直接访问外设，存在隔离、保护等安全问题
+Motivation 背景 现状：
+I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建 目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
+本文专注于：
+Linux内核中的read()和write()&#43;fsync() 基于NVMe SSD的Ext4文件系统 For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
+此类操作可以在设备I/O操作进行时执行
+因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
+For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
+由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求
+由于文件系统带来的三次IO操作
+数据块写 jbd2发起写入日志Block I/O 提交Block I/O 这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。
+For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
+因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/asyncio/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/flashshare/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/github_workflow/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "[ATC'19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/asyncio\/"
+    },"genre": "posts","keywords": "File System, SSD, Storage, Paper","wordcount":  139 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/asyncio\/","datePublished": "2022-08-17T10:30:41+08:00","dateModified": "2022-08-17T10:30:41+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-08-17 10:30:41"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-08-17">2022-08-17</time></span>&nbsp;<span title="Updated on 2022-08-17 10:30:41"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-08-17">2022-08-17</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>139 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#intro">Intro</a></li>
+    <li><a href="#related-work">Related Work</a></li>
+    <li><a href="#motivation">Motivation</a>
+      <ul>
+        <li><a href="#背景">背景</a></li>
+        <li><a href="#for-read-path">For Read Path</a></li>
+        <li><a href="#for-write-path">For Write Path</a></li>
+        <li><a href="#for-lightweight-block-layer">For Lightweight Block Layer</a></li>
+      </ul>
+    </li>
+    <li><a href="#design">Design</a>
+      <ul>
+        <li><a href="#轻量化的block-io-layer">轻量化的Block I/O Layer</a></li>
+        <li><a href="#read-path">Read Path</a>
+          <ul>
+            <li><a href="#异步页面申请和dma分配">异步页面申请和DMA分配</a></li>
+            <li><a href="#缓存页索引">缓存页索引</a></li>
+            <li><a href="#dma解除映射">DMA解除映射</a></li>
+          </ul>
+        </li>
+        <li><a href="#write--fsync-path">Write &amp;&amp; fsync Path</a></li>
+      </ul>
+    </li>
+    <li><a href="#experiment">Experiment</a></li>
+    <li><a href="#evaluation">Evaluation</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#一些启发">一些启发</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="intro">Intro</h1>
+<p>优化I/O的方法</p>
+<ul>
+<li>用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。</li>
+<li>优化操作系统内核的I/O 栈
+<ul>
+<li>使用轮询来减少上下文切换的开销</li>
+<li>在底层减少一半的中断处理</li>
+<li>分散I/O指令</li>
+<li>I/O block调度机制</li>
+</ul>
+</li>
+</ul>
+<h1 id="related-work">Related Work</h1>
+<p>减少内核的开销</p>
+<ul>
+<li>减少中断处理的后半部分</li>
+<li>是用轮询技术而非中断，减少上下文切换</li>
+<li>混合轮询</li>
+<li>基于SSD的闪存随机读写简化调度策略</li>
+<li>在NVMe固件中进行调度</li>
+<li>对高优先级的任务，提供不同的IO path支持，最小化IO path的开销</li>
+</ul>
+<p>修改存储接口</p>
+<ul>
+<li>分散/分散 IO合并多个IO到一个指令，减少往返次数</li>
+<li>移除doorbell机制和完成信号</li>
+</ul>
+<p>改善fsync</p>
+<ul>
+<li>冲fsync请求发出到收到response，延长数据持久化的时间</li>
+<li>在日志提交记录中使用校验和，有效的重叠日志写入和块写入</li>
+<li>提出<code>写守序系统调用</code>，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行</li>
+</ul>
+<p>用户层直接访问外设，存在隔离、保护等安全问题</p>
+<h1 id="motivation">Motivation</h1>
+<h2 id="背景">背景</h2>
+<p>现状：</p>
+<ul>
+<li>I/O 请求过程中太多的步骤</li>
+<li>页面缓存分配和索引</li>
+<li>DMA，一系列数据结构的创建</li>
+</ul>
+<p>目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化</p>
+<p>本文专注于：</p>
+<ul>
+<li>Linux内核中的<code>read()</code>和<code>write()+fsync()</code></li>
+<li>基于NVMe SSD的Ext4文件系统</li>
+</ul>
+<h2 id="for-read-path">For Read Path</h2>
+<p>研究发现许多剩余的操作不必在设备I/O之前或之后执行</p>
+<p>此类操作可以在设备I/O操作进行时执行</p>
+<p>因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠</p>
+<h2 id="for-write-path">For Write Path</h2>
+<p>缓冲写<code>write()</code>，并不发起IO请求，不能异步处理</p>
+<p>由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求</p>
+<p>由于文件系统带来的三次IO操作</p>
+<ol>
+<li>数据块写</li>
+<li>jbd2发起写入日志Block I/O</li>
+<li>提交Block I/O</li>
+</ol>
+<p>这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。</p>
+<h2 id="for-lightweight-block-layer">For Lightweight Block Layer</h2>
+<p>传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间</p>
+<p>因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低</p>
+<p>简化block layer，针对异步IO stack进行优化</p>
+<h1 id="design">Design</h1>
+<h2 id="轻量化的block-io-layer">轻量化的Block I/O Layer</h2>
+<p>LBIO，为LL NVMe SSD而设计，只支持IO submission/completion和IO指令tagging</p>
+<p>只使用<code>lbio</code>来表示一个block I/O请求，减少了<code>bio-to-request</code>的时间</p>
+<p>每个lbio包括</p>
+<ul>
+<li>LBA</li>
+<li>I/O 长度</li>
+<li>复制的页面</li>
+<li>页面的DMA地址</li>
+</ul>
+<p>使用全局的lbio二位数组来记录</p>
+<p>行的个数为CPU核心数，行成组被分配到一个NVMe队列</p>
+<p>例如8核心，4NVMe队列，每个队列分配2个核心的lbio
+当核心数等于队列数时，可以实现无锁的命令提交</p>
+<p>lbio在全局数组中的索引用作NVMe指令的tag，减少了之前赋tag的过程</p>
+<p>lbio提交后，调用<code>nvme_queue_lbio</code>来提交I/O指令</p>
+<p><strong>LBIO不会合并和调度IO请求</strong></p>
+<h2 id="read-path">Read Path</h2>
+<p>Ext4文件系统中，由extent status tree保存缓存到物理文件block的映射</p>
+<p>预加载映射到内存中，当树太大时，可以只对某个文件预加载</p>
+<h3 id="异步页面申请和dma分配">异步页面申请和DMA分配</h3>
+<p>提前分配空闲页池</p>
+<p>为了减少页面DMA的分配，为每个核维护一个DMA映射空闲页（4KB DMA映射页的链表）</p>
+<p>当空闲页池不够用时，将退化为同步进行（origin）</p>
+<h3 id="缓存页索引">缓存页索引</h3>
+<p>自旋锁防止并发问题，影响效率</p>
+<p>在请求发出，但是页面还没有更新时，可能重复请求更新页面</p>
+<p>解决方案是不限制request，在request completion阶段解决问题</p>
+<p>尽管多个block请求，但是只能有一个页面被索引</p>
+<p>对于其他页面，标记为abandoned，中断发生之后，如果标记为abandoned，则清除已经完成的页面</p>
+<h3 id="dma解除映射">DMA解除映射</h3>
+<p>原本使用中断来处理，改为当系统空闲或等待一个IO请求时处理</p>
+<p>该方式可能会产生漏洞窗口，若不受到恶意访问，不会产生影响，否则用户可以自行选择关闭惰性DMA映射接触</p>
+<h2 id="write--fsync-path">Write &amp;&amp; fsync Path</h2>
+<p>当fsync涉及文件系统中事务时，可以将jbd2日志处理重叠处理</p>
+<h1 id="experiment">Experiment</h1>
+<p>基于Linux内核5.0.5版本</p>
+<p>使用文件描述符<code>O_AIOS</code></p>
+<h1 id="evaluation">Evaluation</h1>
+<h1 id="conclusion">Conclusion</h1>
+<p>提出了AIOS</p>
+<p>LBIO层</p>
+<p>AIOS将I/O路径中的同步操作替换为异步操作，以将与读取和fsync相关的计算与设备I/O访问重叠。</p>
+<p>AIOS在Optane SSD上实现了一位数微秒的I/O延迟。</p>
+<p>此外，AIOS通过Z-SSD和Optane SSD上的模拟实验和实际测试显著降低延迟和性能改进。</p>
+<h1 id="一些启发">一些启发</h1>
+<ol>
+<li>优化I/O可以从CPU的空闲时间分析，需要考虑内核和文件系统的工作流程，最大程度的利用CPU资源，减少空闲。</li>
+<li>硬件设备在发展的同时，软件应该提供必要适配</li>
+<li>减少内核中与I/O相关的结构类型转化，可以有效节省时间开销</li>
+<li>惰性修改会存在安全问题，在保证安全的情况下，可以提高效率</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-08-17 10:30:41">Updated on 2022-08-17&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/asyncio/" data-title="[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs" data-hashtags="File System,SSD,Storage,Paper"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/asyncio/" data-hashtag="File System"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/asyncio/" data-title="[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/paper/' class="post-tag">Paper</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/flashshare/" class="post-nav-item" rel="prev" title="[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</a>
+      <a href="/posts/github_workflow/" class="post-nav-item" rel="next" title="使用GitHub Workflow工作流自动部署静态博客">使用GitHub Workflow工作流自动部署静态博客<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

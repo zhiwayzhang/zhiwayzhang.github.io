@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>三种插值方法及实现 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+1 2 x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 import numpy as np def linear(x, y, x0): &#39;&#39;&#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &#39;&#39;&#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np." /><meta name="keywords" content='Math, Numpy' /><meta itemprop="name" content="三种插值方法及实现">
+<meta itemprop="description" content="插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+1 2 x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 import numpy as np def linear(x, y, x0): &#39;&#39;&#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &#39;&#39;&#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np."><meta itemprop="datePublished" content="2021-04-19T22:22:57+00:00" />
+<meta itemprop="dateModified" content="2021-04-19T22:22:57+00:00" />
+<meta itemprop="wordCount" content="597">
+<meta itemprop="keywords" content="Math,Numpy," /><meta property="og:title" content="三种插值方法及实现" />
+<meta property="og:description" content="插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+1 2 x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 import numpy as np def linear(x, y, x0): &#39;&#39;&#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &#39;&#39;&#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/newtown/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-04-19T22:22:57+00:00" />
+<meta property="article:modified_time" content="2021-04-19T22:22:57+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="三种插值方法及实现"/>
+<meta name="twitter:description" content="插值方法 插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。
+常用的插值方法有很多，本文章给出三种常见的插值方法的实现。
+使用语言: Python
+使用下面的数据，预测函数在x=1处的值
+1 2 x = np.array([0.5, 0.6, 0.4, 0.7]) y = np.array([-0.6931, -0.5108, -0.9163, -0.3567]) 线性插值 线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$ 可以根据点斜式方程求解 即
+$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$ 还可以将公式整理成如下形式
+$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} &#43; y_1 \frac{x- x_0}{x_1 - x_0}$
+我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$
+将其线性组合之后即为
+$p(x)=y_0 l_0(x)&#43;y_1 l_1(x)$
+是Lagrange插值的特殊形式
+此处给出线性插值的代码实现：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 import numpy as np def linear(x, y, x0): &#39;&#39;&#39; x : 为横坐标数组 y : 为纵坐标数组 x0: 为需要预测点的横坐标 res: 预测结果 &#39;&#39;&#39; res = y[1] &#43; (y[1] - y[0])*(x0 - x[1])/(x[1] - x[0]) # 根据公式计算结果 return res x = np."/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/newtown/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/debugnote/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/integration/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "三种插值方法及实现",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/newtown\/"
+    },"genre": "posts","keywords": "Math, Numpy","wordcount":  597 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/newtown\/","datePublished": "2021-04-19T22:22:57+00:00","dateModified": "2021-04-19T22:22:57+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>三种插值方法及实现</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/algorithm/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Algorithm</a></span></div>
+      <div class="post-meta-line"><span title="published on 2021-04-19 22:22:57"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2021-04-19">2021-04-19</time></span>&nbsp;<span title="Updated on 2021-04-19 22:22:57"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2021-04-19">2021-04-19</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>597 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>3 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#插值方法">插值方法</a></li>
+    <li><a href="#线性插值">线性插值</a></li>
+    <li><a href="#largrange插值">Largrange插值</a></li>
+    <li><a href="#newton插值">Newton插值</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="插值方法">插值方法</h1>
+<p>插值属于数值分析领域中的一种方法，是一种通过已知的离散的数据点，来拟合原函数根据给定的自变量估算因变量的方法。</p>
+<p>常用的插值方法有很多，本文章给出三种常见的插值方法的实现。</p>
+<p>使用语言: Python</p>
+<p>使用下面的数据，预测函数在x=1处的值</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span></span></span></code></pre></td></tr></table>
+</div>
+</div><!-- more -->
+<h1 id="线性插值">线性插值</h1>
+<p>线性插值及求一次多项式$p(x)$，满足$p(x_0), p(x_1) = y_1$
+可以根据点斜式方程求解
+即</p>
+<p>$p(x) =y_0 \frac{y_{1}-y_{0}}{x_1-x_0}(x-x_0)$
+还可以将公式整理成如下形式</p>
+<p>$p(x) = y_0 \frac{x - x_1}{x_0 - x_1} + y_1 \frac{x- x_0}{x_1 - x_0}$</p>
+<p>我们令这里的$l_0(x)=\frac{x-x_1}{x_0 - x_1}, l_1(x)=\frac{x-x_0}{x_1-x_0}$</p>
+<p>将其线性组合之后即为</p>
+<p>$p(x)=y_0 l_0(x)+y_1 l_1(x)$</p>
+<p>是Lagrange插值的特殊形式</p>
+<p>此处给出线性插值的代码实现：</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">    x : 为横坐标数组
+</span></span></span><span class="line"><span class="cl"><span class="s1">    y : 为纵坐标数组
+</span></span></span><span class="line"><span class="cl"><span class="s1">    x0: 为需要预测点的横坐标
+</span></span></span><span class="line"><span class="cl"><span class="s1">    
+</span></span></span><span class="line"><span class="cl"><span class="s1">    res: 预测结果
+</span></span></span><span class="line"><span class="cl"><span class="s1">    &#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># 根据公式计算结果</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">res</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">answer</span> <span class="o">=</span> <span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="c1"># 保留四位小数</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="largrange插值">Largrange插值</h1>
+<p>根据Lagrange插值基函数$l_k(x)$，其满足如下性质
+当$i=k,l_k(x_i)=1$</p>
+<p>当$i\not ={k}, l_k(x_i) = 0$</p>
+<p>其中$l_k(x) = \prod_{i=0,i \not ={k}}^{n} \frac{x-x_i}{x_k-x_i}$</p>
+<p>可以得到$p(x)=y_0 l_0(x) + y_1 l_1(x) + &hellip; + y_n l_n(x)$</p>
+<p>$p(x)$满足$p(x_i)=y_i, i = 0,1,&hellip;,n$</p>
+<p>即根据插值结点确定的方程，可以使得$p(x_i)=y_i$，是一种可行的插值方法，极大的提高了插值精度。</p>
+<p>并且当只有两个插值结点时，Lagrange插值就退化成了线性插值，当有三个结点时，退化成抛物线插值。</p>
+<div class="highlight" id="id-3"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">largrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">    x : x数组
+</span></span></span><span class="line"><span class="cl"><span class="s1">    y : y数组
+</span></span></span><span class="line"><span class="cl"><span class="s1">    x0: 预测点横坐标
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    res: 预测结果
+</span></span></span><span class="line"><span class="cl"><span class="s1">    &#39;&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):])</span> <span class="c1"># 获得除去xi的所有横坐标</span>
+</span></span><span class="line"><span class="cl">        <span class="n">numerator</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">param</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span>     <span class="c1"># 分子，使用prod求出矩阵中所有元素的积</span>
+</span></span><span class="line"><span class="cl">        <span class="n">denominator</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">param</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="c1"># 计算分母</span>
+</span></span><span class="line"><span class="cl">        <span class="n">res</span> <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">numerator</span><span class="o">/</span><span class="n">denominator</span>   <span class="c1"># 根据公式计算当前步骤对答案的贡献</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">res</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">answer</span> <span class="o">=</span> <span class="n">largrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行结果：
+0.0634</p>
+<h1 id="newton插值">Newton插值</h1>
+<p>我们引入差商的概念，
+设有函数$f(x), x_0,&hellip;,x_n$</p>
+<p>$f[x_i, x_j] = \frac{f(x_j)-f(x_i)}{x_j - x_i}$</p>
+<p>称为$f(x)$关于点$x_i, x_j$的一阶差商</p>
+<p>$f[x_i, x_j, x_k] = \frac{f[x_j, x_k] - f[x_i, x_j]}{x_k - x_i}$</p>
+<p>称为$f(x)$关于点$x_i， x_j， x_k$二阶差商</p>
+<p>我们可以得到差商的一般定义，对于k阶差商</p>
+<p>$f[x_0, x_1, &hellip;, x_k] = \frac{f[x_1, &hellip;, x_k] - f[x_0, &hellip;, x_{k-1}]}{x_k - x_0}$
+计算差商可以通过差商表来计算</p>
+<table>
+<thead>
+<tr>
+<th>$x_i$</th>
+<th>$f(x_i)$</th>
+<th>一阶差商</th>
+<th>二阶差商</th>
+<th>三阶差商</th>
+<th>&hellip;</th>
+<th>n阶差商</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$x_0$</td>
+<td>$f(x_0)$</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>$x_1$</td>
+<td>$f(x_1)$</td>
+<td>$f[x_0, x_1]$</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>$x_2$</td>
+<td>$f(x_2)$</td>
+<td>$f[x_1, x_2]$</td>
+<td>$f[x_0, x_1, x_2]$</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>$x_3$</td>
+<td>$f(x_3)$</td>
+<td>$f[x_2, x_3]$</td>
+<td>$f[x_1, x_2, x_3]$</td>
+<td>$f[x_0, x_1, x_2, x_3]$</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td>&hellip;</td>
+<td></td>
+</tr>
+<tr>
+<td>$x_n$</td>
+<td>$f(x_n)$</td>
+<td>$f[x_{n-1}, x_{n}]$</td>
+<td>$f[x_{n-2}, x_{n-1}, x_{n}]$</td>
+<td>$f[x_{n-3}, x_{n-2}, x_{n-1}, x_{n}]$</td>
+<td></td>
+<td>$f[x_0, x_1, &hellip;, x_n]$</td>
+</tr>
+</tbody>
+</table>
+<p>将对角线上的差商值用来构造插值函数</p>
+<p>$f(x) =  f(x_0) + f[x_0, x_1](x- x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) + &hellip; + f[x_0, &hellip;, x_n](x - x_0)&hellip;(x - x_{n-1}) + f[x,x_0,x_1,x_2,&hellip;,x_n](x - x_0)&hellip;(x - x_{n})$</p>
+<p>其中$R(x) = f[x,x_0,x_1,x_2,&hellip;,x_n](x - x_0)&hellip;(x - x_{n})$为插值余项</p>
+<p>综上，牛顿插值的最终表达式为</p>
+<p>$R(x) = N(x)+R(x)$</p>
+<p>牛顿插值的插值基函数有可继承的特点，可以优化计算方法</p>
+<p>直接利用上一次的计算结果增量更新</p>
+<div class="highlight" id="id-4"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算差商表第j列的元素</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">GetColumRes</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">colum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">colum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">colum</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算差商</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">CalculateDividedDiffernces</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl">    <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 获得差商表第i列的元素</span>
+</span></span><span class="line"><span class="cl">        <span class="n">arr</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">GetColumRes</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">arr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">newton</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">res</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="n">DD</span> <span class="o">=</span> <span class="n">CalculateDividedDiffernces</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># factor因数迭乘</span>
+</span></span><span class="line"><span class="cl">        <span class="n">factor</span> <span class="o">*=</span> <span class="p">(</span><span class="n">x0</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 取出对角线上的元素进行计算</span>
+</span></span><span class="line"><span class="cl">        <span class="n">res</span> <span class="o">+=</span> <span class="n">DD</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">res</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6931</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5108</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9163</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3567</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">answer</span> <span class="o">=</span> <span class="n">newton</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">answer</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行结果：</p>
+<p>差商表</p>
+<p>[ 0.5        -0.6931      0.          0.          0.        ]</p>
+<p>[ 0.6        -0.5108      1.823       0.          0.        ]</p>
+<p>[ 0.4        -0.9163      2.0275     -2.045       0.        ]</p>
+<p>[ 0.7        -0.3567      1.86533333 -1.62166667  2.11666667]</p>
+<p>运行结果
+0.0634</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2021-04-19 22:22:57">Updated on 2021-04-19&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/newtown/" data-title="三种插值方法及实现" data-hashtags="Math,Numpy"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/newtown/" data-hashtag="Math"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/newtown/" data-title="三种插值方法及实现"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/math/' class="post-tag">Math</a><a href='/tags/numpy/' class="post-tag">Numpy</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/debugnote/" class="post-nav-item" rel="prev" title="OJ部署debug记录"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>OJ部署debug记录</a>
+      <a href="/posts/integration/" class="post-nav-item" rel="next" title="数值积分方法">数值积分方法<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

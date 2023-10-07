@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>【存储技术基础】磁盘技术 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="本讲内容HDD好弟弟：
+磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估 电子设备 电路驱动 机械设备 seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率 $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间 Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称
+rpm: round per min $$ {\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}} $$
+Data Transfer Time 分为内部传输和外部传输" /><meta name="keywords" content='Storage' /><meta itemprop="name" content="【存储技术基础】磁盘技术">
+<meta itemprop="description" content="本讲内容HDD好弟弟：
+磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估 电子设备 电路驱动 机械设备 seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率 $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间 Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称
+rpm: round per min $$ {\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}} $$
+Data Transfer Time 分为内部传输和外部传输"><meta itemprop="datePublished" content="2022-09-20T16:13:29+08:00" />
+<meta itemprop="dateModified" content="2022-09-20T16:13:29+08:00" />
+<meta itemprop="wordCount" content="143">
+<meta itemprop="keywords" content="Storage," /><meta property="og:title" content="【存储技术基础】磁盘技术" />
+<meta property="og:description" content="本讲内容HDD好弟弟：
+磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估 电子设备 电路驱动 机械设备 seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率 $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间 Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称
+rpm: round per min $$ {\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}} $$
+Data Transfer Time 分为内部传输和外部传输" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/disktechnology/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-09-20T16:13:29+08:00" />
+<meta property="article:modified_time" content="2022-09-20T16:13:29+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="【存储技术基础】磁盘技术"/>
+<meta name="twitter:description" content="本讲内容HDD好弟弟：
+磁盘的构成和各个部分的功能 磁盘的性能和评估方式 磁盘固件的功能，固件算法 推荐阅读：Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang
+0x00 组成 转轴，盘片，磁头
+track 磁道，每个盘片的正面和背面的同心圆
+对于盘片每个面是surface，每个track磁道分为多个sector（扇区）
+所有盘片上同一个位置的track是一个cylinder（柱面）
+寻址 物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置
+根据柱面-磁头-扇区来访问
+右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构
+0x01 性能评估 电子设备 电路驱动 机械设备 seek time 磁头运动速度 rotational latency 转轴旋转速度 data transfer rate 数据传输速率 $磁盘访问时间=磁头运动速度&#43;转轴旋转速度&#43;数据传输速度$
+Seek time inner和outter track中进行移动，到达对应的track所消耗的时间
+评价方法：
+Full stroke 里圈到外圈 Average 移动到中间所花费的时间 Track-to-track 两个磁道间的移动时间 Rotational Latency 平均旋转速度：转半圈的时间
+厂商使用转速来标称
+rpm: round per min $$ {\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}} $$
+Data Transfer Time 分为内部传输和外部传输"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/disktechnology/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/storage/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/lottery/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "【存储技术基础】磁盘技术",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/disktechnology\/"
+    },"genre": "posts","keywords": "Storage","wordcount":  143 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/disktechnology\/","datePublished": "2022-09-20T16:13:29+08:00","dateModified": "2022-09-20T16:13:29+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>【存储技术基础】磁盘技术</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-09-20 16:13:29"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-20">2022-09-20</time></span>&nbsp;<span title="Updated on 2022-09-20 16:13:29"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-20">2022-09-20</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>143 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-组成">0x00 组成</a>
+      <ul>
+        <li><a href="#寻址">寻址</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x01-性能评估">0x01 性能评估</a>
+      <ul>
+        <li><a href="#seek-time">Seek time</a></li>
+        <li><a href="#rotational-latency">Rotational Latency</a></li>
+        <li><a href="#data-transfer-time">Data Transfer Time</a></li>
+        <li><a href="#data-rate-inner-vs-outer-tracks">Data Rate: Inner vs. Outer Tracks</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-磁盘固件和调度">0x02 磁盘固件和调度</a>
+      <ul>
+        <li><a href="#映射逻辑地址到sector">映射逻辑地址到sector</a></li>
+      </ul>
+    </li>
+    <li><a href="#缺陷-第三讲开头部分">缺陷 第三讲开头部分</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>本讲内容HDD好弟弟：</p>
+<ul>
+<li>磁盘的构成和各个部分的功能</li>
+<li>磁盘的性能和评估方式</li>
+<li>磁盘固件的功能，固件算法</li>
+</ul>
+<p>推荐阅读：<a href="https://github.com/KevinOfNeu/ebooks/blob/master/Memory%20systems%20Cache%20DRAM%20Disk.pdf"target="_blank" rel="external nofollow noopener noreferrer">Memory System: Cache,DRAM,Disk.Author: Bruce Jacob, Spencer W. Ng, David T.Wang</a></p>
+<h1 id="0x00-组成">0x00 组成</h1>
+<p>转轴，盘片，磁头</p>
+<p>track 磁道，每个盘片的正面和背面的同心圆</p>
+<p>对于盘片每个面是surface，每个track磁道分为多个sector（扇区）</p>
+<p>所有盘片上同一个位置的track是一个cylinder（柱面）</p>
+<h2 id="寻址">寻址</h2>
+<p>物理编址：CHS，Cylinder-Head-Sector 定位一个块的位置</p>
+<p>根据柱面-磁头-扇区来访问</p>
+<p>右边图示表示逻辑块地址，每个柱面可以从上到下顺序编址，组成线性结构</p>
+<img src="/img/IMG_0448.jpg" alt="IMG_0448" style="zoom:50%;" />
+<h1 id="0x01-性能评估">0x01 性能评估</h1>
+<ul>
+<li>电子设备
+<ul>
+<li>电路驱动</li>
+</ul>
+</li>
+<li>机械设备
+<ul>
+<li>seek time 磁头运动速度</li>
+<li>rotational latency 转轴旋转速度</li>
+<li>data transfer rate 数据传输速率</li>
+</ul>
+</li>
+</ul>
+<p>$磁盘访问时间=磁头运动速度+转轴旋转速度+数据传输速度$</p>
+<h2 id="seek-time">Seek time</h2>
+<p>inner和outter track中进行移动，到达对应的track所消耗的时间</p>
+<p>评价方法：</p>
+<ul>
+<li>Full stroke 里圈到外圈</li>
+<li>Average 移动到中间所花费的时间</li>
+<li>Track-to-track 两个磁道间的移动时间</li>
+</ul>
+<h2 id="rotational-latency">Rotational Latency</h2>
+<p>平均旋转速度：转半圈的时间</p>
+<p>厂商使用转速来标称</p>
+<p>rpm: round per min
+$$
+{\rm Rotational\ Latency}=\frac{1}{2}*\frac{1}{\frac{x\ rpm}{60}}
+$$</p>
+<h2 id="data-transfer-time">Data Transfer Time</h2>
+<p><img loading="lazy" src="/img/image-20220921135256805.png" srcset="/img/image-20220921135256805.png, /img/image-20220921135256805.png 1.5x, /img/image-20220921135256805.png 2x" sizes="auto" data-title="image-20220921135256805" data-alt="image-20220921135256805" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>分为内部传输和外部传输</p>
+<p>内部传输是磁介质到Buffer</p>
+<p>外部传输是从接口到主机，例如SATA接口
+$$
+{\rm Transfer\ time=\frac{Block\ size}{Transfer\ rate(带宽)}}
+$$
+还有电子控制部件延迟，一般而言可以忽略，以上都是毫秒量级</p>
+<p><img loading="lazy" src="/img/image-20220921135704097.png" srcset="/img/image-20220921135704097.png, /img/image-20220921135704097.png 1.5x, /img/image-20220921135704097.png 2x" sizes="auto" data-title="image-20220921135704097" data-alt="image-20220921135704097" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>大部分时间开销在Seek Time，接近60%</p>
+<p>I/O Controller利用率越高，会导致平均的延迟升高</p>
+<p><img loading="lazy" src="/img/image-20220921140754758.png" srcset="/img/image-20220921140754758.png, /img/image-20220921140754758.png 1.5x, /img/image-20220921140754758.png 2x" sizes="auto" data-title="image-20220921140754758" data-alt="image-20220921140754758" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="data-rate-inner-vs-outer-tracks">Data Rate: Inner vs. Outer Tracks</h2>
+<p>磁盘在里圈和外圈的传输速率不同，外圈数据密度小，磁盘转速恒定（角速度相同），外圈的线速度大，外部磁道有更大的数据速率</p>
+<p>在操作系统视角来说，内外圈速率相同，实际外圈要快，是里圈的1.7倍</p>
+<h1 id="0x02-磁盘固件和调度">0x02 磁盘固件和调度</h1>
+<p>ASIC：</p>
+<ul>
+<li>信号处理</li>
+<li>容错</li>
+<li>驱动处理</li>
+<li>马达控制</li>
+<li>缓存控制</li>
+</ul>
+<p>firmware：</p>
+<ul>
+<li>请求处理</li>
+<li>请求排队和调度</li>
+<li>LBN-to-PBN 逻辑地址到物理地址的映射</li>
+</ul>
+<h2 id="映射逻辑地址到sector">映射逻辑地址到sector</h2>
+<p>一般块大小为512bytes或4KB，块的数量为容量/块大小</p>
+<p>磁盘上的数据编址如图所示，以sector为基础，在track内连续，减少rotational latency</p>
+<img src="/img/image-20220921164047132.png" alt="image-20220921164047132" style="zoom:50%;" />
+<p>不同盘面上的编址分为正面和背面，都会进行编址，还有以柱面为基准的编址，减少seek time。</p>
+<p>一般情况下：</p>
+<ul>
+<li>盘片为1-5个，2-10个盘面</li>
+<li>每个面磁道数为10s - 100s，1000s</li>
+<li>每个磁道上的扇区有500-4000个，每个磁道大小为250KB-2MB</li>
+</ul>
+<p>LBN寻址：</p>
+<ol>
+<li>柱面号=LBN/每个柱面的磁道数</li>
+<li>盘面号=(LBN对每个柱面的磁道数取模)/每个磁道的扇区数</li>
+<li>扇区号=LBN对每个磁道的扇区数取模</li>
+</ol>
+<p>讲解了几种调度算法：</p>
+<ul>
+<li>FCFS 先来先服务</li>
+<li>SSTF 最近先服务，有饥饿问题</li>
+<li>SCAN 先往一个方向走，再往另一个方向扫描</li>
+<li>C-SCAN 单向走</li>
+<li>LOOK 相较于SCAN不走0和边界</li>
+<li>C-LOOK 相较于C-SCAN不走边界</li>
+</ul>
+<p>评估指标：平均访问延迟，一般SSTF，C-LOOK</p>
+<h1 id="缺陷-第三讲开头部分">缺陷 第三讲开头部分</h1>
+<p>机械式部件限制了性能，继续提升会产生一些物理问题</p>
+<p>带宽提升有限</p>
+<p>存在能耗问题，需要通电、散热冷却等开销</p>
+<p>随机访问的性能差</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-09-20 16:13:29">Updated on 2022-09-20&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/disktechnology/" data-title="【存储技术基础】磁盘技术" data-hashtags="Storage"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/disktechnology/" data-hashtag="Storage"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/disktechnology/" data-title="【存储技术基础】磁盘技术"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/storage/" class="post-nav-item" rel="prev" title="【存储技术基础】概述"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>【存储技术基础】概述</a>
+      <a href="/posts/lottery/" class="post-nav-item" rel="next" title="中奖">中奖<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

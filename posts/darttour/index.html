@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Dart学习笔记 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="A Tour Of Dart 在macOS上搭建Dart/Flutter环境
+在Flutter官网下载SDK
+将SDK中的bin目录添加到system path
+执行flutter doctor看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装
+安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。
+安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入.zshrc中
+1 2 export ANDROID_HOME=&#34;/Users/***/Library/Android/sdk&#34; export PATH=&#34;$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH&#34; 然后执行source ~/.zshrc，再执行flutter doctor，可以看到要求接受android licenses
+运行flutter doctor --android-licenses，一路按y接受
+此时flutter全部的配置基本就完成了
+如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行:CocInstall coc-flutter
+两个有关flutter的coc.nvim扩展：
+coc-flutter
+coc-flutter-tools
+Important Concepts Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object
+Dart是强类型语言，但是var可以推导变量类型
+null safety开启后，变量不会包含null，使用int?声明变量可以使得变量可为null，在赋值的字面量后添加!可以保证变量不为null
+1 2 int? NullableNumber = 3; int unNullableNumber = 3!; Object可以用来作为范型的模版
+Dart的函数可以不依赖任何class，top-level
+Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定
+Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
+Dart包含warnings和errors机制，errors主要在编译时和运行时
+Variables " /><meta name="keywords" content='Dart' /><meta itemprop="name" content="Dart学习笔记">
+<meta itemprop="description" content="A Tour Of Dart 在macOS上搭建Dart/Flutter环境
+在Flutter官网下载SDK
+将SDK中的bin目录添加到system path
+执行flutter doctor看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装
+安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。
+安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入.zshrc中
+1 2 export ANDROID_HOME=&#34;/Users/***/Library/Android/sdk&#34; export PATH=&#34;$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH&#34; 然后执行source ~/.zshrc，再执行flutter doctor，可以看到要求接受android licenses
+运行flutter doctor --android-licenses，一路按y接受
+此时flutter全部的配置基本就完成了
+如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行:CocInstall coc-flutter
+两个有关flutter的coc.nvim扩展：
+coc-flutter
+coc-flutter-tools
+Important Concepts Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object
+Dart是强类型语言，但是var可以推导变量类型
+null safety开启后，变量不会包含null，使用int?声明变量可以使得变量可为null，在赋值的字面量后添加!可以保证变量不为null
+1 2 int? NullableNumber = 3; int unNullableNumber = 3!; Object可以用来作为范型的模版
+Dart的函数可以不依赖任何class，top-level
+Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定
+Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
+Dart包含warnings和errors机制，errors主要在编译时和运行时
+Variables "><meta itemprop="datePublished" content="2022-12-09T22:20:03+08:00" />
+<meta itemprop="dateModified" content="2022-12-09T22:20:03+08:00" />
+<meta itemprop="wordCount" content="64">
+<meta itemprop="keywords" content="Dart," /><meta property="og:title" content="Dart学习笔记" />
+<meta property="og:description" content="A Tour Of Dart 在macOS上搭建Dart/Flutter环境
+在Flutter官网下载SDK
+将SDK中的bin目录添加到system path
+执行flutter doctor看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装
+安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。
+安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入.zshrc中
+1 2 export ANDROID_HOME=&#34;/Users/***/Library/Android/sdk&#34; export PATH=&#34;$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH&#34; 然后执行source ~/.zshrc，再执行flutter doctor，可以看到要求接受android licenses
+运行flutter doctor --android-licenses，一路按y接受
+此时flutter全部的配置基本就完成了
+如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行:CocInstall coc-flutter
+两个有关flutter的coc.nvim扩展：
+coc-flutter
+coc-flutter-tools
+Important Concepts Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object
+Dart是强类型语言，但是var可以推导变量类型
+null safety开启后，变量不会包含null，使用int?声明变量可以使得变量可为null，在赋值的字面量后添加!可以保证变量不为null
+1 2 int? NullableNumber = 3; int unNullableNumber = 3!; Object可以用来作为范型的模版
+Dart的函数可以不依赖任何class，top-level
+Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定
+Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
+Dart包含warnings和errors机制，errors主要在编译时和运行时
+Variables " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/darttour/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-12-09T22:20:03+08:00" />
+<meta property="article:modified_time" content="2022-12-09T22:20:03+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Dart学习笔记"/>
+<meta name="twitter:description" content="A Tour Of Dart 在macOS上搭建Dart/Flutter环境
+在Flutter官网下载SDK
+将SDK中的bin目录添加到system path
+执行flutter doctor看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装
+安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。
+安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入.zshrc中
+1 2 export ANDROID_HOME=&#34;/Users/***/Library/Android/sdk&#34; export PATH=&#34;$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH&#34; 然后执行source ~/.zshrc，再执行flutter doctor，可以看到要求接受android licenses
+运行flutter doctor --android-licenses，一路按y接受
+此时flutter全部的配置基本就完成了
+如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行:CocInstall coc-flutter
+两个有关flutter的coc.nvim扩展：
+coc-flutter
+coc-flutter-tools
+Important Concepts Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object
+Dart是强类型语言，但是var可以推导变量类型
+null safety开启后，变量不会包含null，使用int?声明变量可以使得变量可为null，在赋值的字面量后添加!可以保证变量不为null
+1 2 int? NullableNumber = 3; int unNullableNumber = 3!; Object可以用来作为范型的模版
+Dart的函数可以不依赖任何class，top-level
+Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定
+Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
+Dart包含warnings和errors机制，errors主要在编译时和运行时
+Variables "/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/darttour/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/hintstor/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/femu-demo/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Dart学习笔记",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/darttour\/"
+    },"genre": "posts","keywords": "Dart","wordcount":  64 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/darttour\/","datePublished": "2022-12-09T22:20:03+08:00","dateModified": "2022-12-09T22:20:03+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Dart学习笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-12-09 22:20:03"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-12-09">2022-12-09</time></span>&nbsp;<span title="Updated on 2022-12-09 22:20:03"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-12-09">2022-12-09</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>64 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#a-tour-of-dart">A Tour Of Dart</a></li>
+    <li><a href="#important-concepts">Important Concepts</a></li>
+    <li><a href="#variables">Variables</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="a-tour-of-dart">A Tour Of Dart</h1>
+<p>在macOS上搭建Dart/Flutter环境</p>
+<p><a href="https://docs.flutter.dev/get-started/install/macos"target="_blank" rel="external nofollow noopener noreferrer">在Flutter官网下载SDK</a></p>
+<p>将SDK中的bin目录添加到system path</p>
+<p>执行<code>flutter doctor</code>看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装</p>
+<p>安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。</p>
+<p><img loading="lazy" src="/img/image-20221210104359404.png" srcset="/img/image-20221210104359404.png, /img/image-20221210104359404.png 1.5x, /img/image-20221210104359404.png 2x" sizes="auto" data-title="image-20221210104359404" data-alt="image-20221210104359404" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入<code>.zshrc</code>中</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">ANDROID_HOME</span><span class="o">=</span><span class="s2">&#34;/Users/***/Library/Android/sdk&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$ANDROID_HOME</span><span class="s2">/tools:</span><span class="nv">$ANDROID_HOME</span><span class="s2">/tools/bin:</span><span class="nv">$ANDROID_HOME</span><span class="s2">/platform-tools:</span><span class="nv">$PATH</span><span class="s2">&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后执行<code>source ~/.zshrc</code>，再执行<code>flutter doctor</code>，可以看到要求接受android licenses</p>
+<p>运行<code>flutter doctor --android-licenses</code>，一路按y接受</p>
+<p>此时flutter全部的配置基本就完成了</p>
+<p>如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行<code>:CocInstall coc-flutter</code></p>
+<p>两个有关flutter的coc.nvim扩展：</p>
+<p><a href="https://github.com/iamcco/coc-flutter"target="_blank" rel="external nofollow noopener noreferrer">coc-flutter</a></p>
+<p><a href="https://github.com/theniceboy/coc-flutter-tools"target="_blank" rel="external nofollow noopener noreferrer">coc-flutter-tools</a></p>
+<h1 id="important-concepts">Important Concepts</h1>
+<ul>
+<li>
+<p>Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object</p>
+</li>
+<li>
+<p>Dart是强类型语言，但是<code>var</code>可以推导变量类型</p>
+</li>
+<li>
+<p><code>null safety</code>开启后，变量不会包含null，使用<code>int?</code>声明变量可以使得变量可为null，在赋值的字面量后添加<code>!</code>可以保证变量不为null</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kt">int</span><span class="o">?</span> <span class="n">NullableNumber</span> <span class="o">=</span> <span class="m">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span>  <span class="n">unNullableNumber</span> <span class="o">=</span> <span class="m">3</span><span class="o">!</span><span class="p">;</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Object可以用来作为范型的模版</p>
+</li>
+<li>
+<p>Dart的函数可以不依赖任何class，top-level</p>
+</li>
+<li>
+<p>Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定</p>
+</li>
+<li>
+<p>Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰</p>
+</li>
+<li>
+<p>Dart包含warnings和errors机制，errors主要在编译时和运行时</p>
+</li>
+</ul>
+<h1 id="variables">Variables</h1>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-12-09 22:20:03">Updated on 2022-12-09&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/darttour/" data-title="Dart学习笔记" data-hashtags="Dart"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/darttour/" data-hashtag="Dart"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/darttour/" data-title="Dart学习笔记"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/dart/' class="post-tag">Dart</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/hintstor/" class="post-nav-item" rel="prev" title="[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage</a>
+      <a href="/posts/femu-demo/" class="post-nav-item" rel="next" title="FEMU环境配置">FEMU环境配置<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

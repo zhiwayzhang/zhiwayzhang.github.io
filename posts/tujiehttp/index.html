@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>图解HTTP读书笔记 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="图解HTTP读书笔记" /><meta name="keywords" content='HTTP, 计算机网络' /><meta itemprop="name" content="图解HTTP读书笔记">
+<meta itemprop="description" content="图解HTTP读书笔记"><meta itemprop="datePublished" content="2022-01-16T22:25:00+00:00" />
+<meta itemprop="dateModified" content="2022-01-16T22:25:00+00:00" />
+<meta itemprop="wordCount" content="214">
+<meta itemprop="keywords" content="HTTP,计算机网络," /><meta property="og:title" content="图解HTTP读书笔记" />
+<meta property="og:description" content="图解HTTP读书笔记" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/tujiehttp/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-16T22:25:00+00:00" />
+<meta property="article:modified_time" content="2022-01-16T22:25:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="图解HTTP读书笔记"/>
+<meta name="twitter:description" content="图解HTTP读书笔记"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/tujiehttp/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/ecf/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/mysql/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "图解HTTP读书笔记",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/tujiehttp\/"
+    },"genre": "posts","keywords": "HTTP, 计算机网络","wordcount":  214 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/tujiehttp\/","datePublished": "2022-01-16T22:25:00+00:00","dateModified": "2022-01-16T22:25:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>图解HTTP读书笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-01-16 22:25:00"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-16">2022-01-16</time></span>&nbsp;<span title="Updated on 2022-01-16 22:25:00"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-16">2022-01-16</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>214 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#web及网络基础">Web及网络基础</a>
+      <ul>
+        <li><a href="#tcpip">TCP/IP</a></li>
+        <li><a href="#iptcpdns">IP、TCP、DNS</a>
+          <ul>
+            <li><a href="#ip">IP</a></li>
+            <li><a href="#tcp协议的可靠性">TCP协议的可靠性</a></li>
+            <li><a href="#dns">DNS</a></li>
+          </ul>
+        </li>
+        <li><a href="#uri和url">URI和URL</a></li>
+      </ul>
+    </li>
+    <li><a href="#http协议">HTTP协议</a>
+      <ul>
+        <li><a href="#cookie">Cookie</a></li>
+      </ul>
+    </li>
+    <li><a href="#http报文">HTTP报文</a>
+      <ul>
+        <li><a href="#获取部分内容的请求">获取部分内容的请求</a></li>
+      </ul>
+    </li>
+    <li><a href="#http状态码">HTTP状态码</a></li>
+    <li><a href="#web服务器">Web服务器</a>
+      <ul>
+        <li><a href="#虚拟主机">虚拟主机</a></li>
+        <li><a href="#代理-网关-隧道">代理 网关 隧道</a>
+          <ul>
+            <li><a href="#代理">代理</a></li>
+            <li><a href="#网关">网关</a></li>
+            <li><a href="#隧道">隧道</a></li>
+          </ul>
+        </li>
+        <li><a href="#缓存">缓存</a></li>
+        <li><a href="#cookie相关header">Cookie相关header</a></li>
+      </ul>
+    </li>
+    <li><a href="#https">HTTPS</a>
+      <ul>
+        <li><a href="#通信步骤">通信步骤</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>图解HTTP读书笔记</p>
+<h1 id="web及网络基础">Web及网络基础</h1>
+<p><code>HTTP/0.9</code> 不是http的正式标准，临时版本</p>
+<p><code>HTTP/1.0</code> RFC1945</p>
+<p><code>HTTP/1.1</code> 目前应用较广 RFC2616</p>
+<p><code>HTTP/2.0</code> 大幅提高了web性能</p>
+<h2 id="tcpip">TCP/IP</h2>
+<p>互联网运行与TCP IP协议族之上，HTTP包含于其中</p>
+<p>ip，dns，udp，ftp，http，tcp。。。</p>
+<p>TCP/IP的分层管理</p>
+<p>应用层：决定了向用户提供服务时通信的活动，ftp，dns，http</p>
+<p>传输层：对应用层提供连接的两台计算机的数据传输，TCP Transmission Control Protocol传输控制协议和UDP User Data Protocol用户数据报协议</p>
+<p>网络层：处理网络上的数据包，数据包是网络传输的最小数据单位，规定如何传输路线，传输数据包</p>
+<p>数据链路层：处理连接网络的硬件，网络适配器NIC网卡</p>
+<p>物理层</p>
+<blockquote>
+<p>层次化好处：1.设计好接口，每个层次内部的设计可以自由改动 2.使设计变得更简单，应用层上的应用不需要考虑接收方的地理位置等</p>
+</blockquote>
+<h2 id="iptcpdns">IP、TCP、DNS</h2>
+<h3 id="ip">IP</h3>
+<p>IP协议位于网络层</p>
+<p>mac地址为网卡的固定地址，使用ARP协议（address resolution Protocol地址解析协议）凭借mac地址进行通信，解析ip到mac地址</p>
+<p>选择传输路线叫做路由选择</p>
+<h3 id="tcp协议的可靠性">TCP协议的可靠性</h3>
+<p>位于传输层</p>
+<p>将大数据块分割为报文段segment确保传输准确可靠</p>
+<p>将请求报文按照序号分为多个报文段，将每个报文段可靠的传输，收到后再根据序列号重组报文</p>
+<p>确保数据可到达：</p>
+<p>三次握手three way handshaking</p>
+<p>TCP标志 SYN synchronize和ACK acknowledgement</p>
+<p>具体过程：</p>
+<ul>
+<li>发送端发送一个带有SYN标志的数据包</li>
+<li>接收端收到后回传带有SYN/ACK标志的数据包</li>
+<li>发送端传回带有ACK标志的数据包，握手结束</li>
+</ul>
+<p>如果握手中的某个阶段中断，TCP协议会再次发送相同的数据包</p>
+<h3 id="dns">DNS</h3>
+<p>域名解析</p>
+<h2 id="uri和url">URI和URL</h2>
+<p>URL是URI的子集</p>
+<h1 id="http协议">HTTP协议</h1>
+<p>http是无状态协议</p>
+<p>使用cookie管理状态</p>
+<p>使用URI定位资源</p>
+<p>持久连接：任意一端未提出断开，则保持tcp连接状态，减少tcp连接重复建立和断开的开销</p>
+<p>HTTP 1.1中，所有连接默认为持久连接</p>
+<p>pipeline技术：连续发送请求，不必等待上一个请求返回</p>
+<h2 id="cookie">Cookie</h2>
+<p>服务器响应报文中Set-Cookie header字段，告知客户端保存</p>
+<p>客户端再次请求时自动在header中加入cookie</p>
+<h1 id="http报文">HTTP报文</h1>
+<p>换行符CR+LF，CR回车符<code>0x0d</code>，LF换行符<code>0x0a</code></p>
+<p>header + CR+LF + Body</p>
+<p>报文message是通信基本单位，8位组字节流</p>
+<p>实体entity 请求或响应的在和，包含实体header和实体body</p>
+<p>传输过程中可以对实体进行压缩</p>
+<p>实体可以分割传输</p>
+<h2 id="获取部分内容的请求">获取部分内容的请求</h2>
+<p>传输中断的恢复机制</p>
+<p>在header中加Range</p>
+<p><code>Range: bytes= 1-5000</code></p>
+<p>断点续传</p>
+<h1 id="http状态码">HTTP状态码</h1>
+<p>1XX，正在处理 信息性状态
+2XX，处理完毕 成功
+3XX，重定向状态码
+4XX，客户端错误状态码
+5XX，服务器错误状态码</p>
+<p>200 OK</p>
+<p>HEAD方法不会返回body</p>
+<p>204 No Content 处理成功，但是response中不包含实体</p>
+<p>206 Partial Content 客户端进行了范围请求</p>
+<p>301 Moved Permanently 永久重定向，资源分配了新的URI</p>
+<p>302 Found 临时重定向</p>
+<p>303 See Other 客户端用GET，临时重定向（比如POST访问时返回303，需要改GET方法重定向到另一个URI）</p>
+<p>304 Not modified 我有你要的资源但是不让你访问</p>
+<p>307 Temporary Redirect 临时重定向</p>
+<p>400 Bad request</p>
+<p>401 Unauthorized</p>
+<p>403 Forbidden 不允许访问</p>
+<p>404 Not Found 找不到资源</p>
+<p>500 Internal Server Error 内部错误</p>
+<p>503 Service Unavailable 服务器超负荷</p>
+<h1 id="web服务器">Web服务器</h1>
+<h2 id="虚拟主机">虚拟主机</h2>
+<p>一台服务器可以绑定多个域名</p>
+<p>通过dns解析</p>
+<h2 id="代理-网关-隧道">代理 网关 隧道</h2>
+<h3 id="代理">代理</h3>
+<p>转发中间人</p>
+<p>每次转发会追加写入via首部</p>
+<p>代理服务功能：缓存技术，访问控制，获取日志</p>
+<p>缓存代理：将资源缓存在代理服务器上，不从原服务器获取（有点像redis</p>
+<p>透明代理：转发请求和响应，不添加其他内容</p>
+<h3 id="网关">网关</h3>
+<p>转发客户端请求到实际程序</p>
+<p>网关与服务器使用非http通信</p>
+<h3 id="隧道">隧道</h3>
+<p>在客户端和服务器直接中转，保持双方的通信连接</p>
+<p>本身不解析http请求，只传输</p>
+<h2 id="缓存">缓存</h2>
+<p>客户端缓存和服务器缓存</p>
+<p>客户端缓存存储在浏览器</p>
+<p>各种header的作用</p>
+<h2 id="cookie相关header">Cookie相关header</h2>
+<p>Set-Cookie: 后跟name=value的序列</p>
+<p>Cookie: 发送cookie</p>
+<h1 id="https">HTTPS</h1>
+<p>http缺点：</p>
+<ul>
+<li>明文被窃听</li>
+<li>不验证双方身份，可伪装</li>
+<li>无法验证完整性，可以篡改</li>
+</ul>
+<p>使用SSL secure socket layer或TLS transport layer security安全层传输协议</p>
+<p>SSL使用证书确定身份</p>
+<p>防止篡改：使用md5或sha-1等校验方法校验报文完整性</p>
+<p>HTTP+通信加密+证书+完整性保护</p>
+<p>通信接口部分用ssl和tls协议代替</p>
+<p>http先和ssl通信，ssl再和tcp通信</p>
+<p>非对称加密 公钥进行加密，私钥进行解密</p>
+<h2 id="通信步骤">通信步骤</h2>
+<ol>
+<li>客户端发送client hello开始ssl通信</li>
+<li>服务器响应server hello</li>
+<li>服务器发送certificate报文，包含公钥证书</li>
+<li>服务器发送server hello done</li>
+<li>客户端发送client key exchange报文响应，ssl握手部分结束</li>
+<li>客户端发送change cipher spec</li>
+<li>客户端发送finished</li>
+<li>服务器发送change cipher spec</li>
+<li>ssl连接建立成功，开始进行http请求</li>
+</ol></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-01-16 22:25:00">Updated on 2022-01-16&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/tujiehttp/" data-title="图解HTTP读书笔记" data-hashtags="HTTP,计算机网络"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/tujiehttp/" data-hashtag="HTTP"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/tujiehttp/" data-title="图解HTTP读书笔记"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/http/' class="post-tag">HTTP</a><a href='/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/' class="post-tag">计算机网络</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/ecf/" class="post-nav-item" rel="prev" title="【操作系统】异常控制流"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>【操作系统】异常控制流</a>
+      <a href="/posts/mysql/" class="post-nav-item" rel="next" title="Mysql学习笔记">Mysql学习笔记<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

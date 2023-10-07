@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>编译原理笔记 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="编译原理笔记，词法语法分析" /><meta name="keywords" content='汇编语言' /><meta itemprop="name" content="编译原理笔记">
+<meta itemprop="description" content="编译原理笔记，词法语法分析"><meta itemprop="datePublished" content="2022-01-02T10:33:48+00:00" />
+<meta itemprop="dateModified" content="2022-01-02T10:33:48+00:00" />
+<meta itemprop="wordCount" content="234">
+<meta itemprop="keywords" content="汇编语言," /><meta property="og:title" content="编译原理笔记" />
+<meta property="og:description" content="编译原理笔记，词法语法分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/compiler/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-02T10:33:48+00:00" />
+<meta property="article:modified_time" content="2022-01-02T10:33:48+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="编译原理笔记"/>
+<meta name="twitter:description" content="编译原理笔记，词法语法分析"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/compiler/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/csapp-ch3/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/sysio/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "编译原理笔记",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/compiler\/"
+    },"genre": "posts","keywords": "汇编语言","wordcount":  234 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/compiler\/","datePublished": "2022-01-02T10:33:48+00:00","dateModified": "2022-01-02T10:33:48+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>编译原理笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-01-02 10:33:48"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-02">2022-01-02</time></span>&nbsp;<span title="Updated on 2022-01-02 10:33:48"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-02">2022-01-02</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>234 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#词法分析">词法分析</a>
+      <ul>
+        <li><a href="#有穷自动机-dfa">有穷自动机 DFA</a></li>
+        <li><a href="#不确定的有穷自动机-nfa">不确定的有穷自动机 NFA</a></li>
+        <li><a href="#子集法-nfa转换为dfa">子集法 NFA转换为DFA</a></li>
+        <li><a href="#dfa的化简">DFA的化简</a></li>
+        <li><a href="#由dfa化简为正规式">由DFA化简为正规式</a></li>
+        <li><a href="#由正规式生成nfa">由正规式生成NFA</a>
+          <ul>
+            <li><a href="#语法制导">语法制导</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#语法分析">语法分析</a>
+      <ul>
+        <li><a href="#自顶向下">自顶向下</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#构造算法">构造算法</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#非ll1文法到ll1文法的等价转换">非LL(1)文法到LL(1)文法的等价转换</a>
+          <ul>
+            <li><a href="#消除直接左递归">消除直接左递归：</a></li>
+            <li><a href="#消除间接左递归">消除间接左递归</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>编译原理笔记，词法语法分析</p>
+<h1 id="词法分析">词法分析</h1>
+<h2 id="有穷自动机-dfa">有穷自动机 DFA</h2>
+<p>$f: K \times \sum \to K$是一个单值函数，任何输入符号都唯一的确定了下一个状态</p>
+<h2 id="不确定的有穷自动机-nfa">不确定的有穷自动机 NFA</h2>
+<p>至少一个初态节点，若干个终态节点
+DFA是NFA的特例</p>
+<h2 id="子集法-nfa转换为dfa">子集法 NFA转换为DFA</h2>
+<p>对于状态集合$I$，定义两个运算</p>
+<ol>
+<li>
+<p>集合$I$的$\epsilon-Closure(I)$，是一个状态集$I$中的任何状态经过任意条$\epsilon$弧能到达的状态集合
+因为当输入符号为空时，则自动机停留在原来的位置上，所以有关系$\forall S \in I \ \ , S \in \epsilon-Closure(I)$</p>
+</li>
+<li>
+<p>状态集合$I$的$a$弧转换，表示为$move(I,a)$，定义为状态集合J，其中$J$是所有那些可以从$I$中的某一状态经过一条$a$弧而到达的状态的全体
+有关系$\forall S_i \in I \ \ , move(I,a)=f(S_1,a)\bigcup f(S_2,a) \bigcup f(S_3,a)&hellip;$
+算法流程：</p>
+</li>
+</ol>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">let</span> <span class="n">C</span> <span class="n">as</span> <span class="n">a</span> <span class="n">set</span> <span class="n">save</span> <span class="n">Status</span><span class="o">-</span><span class="n">Set</span>
+</span></span><span class="line"><span class="cl"><span class="n">let</span> <span class="n">K_0</span> <span class="o">=</span> <span class="n">epsilon</span><span class="o">-</span><span class="n">Closure</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="o">&lt;-</span> <span class="n">epsilon</span><span class="o">-</span><span class="n">Closure</span><span class="p">(</span><span class="n">K_0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span><span class="p">(</span><span class="k">if</span> <span class="n">C</span> <span class="n">have</span> <span class="n">set</span> <span class="n">not</span> <span class="n">visit</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">visit</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">a</span> <span class="n">in</span> <span class="n">Char</span> <span class="n">Set</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">U</span> <span class="p">:</span><span class="o">=</span> <span class="n">epsilon</span><span class="o">-</span><span class="n">Closure</span><span class="p">(</span><span class="n">Move</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="n">a</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="p">(</span><span class="n">U</span> <span class="n">not</span> <span class="n">in</span> <span class="n">C</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">C</span> <span class="o">&lt;-</span> <span class="n">U</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>经过状态重新命名可以得到DFA</p>
+<h2 id="dfa的化简">DFA的化简</h2>
+<p>化简 的DFA：没有多余状态，没有两个状态是互相等价的。
+DFA可以通过消除无用状态和合并等价状态二转换成一个与之等价的最小状态的DFA</p>
+<p>无用状态：从开始状态触发，任何输入串都无法到达
+或者从这个状态没有通路到达终态
+![[Pasted image 20211230203930.png]]
+如s4，s6，s8，可以直接消除</p>
+<p>DFA中的状态等价条件：</p>
+<ol>
+<li>一致性条件-状态s和t必须同时为可接受状态或不可接受状态</li>
+<li>蔓延性条件-对于所有输入符号，状态s和t必须转换到等价的状态</li>
+</ol>
+<p>分割法分解DFA状态：
+步骤：</p>
+<ol>
+<li>先将终态和非终态分割，作为两个子集，作为一个划分</li>
+<li>在划分中对每个子集加上可输入字符，将可区别的状态拆分，得到新的划分</li>
+<li>重复直到划分不可以再分割</li>
+</ol>
+<p>化简后的DFA便于在计算机上实现</p>
+<h2 id="由dfa化简为正规式">由DFA化简为正规式</h2>
+<p>很简单
+缩缩缩</p>
+<h2 id="由正规式生成nfa">由正规式生成NFA</h2>
+<p>$L(G)$表示文法G产生的语言的集合
+$L(G1) = L(G2)$ 则两个文法等价
+反正就是构造一个等价的$\mathbb{NFA}$</p>
+<h3 id="语法制导">语法制导</h3>
+<p>按照语法结构构造
+将正规式分解为子表达式
+ 
+闭包：终态输入epsilon到达初态
+分解方式不唯一
+可以从头开始，也可以分部进行</p>
+<p>处理步骤：</p>
+<ul>
+<li>如$r_1 r_2$，顺序拼接两个NFA</li>
+<li>如$r1^*$处理闭包，终态输入epsilon链接到初态</li>
+<li>如$r_1|r_2$，由初态输入epsilon到两个NFA，由两个NFA输入epsilon到达终态</li>
+</ul>
+<h1 id="语法分析">语法分析</h1>
+<h2 id="自顶向下">自顶向下</h2>
+<p>文法特点：</p>
+<ol>
+<li>每个产生式右部都由终结符号开始</li>
+<li>若两个产生式都由相同的左部，右部都由不同的终结符开始
+分析过程是唯一的</li>
+</ol>
+<p>FIRST集
+$FIRST(\alpha)={以\alpha为左部的，产生式右部的第一个非终结符集合}$
+为a的开始符号集</p>
+<p>FOLLOW集
+对于上下文无关文法，S是开始符号
+$FOLLOW(A)={状态A后跟符号}$
+若A可以引导终止epsilon ，则加入#到FOLLOW集</p>
+<h4 id="构造算法">构造算法</h4>
+<p>对文法中每一非终结符A，构造FOLLOW(A)的算法如下：反复使用如下规则，直至FOLLOW集不再增大为止。
+⑴若A是文法的开始符号,则把输入结束符＃加入FOLLOW(A)中；
+⑵若B→αAaβ,a是终结符,则把a加入FOLLOW(A)中；
+⑶若B→αAXβ,X是非终结符,则把FIRST(Xβ)加入FOLLOW(A)中；
+⑷若B→αA或B→αAβ,且β可以推导至ε，则把FOLLOW(B)加入FOLLOW(A)中。</p>
+<p>SELECT集
+$SELECT(A  \to a)=(FIRST(a)-{\epsilon})\bigcup FOLLOW(A)$</p>
+<p>LL(1)文法：第一个L表示自顶向下分析是从左到右扫描输入串，第二个L表明分析过程中将用最左推导，1表明只需要向右看一个符号便可以决定如何推导。
+充要条件:
+对于每个非终结符A，的两个不同产生式
+$SELECT(A \to \alpha)\bigcap SELECT(A \to \beta)=\varnothing$</p>
+<h2 id="非ll1文法到ll1文法的等价转换">非LL(1)文法到LL(1)文法的等价转换</h2>
+<p>LL(1)文法的性质：
+① LL(1)文法是无二义性的；
+② LL(1)文法不含左递归；
+③ LL(1)文法没有公共左因子。</p>
+<p>消除左递归
+消除回溯：提取左公因子
+改造成LL1文法</p>
+<h3 id="消除直接左递归">消除直接左递归：</h3>
+<p>例如：
+A→Aα|β
+对A引入一个新的非终结符A′，把上式改写为：
+A →βA′        <br>
+A′→αA′|ε
+例2：
+E→E +T | T
+T→T * F | F
+F→i |（E）
+改造为
+E→TE′
+E′→+T E′|ε
+T→FT ′
+T′→* FT′|ε
+F→i |（E）</p>
+<h3 id="消除间接左递归">消除间接左递归</h3>
+<p>把式子带入，然后按照消除直接左递归的方法去消除
+S → Aα|β      ⑴
+A → Sγ           ⑵
+得到
+S → Sγα|β     ⑶
+消除左递归
+S → βS′
+S ′→γαS′|ε</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-01-02 10:33:48">Updated on 2022-01-02&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/compiler/" data-title="编译原理笔记" data-hashtags="汇编语言"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/compiler/" data-hashtag="汇编语言"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/compiler/" data-title="编译原理笔记"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/' class="post-tag">汇编语言</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/csapp-ch3/" class="post-nav-item" rel="prev" title="【操作系统】程序的机器级表示"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>【操作系统】程序的机器级表示</a>
+      <a href="/posts/sysio/" class="post-nav-item" rel="next" title="【操作系统】系统级IO">【操作系统】系统级IO<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>【存储技术基础】固态硬盘 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="主要由Flash Memory 和FTL组成
+Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存
+根据延迟数量级，一般用PCM做内存，Flash Memory做外存
+0x00 Flash Memory 闪存原理 类型 NOR闪存
+存储密度低 可字节改写 NAND闪存（主流）
+存储密度高 不可覆盖写 用于外存需要较高的存储量级，一般用NAND
+闪存单元 读：电压代表不同数值
+写：电子注入
+相比晶体管添加了浮栅门，保存电子
+原理其实比较简单，非电子系就不做太详细的研究了
+闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行
+闪存块(擦除单元)，由多个页组成的单元
+选中行和列，然后将数据加载到Sense Amplifiers
+存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0
+Pass Through
+选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态
+如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011
+上述为SLC，Single Level Cell，单存储单元
+多比特闪存 多比特闪存单元MLC，包含2Bits 4个Level的数据
+TLC 3 Bits 8个Level
+QLC 4 Bits 16个Level
+多比特使用格雷码来编码
+使用格雷码使得相邻单元只有一位差异，方便纠错
+多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。
+对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。
+对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。
+闪存 Block的大小的一种配置：
+一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB
+有64列bitlines，一个block的大小即为16KB*64*2=2MB，一般按照此比例配置Block
+写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率
+写入是需要先擦除再写入，擦除整个块
+特性 读写粒度 闪存页读写粒度：" /><meta name="keywords" content='SSD, Storage, NVM' /><meta itemprop="name" content="【存储技术基础】固态硬盘">
+<meta itemprop="description" content="主要由Flash Memory 和FTL组成
+Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存
+根据延迟数量级，一般用PCM做内存，Flash Memory做外存
+0x00 Flash Memory 闪存原理 类型 NOR闪存
+存储密度低 可字节改写 NAND闪存（主流）
+存储密度高 不可覆盖写 用于外存需要较高的存储量级，一般用NAND
+闪存单元 读：电压代表不同数值
+写：电子注入
+相比晶体管添加了浮栅门，保存电子
+原理其实比较简单，非电子系就不做太详细的研究了
+闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行
+闪存块(擦除单元)，由多个页组成的单元
+选中行和列，然后将数据加载到Sense Amplifiers
+存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0
+Pass Through
+选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态
+如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011
+上述为SLC，Single Level Cell，单存储单元
+多比特闪存 多比特闪存单元MLC，包含2Bits 4个Level的数据
+TLC 3 Bits 8个Level
+QLC 4 Bits 16个Level
+多比特使用格雷码来编码
+使用格雷码使得相邻单元只有一位差异，方便纠错
+多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。
+对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。
+对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。
+闪存 Block的大小的一种配置：
+一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB
+有64列bitlines，一个block的大小即为16KB*64*2=2MB，一般按照此比例配置Block
+写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率
+写入是需要先擦除再写入，擦除整个块
+特性 读写粒度 闪存页读写粒度："><meta itemprop="datePublished" content="2022-09-22T09:36:42+08:00" />
+<meta itemprop="dateModified" content="2022-09-22T09:36:42+08:00" />
+<meta itemprop="wordCount" content="172">
+<meta itemprop="keywords" content="SSD,Storage,NVM," /><meta property="og:title" content="【存储技术基础】固态硬盘" />
+<meta property="og:description" content="主要由Flash Memory 和FTL组成
+Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存
+根据延迟数量级，一般用PCM做内存，Flash Memory做外存
+0x00 Flash Memory 闪存原理 类型 NOR闪存
+存储密度低 可字节改写 NAND闪存（主流）
+存储密度高 不可覆盖写 用于外存需要较高的存储量级，一般用NAND
+闪存单元 读：电压代表不同数值
+写：电子注入
+相比晶体管添加了浮栅门，保存电子
+原理其实比较简单，非电子系就不做太详细的研究了
+闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行
+闪存块(擦除单元)，由多个页组成的单元
+选中行和列，然后将数据加载到Sense Amplifiers
+存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0
+Pass Through
+选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态
+如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011
+上述为SLC，Single Level Cell，单存储单元
+多比特闪存 多比特闪存单元MLC，包含2Bits 4个Level的数据
+TLC 3 Bits 8个Level
+QLC 4 Bits 16个Level
+多比特使用格雷码来编码
+使用格雷码使得相邻单元只有一位差异，方便纠错
+多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。
+对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。
+对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。
+闪存 Block的大小的一种配置：
+一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB
+有64列bitlines，一个block的大小即为16KB*64*2=2MB，一般按照此比例配置Block
+写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率
+写入是需要先擦除再写入，擦除整个块
+特性 读写粒度 闪存页读写粒度：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/storagessd/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-09-22T09:36:42+08:00" />
+<meta property="article:modified_time" content="2022-09-22T09:36:42+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="【存储技术基础】固态硬盘"/>
+<meta name="twitter:description" content="主要由Flash Memory 和FTL组成
+Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存
+根据延迟数量级，一般用PCM做内存，Flash Memory做外存
+0x00 Flash Memory 闪存原理 类型 NOR闪存
+存储密度低 可字节改写 NAND闪存（主流）
+存储密度高 不可覆盖写 用于外存需要较高的存储量级，一般用NAND
+闪存单元 读：电压代表不同数值
+写：电子注入
+相比晶体管添加了浮栅门，保存电子
+原理其实比较简单，非电子系就不做太详细的研究了
+闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行
+闪存块(擦除单元)，由多个页组成的单元
+选中行和列，然后将数据加载到Sense Amplifiers
+存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0
+Pass Through
+选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态
+如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011
+上述为SLC，Single Level Cell，单存储单元
+多比特闪存 多比特闪存单元MLC，包含2Bits 4个Level的数据
+TLC 3 Bits 8个Level
+QLC 4 Bits 16个Level
+多比特使用格雷码来编码
+使用格雷码使得相邻单元只有一位差异，方便纠错
+多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。
+对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。
+对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。
+闪存 Block的大小的一种配置：
+一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB
+有64列bitlines，一个block的大小即为16KB*64*2=2MB，一般按照此比例配置Block
+写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率
+写入是需要先擦除再写入，擦除整个块
+特性 读写粒度 闪存页读写粒度："/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/storagessd/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/lottery/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/mainmemory/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "【存储技术基础】固态硬盘",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/storagessd\/"
+    },"genre": "posts","keywords": "SSD, Storage, NVM","wordcount":  172 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/storagessd\/","datePublished": "2022-09-22T09:36:42+08:00","dateModified": "2022-09-22T09:36:42+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>【存储技术基础】固态硬盘</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2022-09-22 09:36:42"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-22">2022-09-22</time></span>&nbsp;<span title="Updated on 2022-09-22 09:36:42"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2022-09-22">2022-09-22</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>172 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-flash-memory">0x00 Flash Memory</a>
+      <ul>
+        <li><a href="#闪存原理">闪存原理</a>
+          <ul>
+            <li><a href="#类型">类型</a></li>
+            <li><a href="#闪存单元">闪存单元</a></li>
+            <li><a href="#多比特闪存">多比特闪存</a></li>
+            <li><a href="#闪存">闪存</a>
+              <ul>
+                <li><a href="#特性">特性</a>
+                  <ul>
+                    <li><a href="#读写粒度">读写粒度</a></li>
+                    <li><a href="#不可覆盖写">不可覆盖写</a></li>
+                    <li><a href="#有限次擦除">有限次擦除</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#0x01-ftl">0x01 FTL</a>
+      <ul>
+        <li><a href="#垃圾回收">垃圾回收</a>
+          <ul>
+            <li><a href="#gc策略">GC策略</a></li>
+          </ul>
+        </li>
+        <li><a href="#磨损均衡">磨损均衡</a></li>
+        <li><a href="#ftl简介">FTL简介</a>
+          <ul>
+            <li><a href="#page-level-ftl">Page-Level FTL</a></li>
+            <li><a href="#block-level-ftl">Block-Level FTL</a></li>
+            <li><a href="#hybrid-ftl">Hybrid FTL</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>主要由Flash Memory 和FTL组成</p>
+<p>Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存</p>
+<p>根据延迟数量级，一般用PCM做内存，Flash Memory做外存</p>
+<h1 id="0x00-flash-memory">0x00 Flash Memory</h1>
+<h2 id="闪存原理">闪存原理</h2>
+<h3 id="类型">类型</h3>
+<p>NOR闪存</p>
+<ul>
+<li>存储密度低</li>
+<li>可字节改写</li>
+</ul>
+<p>NAND闪存（主流）</p>
+<ul>
+<li>存储密度高</li>
+<li>不可覆盖写</li>
+</ul>
+<p>用于外存需要较高的存储量级，一般用NAND</p>
+<h3 id="闪存单元">闪存单元</h3>
+<p>读：电压代表不同数值</p>
+<p>写：电子注入</p>
+<p>相比晶体管添加了浮栅门，保存电子</p>
+<p>原理其实比较简单，非电子系就不做太详细的研究了</p>
+<p>闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行</p>
+<p>闪存块(擦除单元)，由多个页组成的单元</p>
+<img src="/img/image-20220922124359358.png" alt="image-20220922124359358" style="zoom:33%;" />
+<p>选中行和列，然后将数据加载到Sense Amplifiers</p>
+<p>存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0</p>
+<img src="/img/image-20220922124755447.png" alt="image-20220922124755447" style="zoom:25%;" />
+<p>Pass Through</p>
+<p>选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态</p>
+<img src="/img/image-20220922131649578.png" alt="image-20220922131649578" style="zoom:25%;" />
+<p>如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011</p>
+<img src="/img/image-20220922134857889.png" alt="image-20220922134857889" style="zoom:33%;"/>
+<p>上述为SLC，Single Level Cell，单存储单元</p>
+<h3 id="多比特闪存">多比特闪存</h3>
+<p>多比特闪存单元MLC，包含2Bits 4个Level的数据</p>
+<p>TLC 3 Bits 8个Level</p>
+<p>QLC 4 Bits 16个Level</p>
+<p><strong>多比特使用格雷码来编码</strong></p>
+<blockquote>
+<p>使用格雷码使得相邻单元只有一位差异，方便纠错</p>
+</blockquote>
+<p>多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。</p>
+<img src="/img/image-20220922135516463.png" alt="image-20220922135516463" style="zoom:45%;" />
+<p>对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。</p>
+<img src="/img/image-20220922140421405.png" alt="image-20220922140421405" style="zoom:40%;" />
+<p>对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。</p>
+<img src="/img/image-20220922141455826.png" alt="image-20220922141455826" style="zoom:40%;" />
+<h3 id="闪存">闪存</h3>
+<p>Block的大小的一种配置：</p>
+<p>一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB</p>
+<p>有64列bitlines，一个block的大小即为<code>16KB*64*2=2MB</code>，一般按照此比例配置Block</p>
+<p>写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率</p>
+<p>写入是需要先擦除再写入，擦除整个块</p>
+<img src="/img/image-20220922143608667.png" alt="image-20220922143608667" style="zoom:50%;" />
+<h4 id="特性">特性</h4>
+<h5 id="读写粒度">读写粒度</h5>
+<p>闪存页读写粒度：</p>
+<ul>
+<li>4KB，8KB，16KB必须全部读取或者写入</li>
+<li>us延迟</li>
+</ul>
+<p>闪存块擦除力度</p>
+<ul>
+<li>2MB擦除</li>
+<li>ms延迟，可以通过FTL来优化</li>
+</ul>
+<h5 id="不可覆盖写">不可覆盖写</h5>
+<p>写前需要擦除，读写粒度与擦除粒度不同</p>
+<p>存在64bytes的OOB（out of bound area），保存ECC，用于纠错，容忍写入时部分比特出错</p>
+<img src="/img/image-20220922162139217.png" alt="image-20220922162139217" style="zoom:50%;" />
+<h5 id="有限次擦除">有限次擦除</h5>
+<p>随着擦除次数的增加，存储单元不能可靠的保持状态（存储数据）。</p>
+<p>氧化层老化变薄，束缚电子能力变弱</p>
+<ul>
+<li>耐久性 变薄地次数</li>
+<li>保持力 不通电可以放置的时间</li>
+</ul>
+<p>SLC：10w次</p>
+<p>MLC：1w次</p>
+<p>TLC：1k次</p>
+<p>根据特性设计FTL固件来</p>
+<img src="/img/image-20220922164523965.png" alt="image-20220922164523965" style="zoom:50%;" />
+<h1 id="0x01-ftl">0x01 FTL</h1>
+<p>固态硬盘整体构成</p>
+<img src="/img/image-20220922164728094.png" alt="image-20220922164728094" style="zoom:50%;" />
+<p>SSD中的通道可以并行，通道中也可以并行读取，每个Plane中有寄存器，暂时存储准备好的数据。不同单元并行，因此内部带宽大</p>
+<img src="/img/image-20220922165354311.png" alt="image-20220922165354311" style="zoom:50%;" />
+<h2 id="垃圾回收">垃圾回收</h2>
+<p>page对于OS而言，是写入时的block</p>
+<p>Page三种状态</p>
+<ul>
+<li>空闲 free page</li>
+<li>有效页 live/valid page</li>
+<li>无效页 dead/invalid page</li>
+</ul>
+<img src="/img/image-20220922184349456.png" alt="image-20220922184349456" style="zoom:25%;" />
+<p>需要擦除无效页，先移走有效页，然后再对一整行进行擦除，转为空闲</p>
+<img src="/img/image-20220922184406162.png" alt="image-20220922184406162" style="zoom:25%;" />
+<p>时间开销：</p>
+<ul>
+<li>复制有效数据到$(R_{Latency}+W_{Latency})*N$，N是移动page的数量</li>
+<li>擦除产生的开销 ms级延迟</li>
+</ul>
+<h3 id="gc策略">GC策略</h3>
+<p>要解决的问题：</p>
+<ul>
+<li>何时启动GC</li>
+<li>选中那些/多少Block进行GC</li>
+<li>有效的页如何被转写</li>
+<li>新数据写到哪里</li>
+</ul>
+<p>GC的时间开销：</p>
+<ul>
+<li>块擦除的时间 ms</li>
+<li>有效页的复制时间</li>
+</ul>
+<p>贪心策略：</p>
+<ul>
+<li>找到脏页最多的block来进行擦除</li>
+</ul>
+<p>优化：</p>
+<ul>
+<li>Age</li>
+<li>Hot/Cold 数据隔离，分组问题</li>
+</ul>
+<h2 id="磨损均衡">磨损均衡</h2>
+<p>优化寿命，有静态和动态策略</p>
+<p>静态：周期性的调整冷热数据存储的位置</p>
+<p>冷热数据的分区：将冷数据放在一起，热数据放在一起</p>
+<h2 id="ftl简介">FTL简介</h2>
+<ul>
+<li>
+<p>维护映射，虚拟地址到物理地址</p>
+</li>
+<li>
+<p>使用SRAM存储映射</p>
+</li>
+<li>
+<p>向上层隐藏擦除操作：</p>
+<ul>
+<li>
+<p>避免原地更新-&gt;异地更新</p>
+</li>
+<li>
+<p>更新一个新页面</p>
+</li>
+<li>
+<p>高性能的垃圾回收和擦除</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>OOB有物理地址到虚拟地址的映射，用于掉电恢复，这里引用一段<a href="https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf"target="_blank" rel="external nofollow noopener noreferrer">wisc的OSTEP中的一段解释（44 Flash- based SSD）</a>。</p>
+<p>OOB保存的在每个页中映射信息，当掉电或者重启时用它在内存中重建映射</p>
+<p>为了防止在重建时扫码整个SSD，可以使用日志或者检查点的方式来加速这个过程</p>
+<p>大致看了一下OSTEP，记得是jyy老师推荐的教材，希望以后有时间读一下</p>
+<img src="/img/image-20220924141132556.png" alt="image-20220924141132556" style="zoom:50%;" />
+<h3 id="page-level-ftl">Page-Level FTL</h3>
+<p>原理类似OS中的页表，由Logical Page Number查询页表得到Physical Page Number</p>
+<p>缺点是页表占用很大的空间</p>
+<img src="/img/image-20220924152322358.png" alt="image-20220924152322358" style="zoom:50%;" />
+<h3 id="block-level-ftl">Block-Level FTL</h3>
+<p>保持Block 到Block的映射</p>
+<p>先查找到对应的Block，在根据offset得到page，块内的页码偏移offset是固定的</p>
+<img src="/img/image-20220924152259043.png" alt="image-20220924152259043" style="zoom:50%;" />
+<p>优点是占用空间很小，缺点是GC负载增加</p>
+<p>原因：offset在不同Block中保持不变，在异地更新时，要选择其他block中相同的offset进行写入，如果选中的block已经存在数据，需要把数据迁移。【TODO 这里讲得不是非常的清楚】</p>
+<h3 id="hybrid-ftl">Hybrid FTL</h3>
+<p>对写入分为新/旧数据，新写入的数据用Page-Level Mapping效率高，写入Log Blocks作为缓冲，之后再更新到Data Blocks</p>
+<p>旧数据因为写入后更新相对不频繁，使用Block-Level Mapping，写入Data Blocks</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2022-09-22 09:36:42">Updated on 2022-09-22&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/storagessd/" data-title="【存储技术基础】固态硬盘" data-hashtags="SSD,Storage,NVM"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/storagessd/" data-hashtag="SSD"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/storagessd/" data-title="【存储技术基础】固态硬盘"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/nvm/' class="post-tag">NVM</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/lottery/" class="post-nav-item" rel="prev" title="中奖"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>中奖</a>
+      <a href="/posts/mainmemory/" class="post-nav-item" rel="next" title="【存储技术基础】主存">【存储技术基础】主存<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

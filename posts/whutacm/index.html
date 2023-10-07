@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>WHUT新生赛&#34;游记&#34; - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="Day -N
+快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。" /><meta name="keywords" content='游记, ACM, WHUT' /><meta itemprop="name" content="WHUT新生赛&#34;游记&#34;">
+<meta itemprop="description" content="Day -N
+快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。"><meta itemprop="datePublished" content="2019-11-16T21:48:04+00:00" />
+<meta itemprop="dateModified" content="2019-11-16T21:48:04+00:00" />
+<meta itemprop="wordCount" content="44">
+<meta itemprop="keywords" content="游记,ACM,WHUT," /><meta property="og:title" content="WHUT新生赛&#34;游记&#34;" />
+<meta property="og:description" content="Day -N
+快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/whutacm/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-11-16T21:48:04+00:00" />
+<meta property="article:modified_time" content="2019-11-16T21:48:04+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="WHUT新生赛&#34;游记&#34;"/>
+<meta name="twitter:description" content="Day -N
+快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/whutacm/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/catalan/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "WHUT新生赛\"游记\"",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/whutacm\/"
+    },"genre": "posts","keywords": "游记, ACM, WHUT","wordcount":  44 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/whutacm\/","datePublished": "2019-11-16T21:48:04+00:00","dateModified": "2019-11-16T21:48:04+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>WHUT新生赛&#34;游记&#34;</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/diary/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Diary</a></span></div>
+      <div class="post-meta-line"><span title="published on 2019-11-16 21:48:04"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-16">2019-11-16</time></span>&nbsp;<span title="Updated on 2019-11-16 21:48:04"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-16">2019-11-16</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>44 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#day--n">Day -N</a></li>
+    <li><a href="#day-1">Day 1</a>
+      <ul>
+        <li><a href="#a题">A题</a></li>
+        <li><a href="#b题">B题</a></li>
+        <li><a href="#c题">C题</a></li>
+        <li><a href="#d题">D题</a></li>
+        <li><a href="#e题">E题</a></li>
+        <li><a href="#f题">F题</a></li>
+        <li><a href="#j题">J题</a></li>
+        <li><a href="#ｈ题">Ｈ题</a></li>
+        <li><a href="#i题">I题</a></li>
+        <li><a href="#j题-1">J题</a></li>
+        <li><a href="#k题">K题</a></li>
+        <li><a href="#后记">后记</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="day--n">Day -N</h1>
+<p>快新生赛了啊啊啊啊，半个多月没碰算法题了，一直在搞ToKen的前端任务，还在搞服务器的事，感觉要凉凉。</p>
+<h1 id="day-1">Day 1</h1>
+<p>嗯，就只有Day1.
+早上起的很晚，八点半才从床上爬起来，起来之后第一件事是看我的USB-HUB发货没有!!!都好几天了，一个USB接口坏了，机械键盘没法用啊，想去买usb转type-c线的想了想还是再等等吧ε=ε=ε=┏(゜ロ゜;)┛
+下楼去堕落一条街吃了早饭。
+中午吃完饭回来买了杯奶茶丫丫精，发现喝完了有点撑得慌~~~~然后就等12.30了。
+比赛开始赶紧去找签到题。</p>
+<h2 id="a题">A题</h2>
+<p>emmmmm像是的数学题，递推，一看数据范围感觉不可做。</p>
+<h2 id="b题">B题</h2>
+<p>这题面稍微有点问题啊。室友就以为是按顺序组合起来的，虽然感觉仔细想想也想出来是求和的，直接DFS走了？？？不存在的，这里有个老年人sum没重置，debug一万年啊，最后才发现sum每次没有赋初值ε=ε=ε=┏(゜ロ゜;)┛</p>
+<h2 id="c题">C题</h2>
+<p>签到题</p>
+<h2 id="d题">D题</h2>
+<p>一开始没看清题意，直接while求Σa*0.1一直到不影响答案为止，算到了1e-5，第一发不知道咋WA了，两发才过。</p>
+<h2 id="e题">E题</h2>
+<p>博弈论，不可做</p>
+<h2 id="f题">F题</h2>
+<p>并查集。但是！！老年人在这里又拉胯了！！！要输出没有感染的人，我输出了一万年感染的人，交了五六发？？？</p>
+<h2 id="j题">J题</h2>
+<p>模拟题。</p>
+<h2 id="ｈ题">Ｈ题</h2>
+<p>贪心交了一发没过，分类讨论情况可能会很多，没敢用搜索。</p>
+<h2 id="i题">I题</h2>
+<p>博弈论sg==就会三种博弈的蒟蒻枯了。听WHU的巨巨说记忆化搜索也能过。</p>
+<h2 id="j题-1">J题</h2>
+<p>计算几何。我认输。在线处理当成直线做的，没考虑到路程是个线段，debug一万年，最后还有半个小时封板的时候放弃了QAQ</p>
+<h2 id="k题">K题</h2>
+<p>模拟题，我充分意识到半个小时可能写不出来了，想去debug一下J题吧</p>
+<h2 id="后记">后记</h2>
+<p>最后五题榜19。校内 榜二。WHU和HUST的巨巨们霸榜啊orz。</p>
+<p>进队了orz</p>
+<p>其实感觉中间耽误了好多时间啊，低级错误，不然可能会在开出两题，just可能。orz</p>
+<p>J题一大遗憾。也是给自己个教训吧。</p>
+<p>至此
+成为WHUTer之后，又成为了ToKener，又成为了ACMer。
+专心训练和学习啦。
+逃ε=ε=ε=┏(゜ロ゜;)┛：蒟蒻 蒟蒻 蒟蒻</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2019-11-16 21:48:04">Updated on 2019-11-16&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/whutacm/" data-title="WHUT新生赛&#34;游记&#34;" data-hashtags="游记,ACM,WHUT"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/whutacm/" data-hashtag="游记"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/whutacm/" data-title="WHUT新生赛&#34;游记&#34;"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/%E6%B8%B8%E8%AE%B0/' class="post-tag">游记</a><a href='/tags/acm/' class="post-tag">ACM</a><a href='/tags/whut/' class="post-tag">WHUT</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav">
+      <a href="/posts/catalan/" class="post-nav-item" rel="next" title="小兔的棋盘 组合数学">小兔的棋盘 组合数学<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

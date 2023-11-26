@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
+    <meta name="google-site-verification" content="BgUHgNcBMb7gYvy2sM6W6KrWgBuDk4YU9eooUbig5oM" />
     <title>127.0.0.1,localhost和0.0.0.0暨🐼一次两次的神神秘秘的debug记录 - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
 <meta name="author-link" content="https://github.com/zhiwayzhang">
 <meta name="description" content="前记 潘达某天在本机docker部署了他的服务，但是发现无论如何都无法ping通，他冥(疯)思(狂)苦(谷)想(歌)，逛遍了GitHub上的各种issues，stack overflow上的各种回答，各种博客文章，都没有解决他的问题，直到他的mentor来到他的电脑前，一通命令猛如虎啊，发现他竟然在docker内监听了容器中的127.0.0.1的端口，那必然会访问不到，检查发现原来是在服务的config中写了magic number，让服务开在了127.0.0.1，在本地这样必然是没问题的，但是如果要与外部进行通信，那就要改成0.0.0.0了。

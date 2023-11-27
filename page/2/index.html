@@ -112,6 +112,31 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/mt2/">[FAST&#39;22] MT^2: Memory Bandwidth Regulation on Hybrid NVM/DRAM Platforms</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-12-19 16:50:00'>published on <time datetime="2022-12-19">2022-12-19</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Intro NVM和DRAM共享内存总线，二者之间的负载相互干扰，给混合NVM/DRAM平台的带宽分配带来了挑战
+本文提出了MT2，可以在混合NVM/DRAM平台中管理并发程序间的内存带宽。
+MT2首先检查内存流量间的干扰并通过硬件监视器和软件汇报从混合流量监控不同类型的内存带宽
+然后MT2利用一个动态的带宽流量调节算法基于多种方式来管理内存带宽
+为了能够更好的管理不同程序，MT2被集成到了cgroup中，添加了一个用于带宽分配的cgroup subsystem
+新兴的NVM存储器逐渐被用来做为可持久化内存来使用，基于NVM，提出了NVM文件系统，NVM编程库，NVM数据结构、NVM数据库，NVM作为大容量内存或者快速的字节寻址存储设备用于数据中心。
+然而NVM/DRAM混合平台加剧了吵闹邻居问题。在云存储环境中，多个用户常常共享一个服务器，不同用户的不同应用程序共享主机的一条总线，某些应用可能会过度使用内存带宽。在NVM/DRAM中，NVM和DRAM共享同一个总线，因此不同的应用程序将竞争有限的内存带宽，影响整体的性能
+在NVM/DRAM中调节带宽有如下几个问题：
+内存带宽不对称，在NVM/DRAM，不同的内存访问（如DRAM read，DRAM write，NVM read和NVM write）会产生不同的最大内存带宽。内存的实际可用带宽主要取决于负载中不同类型访问的占比。同时设置静态的内存带宽而不考虑实际的I/O访问占比是不正确的做法。同时NVM最大带宽通常小于DRAM。而且不同类型的内存访问的干扰程度不同，因此不能单纯将所有内存==访问延迟==视为相等 NVM和DRAM共享内存总线，NVM流量和DRAM流量不可避免地会混合并且很难区分。对于混合的流量，监控不同种类的内存带宽。由于内存流量混合，几乎不可能在每个进程的基础上监控不同类型的内存带宽，这使为DRAM设计的现有硬件和软件调节方法无效。 内存调节的硬件和软件机制不足。由于NVM和DRAM都可以通过CPU负载/存储指令直接访问，因此为了性能，对每个内存访问进行计算和限流是不切实际的。CPU供应商，如英特尔，支持硬件机制来调节内存带宽。然而，带宽限制是粗粒度和定性迭代的，这不足以精确的内存带宽调节。其他一些方法，如频率缩放和CPU调度，可能会提供相对细粒度的带宽调整。然而，它们也是定性的，并减慢了计算和内存访问的速度，因此对整个平台性能缺乏影响。 MT2作为Linux Cgroup中的一个Subsystem，用于减轻吵闹邻居问题。在内存带宽分配和云SLO保证方面提高效率。本文的主要贡献：
+发现了导致NVM/DRAM混合平台上内存密集型应用程序显著性能流失的内存带宽干扰问题 首次对在NVM/DRAM平台现存的硬件和软件带宽分配机制进行研究 高效有效地调节具有线程级粒度的NVM/DRAM混合平台上的内存带宽 在英特尔Optane SSD上进行了测试和分析 以下简称NVM/DRAM
+0x01 BG MT^2 持久内存（PM）/ 非易失性内存（NVM）的出现正改变着存储系统的金字塔层次结构。本文发现，由于 NVM 和 DRAM 共享同一条内存总线，带宽干扰问题变得更为严重和复杂，甚至会显著降低系统的总带宽。本工作介绍了对内存带宽干扰的分析，对现有软硬件技术进行了深入调研，并提出了一种在 NVM/DRAM 混合平台上监控调节并发应用的内存带宽的设计（MT^2）。MT^2 以线程为粒度准确监测来自混合流量的不同类型的内存带宽，使用软硬件结合技术控制内存带宽。在多个不同的用例中，MT^2 能够有效限制“吵闹邻居”（noisy neighbors），消除带宽干扰，保证高优先级应用的性能。
+Noisy Neighbors 在多租户的云环境中，内存带宽对应用程序的性能有很大影响。
+两种可以减轻吵闹邻居问题的方法是：
+Prevention：主动为应用程序设置带宽限制（固定的） Remedy：系统检测吵闹邻居情况的出现并识别出吵闹的“邻居”对其进行限制 这些方法需要去监控应用的带宽使用情况
+NVM NVM得益于其存储容量大，访问速度快的特性，正在逐步作为内存使用于商业服务器中。得益于PMDK（Persistent Memory Development Kit）同时还涌现出了大量基于NVM Memory的应用程序，如PmemKV，Pmem-RocksDB。
+NVM可以直接通过CPU的load/store指令进行访问
+Memory Bandwidth Interference 由于NVM和DRAM共享内存总线，因此存在干扰问题。
+用两个Flexible I/O Tester来竞争总带宽进行测试，包括NVM/DRAM的读写，分别比较在不同的访问方式下的带宽干扰情况
+如下图所示，颜色越深表明干扰越明显，图中数据表示为在Task B运行的情况下Task A的吞吐量占Task Alone情况下的百分比（GB/s）
+从图中得出的两个结论为：
+内存的干扰和内存的访问情况有关，占据更小带宽的内存访问可能会对其他访问造成更大的影响 NVM的访问比DRAM访问对其他任务的影响更大，例如图中NVM Read列和DRAM Read列的对比，说明执行NVM write较多的应用更可能成为影响其他任务 作者还做了Task B进行NVM Write，Task A的延迟和吞吐量的变化，发现了随着带宽的逐渐降低，Task A的延迟逐渐增加。</div><div class="post-footer">
+    <a href="/posts/mt2/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/nvm/' class="post-tag">NVM</a><a href='/tags/memory/' class="post-tag">Memory</a><a href='/tags/cgroups/' class="post-tag">Cgroups</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/femu-demo/">FEMU环境配置</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-12-11 16:10:32'>published on <time datetime="2022-12-11">2022-12-11</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">本文主要参考FEMU仓库README
 0x00 Intro FEMU架构图
@@ -220,19 +245,6 @@ QEMU使用传统的trap-and-emulate方法进行I/O模拟，虚拟机的NVMe驱�
 FEMU对每个I/O请求都设置了+50us的延迟。
 延迟模型 对于$T_{endio}$的计算：</div><div class="post-footer">
     <a href="/posts/femu-paper/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/fast/' class="post-tag">FAST</a><a href='/tags/femu/' class="post-tag">FEMU</a><a href='/tags/qemu/' class="post-tag">QEMU</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/newwhutacm/">WHUT新生赛游记（二）</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-11-21 09:46:56'>published on <time datetime="2022-11-21">2022-11-21</time></span>&nbsp;<span class="post-category">included in <a href="/categories/diary/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Diary</a></span></div><div class="content">大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢
-Day 0 体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线4'19，今年跑了5'00，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。
-Day 1 比赛日，早上七点半爬起来去体测，跑了个8.9，行了吧，也是可以及格了，遂赶紧带着装机u盘去了机房配环境。
-不得不说，WHUT计算机学院的机房是一言难尽的，大二那年在管院办校赛，机器配置极其豪华，配环境的话可以直接分发系统，线路比较新分发也很快，计算机学院的机房如果搞分发估计要大半夜，而且主要是管实验室的老师不同意，只能拿着批处理一台一台的配。
-配环境的中途发现很多机器突然开不起来了，预估坏了20台，抢救也没抢救过来，虽然机器也够用，但是1001机房背后就是轰鸣的服务器，很容易影响选手的发挥。上午又得知因为余家头校区出了小阳人，三十多个选手无法到场，虽然缓解了机房的压力，但是造成了分开参赛的情况，余区选手通过PTA线上参赛和监考，南湖这边还是线下，赶紧发了通知允许选手自带键盘，尽量保证体验一致吧然而线上没有零食吃。
-志愿者人手感觉明显不太够，搞了一上午感觉就累的不行，好歹是准备工作都弄好了，比赛开始之后OJ也没出锅，这一点已经让我很高兴了。下午突然想解决一下PTA这边榜单的问题，有个学弟搞了一下domjudge的滚榜，赛后可以查看封榜后的实时提交和排名变化，来点区预赛的那种氛围。所以就是想把PTA那边的提交整合过来。目测了一下感觉可写，赶紧抓个包瞅瞅，写了大概一个多小时，直接导出了PTA里所有的提交，全部写SQL INSERT到OJ里面，榜单整合就成功了。然而没注意PTA那边给的接口LIMIT做了限制，请求的时候写了LIMIT=600，实际上response里上限就是100条，结果最后只导入成功了100条，这时候已经比赛结束30分钟了。于是打算赶紧搞一个榜单出来直接发奖了。
-整体上还是有挺多遗憾的，榜单合并没及时搞好，滚榜没及时搞好，感觉还是自己没注意做好测试工作，所以说一定要做好测试。晚上回去顺便带了点零食，然后有把榜单整合了一下，微调了一下基本没问题了，学弟把滚榜也搞好了。然而一切还是来的太突然了，突入其来的yq防控打乱了很多事，不过最后的结果还是很不错的，又一年新生赛圆满结束了。
-从大一参加新生赛，大二给新生赛出题，大三拉到老东家夜莺的赞助举办了一次线下新生赛（极其豪华的线下赛），再到大四举办的最后一次新生赛，前前后后忙了不少工作，从台前到幕后，一次次活动中也学到了不少东西，认识了很多优秀的同学，最后感谢所有志愿者同志们的付出吧。
-Return 0 </div><div class="post-footer">
-    <a href="/posts/newwhutacm/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/%E6%B8%B8%E8%AE%B0/' class="post-tag">游记</a><a href='/tags/acm/' class="post-tag">ACM</a><a href='/tags/whut/' class="post-tag">WHUT</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">

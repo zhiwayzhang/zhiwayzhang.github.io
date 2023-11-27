@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <meta name="google-site-verification" content="BgUHgNcBMb7gYvy2sM6W6KrWgBuDk4YU9eooUbig5oM" />
+    <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="0x00 Background
+本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
+Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
+Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
+在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
+
+条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
+条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
+" /><meta name="keywords" content='Paper, OSDI, ZNS, Multi-tenant, Isolation, IO Scheduler' /><meta itemprop="name" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs">
+<meta itemprop="description" content="0x00 Background
+本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
+Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
+Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
+在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
+
+条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
+条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
+"><meta itemprop="datePublished" content="2023-11-27T21:39:01+08:00" />
+<meta itemprop="dateModified" content="2023-11-27T21:39:01+08:00" />
+<meta itemprop="wordCount" content="205">
+<meta itemprop="keywords" content="Paper,OSDI,ZNS,Multi-tenant,Isolation,IO Scheduler," /><meta property="og:title" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs" />
+<meta property="og:description" content="0x00 Background
+本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
+Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
+Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
+在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
+
+条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
+条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/ezns/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-27T21:39:01+08:00" />
+<meta property="article:modified_time" content="2023-11-27T21:39:01+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs"/>
+<meta name="twitter:description" content="0x00 Background
+本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
+Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
+Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
+在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
+
+条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
+条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
+"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/ezns/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/cgroups/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "[OSDI'23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/ezns\/"
+    },"genre": "posts","keywords": "Paper, OSDI, ZNS, Multi-tenant, Isolation, IO Scheduler","wordcount":  205 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/ezns\/","datePublished": "2023-11-27T21:39:01+08:00","dateModified": "2023-11-27T21:39:01+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2023-11-27 21:39:01"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span title="Updated on 2023-11-27 21:39:01"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>205 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-background">0x00 Background</a></li>
+    <li><a href="#0x01-motivation">0x01 Motivation</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#zns的目前存在的三个问题">ZNS的目前存在的三个问题</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#0x02-design">0x02 Design</a>
+      <ul>
+        <li><a href="#hal">HAL</a></li>
+        <li><a href="#问题一提高zns利用率">问题一：提高ZNS利用率</a></li>
+        <li><a href="#问题二避免zone间冲突">问题二：避免Zone间冲突</a></li>
+        <li><a href="#问题三多租户场景下的io干扰">问题三：多租户场景下的I/O干扰</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-evaluation">0x03 Evaluation</a>
+      <ul>
+        <li><a href="#zone-ballooning">Zone Ballooning</a></li>
+        <li><a href="#多租户场景-rocksdb--zenfs">多租户场景 RocksDB + ZenFS</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-conclusion">0x04 Conclusion</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="0x00-background">0x00 Background</h1>
+<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
+<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
+<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
+<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
+<ul>
+<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
+<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
+</ul>
+<h1 id="0x01-motivation">0x01 Motivation</h1>
+<ul>
+<li>Zone Type：
+<ul>
+<li>Physical Zone 由多个die上的block组成</li>
+<li>Logical Zone 由多个Physical Zone组合，可以通过设备固件/软件实现</li>
+</ul>
+</li>
+<li>Zone Size：
+<ul>
+<li>Large Zone 因为包含多个可并行的die，可以提供更高的性能，但是不够灵活，主机管理开销大，作者认为适合租户少的场景，不需要同时打开多个zone进行I/O；带宽利用率低</li>
+<li>Small Zone 支持更多的I/O Streams，主机端的GC开销小</li>
+</ul>
+</li>
+<li>目前ZNS接口存在的问题：
+<ul>
+<li>存储区域的划分需要考虑物理区域和stripping的配置，需要应用的优化。用户/应用来管理Zone的划分可能导致多租户间的干扰；同时使应用更复杂。</li>
+<li>为了应对应用复杂的I/O行为（I/O size，Read/Write，LBA Distribution），现有zone接口不能做出适配，需要过度供应Zone数量OP，资源利用率低。eg: 在为每个应用划分namespace的场景下，Rocksdb/Zenfs，Btrfs，F2FS在处理写入时只会开启少量的Zone，造成了较低的利用率。</li>
+<li>性能隔离问题。虽然对I/O在物理空间上进行了隔离，但是为了提高利用率在多租户场景下会存在SSD内部带宽的干扰。ZNS的GC、磨损均衡行为对主机透明，无法预测ZNS的性能。传统SSD处理I/O、GC会尽可能的利用并行度，ZNS会受到Zone的约束。</li>
+</ul>
+</li>
+</ul>
+<h3 id="zns的目前存在的三个问题">ZNS的目前存在的三个问题</h3>
+<ul>
+<li>
+<p>Zone Striping机制</p>
+<ul>
+<li>对于较大的Zone Size，会超出一个闪存块的大小，通过striping策略来对cross-die的flash block组成一个Zone，类似RAID 0
+<ul>
+<li>Stripe Size：一个Stripe中数据组织的最小单元</li>
+<li>Stripe Width：一个Stripe可以开启的最大物理Zone数量</li>
+</ul>
+</li>
+<li><strong>问题1</strong>：Zone Striping面临的问题，目前Striping的划分与应用无关，根据应用的I/O特征来设置Stripping Size可以提高SSD利用率</li>
+</ul>
+</li>
+<li>
+<p>Zone Allocation和Placement</p>
+<ul>
+<li>
+<p>zone的分配应该充分利用SSD内部Die的并行性，提高单个逻辑Zone中的物理Zone数量可以显著提高性能</p>
+</li>
+<li>
+<p><strong>问题2</strong>：目前的机制为在下一个空闲的die上扩展逻辑Zone，没有考虑该逻辑Zone中其他物理Zone的分布情况</p>
+<ul>
+<li>物理Zone分配于同一个Channel下的其他Die中</li>
+<li>物理Zone分配于同一个Die中的其他Block中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>ZNS的I/O执行</p>
+<ul>
+<li>混合读写的场景下，会导致ZNS处理读延迟时的尾延迟升高，传统SSD由于写放大会导致尾延迟的升高，ZNS主要是因为Zone并行性问题。</li>
+<li>die的带宽有限，并且可能会有冲突。同时SSD内部的cache回写会导致带宽的竞争问题，传统SSD可以直接控制映射关系来缓解die之间的带宽干扰，而ZNS必须写入到特定的物理Zone/Die。</li>
+<li>Figure 9的实验为了说明不同Zone之间的性能分配不公平问题。对于读I/O，采用workload A qd 8 cross 2 zones和workload B qd 2 cross 8 zones，在没有干扰的情况下（Zone A和Zone B没有冲突的Die），由于Zone B有更好的die级别并行性，能达到更高的性能，但是当workload A/B同时运行时，A的队列深度更高导致B的资源占比更低。对于写I/O，WW-の-Cong中写入没有触发Write Cache的换出，当发生写入拥塞时，Zone A/B的性能都有下降，且B下降的更明显，这是因为Write Cache冲突的问题。写入测试中Zone A是指15个条带宽度为8的Zone，Zone B为条带宽度为2的Zone。</li>
+<li><strong>问题3</strong>：多住户场景下应该考虑应用对底层die的使用情况，并以此来实现拥塞避免方案来实现公平调度，同时关注写入缓存的问题。</li>
+</ul>
+</li>
+</ul>
+<h1 id="0x02-design">0x02 Design</h1>
+<p>eZNS的整体架构如下图，实现与NVMe驱动层之上，提供v-zone接口来实现三种功能：</p>
+<ul>
+<li>运行时的硬件动态调整</li>
+<li>应用灵活性</li>
+<li>多租户感知</li>
+</ul>
+<p>eZNS主要包含两个部分：</p>
+<ul>
+<li>Zone Arbiter：
+<ul>
+<li>在硬件抽象层HAL维护设备的shadow view</li>
+<li>执行序列化的Zone分配来避免Zone物理空间的重叠</li>
+<li>通过harvesting mechanism动态伸缩Zone的物理资源和I/O配置</li>
+</ul>
+</li>
+<li>Zone I/O Scheduler：
+<ul>
+<li>通过delay-based冲突控制机制来重排读请求，使用基于token的控制算法来调节写请求</li>
+</ul>
+</li>
+</ul>
+<p><img loading="lazy" src="/img/image-20231126223537807.png" srcset="/img/image-20231126223537807.png, /img/image-20231126223537807.png 1.5x, /img/image-20231126223537807.png 2x" sizes="auto" data-title="image-20231126223537807" data-alt="image-20231126223537807" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>eZNS解决了Motivation中的三个问题</p>
+<ul>
+<li>问题一：Stripping Width与应用行为不匹配，导致SSD利用率较低</li>
+<li>问题二：Zone的分配不考虑SSD内部物理分布</li>
+<li>问题三：多租户场景下的公平调度问题</li>
+</ul>
+<h2 id="hal">HAL</h2>
+<p>为了实现动态的Zone空间调整，eZNS采用HAL机制。</p>
+<p>HAL基于三个参数：</p>
+<ul>
+<li>maximum number of active zones（MAR），是die数量的倍数</li>
+<li>NAND page size，确定stripping的大小</li>
+<li>physical zone size，用于决定逻辑zone和stripping的组织方式</li>
+</ul>
+<p>基于这三个参数，HAL为每个Namespace提供相同的MAR和Zone Size，可以根据需要动态的进行调整</p>
+<h2 id="问题一提高zns利用率">问题一：提高ZNS利用率</h2>
+<p>透明的Zone分配机制，实现了Zone Ballooning。</p>
+<p>将active zone分为两个池子：</p>
+<p>Essentials Pool每个namespace的基本资源：</p>
+<ul>
+<li>每个Zone中的专有资源</li>
+<li>保证有足够的active zone供设备使用</li>
+<li>保证设备的高利用率</li>
+</ul>
+<p>Spares Pool可以被其他namespace借用的额外区域：</p>
+<ul>
+<li>动态资源</li>
+<li>用于临时提高Stripping width</li>
+<li>可以cross-namespace 进行租借，进一步提高利用率</li>
+</ul>
+<p>当一个Namespace需要更多Zone分配时，优先使用本地的Spares Pool中的Zone，还可以向其他Namespace的Spare Pool借用。当Namespace不再需要额外的Zone时，需要归还Spare Pool中的Zone。</p>
+<p>通过该机制可以保证ZNS SSD较高的资源利用率。</p>
+<h2 id="问题二避免zone间冲突">问题二：避免Zone间冲突</h2>
+<p>设备透明的Zone空间分配机制</p>
+<p>Serial Zone Allocator，保证了每个stripe group包含一组连续的物理Zone；单个stripe group中不存在die冲突；在不同的stripe group之间，写入冲突仅发生于所有die都被占用的情况下</p>
+<p>具体分配为缓冲所有逻辑zone open命令，将物理zone和该逻辑zone绑定实现原子操作。由于存在write cache，需要加速flush的过程并提前保留分配信息来完成zone的分配。</p>
+<h2 id="问题三多租户场景下的io干扰">问题三：多租户场景下的I/O干扰</h2>
+<p>用户透明的调度器</p>
+<p>调度器主要分为两部分：</p>
+<ul>
+<li>拥塞避免的读调度器
+<ul>
+<li>ZNS的读延迟较为稳定（无GC且顺序/同步写入），通过延迟感知是否发生冲突</li>
+<li>利用拥塞窗口cwnd为每个stripe group分配带宽，没有发生拥塞是cwnd递增增加，若发生拥塞则快速减小。</li>
+</ul>
+</li>
+<li>感知write cache的写控制器
+<ul>
+<li>对每个v-zone使用令牌来控制写I/O的下发。</li>
+<li>利用平均写延迟来监控write cache的下刷情况，并用来调整令牌的生成速率。同时控制令牌在不同zone之间的公平分布（根据上次回收时间来重新计算令牌数量）。</li>
+</ul>
+</li>
+</ul>
+<h1 id="0x03-evaluation">0x03 Evaluation</h1>
+<h2 id="zone-ballooning">Zone Ballooning</h2>
+<p>使用4个namespace，每个namespace包含16个active logical zone</p>
+<p>是个NS全部执行写入，NS1-NS3线程数为2，NS4线程数为8</p>
+<p>Figure 13可以看出，30-40s NS1-NS3停止写入，NS4需要更多的写入资源申请了更多Zone，得到了写入带宽的提升，同时借用了其他NS的Spares Pool。在80s时重新归还了借用的Zone。</p>
+<p><img loading="lazy" src="/img/image-20231127104454775.png" srcset="/img/image-20231127104454775.png, /img/image-20231127104454775.png 1.5x, /img/image-20231127104454775.png 2x" sizes="auto" data-title="image-20231127104454775" data-alt="image-20231127104454775" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="多租户场景-rocksdb--zenfs">多租户场景 RocksDB + ZenFS</h2>
+<p>四种负载为：</p>
+<ul>
+<li>A：Update-heavy</li>
+<li>B：Read mostly</li>
+<li>C：Read only</li>
+<li>F：Read Modify Write</li>
+</ul>
+<p>四个负载运行于不同的Namespace上，对于Read Only的负载，eZNS将其空闲资源分配给了写入较多的负载A、F</p>
+<p>四个负载在尾延迟、OPS上均有提升</p>
+<p><img loading="lazy" src="/img/image-20231127105201686.png" srcset="/img/image-20231127105201686.png, /img/image-20231127105201686.png 1.5x, /img/image-20231127105201686.png 2x" sizes="auto" data-title="image-20231127105201686" data-alt="image-20231127105201686" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h1 id="0x04-conclusion">0x04 Conclusion</h1>
+<p>这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2023-11-27 21:39:01">Updated on 2023-11-27&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/ezns/" data-title="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs" data-hashtags="Paper,OSDI,ZNS,Multi-tenant,Isolation,IO Scheduler"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/ezns/" data-hashtag="Paper"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/ezns/" data-title="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/osdi/' class="post-tag">OSDI</a><a href='/tags/zns/' class="post-tag">ZNS</a><a href='/tags/multi-tenant/' class="post-tag">Multi-tenant</a><a href='/tags/isolation/' class="post-tag">Isolation</a><a href='/tags/io-scheduler/' class="post-tag">IO Scheduler</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/cgroups/" class="post-nav-item" rel="prev" title="Using Cgroups v2 to limit system I/O resources"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Using Cgroups v2 to limit system I/O resources</a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

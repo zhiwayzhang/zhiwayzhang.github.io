@@ -4,7 +4,23 @@
     <link>https://zhiwayzhang.github.io/categories/storage/</link>
     <description>Storage - Category - Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Fri, 17 Mar 2023 23:30:48 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/categories/storage/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/categories/storage/" rel="self" type="application/rss+xml" /><item>
+  <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</title>
+  <link>https://zhiwayzhang.github.io/posts/ezns/</link>
+  <pubDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/ezns/</guid>
+  <description><![CDATA[<h1 id="0x00-background">0x00 Background</h1>
+<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
+<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
+<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
+<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
+<ul>
+<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
+<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
+</ul>]]></description>
+</item>
+<item>
   <title>[FAST&#39;23] HadaFS: A File System Bridging the Local and Shared Burst Buffer for Exascale Supercomputers</title>
   <link>https://zhiwayzhang.github.io/posts/hadafs/</link>
   <pubDate>Fri, 17 Mar 2023 23:30:48 &#43;0800</pubDate>
@@ -261,41 +277,6 @@ The File Object 在打开一个文件时，需要分配一个文件结构体（�
 对文件的读写、关闭通过用户空间的fd来操作正确的文件结构。
 只要文件打开，它就会保持对dentry的使用状态，这同时意味着inode仍在使用。
 The Dentry Object 目录项纪录子文件和子目录的名称]]></description>
-</item>
-<item>
-  <title>[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</title>
-  <link>https://zhiwayzhang.github.io/posts/flashshare/</link>
-  <pubDate>Wed, 17 Aug 2022 10:30:30 &#43;0800</pubDate>
-  <author>Zhiwei Zhang</author>
-  <guid>https://zhiwayzhang.github.io/posts/flashshare/</guid>
-  <description><![CDATA[超低延迟固态硬盘从内核到固件的服务器存储堆栈
-个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
-blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
-message signaled interrupt (MSI)
-1.摘要 flash share
-在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
-对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
-评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
-1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
-某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
-现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
-为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
-因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
-现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
-但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
-the 99th percentile 是0.8ms（apache）
-但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
-原因：略
-从固件到内核优化堆栈的存储。
-内核级别的增强：
-两个挑战
-Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。 对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
-固件层设计：
-​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
-ULL SSD的新中断处理服务： ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。
-​	通过将NVMe队列和ISR卸载到硬件加速器中来进一步优化NVMe completion routine。
-​	各种仿真实验后效果不错，效率提高了22%和31%。
-2.0 Background 2.1 存储内核栈 Linux文件系统IO]]></description>
 </item>
 </channel>
 </rss>

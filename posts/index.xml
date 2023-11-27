@@ -4,7 +4,23 @@
     <link>https://zhiwayzhang.github.io/posts/</link>
     <description>All Posts | Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Fri, 07 Apr 2023 19:51:41 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+  <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</title>
+  <link>https://zhiwayzhang.github.io/posts/ezns/</link>
+  <pubDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/ezns/</guid>
+  <description><![CDATA[<h1 id="0x00-background">0x00 Background</h1>
+<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
+<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
+<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
+<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
+<ul>
+<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
+<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
+</ul>]]></description>
+</item>
+<item>
   <title>Using Cgroups v2 to limit system I/O resources</title>
   <link>https://zhiwayzhang.github.io/posts/cgroups/</link>
   <pubDate>Fri, 07 Apr 2023 19:51:41 &#43;0800</pubDate>
@@ -193,37 +209,6 @@ MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究�
 Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
 整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
 在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能：]]></description>
-</item>
-<item>
-  <title>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</title>
-  <link>https://zhiwayzhang.github.io/posts/pinkkv/</link>
-  <pubDate>Sat, 26 Nov 2022 13:40:59 &#43;0800</pubDate>
-  <author>Zhiwei Zhang</author>
-  <guid>https://zhiwayzhang.github.io/posts/pinkkv/</guid>
-  <description><![CDATA[0x00 Everyday English preferable 更可取的
-consequently 因此
-inevitably 必然的
-conventional 常规的、传统的
-exacerbates 加剧
-deteriorates 恶化
-deterministic 确定性
-0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
-传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
-单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
-尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
-PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
-由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
-GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
-在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
-0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
-作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
-0x03 Design Pink有四个主要的数据结构
-位于DRAM中的level lists和Skiplist
-位于闪存中的meta segments和data segments
-在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST'16，取代FTL进行GC、索引和磨损均衡
-Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
-当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
-Level list 用于跟踪闪存中每个level的meta segment]]></description>
 </item>
 </channel>
 </rss>

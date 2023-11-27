@@ -2,22 +2,28 @@
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
   ><url>
-      <loc>https://zhiwayzhang.github.io/categories/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/posts/ezns/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/categories/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/io-scheduler/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/isolation/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/multi-tenant/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/categories/notes/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/osdi/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/paper/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/posts/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/categories/storage/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/zns/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/cgroups/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/linux/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/posts/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/tags/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/categories/tech/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/posts/cgroups/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/posts/hadafs/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/burst-buffer/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/fast/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/gfs/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/categories/notes/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/tags/paper/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/sns/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/categories/storage/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/supercomputer/</loc><lastmod>2023-03-17T23:30:48&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/posts/femu-bbssd/</loc><lastmod>2023-03-12T12:36:08&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/femu/</loc><lastmod>2023-03-12T12:36:08&#43;08:00</lastmod></url><url>

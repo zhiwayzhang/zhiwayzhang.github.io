@@ -4,7 +4,23 @@
     <link>https://zhiwayzhang.github.io/categories/notes/</link>
     <description>Notes - Category - Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Fri, 17 Mar 2023 23:30:48 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/categories/notes/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/categories/notes/" rel="self" type="application/rss+xml" /><item>
+  <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</title>
+  <link>https://zhiwayzhang.github.io/posts/ezns/</link>
+  <pubDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/ezns/</guid>
+  <description><![CDATA[<h1 id="0x00-background">0x00 Background</h1>
+<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
+<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
+<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
+<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
+<ul>
+<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
+<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
+</ul>]]></description>
+</item>
+<item>
   <title>[FAST&#39;23] HadaFS: A File System Bridging the Local and Shared Burst Buffer for Exascale Supercomputers</title>
   <link>https://zhiwayzhang.github.io/posts/hadafs/</link>
   <pubDate>Fri, 17 Mar 2023 23:30:48 &#43;0800</pubDate>
@@ -214,30 +230,6 @@ GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree�
 Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
 当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
 Level list 用于跟踪闪存中每个level的meta segment]]></description>
-</item>
-<item>
-  <title>[FAST&#39;18] FEMU闪存模拟系统介绍</title>
-  <link>https://zhiwayzhang.github.io/posts/femu-paper/</link>
-  <pubDate>Wed, 23 Nov 2022 19:44:51 &#43;0800</pubDate>
-  <author>Zhiwei Zhang</author>
-  <guid>https://zhiwayzhang.github.io/posts/femu-paper/</guid>
-  <description><![CDATA[0x00 Everyday English LOC == line of code
-Guest OS == VM
-intricacies 错综复杂
-drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能
-leverage 对&hellip;产生影响；一般也可以理解为 充分利用，比utilize语气强一些
-0x01 Intro FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率
-此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。
-FEMU首先开源免费，并且有较高的准确度，同时可伸缩性强，最大支持32 I/O 线程并模拟32个并行的SSD channels/chips，可扩展性高，得益于基于QEMU的优点，FEMU可以支持针对于SSD的研究，针对os 内核的研究，或者基于os内核和SSD的研究。
-FEMU GitHub 仓库地址： https://github.com/vtess/FEMU
-0x02 FEMU FEMU本身仅有3929行代码，基于QEMU v2.9，FEMU近些年的更新也主要为修复一些bug、合并QEMU的版本，将传统的App+宿主机+SSD的研究架构转变为了App+虚拟机+FEMU。
-FEMU中的FTL模块、GC、I/O调度主要基于VSSIMVSSIM: Virtual machine based SSD simulator | IEEE Conference Publication | IEEE Xplore
-可伸缩性 对于当前的高并行化的SSD，可伸缩性对模拟闪存至关重要。通过virtio和dataplane接口进行模拟，不能达到足够的可伸缩性，同时存在较高的延迟。
-在QEMU中存在的两个主要问题是
-QEMU使用传统的trap-and-emulate方法进行I/O模拟，虚拟机的NVMe驱动通过doorbell寄存器告知QEMU模拟的I/O设备。该doorbell将引起开销较大的VM-exit，同时在I/O完成阶段，也会产生该调用。 QEMU使用异步I/O来实现read/write，AIO的执行需要避免QEMU的I/O被阻塞，当在存储后端是基于RAM的镜像时，AIO产生的负载尤为明显 解决方案为：
-使用基于轮询的方案，并且禁用了虚拟机的doorbell写操作，通过一个线程来轮询存储设备队列的状态，避免了VM-exit 不使用虚拟的镜像文件，使用自定义的以RAM为后端的存储模拟，定义在QEMU的堆空间中，将QEMU中DMA修改为从QEMU heap中读写数据，这个改变对VM来说是透明的 准确度 延迟模拟 当I/O请求到达后，FEMU发起DMA R/W，并用模拟的完成时间$(T_{endio})$对I/O请求进行标记，添加到endio queue中，队列按照I/O的完成时间进行排序。一旦I/O请求的预估完成时间大于当前时间，会由专门的end I/O 处理线程负责将其通过中断发送给虚拟机。
-FEMU对每个I/O请求都设置了+50us的延迟。
-延迟模型 对于$T_{endio}$的计算：]]></description>
 </item>
 </channel>
 </rss>

@@ -1,0 +1,24 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>ZNS - Tag - Coding Panda&#39;s Blog</title>
+    <link>https://zhiwayzhang.github.io/tags/zns/</link>
+    <description>ZNS - Tag - Coding Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/zns/" rel="self" type="application/rss+xml" /><item>
+  <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</title>
+  <link>https://zhiwayzhang.github.io/posts/ezns/</link>
+  <pubDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/ezns/</guid>
+  <description><![CDATA[<h1 id="0x00-background">0x00 Background</h1>
+<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
+<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
+<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
+<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
+<ul>
+<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
+<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
+</ul>]]></description>
+</item>
+</channel>
+</rss>

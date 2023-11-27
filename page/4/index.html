@@ -112,6 +112,42 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/storagessd/">【存储技术基础】固态硬盘</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-09-22 09:36:42'>published on <time datetime="2022-09-22">2022-09-22</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">主要由Flash Memory 和FTL组成
+Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存
+根据延迟数量级，一般用PCM做内存，Flash Memory做外存
+0x00 Flash Memory 闪存原理 类型 NOR闪存
+存储密度低 可字节改写 NAND闪存（主流）
+存储密度高 不可覆盖写 用于外存需要较高的存储量级，一般用NAND
+闪存单元 读：电压代表不同数值
+写：电子注入
+相比晶体管添加了浮栅门，保存电子
+原理其实比较简单，非电子系就不做太详细的研究了
+闪存页(4KB,8KB,16KB，读写单元)，阵列中的每一行
+闪存块(擦除单元)，由多个页组成的单元
+选中行和列，然后将数据加载到Sense Amplifiers
+存储单元有两个阈值的电压，可以根据两个电压的中点作为读电压，2.5V读电压时左边通电，数据为1，右边则不通电，数据为0
+Pass Through
+选取一个较大的电压，使得所有的单元都接通，数据为1，不影响其他行的状态
+如图所示的存储结构，在第二行施加2.5V电压，其他行施加5V，最终读取数据为0011
+上述为SLC，Single Level Cell，单存储单元
+多比特闪存 多比特闪存单元MLC，包含2Bits 4个Level的数据
+TLC 3 Bits 8个Level
+QLC 4 Bits 16个Level
+多比特使用格雷码来编码
+使用格雷码使得相邻单元只有一位差异，方便纠错
+多比特提高了存储密度，但是提高了错误率，因为施加的电压差距很小。可靠性会降低。
+对于多比特的写，MLC分为高比特和低比特，对于低比特的状态加偏移电压确定高比特，在低比特时需要加的电压较大，操作难度低，运行速度快，在高比特时需要加的电压小，波形的间距小，操作难度高，运行的速度较慢。
+对于多比特的读，先看lower bit，加一次电压，即可筛选出低位的0，1，再加两次电压确定upper bit。因为upper bit为0的在中间部分，为1的在两侧，因此需要在两个分界线分别加一次电压来确定upper bit为多少。
+闪存 Block的大小的一种配置：
+一行有两个Page，Upper Page和Lower Page，每个单元中，低位构成Lower Page，高位构成Upper Page，有128个单元，128K/8=16KB
+有64列bitlines，一个block的大小即为16KB*64*2=2MB，一般按照此比例配置Block
+写入时按照固定顺序，写入高低页面相互独立，不能同时写，在写入加压时容易使相邻单元发生数据偏移，要降低错误率
+写入是需要先擦除再写入，擦除整个块
+特性 读写粒度 闪存页读写粒度：</div><div class="post-footer">
+    <a href="/posts/storagessd/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/nvm/' class="post-tag">NVM</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/lottery/">中奖</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-09-21 15:27:25'>published on <time datetime="2022-09-21">2022-09-21</time></span>&nbsp;<span class="post-category">included in <a href="/categories/diary/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Diary</a></span></div><div class="content">中奖
 我人生中几乎很少有过中奖，印象中甚至是没有，抛开小时候5毛钱买的那种，今天在去图书馆的路上看到了这个画面，让我想起了三年前大一刚入学发生的事。
@@ -196,38 +232,6 @@ For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
 For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
 因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低</div><div class="post-footer">
     <a href="/posts/asyncio/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/paper/' class="post-tag">Paper</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/flashshare/">[OSDI&#39;19] Flashshare: Punching Through Server Storage Stack from Kernel to Firmware for Ultra-Low Latency SSDs</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-08-17 10:30:30'>published on <time datetime="2022-08-17">2022-08-17</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">超低延迟固态硬盘从内核到固件的服务器存储堆栈
-个别名词解释 the 99^th percentile 超过统计数据99%的数是多少
-blk-mq Linux Multiqueue block layer 内核对ssd随机I/O的优化
-message signaled interrupt (MSI)
-1.摘要 flash share
-在内核中，扩展了系统堆栈的数据结构，传递应用程序的属性（？），包括内核层到SSD固件。
-对于给定的属性，FlashShare的块层管理IO调度并处理NVMe中断。
-评估结果表明，FLASHSHARE可以将共同运行应用程序的平均周转响应时间分别缩短22%和31%。
-1.0 Intro 1.1 现状 网络服务提供商，满足服务级别协议SLA，延迟敏感
-某个段时间短可能有大量请求涌入，供应商会超额配置机器以满足SLA
-现状：该场景并不常见，因此大部分情况下服务器的资源占用率非常低，能耗比低。
-为了解决利用率低，服务器会运行离线的数据分析应用，延迟不敏感，以吞吐量为导向。
-因此，在运行了多个进程的服务器上，I/O延迟增高，满足SLA非常困难。
-现有的ULL SSD相较于NVMe SSD可以减少10倍的延迟
-但是这些ULL SSD在同时运行多个进程下高强度压榨服务器的时候，不能充分利用ULL SSD的优势/表现一般。
-the 99th percentile 是0.8ms（apache）
-但是当服务器同时运行pagerank的时候，延迟会增加228.5%。
-原因：略
-从固件到内核优化堆栈的存储。
-内核级别的增强：
-两个挑战
-Linux的blk-mq导致I/O请求队列化，引入延迟 NVMe的队列机制没有对I/O优先级的策略，因此，来自离线应用的IO请求容易阻塞在线应用的紧急请求，造成延迟。 对于latency critical的请求，绕过NVMe的请求队列。同时令NVMe的驱动通过知晓每个应用的延迟临界匹配NVMe的提交和请求队列。
-固件层设计：
-​	即使内核级的优化保证了延迟敏感的请求可以获得高优先级，但如果基础固件不了解延迟临界值，ULL特性（类似内存的性能）无法完全暴露给用户。本文中重新设计了I/O调度和缓存的固件，以直接向用户暴露ULL特性。将ULL SSD的集成缓存进行分区，并根据工作负载的属性对每个I/O服务独立的分配缓存。固件动态的更新分区大小并以精细粒度调整预取I/O粒度。
-ULL SSD的新中断处理服务： ​	当前的NVMe中断机制没有对ULL I/O服务优化。轮询方法（Linux 4.9.30）消耗了大量的CPU资源去检查I/O服务的完成情况。当轮询在线交互服务的IO请求完成状态时，flashShare使用一个仅对离线应用程序使用消息信号中断的选择性中断服务程序Select-ISR。
-​	通过将NVMe队列和ISR卸载到硬件加速器中来进一步优化NVMe completion routine。
-​	各种仿真实验后效果不错，效率提高了22%和31%。
-2.0 Background 2.1 存储内核栈 Linux文件系统IO</div><div class="post-footer">
-    <a href="/posts/flashshare/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/paper/' class="post-tag">Paper</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">

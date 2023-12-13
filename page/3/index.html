@@ -112,6 +112,27 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/femu-paper/">[FAST&#39;18] FEMU闪存模拟系统介绍</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-11-23 19:44:51'>published on <time datetime="2022-11-23">2022-11-23</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Everyday English LOC == line of code
+Guest OS == VM
+intricacies 错综复杂
+drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能
+leverage 对&hellip;产生影响；一般也可以理解为 充分利用，比utilize语气强一些
+0x01 Intro FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率
+此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。
+FEMU首先开源免费，并且有较高的准确度，同时可伸缩性强，最大支持32 I/O 线程并模拟32个并行的SSD channels/chips，可扩展性高，得益于基于QEMU的优点，FEMU可以支持针对于SSD的研究，针对os 内核的研究，或者基于os内核和SSD的研究。
+FEMU GitHub 仓库地址： https://github.com/vtess/FEMU
+0x02 FEMU FEMU本身仅有3929行代码，基于QEMU v2.9，FEMU近些年的更新也主要为修复一些bug、合并QEMU的版本，将传统的App+宿主机+SSD的研究架构转变为了App+虚拟机+FEMU。
+FEMU中的FTL模块、GC、I/O调度主要基于VSSIMVSSIM: Virtual machine based SSD simulator | IEEE Conference Publication | IEEE Xplore
+可伸缩性 对于当前的高并行化的SSD，可伸缩性对模拟闪存至关重要。通过virtio和dataplane接口进行模拟，不能达到足够的可伸缩性，同时存在较高的延迟。
+在QEMU中存在的两个主要问题是
+QEMU使用传统的trap-and-emulate方法进行I/O模拟，虚拟机的NVMe驱动通过doorbell寄存器告知QEMU模拟的I/O设备。该doorbell将引起开销较大的VM-exit，同时在I/O完成阶段，也会产生该调用。 QEMU使用异步I/O来实现read/write，AIO的执行需要避免QEMU的I/O被阻塞，当在存储后端是基于RAM的镜像时，AIO产生的负载尤为明显 解决方案为：
+使用基于轮询的方案，并且禁用了虚拟机的doorbell写操作，通过一个线程来轮询存储设备队列的状态，避免了VM-exit 不使用虚拟的镜像文件，使用自定义的以RAM为后端的存储模拟，定义在QEMU的堆空间中，将QEMU中DMA修改为从QEMU heap中读写数据，这个改变对VM来说是透明的 准确度 延迟模拟 当I/O请求到达后，FEMU发起DMA R/W，并用模拟的完成时间$(T_{endio})$对I/O请求进行标记，添加到endio queue中，队列按照I/O的完成时间进行排序。一旦I/O请求的预估完成时间大于当前时间，会由专门的end I/O 处理线程负责将其通过中断发送给虚拟机。
+FEMU对每个I/O请求都设置了+50us的延迟。
+延迟模型 对于$T_{endio}$的计算：</div><div class="post-footer">
+    <a href="/posts/femu-paper/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/fast/' class="post-tag">FAST</a><a href='/tags/femu/' class="post-tag">FEMU</a><a href='/tags/qemu/' class="post-tag">QEMU</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/newwhutacm/">WHUT新生赛游记（二）</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-11-21 09:46:56'>published on <time datetime="2022-11-21">2022-11-21</time></span>&nbsp;<span class="post-category">included in <a href="/categories/diary/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Diary</a></span></div><div class="content">大四老狗为什么还写新生赛游记呢，怎么回事呢，怎么回事呢
 Day 0 体测日，大三一年基本上是没怎么练跑步的，去年在女朋友监督下练了好久1000米摸到了及格线4'19，今年跑了5'00，还算能接受吧，以为能将将凑够50分毕业吧，结果50米垃了，9.7，明天早上再去润个50米，不然真毕不了业了。
@@ -245,33 +266,6 @@ Disk Mirroring 磁盘镜像，分主从磁盘，从盘基于主盘进行同步�
 先做Striping再做Mirroring (RAID 01)</div><div class="post-footer">
     <a href="/posts/multidisksystems/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/raid/' class="post-tag">RAID</a><a href='/tags/%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C/' class="post-tag">奇偶校验</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/mainmemory/">【存储技术基础】主存</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-09-24 18:26:22'>published on <time datetime="2022-09-24">2022-09-24</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 主存 当前面临的问题：
-容量问题、带宽问题、QoS保证
-多核处理器、数据密集应用、云计算、GPU
-HDFS（GFS）基于外存储器
-Spark 内存中数据处理
-能耗功率问题
-40%功耗在DRAM，Refresh操作耗能
-DRAM发展遇到瓶颈
-制成方式限制
-改进：
-3D-Stack DRAM 提供更高的带宽 低延迟DRAM 低功耗DRAM NVM（e.g. PCM）容量更大，延迟较高 0x01 DRAM的组成 Channel DIMM 内存条 Rank 二维阵列最小单元 Chip 芯片 Bank Row/Column 行为字线 word line
-列为位线，交点是cell 内存单元
-DRAM row是一个DRAM page
-Sense Amplifiers 也被叫做Row buffer
-每个地址通过&lt;row,colum&gt;编址
-访问一个closed row的过程：
-Activate：将row放到row buffer中 Read/Write：读写row buffer中的column Precharge：从row buffer中的数据写回到选中的row中 Bank Operation 给定Row Address通过Row decoder选中一行
-将行加载到Row Buffer
-若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据
-若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据
-Chip 由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）
-每次只能读4或16 Bit
-Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个rank组成</div><div class="post-footer">
-    <a href="/posts/mainmemory/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/dram/' class="post-tag">DRAM</a><a href='/tags/nvm/' class="post-tag">NVM</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -296,7 +290,7 @@ Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>

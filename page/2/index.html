@@ -112,6 +112,31 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/xrp/">[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-02-09 14:51:48'>published on <time datetime="2023-02-09">2023-02-09</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Intro 随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。
+观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。
+因此可以考虑跳过内核中一系列的数据传递，即Kernel Bypass。目前现有的研究大都对内核进行了激进的修改策略，或引入了新的硬件，Kernel Bypass主要使用SPDK，直接对硬件设备进行访问，而SPDK会强制开发者实现自己的文件系统，需要自行维护隔离性和安全性。
+在等待I/O完成时，往往会进行轮询，给CPU带来了一些性能损失。有研究表明当可调度的线程数量超过了CPU核心数量时，使用SPDK会提高平均延迟和尾延迟，严重降低了吞吐量。
+因此作者的核心思想为既可以完成Kernel Bypass，也不需要引入额外硬件并不对内核和文件系统进行很大的修改，作者借助BPF(Berkeley Packet Filter)来实现，BPF允许应用程序下放部分工作到内核中，同时还能保证隔离性，允许多线程共享一个CPU核心，提高利用率。
+许多I/O负载需要多次调用函数访问硬盘上的大型数据结构（B+ tree），作者称之为resubmission。
+作者提出了eXpress Resubmission Path，XRP在NVMe驱动中的中断处理器上添加了一个hook，使得XRP可以在I/O完成时直接从NVMe驱动层来发起BPF函数调用，快速启动I/O的重新提交。
+XRP的主要贡献为：
+首次使用BPF来卸载I/O任务到内核 将B-tree的查找吞吐量提高了2.5倍 XRP提供了接近Kernel Bypass的延迟，而且允许线程和进程高效地共享CPU核心 XRP适用于多种不同用例，支持不同类型数据结构以及存储操作 0x01 Bg &amp;&amp; Motivation I/O是目前的瓶颈 时间都去哪了 作者通过实验发现延迟的部分来源是软件层面，即系统内核部分中block I/O的传递
+为什么不单纯的kernel bypass 大部分bypass的方法都是直接对NVMe driver发起请求，此类方案不能实现细粒度的隔离或者再不同应用之间共享数据，同时不能有效的去接收I/O完成产生的中断，需要应用不断轮询，因此CPU就被某个应用独占，不能得到共享。而且当多个轮询线程共享一个CPU处理器时，他们之间对CPU的竞争同时缺少同步会导致尾延迟升高和吞吐量的降低。
+BPF Berkeley Packet Filter允许用户将一些简单函数下放到内核层来执行，起初是用于TCP的数据包过滤、负载均衡、数据包转发，目前推出了eBPF扩展。
+BPF可以验证函数的安全性，主要检查是否超出内存地址空间、是否有死循环、指令是否太多。
+BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。
+一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。
+有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。
+在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。
+io_uring io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。
+0x02 Challenges &amp;&amp; Principles Challenges 地址转换和安全问题：NVMe Driver不能访问文件系统的元数据，因此不能完成逻辑地址到物理地址的转换；BPF可以访问其他文件和用户的任何block。 并发和缓存问题：对于从文件系统发起的并发读写很难维护。从文件系统发出的写请求将写入到page cache中，对于XRP不可见；同时对于硬盘上数据结构布局的修改，例如改变某一个指针，将会导致XRP获取到错误的数据，虽然可以进行加锁，但是从NVMe中断访问锁的开销太大。 Observation 作者研究发现，大部分的存储引擎的硬盘数据结构都是稳定的，或不会进行就地更新。
+例如在LSM-tree中，进行索引的写入操作，写入到文件SSTables中，这些文件为不可变，直至其被删除，不可变文件还降低了文件并发访问的成本。B-tree的索引虽然可以就地更新，但是在实际测试中（24小时YCSB读写改实验）发现，索引的修改次数很少，因此也不需要在NVMe Driver中频繁的更新文件系统的元数据。
+同时，索引一般存储在少量的大文件中，并且每个索引不会跨越多个文件。
+Design Principles 一次只访问一个文件：可以简化地址转换和访问控制，还最小化了需要传递给NVMe driver的元数据 面向于稳定的数据结构：XRP以不会频繁更新的数据结构为目标RocksDB、LevelDB、TokuDB、WiredTiger，不支持需要锁来访问的数据结构 用户管理缓存：XRP无法直接访问Page Cache，因此如果block位于Page Cache中，XRP函数不能安全的并发执行，而大多数存储引擎都是在用户空间自行管理Cache。 错误处理：如果访问失败（映射信息过期），需要程序在用户空间重试或回滚。 0x03 Design &amp;&amp; Implementation XRP的架构图：</div><div class="post-footer">
+    <a href="/posts/xrp/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/ebpf/' class="post-tag">eBPF</a><a href='/tags/wiredtiger/' class="post-tag">WiredTiger</a><a href='/tags/mongodb/' class="post-tag">MongoDB</a><a href='/tags/io_uring/' class="post-tag">io_uring</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/mt2/">[FAST&#39;22] MT^2: Memory Bandwidth Regulation on Hybrid NVM/DRAM Platforms</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-12-19 16:50:00'>published on <time datetime="2022-12-19">2022-12-19</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Intro NVM和DRAM共享内存总线，二者之间的负载相互干扰，给混合NVM/DRAM平台的带宽分配带来了挑战
 本文提出了MT2，可以在混合NVM/DRAM平台中管理并发程序间的内存带宽。
@@ -225,27 +250,6 @@ Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，�
 Level list 用于跟踪闪存中每个level的meta segment</div><div class="post-footer">
     <a href="/posts/pinkkv/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/lsm-tree/' class="post-tag">LSM-tree</a><a href='/tags/k/v/' class="post-tag">K/V</a><a href='/tags/database/' class="post-tag">Database</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/femu-paper/">[FAST&#39;18] FEMU闪存模拟系统介绍</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-11-23 19:44:51'>published on <time datetime="2022-11-23">2022-11-23</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Everyday English LOC == line of code
-Guest OS == VM
-intricacies 错综复杂
-drop-in replacement 通常表示直接替换，并且替换后不会产生影响，甚至会有一些新的功能
-leverage 对&hellip;产生影响；一般也可以理解为 充分利用，比utilize语气强一些
-0x01 Intro FEMU是用于软硬件全栈的SSD研究模拟平台，基于QEMU开发，相比于OpenChannel SSD实现了较高的准确率
-此前的SSD研究模拟工具大多不开源，可扩展性差，研究成本高，并且已经过时。
-FEMU首先开源免费，并且有较高的准确度，同时可伸缩性强，最大支持32 I/O 线程并模拟32个并行的SSD channels/chips，可扩展性高，得益于基于QEMU的优点，FEMU可以支持针对于SSD的研究，针对os 内核的研究，或者基于os内核和SSD的研究。
-FEMU GitHub 仓库地址： https://github.com/vtess/FEMU
-0x02 FEMU FEMU本身仅有3929行代码，基于QEMU v2.9，FEMU近些年的更新也主要为修复一些bug、合并QEMU的版本，将传统的App+宿主机+SSD的研究架构转变为了App+虚拟机+FEMU。
-FEMU中的FTL模块、GC、I/O调度主要基于VSSIMVSSIM: Virtual machine based SSD simulator | IEEE Conference Publication | IEEE Xplore
-可伸缩性 对于当前的高并行化的SSD，可伸缩性对模拟闪存至关重要。通过virtio和dataplane接口进行模拟，不能达到足够的可伸缩性，同时存在较高的延迟。
-在QEMU中存在的两个主要问题是
-QEMU使用传统的trap-and-emulate方法进行I/O模拟，虚拟机的NVMe驱动通过doorbell寄存器告知QEMU模拟的I/O设备。该doorbell将引起开销较大的VM-exit，同时在I/O完成阶段，也会产生该调用。 QEMU使用异步I/O来实现read/write，AIO的执行需要避免QEMU的I/O被阻塞，当在存储后端是基于RAM的镜像时，AIO产生的负载尤为明显 解决方案为：
-使用基于轮询的方案，并且禁用了虚拟机的doorbell写操作，通过一个线程来轮询存储设备队列的状态，避免了VM-exit 不使用虚拟的镜像文件，使用自定义的以RAM为后端的存储模拟，定义在QEMU的堆空间中，将QEMU中DMA修改为从QEMU heap中读写数据，这个改变对VM来说是透明的 准确度 延迟模拟 当I/O请求到达后，FEMU发起DMA R/W，并用模拟的完成时间$(T_{endio})$对I/O请求进行标记，添加到endio queue中，队列按照I/O的完成时间进行排序。一旦I/O请求的预估完成时间大于当前时间，会由专门的end I/O 处理线程负责将其通过中断发送给虚拟机。
-FEMU对每个I/O请求都设置了+50us的延迟。
-延迟模型 对于$T_{endio}$的计算：</div><div class="post-footer">
-    <a href="/posts/femu-paper/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/fast/' class="post-tag">FAST</a><a href='/tags/femu/' class="post-tag">FEMU</a><a href='/tags/qemu/' class="post-tag">QEMU</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -266,7 +270,7 @@ FEMU对每个I/O请求都设置了+50us的延迟。
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>

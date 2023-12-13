@@ -2,18 +2,21 @@
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
   ><url>
+      <loc>https://zhiwayzhang.github.io/posts/bourbon/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/categories/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/learned-index/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/lsm-tree/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/categories/notes/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/osdi/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/paper/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/posts/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/categories/storage/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
+      <loc>https://zhiwayzhang.github.io/tags/</loc><lastmod>2023-12-10T16:56:03&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/posts/ezns/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/categories/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/io-scheduler/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/isolation/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/multi-tenant/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/categories/notes/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/tags/osdi/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/tags/paper/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/posts/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/categories/storage/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/tags/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/zns/</loc><lastmod>2023-11-27T21:39:01&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/cgroups/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/linux/</loc><lastmod>2023-04-07T19:51:41&#43;08:00</lastmod></url><url>
@@ -48,7 +51,6 @@
       <loc>https://zhiwayzhang.github.io/posts/hintstor/</loc><lastmod>2022-11-30T10:58:22&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/posts/pinkkv/</loc><lastmod>2022-11-26T13:40:59&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/database/</loc><lastmod>2022-11-26T13:40:59&#43;08:00</lastmod></url><url>
-      <loc>https://zhiwayzhang.github.io/tags/lsm-tree/</loc><lastmod>2022-11-26T13:40:59&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/posts/femu-paper/</loc><lastmod>2022-11-23T19:44:51&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/tags/acm/</loc><lastmod>2022-11-21T09:46:56&#43;08:00</lastmod></url><url>
       <loc>https://zhiwayzhang.github.io/categories/diary/</loc><lastmod>2022-11-21T09:46:56&#43;08:00</lastmod></url><url>

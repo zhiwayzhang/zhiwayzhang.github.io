@@ -112,16 +112,13 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/bourbon/">[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-12-10 16:56:03'>published on <time datetime="2023-12-10">2023-12-10</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content"><p>本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。</p></div><div class="post-footer">
+    <a href="/posts/bourbon/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/osdi/' class="post-tag">OSDI</a><a href='/tags/lsm-tree/' class="post-tag">LSM-tree</a><a href='/tags/learned-index/' class="post-tag">Learned-Index</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/ezns/">[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-11-27 21:39:01'>published on <time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content"><h1 id="0x00-background">0x00 Background</h1>
-<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
-<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
-<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
-<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
-<ul>
-<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
-<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
-</ul></div><div class="post-footer">
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-11-27 21:39:01'>published on <time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content"><p>这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。</p></div><div class="post-footer">
     <a href="/posts/ezns/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/osdi/' class="post-tag">OSDI</a><a href='/tags/zns/' class="post-tag">ZNS</a><a href='/tags/multi-tenant/' class="post-tag">Multi-tenant</a><a href='/tags/isolation/' class="post-tag">Isolation</a><a href='/tags/io-scheduler/' class="post-tag">IO Scheduler</a></div></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
@@ -176,31 +173,6 @@ Pangu 1.0基于Linux Ext4设计了一个分布式的内核文件系统和内核T
 为了完全获得这些升级带来的性能提升，盘古2.0提出了一系列的技术来处理在{网络/内存/CPU}的性能瓶颈并充分利用其强大的硬件资源。具体来说，盘古2.0通过减少网络流量放大率和动态调整不同流量的优先级来优化网络带宽；通过提出Remote Direct Cache Access(RDCA)来处理内存瓶颈；通过消除数据序列化/反序列化的开销并引入CPU等待指令来同步超线程，以此来解决CPU瓶颈问题。</div><div class="post-footer">
     <a href="/posts/pangu/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/pangu/' class="post-tag">Pangu</a><a href='/tags/alibaba/' class="post-tag">Alibaba</a><a href='/tags/rdma/' class="post-tag">RDMA</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/distribute-system/' class="post-tag">Distribute System</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/xrp/">[OSDI&#39;22] XRP: In-Kernel Storage Functions with eBPF</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2023-02-09 14:51:48'>published on <time datetime="2023-02-09">2023-02-09</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Intro 随着超低延迟SSD的发展，I/O过程中来自内核的延迟比重不断升高。
-观察一个请求的从发起到完成的整个过程，内核部分占据了48.6%的延迟。
-因此可以考虑跳过内核中一系列的数据传递，即Kernel Bypass。目前现有的研究大都对内核进行了激进的修改策略，或引入了新的硬件，Kernel Bypass主要使用SPDK，直接对硬件设备进行访问，而SPDK会强制开发者实现自己的文件系统，需要自行维护隔离性和安全性。
-在等待I/O完成时，往往会进行轮询，给CPU带来了一些性能损失。有研究表明当可调度的线程数量超过了CPU核心数量时，使用SPDK会提高平均延迟和尾延迟，严重降低了吞吐量。
-因此作者的核心思想为既可以完成Kernel Bypass，也不需要引入额外硬件并不对内核和文件系统进行很大的修改，作者借助BPF(Berkeley Packet Filter)来实现，BPF允许应用程序下放部分工作到内核中，同时还能保证隔离性，允许多线程共享一个CPU核心，提高利用率。
-许多I/O负载需要多次调用函数访问硬盘上的大型数据结构（B+ tree），作者称之为resubmission。
-作者提出了eXpress Resubmission Path，XRP在NVMe驱动中的中断处理器上添加了一个hook，使得XRP可以在I/O完成时直接从NVMe驱动层来发起BPF函数调用，快速启动I/O的重新提交。
-XRP的主要贡献为：
-首次使用BPF来卸载I/O任务到内核 将B-tree的查找吞吐量提高了2.5倍 XRP提供了接近Kernel Bypass的延迟，而且允许线程和进程高效地共享CPU核心 XRP适用于多种不同用例，支持不同类型数据结构以及存储操作 0x01 Bg &amp;&amp; Motivation I/O是目前的瓶颈 时间都去哪了 作者通过实验发现延迟的部分来源是软件层面，即系统内核部分中block I/O的传递
-为什么不单纯的kernel bypass 大部分bypass的方法都是直接对NVMe driver发起请求，此类方案不能实现细粒度的隔离或者再不同应用之间共享数据，同时不能有效的去接收I/O完成产生的中断，需要应用不断轮询，因此CPU就被某个应用独占，不能得到共享。而且当多个轮询线程共享一个CPU处理器时，他们之间对CPU的竞争同时缺少同步会导致尾延迟升高和吞吐量的降低。
-BPF Berkeley Packet Filter允许用户将一些简单函数下放到内核层来执行，起初是用于TCP的数据包过滤、负载均衡、数据包转发，目前推出了eBPF扩展。
-BPF可以验证函数的安全性，主要检查是否超出内存地址空间、是否有死循环、指令是否太多。
-BPF可以直接发起一系列I/O请求，来获取那些不被程序直接利用的中间数据，例如指针寻址过程，B-tree索引便利。
-一些在硬盘维护并且使用指针来查找的数据结构，例如LSM tree，可以用于加速查找的过程。
-有研究对比了分别从User Space、Syscall、NVMe Driver层发起I/O之间吞吐量和延迟的差异。
-在NVMe Driver中发起I/O有效提高了吞吐量降低了延迟，原因是越靠近存储设备的一层，总体的延迟和性能越高。因此XRP选择在NVMe Driver层来实现。
-io_uring io_uring是Linux的一个系统调用，可以批量提交异步I/O，并且相较于aio减少了系统调用的次数，作者通过实验验证了在NVMe Driver层提交I/O也可以提高io_uring的性能。
-0x02 Challenges &amp;&amp; Principles Challenges 地址转换和安全问题：NVMe Driver不能访问文件系统的元数据，因此不能完成逻辑地址到物理地址的转换；BPF可以访问其他文件和用户的任何block。 并发和缓存问题：对于从文件系统发起的并发读写很难维护。从文件系统发出的写请求将写入到page cache中，对于XRP不可见；同时对于硬盘上数据结构布局的修改，例如改变某一个指针，将会导致XRP获取到错误的数据，虽然可以进行加锁，但是从NVMe中断访问锁的开销太大。 Observation 作者研究发现，大部分的存储引擎的硬盘数据结构都是稳定的，或不会进行就地更新。
-例如在LSM-tree中，进行索引的写入操作，写入到文件SSTables中，这些文件为不可变，直至其被删除，不可变文件还降低了文件并发访问的成本。B-tree的索引虽然可以就地更新，但是在实际测试中（24小时YCSB读写改实验）发现，索引的修改次数很少，因此也不需要在NVMe Driver中频繁的更新文件系统的元数据。
-同时，索引一般存储在少量的大文件中，并且每个索引不会跨越多个文件。
-Design Principles 一次只访问一个文件：可以简化地址转换和访问控制，还最小化了需要传递给NVMe driver的元数据 面向于稳定的数据结构：XRP以不会频繁更新的数据结构为目标RocksDB、LevelDB、TokuDB、WiredTiger，不支持需要锁来访问的数据结构 用户管理缓存：XRP无法直接访问Page Cache，因此如果block位于Page Cache中，XRP函数不能安全的并发执行，而大多数存储引擎都是在用户空间自行管理Cache。 错误处理：如果访问失败（映射信息过期），需要程序在用户空间重试或回滚。 0x03 Design &amp;&amp; Implementation XRP的架构图：</div><div class="post-footer">
-    <a href="/posts/xrp/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/ebpf/' class="post-tag">eBPF</a><a href='/tags/wiredtiger/' class="post-tag">WiredTiger</a><a href='/tags/mongodb/' class="post-tag">MongoDB</a><a href='/tags/io_uring/' class="post-tag">io_uring</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item active">
           <span class="page-link">
             <a href="/">1</a>
@@ -217,7 +189,7 @@ Design Principles 一次只访问一个文件：可以简化地址转换和访�
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>

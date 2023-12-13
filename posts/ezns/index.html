@@ -8,55 +8,23 @@
     <meta name="google-site-verification" content="BgUHgNcBMb7gYvy2sM6W6KrWgBuDk4YU9eooUbig5oM" />
     <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
 <meta name="author-link" content="https://github.com/zhiwayzhang">
-<meta name="description" content="0x00 Background
-本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
-Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
-Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
-在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
-
-条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
-条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
-" /><meta name="keywords" content='Paper, OSDI, ZNS, Multi-tenant, Isolation, IO Scheduler' /><meta itemprop="name" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs">
-<meta itemprop="description" content="0x00 Background
-本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
-Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
-Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
-在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
-
-条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
-条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
-"><meta itemprop="datePublished" content="2023-11-27T21:39:01+08:00" />
+<meta name="description" content="这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。" /><meta name="keywords" content='Paper, OSDI, ZNS, Multi-tenant, Isolation, IO Scheduler' /><meta itemprop="name" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs">
+<meta itemprop="description" content="这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。"><meta itemprop="datePublished" content="2023-11-27T21:39:01+08:00" />
 <meta itemprop="dateModified" content="2023-11-27T21:39:01+08:00" />
-<meta itemprop="wordCount" content="205">
+<meta itemprop="wordCount" content="206">
 <meta itemprop="keywords" content="Paper,OSDI,ZNS,Multi-tenant,Isolation,IO Scheduler," /><meta property="og:title" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs" />
-<meta property="og:description" content="0x00 Background
-本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
-Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
-Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
-在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
-
-条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
-条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
-" />
+<meta property="og:description" content="这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://zhiwayzhang.github.io/posts/ezns/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-11-27T21:39:01+08:00" />
 <meta property="article:modified_time" content="2023-11-27T21:39:01+08:00" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs"/>
-<meta name="twitter:description" content="0x00 Background
-本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping
-Physical Zone，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除
-Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性
-在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：
-
-条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O
-条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度
-"/>
+<meta name="twitter:description" content="这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。"/>
 <meta name="application-name" content="FixIt">
 <meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/ezns/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/cgroups/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/ezns/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/cgroups/" /><link rel="next" href="https://zhiwayzhang.github.io/posts/bourbon/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
   {
     "@context": "http://schema.org",
     "@type": "BlogPosting",
@@ -65,7 +33,7 @@ Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https:\/\/zhiwayzhang.github.io\/posts\/ezns\/"
-    },"genre": "posts","keywords": "Paper, OSDI, ZNS, Multi-tenant, Isolation, IO Scheduler","wordcount":  205 ,
+    },"genre": "posts","keywords": "Paper, OSDI, ZNS, Multi-tenant, Isolation, IO Scheduler","wordcount":  206 ,
     "url": "https:\/\/zhiwayzhang.github.io\/posts\/ezns\/","datePublished": "2023-11-27T21:39:01+08:00","dateModified": "2023-11-27T21:39:01+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
@@ -162,7 +130,7 @@ Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
           <span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
-      <div class="post-meta-line"><span title="published on 2023-11-27 21:39:01"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span title="Updated on 2023-11-27 21:39:01"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>205 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
+      <div class="post-meta-line"><span title="published on 2023-11-27 21:39:01"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span title="Updated on 2023-11-27 21:39:01"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-11-27">2023-11-27</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>206 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>One minute</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>Contents</span>
@@ -197,7 +165,8 @@ Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露
     <li><a href="#0x04-conclusion">0x04 Conclusion</a></li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><h1 id="0x00-background">0x00 Background</h1>
+      </div><div class="content" id="content"><p>这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。</p>
+<h1 id="0x00-background">0x00 Background</h1>
 <p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
 <p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
 <p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
@@ -387,7 +356,8 @@ Logical Zone，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露
     </section>
   </div>
 
-  <div class="post-nav"><a href="/posts/cgroups/" class="post-nav-item" rel="prev" title="Using Cgroups v2 to limit system I/O resources"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Using Cgroups v2 to limit system I/O resources</a></div>
+  <div class="post-nav"><a href="/posts/cgroups/" class="post-nav-item" rel="prev" title="Using Cgroups v2 to limit system I/O resources"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Using Cgroups v2 to limit system I/O resources</a>
+      <a href="/posts/bourbon/" class="post-nav-item" rel="next" title="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees">[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>

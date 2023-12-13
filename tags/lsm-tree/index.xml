@@ -4,7 +4,15 @@
     <link>https://zhiwayzhang.github.io/tags/lsm-tree/</link>
     <description>LSM-tree - Tag - Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Sat, 26 Nov 2022 13:40:59 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/lsm-tree/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/lsm-tree/" rel="self" type="application/rss+xml" /><item>
+  <title>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</title>
+  <link>https://zhiwayzhang.github.io/posts/bourbon/</link>
+  <pubDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/bourbon/</guid>
+  <description><![CDATA[<p>本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。</p>]]></description>
+</item>
+<item>
   <title>[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</title>
   <link>https://zhiwayzhang.github.io/posts/pinkkv/</link>
   <pubDate>Sat, 26 Nov 2022 13:40:59 &#43;0800</pubDate>

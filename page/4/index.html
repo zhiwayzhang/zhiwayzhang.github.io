@@ -112,6 +112,33 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/mainmemory/">【存储技术基础】主存</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-09-24 18:26:22'>published on <time datetime="2022-09-24">2022-09-24</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 主存 当前面临的问题：
+容量问题、带宽问题、QoS保证
+多核处理器、数据密集应用、云计算、GPU
+HDFS（GFS）基于外存储器
+Spark 内存中数据处理
+能耗功率问题
+40%功耗在DRAM，Refresh操作耗能
+DRAM发展遇到瓶颈
+制成方式限制
+改进：
+3D-Stack DRAM 提供更高的带宽 低延迟DRAM 低功耗DRAM NVM（e.g. PCM）容量更大，延迟较高 0x01 DRAM的组成 Channel DIMM 内存条 Rank 二维阵列最小单元 Chip 芯片 Bank Row/Column 行为字线 word line
+列为位线，交点是cell 内存单元
+DRAM row是一个DRAM page
+Sense Amplifiers 也被叫做Row buffer
+每个地址通过&lt;row,colum&gt;编址
+访问一个closed row的过程：
+Activate：将row放到row buffer中 Read/Write：读写row buffer中的column Precharge：从row buffer中的数据写回到选中的row中 Bank Operation 给定Row Address通过Row decoder选中一行
+将行加载到Row Buffer
+若读取的Row在Row Buffer中，则为命中Hit状态，通过Column Mutex直接获取数据
+若读取的Row不在Row Buffer中，则为冲突Conflict状态，将Row Buffer回写，然后再选中新的Row，读取数据
+Chip 由多个(2-16个)Bank组成，Bank共享总线（指令/地址/数据总线）
+每次只能读4或16 Bit
+Rank and Module Module为DIMM内存条，连接在主板上，由一个或多个rank组成</div><div class="post-footer">
+    <a href="/posts/mainmemory/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/dram/' class="post-tag">DRAM</a><a href='/tags/nvm/' class="post-tag">NVM</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/storagessd/">【存储技术基础】固态硬盘</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-09-22 09:36:42'>published on <time datetime="2022-09-22">2022-09-22</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">主要由Flash Memory 和FTL组成
 Non-Volatile Memory 提供低延迟持久性的内存/存储，也可以用来做内存
@@ -212,27 +239,6 @@ Intro Github Workflows 在仓库的目录下，创建.github/workflows目录，�
 switches* - The first is for any initial/required rsync flags, eg: -avzr --delete rsh - Remote shell commands path - The source path. Defaults to GITHUB_WORKSPACE and is relative to it remote_path* - The deployment target path remote_host* - The remote host remote_port - The remote port.</div><div class="post-footer">
     <a href="/posts/github_workflow/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/web/' class="post-tag">Web</a><a href='/tags/git/' class="post-tag">git</a><a href='/tags/ci/cd/' class="post-tag">CI/CD</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/asyncio/">[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-08-17 10:30:41'>published on <time datetime="2022-08-17">2022-08-17</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">Intro 优化I/O的方法
-用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈 使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制 Related Work 减少内核的开销
-减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销 修改存储接口
-分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号 改善fsync
-冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行 用户层直接访问外设，存在隔离、保护等安全问题
-Motivation 背景 现状：
-I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建 目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
-本文专注于：
-Linux内核中的read()和write()+fsync() 基于NVMe SSD的Ext4文件系统 For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
-此类操作可以在设备I/O操作进行时执行
-因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
-For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
-由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求
-由于文件系统带来的三次IO操作
-数据块写 jbd2发起写入日志Block I/O 提交Block I/O 这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。
-For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
-因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低</div><div class="post-footer">
-    <a href="/posts/asyncio/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/paper/' class="post-tag">Paper</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -261,7 +267,7 @@ For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>

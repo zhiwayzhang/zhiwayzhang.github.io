@@ -4,21 +4,21 @@
     <link>https://zhiwayzhang.github.io/tags/paper/</link>
     <description>Paper - Tag - Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/paper/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/paper/" rel="self" type="application/rss+xml" /><item>
+  <title>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</title>
+  <link>https://zhiwayzhang.github.io/posts/bourbon/</link>
+  <pubDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/bourbon/</guid>
+  <description><![CDATA[<p>本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。</p>]]></description>
+</item>
+<item>
   <title>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</title>
   <link>https://zhiwayzhang.github.io/posts/ezns/</link>
   <pubDate>Mon, 27 Nov 2023 21:39:01 &#43;0800</pubDate>
   <author>Zhiwei Zhang</author>
   <guid>https://zhiwayzhang.github.io/posts/ezns/</guid>
-  <description><![CDATA[<h1 id="0x00-background">0x00 Background</h1>
-<p>本文主要设计三个重要概念，逻辑Zone、物理Zone以及ZNS中的条带化Stripping</p>
-<p><strong>Physical Zone</strong>，物理Zone，是ZNS的最小分配单元，一般为一个block或多个（cross-die）Block组成，需要按顺序写入并通过RESET命令一起擦除</p>
-<p><strong>Logical Zone</strong>，逻辑Zone，则由多个物理Zone组合，是SSD向上层暴露的接口，利用cross-die的物理Zone来提高并行性</p>
-<p>在逻辑Zone中，还存在Stripping机制来将数据分散到多个物理zone中，包括两个参数：</p>
-<ul>
-<li>条带大小 Stripping Size，条带中最小的数据操作单元，一般和闪存页大小对齐，减少不必要的I/O</li>
-<li>条带宽度 Stripping Width，一个逻辑Zone中包含物理Zone的数量，用于提高并行度</li>
-</ul>]]></description>
+  <description><![CDATA[<p>这篇文章写作很多地方没有说清楚，motivation部分描述实验负载时不够清楚，第三个实验/observation看了很久才看出来是想表达什么问题。文章的三个主要设计都围绕motivation中的三个问题，整体的设计思想有点类似于将应用和固态盘namespace绑定，按照调度应用I/O的思想来管理ZNS中Zone的资源。</p>]]></description>
 </item>
 <item>
   <title>[FAST&#39;23] HadaFS: A File System Bridging the Local and Shared Burst Buffer for Exascale Supercomputers</title>
@@ -240,30 +240,6 @@ KV对象首先写入DRAM中的Memtable，当Memtable不为空时，缓存的KV�
 KEVINFS：维护文件、目录到KV对象映射的文件系统
 KEVINSSD：索引KV对象到闪存的LSM-tree
 KV Command 支持多种KV指令，同时支持事务]]></description>
-</item>
-<item>
-  <title>[ATC&#39;19] Asynchronous I/O Stack: A Low-latency Kernel I/O Stack for Ultra-Low Latency SSDs</title>
-  <link>https://zhiwayzhang.github.io/posts/asyncio/</link>
-  <pubDate>Wed, 17 Aug 2022 10:30:41 &#43;0800</pubDate>
-  <author>Zhiwei Zhang</author>
-  <guid>https://zhiwayzhang.github.io/posts/asyncio/</guid>
-  <description><![CDATA[Intro 优化I/O的方法
-用户层面直接调用外部存储设备，需要应用包含文件系统的调用，臃肿，同时不同应用和用户间的冲突问题。 优化操作系统内核的I/O 栈 使用轮询来减少上下文切换的开销 在底层减少一半的中断处理 分散I/O指令 I/O block调度机制 Related Work 减少内核的开销
-减少中断处理的后半部分 是用轮询技术而非中断，减少上下文切换 混合轮询 基于SSD的闪存随机读写简化调度策略 在NVMe固件中进行调度 对高优先级的任务，提供不同的IO path支持，最小化IO path的开销 修改存储接口
-分散/分散 IO合并多个IO到一个指令，减少往返次数 移除doorbell机制和完成信号 改善fsync
-冲fsync请求发出到收到response，延长数据持久化的时间 在日志提交记录中使用校验和，有效的重叠日志写入和块写入 提出写守序系统调用，重叠的fsync效果相同，当应用需要使用fsync时，关于IO的操作将同步进行 用户层直接访问外设，存在隔离、保护等安全问题
-Motivation 背景 现状：
-I/O 请求过程中太多的步骤 页面缓存分配和索引 DMA，一系列数据结构的创建 目前的 ULL SDD实现了低于10微妙的IO延迟，然而操作系统内核产生的延迟没有明显变化
-本文专注于：
-Linux内核中的read()和write()+fsync() 基于NVMe SSD的Ext4文件系统 For Read Path 研究发现许多剩余的操作不必在设备I/O之前或之后执行
-此类操作可以在设备I/O操作进行时执行
-因为此类操作大多独立于设备I/O操作，因此考虑让这些操作与IO重叠
-For Write Path 缓冲写write()，并不发起IO请求，不能异步处理
-由于fsync的回写机制和文件系统崩溃一致性（日志系统），包含部分IO请求
-由于文件系统带来的三次IO操作
-数据块写 jbd2发起写入日志Block I/O 提交Block I/O 这些IO的创建，涉及众多过程（block分配，请求缓冲页，创建和提交bio，设置DMA地址），因此可以让CPU将这些前置操作在IO请求发起前预执行。
-For Lightweight Block Layer 传统Block Layer涉及过多过程，推迟了IO指令提交给设备的时间
-因为ULL SSD的高速随机IO性能和低速的顺序IO，请求重排的效果很低]]></description>
 </item>
 </channel>
 </rss>

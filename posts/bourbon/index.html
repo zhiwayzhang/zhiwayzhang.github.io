@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <meta name="google-site-verification" content="BgUHgNcBMb7gYvy2sM6W6KrWgBuDk4YU9eooUbig5oM" />
+    <title>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。" /><meta name="keywords" content='Paper, OSDI, LSM-tree, Learned-Index' /><meta itemprop="name" content="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees">
+<meta itemprop="description" content="本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。"><meta itemprop="datePublished" content="2023-12-10T16:56:03+08:00" />
+<meta itemprop="dateModified" content="2023-12-10T16:56:03+08:00" />
+<meta itemprop="wordCount" content="259">
+<meta itemprop="keywords" content="Paper,OSDI,LSM-tree,Learned-Index," /><meta property="og:title" content="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees" />
+<meta property="og:description" content="本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/bourbon/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-12-10T16:56:03+08:00" />
+<meta property="article:modified_time" content="2023-12-10T16:56:03+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees"/>
+<meta name="twitter:description" content="本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/bourbon/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/ezns/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "[OSDI'20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/bourbon\/"
+    },"genre": "posts","keywords": "Paper, OSDI, LSM-tree, Learned-Index","wordcount":  259 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/bourbon\/","datePublished": "2023-12-10T16:56:03+08:00","dateModified": "2023-12-10T16:56:03+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2023-12-10 16:56:03"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-10">2023-12-10</time></span>&nbsp;<span title="Updated on 2023-12-10 16:56:03"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-10">2023-12-10</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>259 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>2 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-background">0x00 Background</a>
+      <ul>
+        <li><a href="#lsm-tree--leveldb">LSM-tree &amp;&amp; LevelDB</a></li>
+        <li><a href="#wisckey">Wisckey</a></li>
+        <li><a href="#learned-index">Learned Index</a></li>
+        <li><a href="#related-work">Related Work</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x01-motivation">0x01 Motivation</a>
+      <ul>
+        <li><a href="#learned-index-带来的收益">Learned Index 带来的收益</a></li>
+        <li><a href="#learned-index-with-writes">Learned Index with Writes</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-design">0x02 Design</a>
+      <ul>
+        <li><a href="#learning-the-data">Learning the Data</a></li>
+        <li><a href="#supporting-variable-size-values">Supporting Variable-size Values</a></li>
+        <li><a href="#level-vs-file-learning">Level vs. File Learning</a></li>
+        <li><a href="#cost-vs-benefit-analyzer">Cost vs. Benefit Analyzer</a></li>
+        <li><a href="#putting-it-all-together">Putting it All Together</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-evaluation">0x03 Evaluation</a>
+      <ul>
+        <li><a href="#bourbon优化了lookup流程的哪一个部分">Bourbon优化了lookup流程的哪一个部分</a></li>
+        <li><a href="#bourbon的最优性能和负载特征的影响">Bourbon的最优性能和负载特征的影响</a></li>
+        <li><a href="#bourbon对范围查找的处理">Bourbon对范围查找的处理</a></li>
+        <li><a href="#评估cost-benefit-analyzer和其他学习索引">评估Cost-Benefit Analyzer和其他学习索引</a></li>
+        <li><a href="#真实数据集测试">真实数据集测试</a></li>
+        <li><a href="#数据在存储设备上的场景">数据在存储设备上的场景</a></li>
+        <li><a href="#内存资源有限的场景">内存资源有限的场景</a></li>
+        <li><a href="#tradeoffs评估">Tradeoffs评估</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-conclusion">0x04 Conclusion</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。</p>
+<p>下图即为Bourbon (´･Д･)」</p>
+<p><img loading="lazy" src="/img/220px-Tooru_Amuro.jpg" srcset="/img/220px-Tooru_Amuro.jpg, /img/220px-Tooru_Amuro.jpg 1.5x, /img/220px-Tooru_Amuro.jpg 2x" sizes="auto" data-title="img" data-alt="img" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h1 id="0x00-background">0x00 Background</h1>
+<h2 id="lsm-tree--leveldb">LSM-tree &amp;&amp; LevelDB</h2>
+<p>LSM-tree是在KV存储中常用的数据结构，采用多级的查找结构，将随机写转换成顺序写入</p>
+<p>LevelDB则是使用LSM-tree的KV数据库引擎</p>
+<p>具有2个in-memory tables，7-levels 盘上SSTable</p>
+<p>更新和插入操作会写入到MemTable的buffer中</p>
+<p>当每个层级full之后会发生Compaction，将数据合并到下一个层级</p>
+<p>因此对于SSTable而言，不会发生就地更新</p>
+<p>对于查找操作，将从上向下遍历所有的层级，直到Key存在</p>
+<p>由于硬盘上的SSTable不会在写入操作时更新，因此不需要频繁的更新模型（保证模型的准确度）</p>
+<p>引入学习索引需要关注几个问题：</p>
+<ul>
+<li>SSTable的Lifetime：模型可以使用的时间</li>
+<li>SSTable查询操作的数量：模型的使用频率</li>
+</ul>
+<p>LSM-tree的查找过程：</p>
+<ol>
+<li>FindFiles：MemTable中没有找到所需Key时，找到可能包含Key的SSTable文件</li>
+<li>LoadIB+FB：在候选的SSTable中，加载其Index-Block和bloom-filter Block</li>
+<li>SearchIB：在Index-Block中进行二分查找，找到可能包含Key的data block</li>
+<li>SearchFB：读取Filter Block通过Bloom-filter检查Key是否存在</li>
+<li>LoadDB：如果查找bloom-filter发现Key存在，将加载相应的data block</li>
+<li>SearchDB：在data block中进行二分查找</li>
+<li>ReadValue：读取Key所对应的Value</li>
+</ol>
+<p>上述步骤中每次没有命中都会直接去查找下一个候选的SSTable文件</p>
+<p>整个过程分为两类操作：</p>
+<ul>
+<li>索引操作（查找Key）：Find Files，Search IB，Search FB，Search DB</li>
+<li>数据访问操作：LoadIB+FB，LoadDB，Read Value</li>
+</ul>
+<p>作者使用学习索引优化的即<strong>索引操作</strong></p>
+<h2 id="wisckey">Wisckey</h2>
+<p>LevelDB中Compaction操作带来了写放大write amplification，因此Wisckey提出一些思路来进行优化：</p>
+<ul>
+<li>Key-Value分离存储，Compaction操作只处理Key，降低了内部的数据处理开销（后台IO），采用Key- Position-Data的查找方式，一次查询需要两次I/O（索引、数据）</li>
+</ul>
+<p>下图展示了LevelDB如何组织数据并处理查找操作，以及展示了Wisckey的KV分离存储模式</p>
+<p>Wisckey的查找流程和传统LSM-tree相同，分离出来的数据部分保存于value-log，由于LSM-tree不保存数据，Wisckey的整个SSTable可以保存在Memory中，加速了查找的过程，最后仅需要一次on-disk access</p>
+<p><img loading="lazy" src="/img/image-20231212173156707.png" srcset="/img/image-20231212173156707.png, /img/image-20231212173156707.png 1.5x, /img/image-20231212173156707.png 2x" sizes="auto" data-title="image-20231212173156707" data-alt="image-20231212173156707" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="learned-index">Learned Index</h2>
+<p>对于LSM-tree、B-tree等数据结构在索引上的开销巨大，通过建立线性映射的函数（线性回归模型）可以显著优化查询操作索引的开销为O1。</p>
+<p>对于插入请求，将改变数据布局，需要对模型进行重训练。</p>
+<p>Bourbon将学习索引应用到了LSM-tree中，WiscKey KV</p>
+<p>可以优化写操作</p>
+<p>LSM-Tree SSTable没有就地更新</p>
+<p>需要解决如何/何时建立SSTable的索引模型</p>
+<p>由于模型可能出错，因此索引模型会设置error bound</p>
+<p>对于预测结果pos，如果预测出错将会在$(pos-\delta_{min},pos+\delta_{max})$范围内重新进行查找</p>
+<h2 id="related-work">Related Work</h2>
+<h1 id="0x01-motivation">0x01 Motivation</h1>
+<h2 id="learned-index-带来的收益">Learned Index 带来的收益</h2>
+<p>学习索引只能优化前文提到的LSM-tree索引操作，并不能优化on-disk/memory数据的访问。</p>
+<p>作者对Wisckey LSM-tree查找操作进行了breakdown分析，对于数据全缓存于Memory中的情景，数据的访问不再是瓶颈，<strong>索引所占的开销超过了50%</strong>。当数据保存于硬盘时，随着存储设备的性能越来越好（SATA、NVMe、Optane 3DXpoint），数据访问的延迟占比越来越小，索引在整个延迟中的占比逐渐升高，（indexing cost）在SATA达到了17%，Optane达到了44%。</p>
+<p><img loading="lazy" src="/img/image-20231212204450547.png" srcset="/img/image-20231212204450547.png, /img/image-20231212204450547.png 1.5x, /img/image-20231212204450547.png 2x" sizes="auto" data-title="image-20231212204450547" data-alt="image-20231212204450547" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>因此，作者得出结论：不管是对于全缓存还是on-disk的场景，学习索引都能加速查找的性能，并且性能越好的存储设备提升越大。</p>
+<h2 id="learned-index-with-writes">Learned Index with Writes</h2>
+<p>对于write/update操作，会改变数据的分布，因此需要学习索引模型进行重训练，对于写多的负载重训练将产生巨大的开销。</p>
+<p>LSM-tree设计之初就是为了优化写入操作，这和学习索引看起来并不match。</p>
+<p>作者设计实验评估了不同层级SSTable的lifetime（从file creation到deletion），有三个发现：</p>
+<ul>
+<li>lower level的平均lifetime比higher level更高</li>
+<li>在写入比例较低时，higher level SSTable L0的也能存在较长的时间（2min），L4可以存在150minutes</li>
+<li>在写入比例较高时，lower level SSTable L4的lifetime也能达到60minutes，L0仅有10s</li>
+</ul>
+<p>综合以上发现，作者总结出5条guidelines：</p>
+<ol>
+<li><strong>lower level的lifetime最长</strong>，不管写入负载的比例如何，lower level的lifetime都比较长，无需频繁重训练</li>
+<li><strong>重训练前等待一段时间</strong>，一些文件的lifetime较短，甚至在lower level也存在（连续的Compaction频繁创建销毁文件；Compaction后出现重叠进行文件合并），设置阈值等待文件的lifetime避免频繁重训练</li>
+<li><strong>不能忽视higher level的文件</strong>，可以加快内部查找</li>
+<li><strong>workload/data-aware</strong>，不同的负载和数据有不同的访问特征。lower level可能访问不频繁，建立学习索引的收益较低；数据有序或者无序进行加载会影响查询的效率，Key有序插入时可以很容易的找到对应的文件，lower level也会处理较多的查询请求，无序插入时不同层级之间存在重叠的Key范围，提高higher level的查询开销。因此系统需要判断哪些文件应该进行学习</li>
+<li><strong>不应在write-heavy的情况下重训练整个level</strong>，由于Compaction等原因很多数据会频繁的修改，重训练成本非常高，同时读的比例较少，重训练的收益也有限</li>
+</ol>
+<h1 id="0x02-design">0x02 Design</h1>
+<h2 id="learning-the-data">Learning the Data</h2>
+<p>学习的粒度：</p>
+<ul>
+<li>独立的SSTable File，给出key对应于SSTable的<strong>Offset</strong></li>
+<li>整个Level，给出key对应的<strong>SSTable</strong>和<strong>Offset</strong></li>
+</ul>
+<p>使用轻量化的分段线性回归模型，按照<code>&lt;key,offset&gt;</code>的数据进行学习</p>
+<p>Greedy-PLR</p>
+<p>Greedy Piecewise Linear Regression，分段线性回归</p>
+<p>训练时间负载度为$O(n)$，~40ms</p>
+<p>预测时间负载度$O(\log #segments)$，&lt;1us</p>
+<p><img loading="lazy" src="/img/image-20231213133740875.png" srcset="/img/image-20231213133740875.png, /img/image-20231213133740875.png 1.5x, /img/image-20231213133740875.png 2x" sizes="auto" data-title="image-20231213133740875" data-alt="image-20231213133740875" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="supporting-variable-size-values">Supporting Variable-size Values</h2>
+<p>为了便于学习索引的建立，Bourbon延续了Wisckey中的设计，只支持固定长度的Key，保存数据指针，因此可以支持任意大小的Value。</p>
+<h2 id="level-vs-file-learning">Level vs. File Learning</h2>
+<p>Bourbon默认采用file粒度的学习索引，采用Level粒度仅在读占比较大的情况效果优于baseline，略优于File Model；但是在写占比较大时Level model甚至比baseline性能略差一些。主要的原因是上文提到的频繁重训练，Level粒度的更新比file变化更频繁。</p>
+<p>针对read-only的场景，Bourbon也可以配置Level Model</p>
+<h2 id="cost-vs-benefit-analyzer">Cost vs. Benefit Analyzer</h2>
+<p>开销和收益的分析。在对file进行学习之前，Bourbon需要评估学习产生的收益，也就是评估file的lifetime和收益。</p>
+<p><strong>设置wait time</strong> 对于4MB左右的SSTable File，学习一次产生的开销大约在40ms，设置大约50ms的wait time，在对文件进行学习时等待一段时间，防止这段时间内文件被销毁。该值设置过小会产生更大的学习开销，设置过大会降低学习索引带来的收益（执行了baseline lookup）。</p>
+<p><strong>是否对文件进行学习。</strong> 即使是lifetime较长的file（lower level）可能不会处理很多查找，而lifetime较短的file会在短时间内执行很多查询操作。因此需要评估学习该文件带来的收益Benefit**（对于lifetime中的N次查找，走Model相比于baseline path减少的总时间）<strong>和开销Cost</strong>（训练一个file的时间开销，avg time * nr data points）**，当收益大于开销时再进行学习。</p>
+<h2 id="putting-it-all-together">Putting it All Together</h2>
+<p>下图展示了Bourbon的整个查找流程</p>
+<p><img loading="lazy" src="/img/image-20231212230602312.png" srcset="/img/image-20231212230602312.png, /img/image-20231212230602312.png 1.5x, /img/image-20231212230602312.png 2x" sizes="auto" data-title="image-20231212230602312" data-alt="image-20231212230602312" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>Bourbon目前存在的问题/优化方向：</p>
+<ul>
+<li>不支持String Key和Key压缩，String Key可以转换为64位整数进行处理</li>
+<li>不支持Level Model和File Model的自动切换，为静态配置</li>
+</ul>
+<h1 id="0x03-evaluation">0x03 Evaluation</h1>
+<p>Bourbon采用16Byte的Key和64Byte的Value，error bound为8</p>
+<p>作者采用以下的数据集对Bourbon的性能进行评估。</p>
+<p>4个合成数据集：</p>
+<ul>
+<li>Linear：Key完全连续</li>
+<li>Segmented 1%：每1%的Key连续，之后会存在gap</li>
+<li>Segmented 10%：每10%的Key连续</li>
+<li>Normal：遵循正态分布$N(0,1)$</li>
+</ul>
+<p>两个真实数据集：</p>
+<ul>
+<li>Amazon Reviews（AR）</li>
+<li>New York Open StreetMaps（OSM）</li>
+</ul>
+<h2 id="bourbon优化了lookup流程的哪一个部分">Bourbon优化了lookup流程的哪一个部分</h2>
+<p>下图的Breakdown分析可以看出，与baseline相比，Bourbon：</p>
+<ul>
+<li><strong>优化了Search</strong> IB+Search DB的部分</li>
+<li>由于Bourbon LoadData 采用chunk粒度，也优化了<strong>数据访问开销</strong></li>
+</ul>
+<p><img loading="lazy" src="/img/image-20231213211008614.png" srcset="/img/image-20231213211008614.png, /img/image-20231213211008614.png 1.5x, /img/image-20231213211008614.png 2x" sizes="auto" data-title="image-20231213211008614" data-alt="image-20231213211008614" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="bourbon的最优性能和负载特征的影响">Bourbon的最优性能和负载特征的影响</h2>
+<p>探究Bourbon在<strong>无写入</strong>的情况下（read-only）</p>
+<p>负载特征包括数据集、load order、请求分布</p>
+<p><strong>数据集。<strong>下图a为baseline、Bourbon file model和Bourbon level model的平均查找延迟，可以看出</strong>对于线性负载，学习索引的收益最大</strong>，或者说Key的连续性越强（下图table b），学习索引的收益就越大。同时在纯读read-only的场景下，level model的效果也更好。</p>
+<p><img loading="lazy" src="/img/image-20231213225059546.png" srcset="/img/image-20231213225059546.png, /img/image-20231213225059546.png 1.5x, /img/image-20231213225059546.png 2x" sizes="auto" data-title="image-20231213225059546" data-alt="image-20231213225059546" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>**Load Order。**下图a可以看出，baseline和bourbon file model在不同data load order下的性能表现。</p>
+<p>Seq为按照递增的顺序插入Key，Rand则为乱序插入Key，Key的插入会影响每个Level的命中情况（key range overlap），可能会在higher level带来更多的Negative lookup。</p>
+<p>在Seq和Rand的场景下，Bourbon的提升都很明显，Rand下的延迟显著高于Read，主要是因为Negative lookup需要多加载一次data block（过滤器没命中），表b统计了两个数据集下Positive/Negative lookup次数，Negative lookup占比较多。</p>
+<p><img loading="lazy" src="/img/image-20231213225639389.png" srcset="/img/image-20231213225639389.png, /img/image-20231213225639389.png 1.5x, /img/image-20231213225639389.png 2x" sizes="auto" data-title="image-20231213225639389" data-alt="image-20231213225639389" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>**请求分布。**下图展示了不同分布下Bourbon的查找性能，数据集均为乱序加载。Bourbon最快比baseline快1.8倍。</p>
+<p><img loading="lazy" src="/img/image-20231214000938191.png" srcset="/img/image-20231214000938191.png, /img/image-20231214000938191.png 1.5x, /img/image-20231214000938191.png 2x" sizes="auto" data-title="image-20231214000938191" data-alt="image-20231214000938191" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="bourbon对范围查找的处理">Bourbon对范围查找的处理</h2>
+<p>查找LSM-tree中一段连续的Key，下图可以看出Bourbon在处理range query时的收益不高，这是因为bourbon只加速了索引的过程，较大范围的查询索引开销的占比远低于数据的访问。</p>
+<p><img loading="lazy" src="/img/image-20231214001808075.png" srcset="/img/image-20231214001808075.png, /img/image-20231214001808075.png 1.5x, /img/image-20231214001808075.png 2x" sizes="auto" data-title="image-20231214001808075" data-alt="image-20231214001808075" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="评估cost-benefit-analyzer和其他学习索引">评估Cost-Benefit Analyzer和其他学习索引</h2>
+<p>下图对比了baseline和offline（只训练一次，写入后不re-learn），always（只要发生写入就re-learn），cba（采用cost-benefit analyzer）四种策略下的查找插入时间和重训练时间</p>
+<p>结果不必多言，cba和always的foreground（查找时间）相近，但是cba的re-learn开销在write- heavy的情况下显著由于always。</p>
+<p><img loading="lazy" src="/img/image-20231214004737788.png" srcset="/img/image-20231214004737788.png, /img/image-20231214004737788.png 1.5x, /img/image-20231214004737788.png 2x" sizes="auto" data-title="image-20231214004737788" data-alt="image-20231214004737788" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="真实数据集测试">真实数据集测试</h2>
+<p><img loading="lazy" src="/img/image-20231214004308167.png" srcset="/img/image-20231214004308167.png, /img/image-20231214004308167.png 1.5x, /img/image-20231214004308167.png 2x" sizes="auto" data-title="image-20231214004308167" data-alt="image-20231214004308167" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="数据在存储设备上的场景">数据在存储设备上的场景</h2>
+<p>下图为在Optane傲腾SSD上的测试，在高速存储设备上bourbon能带来1.25-1.28倍的性能提升</p>
+<p><img loading="lazy" src="/img/image-20231214004225208.png" srcset="/img/image-20231214004225208.png, /img/image-20231214004225208.png 1.5x, /img/image-20231214004225208.png 2x" sizes="auto" data-title="image-20231214004225208" data-alt="image-20231214004225208" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>对于YCSB，bourbon在read-heavy类型的负载下也有较好的表现1.16x-1.19x</p>
+<p><img loading="lazy" src="/img/image-20231214012540420.png" srcset="/img/image-20231214012540420.png, /img/image-20231214012540420.png 1.5x, /img/image-20231214012540420.png 2x" sizes="auto" data-title="image-20231214012540420" data-alt="image-20231214012540420" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="内存资源有限的场景">内存资源有限的场景</h2>
+<p>在内存资源不足的情况下，对于不同的负载bourbon也可以达到一定的性能提升。</p>
+<p>负载特征：内存存储25%数据，SATA SSD存储75%的数据，80%的请求访问25%的数据。</p>
+<p>对于zipfian分布的负载bourbon可以达到1.25倍的性能提升</p>
+<p><img loading="lazy" src="/img/image-20231214011707792.png" srcset="/img/image-20231214011707792.png, /img/image-20231214011707792.png 1.5x, /img/image-20231214011707792.png 2x" sizes="auto" data-title="image-20231214011707792" data-alt="image-20231214011707792" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="tradeoffs评估">Tradeoffs评估</h2>
+<p>$\delta$会影响分段线性回归所建立的segments数量，越大的error bound可以建立更少的segments，减少存储空间，越小的error bound可以加速查找过程，二者tradeoff下选择8较为合适。下图中的表b也可以看出，建立学习索引所占的空间开销相比于数据集而言还是很小的。</p>
+<p><img loading="lazy" src="/img/image-20231214002825787.png" srcset="/img/image-20231214002825787.png, /img/image-20231214002825787.png 1.5x, /img/image-20231214002825787.png 2x" sizes="auto" data-title="image-20231214002825787" data-alt="image-20231214002825787" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h1 id="0x04-conclusion">0x04 Conclusion</h1>
+<p>本文首次将学习索引应用到了LSM-tree之中，基于Whiskey Key-Value分离存储的开创性工作，使得对LSM-tree建立学习索引成为可能（定长SSTable entry）。文章通过详细的实验分析说明了学习索引加速LSM-tree Lookup的性能提升，并指出在未来高性能SSD/存储设备上学习索引能带来更大的收益。</p></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2023-12-10 16:56:03">Updated on 2023-12-10&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/bourbon/" data-title="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees" data-hashtags="Paper,OSDI,LSM-tree,Learned-Index"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/bourbon/" data-hashtag="Paper"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/bourbon/" data-title="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/osdi/' class="post-tag">OSDI</a><a href='/tags/lsm-tree/' class="post-tag">LSM-tree</a><a href='/tags/learned-index/' class="post-tag">Learned-Index</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/ezns/" class="post-nav-item" rel="prev" title="[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[OSDI&#39;23] eZNS: An Elastic Zoned Namespace for Commodity ZNS SSDs</a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <meta name="google-site-verification" content="BgUHgNcBMb7gYvy2sM6W6KrWgBuDk4YU9eooUbig5oM" />
+    <title>使用Filebench测试ZNS&#43;F2FS - Coding Panda&#39;s Blog</title><meta name="author" content="Zhiwei Zhang">
+<meta name="author-link" content="https://github.com/zhiwayzhang">
+<meta name="description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。" /><meta name="keywords" content='Filebench, Benchmark, File System, F2FS, ZNS' /><meta itemprop="name" content="使用Filebench测试ZNS&#43;F2FS">
+<meta itemprop="description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。"><meta itemprop="datePublished" content="2023-12-14T21:48:26+08:00" />
+<meta itemprop="dateModified" content="2023-12-14T21:48:26+08:00" />
+<meta itemprop="wordCount" content="1242">
+<meta itemprop="keywords" content="Filebench,Benchmark,File System,F2FS,ZNS," /><meta property="og:title" content="使用Filebench测试ZNS&#43;F2FS" />
+<meta property="og:description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhiwayzhang.github.io/posts/filebench/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-12-14T21:48:26+08:00" />
+<meta property="article:modified_time" content="2023-12-14T21:48:26+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用Filebench测试ZNS&#43;F2FS"/>
+<meta name="twitter:description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。"/>
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://zhiwayzhang.github.io/posts/filebench/" /><link rel="prev" href="https://zhiwayzhang.github.io/posts/bourbon/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "使用Filebench测试ZNS+F2FS",
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/zhiwayzhang.github.io\/posts\/filebench\/"
+    },"genre": "posts","keywords": "Filebench, Benchmark, File System, F2FS, ZNS","wordcount":  1242 ,
+    "url": "https:\/\/zhiwayzhang.github.io\/posts\/filebench\/","datePublished": "2023-12-14T21:48:26+08:00","dateModified": "2023-12-14T21:48:26+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Zhiwei Zhang"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="Coding Panda&#39;s Blog" data-alt="Coding Panda&#39;s Blog" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Coding Panda&#39;s Blog"><img loading="lazy" src="/img/kaifanle.gif" srcset="/img/kaifanle.gif, /img/kaifanle.gif 1.5x, /img/kaifanle.gif 2x" sizes="auto" data-title="/img/kaifanle.gif" data-alt="/img/kaifanle.gif" class="logo" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/><span class="header-title-text">Coding Panda&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa fa-home fa-fw fa-sm" aria-hidden="true"></i> Home</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden="true"></i> Archives</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-th fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="container container-reverse"><aside class="toc" id="toc-auto"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside>
+
+  <aside class="aside-custom">
+    </aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>使用Filebench测试ZNS&#43;F2FS</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
+          <span class="post-category">included in <a href="/categories/tech/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Tech</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
+      <div class="post-meta-line"><span title="published on 2023-12-14 21:48:26"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-14">2023-12-14</time></span>&nbsp;<span title="Updated on 2023-12-14 21:48:26"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-14">2023-12-14</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>1242 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>6 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#filebench简介及相关参数说明">Filebench简介及相关参数说明</a>
+      <ul>
+        <li><a href="#filebench高级功能">Filebench高级功能</a>
+          <ul>
+            <li><a href="#变量设置-variables">变量设置 Variables</a></li>
+            <li><a href="#同步原语-synchronization-primitives">同步原语 Synchronization Primitives</a></li>
+            <li><a href="#cpu和内存开销模拟">CPU和内存开销模拟</a></li>
+            <li><a href="#io速率限制">I/O速率限制</a></li>
+            <li><a href="#访问参数">访问参数</a></li>
+            <li><a href="#延迟分布">延迟分布</a></li>
+            <li><a href="#数据生成">数据生成</a></li>
+          </ul>
+        </li>
+        <li><a href="#一些预定义的负载">一些预定义的负载</a>
+          <ul>
+            <li><a href="#web-server">Web-server</a></li>
+            <li><a href="#file-server">File-server</a></li>
+            <li><a href="#mail-server">Mail-Server</a></li>
+            <li><a href="#webproxy">Webproxy</a></li>
+            <li><a href="#video-server">Video-server</a></li>
+            <li><a href="#对负载的修改">对负载的修改</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#filebench的安装和使用">Filebench的安装和使用</a></li>
+    <li><a href="#使用filebench测试zns">使用Filebench测试ZNS</a>
+      <ul>
+        <li><a href="#创建并挂载f2fs文件系统">创建并挂载F2FS文件系统</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>本文的内容主要参考了filebench在<code>USENIX ;login:'16</code>上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。</p>
+<h1 id="filebench简介及相关参数说明">Filebench简介及相关参数说明</h1>
+<p>Filebench是一个用于文件系统/存储设备性能测试的工具，该项目始于2002年，由Sun Microsystems发起，在2005年开源，经常被系统领域的论文用于性能基准测试。Filebench除了可以自行定义负载，还预定义了几种常见的负载，例如Web服务器，邮件服务器，文件服务器等。</p>
+<p>Filebench通过<a href="https://github.com/filebench/filebench/wiki/Workload-model-language"target="_blank" rel="external nofollow noopener noreferrer">Workload Model Language</a>来描述I/O负载。主要包括：</p>
+<ul>
+<li>fileset: 描述一组文件，可以设定file name,path,文件数量entries,文件大小filesize等信息</li>
+<li>process：定义负载的进程实例</li>
+<li>thread：包含于process，filebench执行负载的基本单位</li>
+<li>flowop：filebench提供的操作指令，对应文件系统syscall，执行文件读写等操作</li>
+</ul>
+<p>filebench在运行时可以配置为两种模式：</p>
+<ul>
+<li>预先分配文件fileset preallocation</li>
+<li>工作时执行分配</li>
+</ul>
+<p>filebench默认不会直接创建文件，只预分配文件所需要的空间，可以通过设置<code>prealloc</code>参数来让filebench预创建文件，例如下面的prealloc=80则表示预创建80%的文件</p>
+<div class="highlight" id="id-1"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">define fileset name=”test1”,path=”/tmp”, 		
+</span></span><span class="line"><span class="cl">					entries=1000,filesize=128k,prealloc=80</span></span></code></pre></td></tr></table>
+</div>
+</div><p>filebench之所以不预先创建文件，是考虑到有些工作负载过程中包含文件创建的操作，同时要保证WML描述的负载不能超过fileset所包含的文件总数量。比如fileset定义了1000个文件，但是在WML中尝试去创建第1001个文件，filebench会抛出异常停止负载。</p>
+<p>instances=N参数可以让filebench创建多个相应的进程/线程进行测试，每个进程内部可以包含多个不同/相同的测试线程，下面的负载就描述了进程filecreate包含两个filecreatethread线程，用于测试文件系统处理文件创建操作的能力。</p>
+<div class="highlight" id="id-2"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set mode quit firstdone
+</span></span><span class="line"><span class="cl">define fileset name=”fcrset”,path=”/tmp”, entries=10000,filesize=16k
+</span></span><span class="line"><span class="cl">define process name=”filecreate”,instances=1 { 
+</span></span><span class="line"><span class="cl">	thread name=”filecreatethread”,instances=2 {
+</span></span><span class="line"><span class="cl">		flowop createfile name=”crfile”,filesetname=”fcrset”
+</span></span><span class="line"><span class="cl">		flowop closefile name=”clfile” 
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">} 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">run</span></span></code></pre></td></tr></table>
+</div>
+</div><p>每个线程执行Flowop描述的指令流，Flowop表示文件系统的操作（filesystem syscall），例如：</p>
+<ul>
+<li>createfile：创建文件，可以指定一个虚拟FD</li>
+<li>write：向某个文件写入数据</li>
+<li>openfile：打开文件，指定一个虚拟的文件描述符FD用于其他的Flowop</li>
+<li>closefile：关闭文件，关闭（虚拟）FD所对应的文件</li>
+<li>deletefile：删除文件</li>
+<li>read：从文件中读取数据</li>
+<li>readwholefile：读取整个文件的内容</li>
+<li>writewholefile：写入到文件</li>
+<li>appendfile：追加写入文件末尾</li>
+<li>statfile：发起<code>stat()</code>系统调用，获取文件信息（<code>ino_t</code>,<code>nlink_t</code>,<code>off_t</code>&hellip;）</li>
+<li>fsync：发起fsync系统调用，强制落盘</li>
+</ul>
+<p>filebench还支持一些异步/同步I/O操作</p>
+<p>Virtual File Descriptors，虚拟FD来表示一个文件，filebench可以显视的制定VFD来操作文件，如果没有指定将默认fd=0，下面是一个使用VFD的负载示例。</p>
+<div class="highlight" id="id-3"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set mode quite firstdone
+</span></span><span class="line"><span class="cl">define fileset name=”testfset”,path=”/tmp”, 
+</span></span><span class="line"><span class="cl">				entries=10000,filesize=4k,prealloc=50
+</span></span><span class="line"><span class="cl">define process name=”filecopy”,instances=2 { 
+</span></span><span class="line"><span class="cl">thread name=”filecopythread”,instances=2 {
+</span></span><span class="line"><span class="cl">    flowop openfile name=opfile”, filesetname=”testfset”,fd=1
+</span></span><span class="line"><span class="cl">    flowop createfile name=”crfile”, filesetname=”testfset”,fd=2
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=”rdfile”, filesetname=”testfset”,fd=1
+</span></span><span class="line"><span class="cl">    flowop writewholefile name=”wrfile”, filesetname=”testfset”,fd=2
+</span></span><span class="line"><span class="cl">		flowop closefile name=”clfile1”, filesetname=”testfset”,fd=2
+</span></span><span class="line"><span class="cl">		flowop closefile name=”clfile2”, filesetname=”testfset”,fd=1
+</span></span><span class="line"><span class="cl">	} 
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table>
+</div>
+</div><p>默认情况下，filebench对于openfile操作会迭代打开fileset中的所有文件（负载均衡），也可以指定index来显示指定要操作的文件。</p>
+<p>filebench还能控制文件的访问模式：</p>
+<ul>
+<li>iosize：指定I/O的大小</li>
+<li>Sequential/Random Access：顺序或随机访问文件</li>
+<li>wss：指定随机访问的working set size</li>
+<li>direct/synchronous I/O：direct访问或同步I/O</li>
+</ul>
+<p>每个负载结尾通过run/psrun命令来指定负载运行的时间，psrun命令可以在运行时持续输（每十秒）出负载性能情况。</p>
+<p>通过以上参数描述过的WML保存为一个workload.f文件，通过改命令来指定filebench要运行的负载</p>
+<div class="highlight" id="id-4"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">filebench -f workload.f</span></span></code></pre></td></tr></table>
+</div>
+</div><p>quit mode：filebench在两种情况下结束负载的运行：</p>
+<ul>
+<li>time based，通过run参数指定运行的时间，默认为1minutes</li>
+<li>所有线程完成了flowop</li>
+</ul>
+<p>通过<code>set mode quit xxxx</code>指令可以决定负载结束的条件，这里介绍几种结束条件：</p>
+<ul>
+<li>
+<p>firstdone：其中一个线程处理的文件超出了fileset范围，例如创建文件操作超出了fileset</p>
+</li>
+<li>
+<p>alldone：所有线程都超出了fileset范围/耗尽了fileset资源</p>
+</li>
+<li>
+<p>finishoncount：用于终止一个线程，执行了<strong>指定次数</strong>的flowop操作（read/write）</p>
+<blockquote>
+<div class="highlight" id="id-5"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">flowop finishoncount name=&lt;name&gt;,value=&lt;ops/s&gt;,[target=&lt;any-flowop]</span></span></code></pre></td></tr></table>
+</div>
+</div></blockquote>
+</li>
+<li>
+<p>finishonbytes：用于终止一个线程，执行了<strong>指定数据量</strong>的flowop操作（read/write）</p>
+</li>
+</ul>
+<p>filebench运行结束后，会输出测试的性能信息，包括operation per second，带宽/吞吐量，每个flowop的操作延迟等信息，filebench还能以process/thread/flowop的粒度来统计性能信息。</p>
+<h2 id="filebench高级功能">Filebench高级功能</h2>
+<h3 id="变量设置-variables">变量设置 Variables</h3>
+<p>通过set命令来指定变量，避免使用常数来定义线程数、iosize等参数</p>
+<div class="highlight" id="id-6"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $iosize=4k</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>cvar</code> costume variables可以用来指定一些统计学分布的参数，这个功能是通过dll实现的，也可以自己定义新的参数分布。举下面的样例来说明一下，<code>findex</code>定义了一个正态分布，生成的index分布为<code>[0,999]</code>，与下面的fileset entries保持一致，同时指定了<code>均值</code>和<code>标准差sigma</code>。通过这样的配置后，reader thread就能按照该分布产生的file index来读取文件（默认情况下将轮询fileset中的所有文件），因此负载对某些文件的访问会比较频繁。</p>
+<div class="highlight" id="id-7"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $findex=cvar(type=cvar-normal,min=0,max=999,parameters=mean:500;sigma:100) \
+</span></span><span class="line"><span class="cl">set $off=cvar(type=cvar-triangular,min=0,max=28k,parameters=lower:0;upper:28k;mode:16k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define fileset name=”test”,path=”/tmp”,entries=1000, filesize=32k,prealloc=100
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  thread name=”reader”,memsize=10m {
+</span></span><span class="line"><span class="cl">    flowop read name=”rdfile”,filesetname=”test”,indexed=$findex,offset=$off,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=”clsfile1”
+</span></span><span class="line"><span class="cl">    flowop block name=”blk” 
+</span></span><span class="line"><span class="cl">  }</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="同步原语-synchronization-primitives">同步原语 Synchronization Primitives</h3>
+<p>负载中的多个线程可能有数据间的依赖关系，因此filebench引入了一些同步原语，例如<code>block</code>, <code>wakeup</code>, <code>semblock</code>, <code>sempost</code>这些flowops。下面的负载样例可以看到，第一个reader线程被阻塞，noio线程调用wakeup可以将其唤醒。同步原语通过<code>target</code>和<code>name</code>这些标记来执行。</p>
+<div class="highlight" id="id-8"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">define process name=”testproc1” { 
+</span></span><span class="line"><span class="cl">  thread name=”reader”,memsize=10m {
+</span></span><span class="line"><span class="cl">    flowop read name=”rdfile”,filesetname=”test”,indexed=$findex,offset=$off,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=”clsfile1”
+</span></span><span class="line"><span class="cl">    flowop block name=”blk” 
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">  thread name=”writer”,memsize=20m { 
+</span></span><span class="line"><span class="cl">    flowop write name=”wrfile”,
+</span></span><span class="line"><span class="cl">    filesetname=”test”,iosize=$iosize 
+</span></span><span class="line"><span class="cl">    flowop closefile name=”clsfile2”
+</span></span><span class="line"><span class="cl">    flowop opslimit name=”limit” 
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">  thread name=”noio”,memsize=40m { 
+</span></span><span class="line"><span class="cl">    flowop hog name=”eatcpu”,value=1000 
+</span></span><span class="line"><span class="cl">    flowop delay name=”idle”,value=1 
+</span></span><span class="line"><span class="cl">    flowop wakeup name=”wk”,target=”blk”
+</span></span><span class="line"><span class="cl">  } 
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="cpu和内存开销模拟">CPU和内存开销模拟</h3>
+<p>filebench的<code>hog</code>指令可以让线程占用一些CPU cycles和内存资源，模拟真实线程对CPU和内存的消耗情况，参数通过指定values来让线程执行多次的内存拷贝。</p>
+<p><code>delay</code>指令可以模拟线程的等待I/O的过程，让线程sleep一段时间</p>
+<p>memsize参数可以限制/指定线程的内存使用情况</p>
+<p>下面的负载则表示，线程使用40m的内存空间，每次循环时，然后休眠1秒</p>
+<div class="highlight" id="id-9"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">thread name=”noio”,memsize=40m { 
+</span></span><span class="line"><span class="cl">  flowop hog name=”eatcpu”,value=1000 
+</span></span><span class="line"><span class="cl">  flowop delay name=”idle”,value=1 
+</span></span><span class="line"><span class="cl">  flowop wakeup name=”wk”,target=”blk”
+</span></span><span class="line"><span class="cl">} </span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="io速率限制">I/O速率限制</h3>
+<p><code>iopslimit</code>指令可以限制iops</p>
+<p><code>bwlimit</code>指令可以限制带宽</p>
+<p><code>eventgen</code>指令用于全局限制（所有的process和threads）</p>
+<h3 id="访问参数">访问参数</h3>
+<p>filebench支持<code>offset</code>来对文件进行读写</p>
+<h3 id="延迟分布">延迟分布</h3>
+<p>可以通过<code>enable lathist</code>来分析请求的延迟（每个flowop）分布情况</p>
+<h3 id="数据生成">数据生成</h3>
+<p>~~filebench可以控制数据生成的策略，以往为全零写入，该特性对于数据压缩、重复数据删除等研究领域有巨大的作用。~~官方wiki并没有找到有关datasource指令的描述，但是有个2019年的issues提到了这一点，应该是开发到一半放弃了或者是什么原因，如果我找到了相关的内容会及时更新这一部分：</p>
+<p><img loading="lazy" src="/img/image-20231215224544579.png" srcset="/img/image-20231215224544579.png, /img/image-20231215224544579.png 1.5x, /img/image-20231215224544579.png 2x" sizes="auto" data-title="image-20231215224544579" data-alt="image-20231215224544579" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<p>文章里还有几个advanced feature的描述，例如Composite Flowops，File System Importing，但是在官网wiki没有找到相关的描述，因此先TODO一下。</p>
+<h2 id="一些预定义的负载">一些预定义的负载</h2>
+<p>filebench还有一个很大的贡献就是提供了丰富的预定义负载，比较符合真实应用的行为。</p>
+<p>这里介绍三个负载：Web-server，File-server，Mail-Server</p>
+<h3 id="web-server">Web-server</h3>
+<p>Web服务器往往是处理用户通过HTTP请求的网站静态资源，服务器会将网站所有的文件都读取并返回，同时在log文件记录日子。filebench的<code>webserver.f</code>负载则按照该流程来描述。</p>
+<p>下面是该负载中的一部分，每个线程将完全读取10个文件（模拟10个静态资源文件），并生成日志数据追加写入到log文件中。文件的大小遵循<strong>连续概率分布</strong>，平均大小为16KB，负载整体采用100个线程来读取1000个文件，模拟并发访问场景。bigfileset、logfiles都是完全预分配文件（prealloc如果缺省number则表示100%预分配）。</p>
+<div class="highlight" id="id-10"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $dir=/tmp
+</span></span><span class="line"><span class="cl">set $nfiles=1000
+</span></span><span class="line"><span class="cl">set $meandirwidth=20
+</span></span><span class="line"><span class="cl">set $filesize=cvar(type=cvar-gamma,parameters=mean:16384;gamma:1.5)
+</span></span><span class="line"><span class="cl">set $nthreads=100
+</span></span><span class="line"><span class="cl">set $iosize=1m
+</span></span><span class="line"><span class="cl">set $meanappendsize=16k
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define fileset name=bigfileset,path=$dir,size=$filesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=100,readonly
+</span></span><span class="line"><span class="cl">define fileset name=logfiles,path=$dir,size=$filesize,entries=1,dirwidth=$meandirwidth,prealloc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define process name=filereader,instances=1
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  thread name=filereaderthread,memsize=10m,instances=$nthreads
+</span></span><span class="line"><span class="cl">  {
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile1,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile1,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile1,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile2,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile2,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile2,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile3,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile3,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile3,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile4,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile4,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile4,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile5,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile5,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile5,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile6,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile6,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile6,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile7,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile7,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile7,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile8,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile8,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile8,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile9,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile9,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile9,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile10,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile10,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile10,fd=1
+</span></span><span class="line"><span class="cl">    flowop appendfilerand name=appendlog,filesetname=logfiles,iosize=$meanappendsize,fd=2
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="file-server">File-server</h3>
+<p>该负载使用50个进程（代表用户），每个进程包含创建、写入文件、打开文件、追加写入、完全读取、文件删除、文件元数据检查的操作。</p>
+<p>该负载预分配了80%的平均大小为128KB的文件10000个，因为对于文件服务器可能存在新写入/创建的文件。</p>
+<div class="highlight" id="id-11"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $dir=/tmp
+</span></span><span class="line"><span class="cl">set $nfiles=10000
+</span></span><span class="line"><span class="cl">set $meandirwidth=20
+</span></span><span class="line"><span class="cl">set $filesize=cvar(type=cvar-gamma,parameters=mean:131072;gamma:1.5)
+</span></span><span class="line"><span class="cl">set $nthreads=50
+</span></span><span class="line"><span class="cl">set $iosize=1m
+</span></span><span class="line"><span class="cl">set $meanappendsize=16k
+</span></span><span class="line"><span class="cl">set $runtime=60
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define fileset name=bigfileset,path=$dir,size=$filesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=80
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define process name=filereader,instances=1
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  thread name=filereaderthread,memsize=10m,instances=$nthreads
+</span></span><span class="line"><span class="cl">  {
+</span></span><span class="line"><span class="cl">    flowop createfile name=createfile1,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop writewholefile name=wrtfile1,srcfd=1,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile1,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile1,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop appendfilerand name=appendfilerand1,iosize=$meanappendsize,fd=1
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile2,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile2,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile1,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile3,fd=1
+</span></span><span class="line"><span class="cl">    flowop deletefile name=deletefile1,filesetname=bigfileset
+</span></span><span class="line"><span class="cl">    flowop statfile name=statfile1,filesetname=bigfileset
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="mail-server">Mail-Server</h3>
+<p><code>varmail.f</code>描述的负载是传统UNIX系统中对<code>/var/mail</code>目录中的文件操作。用户收到邮件后，将执行文件创建、写入和fsync落盘操作。当用户读取邮件时，发生文件打开、读取、标记为已读、fsync操作，或者是读取已读的文件。平均的文件大小为16KB，采用16个线程。</p>
+<p>负载的workflow为：</p>
+<ul>
+<li>删除文件（模拟删除邮件/预留一个创建文件的空位）</li>
+<li>创建邮件文件，写入邮件数据，落盘后关闭文件</li>
+<li>打开一个未读邮件，读取内容后追加写入已读mark，落盘后关闭</li>
+<li>读取一个已读文件，读取内容后关闭</li>
+</ul>
+<div class="highlight" id="id-12"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $dir=/tmp
+</span></span><span class="line"><span class="cl">set $nfiles=1000
+</span></span><span class="line"><span class="cl">set $meandirwidth=1000000
+</span></span><span class="line"><span class="cl">set $filesize=cvar(type=cvar-gamma,parameters=mean:16384;gamma:1.5)
+</span></span><span class="line"><span class="cl">set $nthreads=16
+</span></span><span class="line"><span class="cl">set $iosize=1m
+</span></span><span class="line"><span class="cl">set $meanappendsize=16k
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define fileset name=bigfileset,path=$dir,size=$filesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=80
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define process name=filereader,instances=1
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  thread name=filereaderthread,memsize=10m,instances=$nthreads
+</span></span><span class="line"><span class="cl">  {
+</span></span><span class="line"><span class="cl">    flowop deletefile name=deletefile1,filesetname=bigfileset
+</span></span><span class="line"><span class="cl">    flowop createfile name=createfile2,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop appendfilerand name=appendfilerand2,iosize=$meanappendsize,fd=1
+</span></span><span class="line"><span class="cl">    flowop fsync name=fsyncfile2,fd=1
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile2,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile3,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile3,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop appendfilerand name=appendfilerand3,iosize=$meanappendsize,fd=1
+</span></span><span class="line"><span class="cl">    flowop fsync name=fsyncfile3,fd=1
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile3,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile4,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile4,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile4,fd=1
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">echo  &#34;Varmail Version 3.0 personality successfully loaded&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">run 60</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="webproxy">Webproxy</h3>
+<p><code>webproxy.f</code>描述的负载是一个web代理服务器，用户通过代理服务器访问网站，代理服务器会将网站的内容缓存到本地，当用户再次访问时，代理服务器会直接返回缓存的内容。该负载预先分配80%的缓存文件，使用100个线程操作10000个文件。该负载的workflow为：</p>
+<ul>
+<li>删除文件（预留一个创建文件的空位）</li>
+<li>读取一个已经缓存的文件（重复5次）</li>
+</ul>
+<p>该负载还通过opslimit来限制短时间内的操作次数，避免负载过早结束，同时还可以控制系统的资源。</p>
+<div class="highlight" id="id-13"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $dir=/tmp
+</span></span><span class="line"><span class="cl">set $nfiles=10000
+</span></span><span class="line"><span class="cl">set $meandirwidth=1000000
+</span></span><span class="line"><span class="cl">set $meanfilesize=16k
+</span></span><span class="line"><span class="cl">set $nthreads=100
+</span></span><span class="line"><span class="cl">set $meaniosize=16k
+</span></span><span class="line"><span class="cl">set $iosize=1m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define fileset name=bigfileset,path=$dir,size=$meanfilesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=80
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define process name=proxycache,instances=1
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  thread name=proxycache,memsize=10m,instances=$nthreads
+</span></span><span class="line"><span class="cl">  {
+</span></span><span class="line"><span class="cl">    flowop deletefile name=deletefile1,filesetname=bigfileset
+</span></span><span class="line"><span class="cl">    flowop createfile name=createfile1,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop appendfilerand name=appendfilerand1,iosize=$meaniosize,fd=1
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile1,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile2,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile2,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile2,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile3,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile3,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile3,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile4,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile4,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile4,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile5,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile5,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile5,fd=1
+</span></span><span class="line"><span class="cl">    flowop openfile name=openfile6,filesetname=bigfileset,fd=1
+</span></span><span class="line"><span class="cl">    flowop readwholefile name=readfile6,fd=1,iosize=$iosize
+</span></span><span class="line"><span class="cl">    flowop closefile name=closefile6,fd=1
+</span></span><span class="line"><span class="cl">    flowop opslimit name=limit
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">echo  &#34;Web proxy-server Version 3.0 personality successfully loaded&#34;</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="video-server">Video-server</h3>
+<p><code>videoserver.f</code>描述的负载是一个视频服务器，包含两个fileset，一个是正在播放的视频（active），一个是可用但还没有被播放的视频（inactive/passive），这里paralloc是通过多线程（32个）预分配文件，因为预分配的文件较大，需要提高效率。一个writer线程负责写入新的视频文件来替换掉passive的视频文件，48个reader线程负责读取视频文件，模拟视频的播放。</p>
+<p>eventrate参数限制读取线程的读取速率，计算公式为nthreads*Rate，这里的Rate就是每个线程读取的带宽大小，为2mb/s。</p>
+<p>repintval参数为视频文件的替换速率，每隔10s会写入一个视频文件进行替换。</p>
+<div class="highlight" id="id-14"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">set $dir=/tmp
+</span></span><span class="line"><span class="cl">set $eventrate=96
+</span></span><span class="line"><span class="cl">set $filesize=10g
+</span></span><span class="line"><span class="cl">set $nthreads=48
+</span></span><span class="line"><span class="cl">set $numactivevids=32
+</span></span><span class="line"><span class="cl">set $numpassivevids=194
+</span></span><span class="line"><span class="cl">set $reuseit=false
+</span></span><span class="line"><span class="cl">set $readiosize=256k
+</span></span><span class="line"><span class="cl">set $writeiosize=1m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">set $passvidsname=passivevids
+</span></span><span class="line"><span class="cl">set $actvidsname=activevids
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">set $repintval=10
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">eventgen rate=$eventrate
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define fileset name=$actvidsname,path=$dir,size=$filesize,entries=$numactivevids,dirwidth=4,prealloc,paralloc,reuse=$reuseit
+</span></span><span class="line"><span class="cl">define fileset name=$passvidsname,path=$dir,size=$filesize,entries=$numpassivevids,dirwidth=20,prealloc=50,paralloc,reuse=$reuseit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define process name=vidwriter,instances=1
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  thread name=vidwriter,memsize=10m,instances=1
+</span></span><span class="line"><span class="cl">  {
+</span></span><span class="line"><span class="cl">    flowop deletefile name=vidremover,filesetname=$passvidsname
+</span></span><span class="line"><span class="cl">    flowop createfile name=wrtopen,filesetname=$passvidsname,fd=1
+</span></span><span class="line"><span class="cl">    flowop writewholefile name=newvid,iosize=$writeiosize,fd=1,srcfd=1
+</span></span><span class="line"><span class="cl">    flowop closefile name=wrtclose, fd=1
+</span></span><span class="line"><span class="cl">    flowop delay name=replaceinterval, value=$repintval
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">define process name=vidreaders,instances=1
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  thread name=vidreaders,memsize=10m,instances=$nthreads
+</span></span><span class="line"><span class="cl">  {
+</span></span><span class="line"><span class="cl">    flowop read name=vidreader,filesetname=$actvidsname,iosize=$readiosize
+</span></span><span class="line"><span class="cl">    flowop bwlimit name=serverlimit, target=vidreader
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">echo  &#34;Video Server Version 3.0 personality successfully loaded&#34;</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="对负载的修改">对负载的修改</h3>
+<p>为了评估系统不同部分的性能，可以对负载作出适当的修改</p>
+<p>例如，对于Webserver负载而言，总体的文件大小仅16MB，可以完全缓存在Page Cache中，因此性能取决于操作系统的Cache，如果想进一步测试硬盘性能的影响，可以提高文件的数量让整个负载的文件占用更多的硬盘空间。</p>
+<p>负载的运行时间也很重要，一般而言运行60s可以测的系统的真实情况（例如Cache warmup、bdflush脏页下刷落盘），通过psrun指令来收集运行时的性能情况，有助于观察系统是否处于稳定状态。</p>
+<p>因为Filebench需要预先创建文件，这些文件创建后很可能已经在Page Cache中，因此可以通过如下的指令来清空Page Cache，避免影响后续的测试。在执行run/psrun之前，WML可以提前执行一些shell命令。</p>
+<div class="highlight" id="id-15"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">create fileset
+</span></span><span class="line"><span class="cl">system <span class="s2">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl">system <span class="s2">&#34;echo 3 &gt; /proc/sys/vm/drop_caches&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="filebench的安装和使用">Filebench的安装和使用</h1>
+<p>这里主要参考官方仓库的安装流程。</p>
+<p>首先clone或者下载filebench的release版本</p>
+<p>Github仓库：</p>
+<div class="highlight" id="id-16"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/filebench/filebench
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> filebench</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight" id="id-17"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget https://github.com/filebench/filebench/archive/refs/tags/1.5-alpha3.zip
+</span></span><span class="line"><span class="cl">unzip 1.5-alpha3.zip
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> filebench-1.5-alpha3</span></span></code></pre></td></tr></table>
+</div>
+</div><p>仓库代码不包含Makefile和configure文件，需要通过autoreconf来生成，需要先安装libtool、automake、autoconf等工具</p>
+<div class="highlight" id="id-18"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install libtool automake autoconf
+</span></span><span class="line"><span class="cl">libtoolize
+</span></span><span class="line"><span class="cl">aclocal
+</span></span><span class="line"><span class="cl">autoheader
+</span></span><span class="line"><span class="cl">automake --add-missing
+</span></span><span class="line"><span class="cl">autoconf</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后执行configure和make</p>
+<div class="highlight" id="id-19"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./configure
+</span></span><span class="line"><span class="cl">make
+</span></span><span class="line"><span class="cl">sudo make install</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在某些情况下，直接运行可能会遇到段错误，因此运行负载之前，需要通过下面的命令关闭进程地址空间随机化ASLR，参考<a href="https://github.com/filebench/filebench/issues/110"target="_blank" rel="external nofollow noopener noreferrer">Filebench Issue#110</a>。ASLR是一种安全机制，可以防止攻击者通过缓冲区溢出等方式来执行恶意代码，这个原因可能与Filebench内部实现中间接调用初始化函数时发生的地址偏移问题有关。</p>
+<div class="highlight" id="id-20"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="m">0</span> <span class="p">|</span> sudo tee /proc/sys/kernel/randomize_va_space</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装完成后，可以通过<code>filebench -f workload.f</code>来运行负载。
+前面介绍的预定义负载都在<code>/usr/local/share/filebench/workloads</code>目录下，可以直接运行。最好在运行先先将预定义负载复制出来，根据系统环境修改参数（文件数量、线程数等）后再运行。这里TODO一下，后面补充一下如何根据当前系统的配置来合理的Scale负载。</p>
+<h1 id="使用filebench测试zns">使用Filebench测试ZNS</h1>
+<p>既然Filebench是对文件系统进行测试的工具，那么我们必须在ZNS上创建一个文件系统，然后将其挂载到某个目录下，这样Filebench才能对其进行测试。目前Linux已经有诸多文件系统支持了ZNS，例如F2FS（4.10支持Zone设备）、ZoneFS（5.6.0）、SSDFS（6.3）、Btrfs（5.16）、XFS（借助dm-zoned），这里以F2FS为例来介绍如何使用Filebench来测试ZNS的性能。要注意，Linux内核在5.9之后开始支持ZNS，因此需要使用5.9及以上的内核，一般而言使用LTS版本的5.10或者5.15。</p>
+<p>准备工作：</p>
+<ul>
+<li>支持ZNS的Linux内核（笔者使用的为5.15内核）</li>
+<li>一块普通的固态盘<code>/dev/nvme0n1</code>（用于存放F2FS的元数据）</li>
+<li>一块ZNS固态盘<code>/dev/nvme1n1</code>（笔者使用的固态盘都是FEMU闪存仿真平台所模拟的ZNS/SSD）</li>
+</ul>
+<p><img loading="lazy" src="/img/lsblk.png" srcset="/img/lsblk.png, /img/lsblk.png 1.5x, /img/lsblk.png 2x" sizes="auto" data-title="lsblk" data-alt="lsblk" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></p>
+<h2 id="创建并挂载f2fs文件系统">创建并挂载F2FS文件系统</h2>
+<p>这里参考了<a href="https://zonedstorage.io/docs/linux/fs"target="_blank" rel="external nofollow noopener noreferrer">Zoned Storage</a>中的配置过程。
+由于ZNS不支持乱序写入，只允许顺序写，因此需要设置ZNS固态盘的调度器为mq-deadline，要指定ZNS对应的namespace。</p>
+<div class="highlight" id="id-21"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> mq-deadline &gt; /sys/block/nvme1n1/queue/scheduler</span></span></code></pre></td></tr></table>
+</div>
+</div><p>笔者也曾经尝试配置过真实SSD+ZNS+F2FS，需要SSD和ZNS的Sector Size必须统一。由于缺少相应设备因此没有成功配置。</p>
+<p>指定好调度器之后，通过<code>mkfs.f2fs</code>工具来指定普通SSD和ZNS建立F2FS文件系统，这里要注意mkfs参数的顺序，前面是ZNS，后面是普通SSD。</p>
+<div class="highlight" id="id-22"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo mkfs.f2fs -f -m -c /dev/nvme1n1 /dev/nvme0n1</span></span></code></pre></td></tr></table>
+</div>
+</div><p>配置成功的话会显示类似下面的信息：</p>
+<div class="highlight" id="id-23"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    F2FS-tools: mkfs.f2fs Ver: 1.15.0 (2022-05-13)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Info: Disable heap-based policy
+</span></span><span class="line"><span class="cl">Info: Debug level = 0
+</span></span><span class="line"><span class="cl">Info: Trim is enabled
+</span></span><span class="line"><span class="cl">Info: Host-managed zoned block device:
+</span></span><span class="line"><span class="cl">      32 zones, 2147483648 zone size(bytes), 0 randomly writeable zones
+</span></span><span class="line"><span class="cl">      524288 blocks per zone
+</span></span><span class="line"><span class="cl">Info: Segments per section = 1024
+</span></span><span class="line"><span class="cl">Info: Sections per zone = 1
+</span></span><span class="line"><span class="cl">Info: sector size = 512
+</span></span><span class="line"><span class="cl">Info: total sectors = 167772160 (81920 MB)
+</span></span><span class="line"><span class="cl">Info: zone aligned segment0 blkaddr: 524288
+</span></span><span class="line"><span class="cl">Info: format version with
+</span></span><span class="line"><span class="cl">  &#34;Linux version 5.15.81 xxxxxx&#34;
+</span></span><span class="line"><span class="cl">Info: [/dev/nvme0n1] Discarding device
+</span></span><span class="line"><span class="cl">Info: This device doesn&#39;t support BLKSECDISCARD
+</span></span><span class="line"><span class="cl">Info: Discarded 16384 MB
+</span></span><span class="line"><span class="cl">Info: [/dev/nvme1n1] Discarding device
+</span></span><span class="line"><span class="cl">Info: Discarded 65536 MB
+</span></span><span class="line"><span class="cl">Info: Overprovision ratio = 10.000%
+</span></span><span class="line"><span class="cl">Info: Overprovision segments = 9420 (GC reserved = 6144)
+</span></span><span class="line"><span class="cl">Info: format successful</span></span></code></pre></td></tr></table>
+</div>
+</div><p>文件系统创建成功后，将组合后的设备挂载到某个目录下，这里要指定元数据盘（普通SSD）</p>
+<div class="highlight" id="id-24"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo mount -t f2fs /dev/nvme0n1 /mnt/f2fs/</span></span></code></pre></td></tr></table>
+</div>
+</div><p>挂载成功后就可以使用filebench对ZNS进行性能测试了，还需要注意要更改filebench负载中的目录配置，比如<code>/mnt/f2fs</code>，一般要修改dir变量或者fileset path字段；同时要注意负载中描述的文件大小是否超出了SSD的容量，要通过计算将其修改为合适的大小。</p>
+<h1 id="reference">Reference</h1>
+<ol>
+<li>
+<p><a href="https://www.usenix.org/system/files/login/articles/login_spring16_02_tarasov.pdf"target="_blank" rel="external nofollow noopener noreferrer">[USENIX] Login'16</a></p>
+</li>
+<li>
+<p><a href="https://github.com/filebench/filebench/wiki"target="_blank" rel="external nofollow noopener noreferrer">[Github] Filebench Repo</a></p>
+</li>
+<li>
+<p><a href="https://github.com/filebench/filebench/issues/110"target="_blank" rel="external nofollow noopener noreferrer">[Github] Filebench Issue#110</a></p>
+</li>
+<li>
+<p><a href="https://zonedstorage.io/docs/linux/overview"target="_blank" rel="external nofollow noopener noreferrer">[WD] Zoned Storage</a></p>
+</li>
+<li>
+<p><a href="https://docs.kernel.org/filesystems/f2fs.html"target="_blank" rel="external nofollow noopener noreferrer">[Kernel.org] F2FS Docs</a></p>
+</li>
+</ol></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="Updated on 2023-12-14 21:48:26">Updated on 2023-12-14&nbsp;</span>
+      </div><div class="post-info-license">
+          <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span>
+        </div></div>
+    <div class="post-info-line">
+      <div class="post-info-md"></div>
+      <div class="post-info-share">
+        <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://zhiwayzhang.github.io/posts/filebench/" data-title="使用Filebench测试ZNS&#43;F2FS" data-hashtags="Filebench,Benchmark,File System,F2FS,ZNS"><i class="fa-brands fa-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://zhiwayzhang.github.io/posts/filebench/" data-hashtag="Filebench"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://zhiwayzhang.github.io/posts/filebench/" data-title="使用Filebench测试ZNS&#43;F2FS"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/filebench/' class="post-tag">Filebench</a><a href='/tags/benchmark/' class="post-tag">Benchmark</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/f2fs/' class="post-tag">F2FS</a><a href='/tags/zns/' class="post-tag">ZNS</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/bourbon/" class="post-nav-item" rel="prev" title="[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</a></div>
+</div>
+</article></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.119.0">Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt %!v(MISSING)">FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/zhiwayzhang"target="_blank" rel="external nofollow noopener noreferrer">Zhiwei Zhang</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{"enable":false},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

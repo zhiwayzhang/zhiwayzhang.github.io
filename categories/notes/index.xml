@@ -4,7 +4,15 @@
     <link>https://zhiwayzhang.github.io/categories/notes/</link>
     <description>Notes - Category - Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/categories/notes/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Thu, 14 Dec 2023 21:48:26 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/categories/notes/" rel="self" type="application/rss+xml" /><item>
+  <title>使用Filebench测试ZNS&#43;F2FS</title>
+  <link>https://zhiwayzhang.github.io/posts/filebench/</link>
+  <pubDate>Thu, 14 Dec 2023 21:48:26 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/filebench/</guid>
+  <description><![CDATA[<p>本文的内容主要参考了filebench在<code>USENIX ;login:'16</code>上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。</p>]]></description>
+</item>
+<item>
   <title>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</title>
   <link>https://zhiwayzhang.github.io/posts/bourbon/</link>
   <pubDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</pubDate>
@@ -168,37 +176,6 @@ Dart的变量也是top-level的，top-level我的理解的话就是不像Java那
 Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
 Dart包含warnings和errors机制，errors主要在编译时和运行时
 Variables ]]></description>
-</item>
-<item>
-  <title>[ACM Trans. On Storage] HintStor: A Framework to Study I/O Hints in Heterogeneous Storage</title>
-  <link>https://zhiwayzhang.github.io/posts/hintstor/</link>
-  <pubDate>Wed, 30 Nov 2022 10:58:22 &#43;0800</pubDate>
-  <author>Zhiwei Zhang</author>
-  <guid>https://zhiwayzhang.github.io/posts/hintstor/</guid>
-  <description><![CDATA[0x00 Everyday English Heterogeneous 各种各样的
-semantic 语义上的
-conservative 保守的、传统的 &mdash;aggressive 激进的
-aggregate 合计
-orchestrate 精心策划
-proactive 积极主动的
-by means of 通过，借助于
-off-the-shelf 现成的
-elaborate 详细阐述
-0x01 Intro 随着存储技术的发展，由SCM、SSD、HDD以及一系列云存储构成了目前异构存储系统
-异构存储系统将冷数据放在更慢的层次，热数据放在更快的层次，存储机制的激进和保守都会带来一些性能损失，而且异构存储系统由不同速度和特点的存储设备组成
-在异构存储系统中，还存在前台和后台I/O的干扰问题，带来明显的延迟，硬盘的管理层往往不能分辨出I/O请求的优先级高低，并决定将其数据存储到哪一层次
-这种情况被称为I/O栈高层次与底层存储系统之间的语义鸿沟，其中一个解决方案为使用I/O access hints，当app读取一个文件时，文件块可能散落在不同设备中，上层可以告知存储系统，使得存储系统提前将该文件的数据汇总到读取速度更高的层次，本文提出了一个分类器，允许存储后端控制器针对不同的I/O指令实施不同的I/O策略，例如SSD可以优先处理元数据和小文件，使其先缓存至文件系统中
-本文提出了一个通用灵活的框架，HintStor，为异构存储系统提供access hints
-设计和实现了一套新的用户层面的接口，文件系统插件，块存储数据管理器，在存储管理方面，HintStror通过在block级别进行统计（热力图等）来触发数据迁移，并通过FIFO队列处理I/O；HintStor还提供了access hint的评估，有以下几个要点：
-新的app/user层面的接口允许用户定义和配置新的hint VFS中的文件系统插件提取文件布局信息并建立文件层面的数据分类器，用于下层各种文件系统 在基于DM的Linux中，块存储数据管理器实现了四个原子access hint操作，触发数据迁移和I/O调度，因此可以执行和分析与上层hint有关的不同策略 作者基于SSD、HDD、SCM以及云存储进行了评估，以体现系统的灵活性，实现并分析了以下四个hints：
-使用文件系统内部的数据进行分类（元数据，文件数据，文件大小） Stream ID，该ID用于对不同数据进行分类，并将相关数据存储在一起或紧密地存储在同一个设备上 云预取，cloud prefetch，调研了在access hints情况下，如何帮助有效地集成本地存储和云存储。 I/O任务调度，用户可以在应用层面向块存储设备发起hints，来对前台和后台任务进行区分 0x02 Bg 在目前的hints机制中，主要考虑的是宿主机的page cache和预取机制，目前system中的系统调用可以通过指定一个随机访问flag来告知内核选取正确的预取和page cache策略以优化对某个文件的访问。
-目前很少有对异构存储系统的优化，需要解决的问题是在不同的存储设备上的智能数据移动，fadvise()和inoice()系统调用可以改善prefetching，但是不能解决数据移动问题。
-MPI-I/O hints在高性能计算系统中优化文件系统，目前这些研究着眼于优化存储系统中的buffer/cache部分，red hat通过在用户空间限制I/O来对不同供应商的存储设备进行block对齐。
-目前有些文件系统支持自定义类别，btrfs可以在同一文件系统中支持不同的卷，同时需要用户为存储设备静态配置卷，用户可能让多个应用运行在一个逻辑卷中，为了实现高效的数据管理，作者考虑在卷上支持动态的access hints。
-0x03 HintStor Design Overview HintStor的架构图如上图所示
-Device Mapper是一个开源框架，为由多种块设备组成的卷提供映射
-整体包含三层，在应用层、文件系统层、块层提供了新的接口和插件
-在用户层通过接口连接Block Storage Data Manager和文件系统，使得应用可以接受数据和发送access hints 为了提取chunk的文件系统语义，HintStor将一个插件绑定到文件系统层，来利用内部文件的文件数据结构和文件数据布局 为了控制对大chunk的数据管理，HintStor实现了新的block storage manager，可以实现对存储设备的access hints策略 在Device Mapper中实现了两个功能：]]></description>
 </item>
 </channel>
 </rss>

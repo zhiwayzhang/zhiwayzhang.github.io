@@ -112,6 +112,34 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/pinkkv/">[ATC&#39;20] PinK: High-speed In-storage Key-value Store with Bounded Tails</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-11-26 13:40:59'>published on <time datetime="2022-11-26">2022-11-26</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Everyday English preferable 更可取的
+consequently 因此
+inevitably 必然的
+conventional 常规的、传统的
+exacerbates 加剧
+deteriorates 恶化
+deterministic 确定性
+0x01 Intro 本文主要提出了Pink，基于LSM tree的KV-SSD，主要通过避免使用布隆过滤器，而是使用少量DRAM来进行优化
+传统的KV-SSD主要通过在控制器的DRAM中维护一个hash table来寻址，受到DRAM的容量限制，超出容量的部分会暂时存放在闪存中，因此在寻址时带来了访问闪存的额外开销，同时当发生哈希碰撞时，可能会操作多个闪存，造成了大量不可预测的开销
+单纯使用LSM做为替换的话，可以减少DRAM的存储，但是存在一些性能问题：
+尾延迟：很多LSM-tree使用布隆过滤器来快速检索，可靠性差，存在尾延迟问题 写放大：由于LSM对KV索引的排序和合并操作，带来了很多对闪存额外的访问，还增大了FTL进行GC的负担 布隆过滤器的重建和KV排序：消耗了大量的CPU资源，带来I/O性能的大幅下降 本文提出了一种基于LSM-tree的KV存储引擎-PinK，解决了上述三个问题。PinK使用了四种技术。
+PinK的核心是level pinning，将固定在LSM-tree最顶层的KV索引固定到DRAM中
+由于部分level固定在DRAM中，因此可以直接进行compaction，无需占用闪存的I/O，被固定的索引通过电容进行保护，因此也不需要定期进行刷新，这里要注意作者使用DRAM容量很小，使用电容足以保证持久化
+GC的主要I/O开销来自对LSM-tree索引的更新，Pink通过延迟LSM-tree中索引更新到compaction阶段来减少GC的I/O开销
+在SSD控制器和NAND芯片之间添加比较器，PinK在读取KV对象时执行KV排序，完全消除了compaction的CPU成本
+0x02 Bg 了解一些有关NAND闪存SSD、KV-SSD、Hash-based KV-SSD、LSM-Tree-based KV-SSD的现状，并对Hash和LSM-tree进行比较
+作者对LSM-tree的设计，L0位于DRAM中，并作为write buffer，其余各层存储在闪存中
+0x03 Design Pink有四个主要的数据结构
+位于DRAM中的level lists和Skiplist
+位于闪存中的meta segments和data segments
+在LSM-tree KV 文件系统方面，作者主要参考了WiscKey FAST'16，取代FTL进行GC、索引和磨损均衡
+Skiplist Skiplist作为LSM-tree中的L0，起到类似write buffer的作用，暂时保存KV对象，Skiplist中的对象为：&lt;key size, key, value size, value&gt;
+当Skiplist满时，会将缓存的对象以meta segment和data segment的形式刷新到L1中，在L1和更低的level中，Key和Value将被分离存储到meta/data segment中，data segment中存储value、key和key size用于GC
+Level list 用于跟踪闪存中每个level的meta segment</div><div class="post-footer">
+    <a href="/posts/pinkkv/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/paper/' class="post-tag">Paper</a><a href='/tags/file-system/' class="post-tag">File System</a><a href='/tags/lsm-tree/' class="post-tag">LSM-tree</a><a href='/tags/k/v/' class="post-tag">K/V</a><a href='/tags/database/' class="post-tag">Database</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/femu-paper/">[FAST&#39;18] FEMU闪存模拟系统介绍</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-11-23 19:44:51'>published on <time datetime="2022-11-23">2022-11-23</time></span>&nbsp;<span class="post-category">included in <a href="/categories/storage/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 Everyday English LOC == line of code
 Guest OS == VM
@@ -229,43 +257,6 @@ The File Object 在打开一个文件时，需要分配一个文件结构体（�
 The Dentry Object 目录项纪录子文件和子目录的名称</div><div class="post-footer">
     <a href="/posts/linuxblockiostack/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/linux/' class="post-tag">Linux</a><a href='/tags/i/o/' class="post-tag">I/O</a><a href='/tags/nvme/' class="post-tag">NVMe</a><a href='/tags/ssd/' class="post-tag">SSD</a><a href='/tags/file-system/' class="post-tag">File System</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/multidisksystems/">【存储系统】多硬盘存储系统</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-10-05 16:54:42'>published on <time datetime="2022-10-05">2022-10-05</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 多硬盘系统 对多硬盘系统可靠性的度量，上图从故障产生，故障产生程序错误，错误检测，修复故障四个时间节点为一个周期。
-三个可靠性的指标：
-可靠性：通过错误产生到发现错误的时间间隔MTTF来衡量
-可维护性：通过发现错误到错误修复的时间间隔来衡量，定义系统修复的能力
-可用性：通过系统中非修复时间所占的比例，可以对外提供服务的时间占比，$EA=\frac{MTTF}{MTTF+MTTR}$
-MTBF=MTTR+MTTF，两故障之间的时间间隔
-恢复一块硬盘的代价很高，为了提高系统可用性，需要构建多盘系统，在某块磁盘故障时仍然能正常工作。
-每秒的I/O请求峰值为1200，R/W比例为2:1，分别使用RAID 1/5，计算峰值的硬盘负载
-总的R/W分别为800/400
-RAID 1：写操作需要翻倍，总负载为800+400*2=1600
-RAID 5：写操作翻四倍，总负载为800+400*4=2400
-使用多盘系统的目的：
-提高存储容量 提高性能 负载均衡 Disk Striping 带宽 吞吐量 提高可靠性 容错 基于奇偶校验的保护 创建副本 JBOD（Just a Bunch Of Disks）单纯对硬盘进行组合，只提高存储容量
-负载均衡 静态：某一地址固定映射到某块硬盘
-动态：热点数据分配到不同的硬盘中
-按照数据块：将一个数据划分后存储到所有硬盘中（Disk Striping 条带化）
-Disk Striping 按一定大小对数据分块（stripe unit/block），然后依次存储到各个硬盘中
-分配规则使用轮询枚举，通过取模判断存储的磁盘编号，根据余数确定偏移量
-Stripe Unit大小设置一般为2M、4M、16M，太大丧失负载均衡能力，太小会在寻址上花费太多时间
-磁盘失效 对于JBOD、Striping某块盘失效，整个文件系统都将失效
-可以通过备份来解决，要花费较长的时间
-多盘系统的MTTF为第一块磁盘失效的时间，比单盘系统时间短很多
-解决方案：Redundancy冗余存储
-Redundancy 存储副本 存储两份或更多的副本，采用三副本的服务有HDFS/GFS/Cloud Storage
-Disk Mirroring 磁盘镜像，分主从磁盘，从盘基于主盘进行同步，可以从任意盘进行读取
-有较高的可用性
-花费较高
-写性能降低，磁盘之间需要同步，受限于最慢同步的磁盘
-读性能提高，请求被分散到各个磁盘
-磁盘镜像可以与结合条带化
-先做Mirroring再做Striping (RAID 10)
-若有磁盘故障，会损失1/2的数据
-先做Striping再做Mirroring (RAID 01)</div><div class="post-footer">
-    <a href="/posts/multidisksystems/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/raid/' class="post-tag">RAID</a><a href='/tags/%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C/' class="post-tag">奇偶校验</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -301,5 +292,5 @@ Disk Mirroring 磁盘镜像，分主从磁盘，从盘基于主盘进行同步�
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
   </noscript>
-</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
 </html>

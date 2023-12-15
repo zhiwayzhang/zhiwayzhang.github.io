@@ -4,7 +4,15 @@
     <link>https://zhiwayzhang.github.io/posts/</link>
     <description>All Posts | Coding Panda&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
-      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Thu, 14 Dec 2023 21:48:26 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+  <title>使用Filebench测试ZNS&#43;F2FS</title>
+  <link>https://zhiwayzhang.github.io/posts/filebench/</link>
+  <pubDate>Thu, 14 Dec 2023 21:48:26 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/filebench/</guid>
+  <description><![CDATA[<p>本文的内容主要参考了filebench在<code>USENIX ;login:'16</code>上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。</p>]]></description>
+</item>
+<item>
   <title>[OSDI&#39;20] From WiscKey to Bourbon: A Learned Index for Log-Structured Merge Trees</title>
   <link>https://zhiwayzhang.github.io/posts/bourbon/</link>
   <pubDate>Sun, 10 Dec 2023 16:56:03 &#43;0800</pubDate>
@@ -149,35 +157,6 @@ Memory Bandwidth Interference 由于NVM和DRAM共享内存总线，因此存在�
   <description><![CDATA[本文主要参考FEMU仓库README
 0x00 Intro FEMU架构图
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 +--------------------+ | VM / Guest OS | | | | | | NVMe Block Device | +--------^^----------+ || PCIe/NVMe || +------------------------------vv----------------------------+ | +---------+ +---------+ +---------+ +---------+ +------+ | | | Blackbox| | OCSSD | | ZNS-SSD | | NoSSD | | ... | | | +---------+ +---------+ +---------+ +---------+ +------+ | | FEMU NVMe SSD Controller | +------------------------------------------------------------+ FEMU是弗吉尼亚理工学院的Huaicheng LI教授团队开发的一款SSD模拟器，FEMU的论文此前进行过总结[[FAST'18] FEMU闪存模拟系统介绍](https://blog.]]></description>
-</item>
-<item>
-  <title>Dart学习笔记</title>
-  <link>https://zhiwayzhang.github.io/posts/darttour/</link>
-  <pubDate>Fri, 09 Dec 2022 22:20:03 &#43;0800</pubDate>
-  <author>Zhiwei Zhang</author>
-  <guid>https://zhiwayzhang.github.io/posts/darttour/</guid>
-  <description><![CDATA[A Tour Of Dart 在macOS上搭建Dart/Flutter环境
-在Flutter官网下载SDK
-将SDK中的bin目录添加到system path
-执行flutter doctor看查本地环境，如果此前没有配置过安卓开发环境的话，此时会提示缺少android command line tools，这里我通过Android Studio来进行安装
-安装Android Studio后，进入后会提示安装部分组件，勾选Android Command Line Tools进行安装，如果这里错过了，可以在Preference进行安装。如下图所示，记住上方的Android SDK location。
-安装完成后，将安装SDK location添加到环境变量ANDROID_HOME，可以将配置写入.zshrc中
-1 2 export ANDROID_HOME=&#34;/Users/***/Library/Android/sdk&#34; export PATH=&#34;$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH&#34; 然后执行source ~/.zshrc，再执行flutter doctor，可以看到要求接受android licenses
-运行flutter doctor --android-licenses，一路按y接受
-此时flutter全部的配置基本就完成了
-如果要在neovim中进行代码补全，推荐安装coc.nvim插件，同时执行:CocInstall coc-flutter
-两个有关flutter的coc.nvim扩展：
-coc-flutter
-coc-flutter-tools
-Important Concepts Dart中所有的变量都是对象，并且是一个类的实例，包括数字、函数和null，除了null，所有对象都继承自Object
-Dart是强类型语言，但是var可以推导变量类型
-null safety开启后，变量不会包含null，使用int?声明变量可以使得变量可为null，在赋值的字面量后添加!可以保证变量不为null
-1 2 int? NullableNumber = 3; int unNullableNumber = 3!; Object可以用来作为范型的模版
-Dart的函数可以不依赖任何class，top-level
-Dart的变量也是top-level的，top-level我的理解的话就是不像Java那种需要将函数和变量和类进行强行绑定
-Dart不使用public、protected、private来修饰变量，使用下划线来进行修饰
-Dart包含warnings和errors机制，errors主要在编译时和运行时
-Variables ]]></description>
 </item>
 </channel>
 </rss>

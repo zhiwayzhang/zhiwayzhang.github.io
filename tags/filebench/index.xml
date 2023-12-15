@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Filebench - Tag - Coding Panda&#39;s Blog</title>
+    <link>https://zhiwayzhang.github.io/tags/filebench/</link>
+    <description>Filebench - Tag - Coding Panda&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</managingEditor>
+      <webMaster>zhiweizhang@hust.edu.cn (Zhiwei Zhang)</webMaster><lastBuildDate>Thu, 14 Dec 2023 21:48:26 &#43;0800</lastBuildDate><atom:link href="https://zhiwayzhang.github.io/tags/filebench/" rel="self" type="application/rss+xml" /><item>
+  <title>使用Filebench测试ZNS&#43;F2FS</title>
+  <link>https://zhiwayzhang.github.io/posts/filebench/</link>
+  <pubDate>Thu, 14 Dec 2023 21:48:26 &#43;0800</pubDate>
+  <author>Zhiwei Zhang</author>
+  <guid>https://zhiwayzhang.github.io/posts/filebench/</guid>
+  <description><![CDATA[<p>本文的内容主要参考了filebench在<code>USENIX ;login:'16</code>上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。</p>]]></description>
+</item>
+</channel>
+</rss>

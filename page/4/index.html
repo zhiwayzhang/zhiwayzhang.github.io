@@ -112,6 +112,43 @@
   </div>
 </header><main class="container container-reverse"><div class="page home posts"><div class="home-profile"><div class="home-avatar"><a href="/" title="Home"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+    <a href="/posts/multidisksystems/">【存储系统】多硬盘存储系统</a>
+  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-10-05 16:54:42'>published on <time datetime="2022-10-05">2022-10-05</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 多硬盘系统 对多硬盘系统可靠性的度量，上图从故障产生，故障产生程序错误，错误检测，修复故障四个时间节点为一个周期。
+三个可靠性的指标：
+可靠性：通过错误产生到发现错误的时间间隔MTTF来衡量
+可维护性：通过发现错误到错误修复的时间间隔来衡量，定义系统修复的能力
+可用性：通过系统中非修复时间所占的比例，可以对外提供服务的时间占比，$EA=\frac{MTTF}{MTTF+MTTR}$
+MTBF=MTTR+MTTF，两故障之间的时间间隔
+恢复一块硬盘的代价很高，为了提高系统可用性，需要构建多盘系统，在某块磁盘故障时仍然能正常工作。
+每秒的I/O请求峰值为1200，R/W比例为2:1，分别使用RAID 1/5，计算峰值的硬盘负载
+总的R/W分别为800/400
+RAID 1：写操作需要翻倍，总负载为800+400*2=1600
+RAID 5：写操作翻四倍，总负载为800+400*4=2400
+使用多盘系统的目的：
+提高存储容量 提高性能 负载均衡 Disk Striping 带宽 吞吐量 提高可靠性 容错 基于奇偶校验的保护 创建副本 JBOD（Just a Bunch Of Disks）单纯对硬盘进行组合，只提高存储容量
+负载均衡 静态：某一地址固定映射到某块硬盘
+动态：热点数据分配到不同的硬盘中
+按照数据块：将一个数据划分后存储到所有硬盘中（Disk Striping 条带化）
+Disk Striping 按一定大小对数据分块（stripe unit/block），然后依次存储到各个硬盘中
+分配规则使用轮询枚举，通过取模判断存储的磁盘编号，根据余数确定偏移量
+Stripe Unit大小设置一般为2M、4M、16M，太大丧失负载均衡能力，太小会在寻址上花费太多时间
+磁盘失效 对于JBOD、Striping某块盘失效，整个文件系统都将失效
+可以通过备份来解决，要花费较长的时间
+多盘系统的MTTF为第一块磁盘失效的时间，比单盘系统时间短很多
+解决方案：Redundancy冗余存储
+Redundancy 存储副本 存储两份或更多的副本，采用三副本的服务有HDFS/GFS/Cloud Storage
+Disk Mirroring 磁盘镜像，分主从磁盘，从盘基于主盘进行同步，可以从任意盘进行读取
+有较高的可用性
+花费较高
+写性能降低，磁盘之间需要同步，受限于最慢同步的磁盘
+读性能提高，请求被分散到各个磁盘
+磁盘镜像可以与结合条带化
+先做Mirroring再做Striping (RAID 10)
+若有磁盘故障，会损失1/2的数据
+先做Striping再做Mirroring (RAID 01)</div><div class="post-footer">
+    <a href="/posts/multidisksystems/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a><a href='/tags/raid/' class="post-tag">RAID</a><a href='/tags/%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C/' class="post-tag">奇偶校验</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
     <a href="/posts/mainmemory/">【存储技术基础】主存</a>
   </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-09-24 18:26:22'>published on <time datetime="2022-09-24">2022-09-24</time></span>&nbsp;<span class="post-category">included in <a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div><div class="content">0x00 主存 当前面临的问题：
 容量问题、带宽问题、QoS保证
@@ -228,17 +265,6 @@ SSD多个颗粒可以并行I/O，总体上速度快
 Assignment 有一个服务器集群（4台），针对I/O 500测试，需要考虑哪些问题？</div><div class="post-footer">
     <a href="/posts/storage/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/storage/' class="post-tag">Storage</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-    <a href="/posts/github_workflow/">使用GitHub Workflow工作流自动部署静态博客</a>
-  </h1><div class="post-meta"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>&nbsp;<span class="post-publish" title='2022-08-30 09:27:53'>published on <time datetime="2022-08-30">2022-08-30</time></span>&nbsp;<span class="post-category">included in <a href="/categories/web-development/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Web Development</a></span></div><div class="content">Background 自很久以前就开始使用静态博客，并且在GitHub Pages上部署后同时在服务器上进行同步，每次push新的修改后都需要在服务器上手动pull，因此决定探究使用Github Workflow自动化部署静态博客的解决方案。
-Intro Github Workflows 在仓库的目录下，创建.github/workflows目录，目录内存放需要使用的工作流配置文件。
-例如：
-1 2 3 .github └── workflows └── rsync-action.yml Rsync Action Github提供了很全面的Actions操作，包括Hooks功能，支持在对仓库进行push、merge等操作后触发对应的脚本。对于本需求，我们需要使用GitHub的Rsync Action插件。
-插件主页 Rsync Deployments Action
-包含如下参数：
-switches* - The first is for any initial/required rsync flags, eg: -avzr --delete rsh - Remote shell commands path - The source path. Defaults to GITHUB_WORKSPACE and is relative to it remote_path* - The deployment target path remote_host* - The remote host remote_port - The remote port.</div><div class="post-footer">
-    <a href="/posts/github_workflow/">Read More</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/web/' class="post-tag">Web</a><a href='/tags/git/' class="post-tag">git</a><a href='/tags/ci/cd/' class="post-tag">CI/CD</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -278,5 +304,5 @@ switches* - The first is for any initial/required rsync flags, eg: -avzr --delet
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">Theme FixIt works best with JavaScript enabled.</div>
   </noscript>
-</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","editLockTitle":"Lock editable code block","editUnLockTitle":"Unlock editable code block","editable":true,"maxShownLines":10},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
+</div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/github-dark.min.css"><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js" defer></script><script>window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script src="/js/theme.min.js" defer></script></body>
 </html>

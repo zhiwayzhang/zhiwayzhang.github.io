@@ -11,7 +11,7 @@
 <meta name="description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。" /><meta name="keywords" content='Filebench, Benchmark, File System, F2FS, ZNS' /><meta itemprop="name" content="使用Filebench测试ZNS&#43;F2FS">
 <meta itemprop="description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。"><meta itemprop="datePublished" content="2023-12-14T21:48:26+08:00" />
 <meta itemprop="dateModified" content="2023-12-14T21:48:26+08:00" />
-<meta itemprop="wordCount" content="1242">
+<meta itemprop="wordCount" content="1330">
 <meta itemprop="keywords" content="Filebench,Benchmark,File System,F2FS,ZNS," /><meta property="og:title" content="使用Filebench测试ZNS&#43;F2FS" />
 <meta property="og:description" content="本文的内容主要参考了filebench在USENIX ;login:&#39;16上的文章（正值filebench 1.5发布）和官方仓库的wiki，filebench从2005年开源到今天已经过去了18年了，github最后一次commit截止在了3年前，之后也没有维护过了，不过filebench目前已经比较完善了，也得到了学术界比较广泛的认可，到今天依然还能拿来跑一些benchmark。本篇文章主要目的是解释一些filebench中的参数，几个预定义工作负载，最后来介绍如何使用filebench来测试ZNS的性能。" />
 <meta property="og:type" content="article" />
@@ -33,7 +33,7 @@
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https:\/\/zhiwayzhang.github.io\/posts\/filebench\/"
-    },"genre": "posts","keywords": "Filebench, Benchmark, File System, F2FS, ZNS","wordcount":  1242 ,
+    },"genre": "posts","keywords": "Filebench, Benchmark, File System, F2FS, ZNS","wordcount":  1330 ,
     "url": "https:\/\/zhiwayzhang.github.io\/posts\/filebench\/","datePublished": "2023-12-14T21:48:26+08:00","dateModified": "2023-12-14T21:48:26+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
@@ -130,7 +130,7 @@
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/zhiwayzhang" title="Author"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><img loading="lazy" src="/img/avatar.png" srcset="/img/avatar.png, /img/avatar.png 1.5x, /img/avatar.png 2x" sizes="auto" data-title="Zhiwei Zhang" data-alt="Zhiwei Zhang" class="avatar" style="background: url(/svg/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;this.alt=this.dataset.alt;for(const a of ['style','data-title','data-alt','onerror','onload']){this.removeAttribute(a);}"/>&nbsp;Zhiwei Zhang</a></span>
           <span class="post-category">included in <a href="/categories/tech/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Tech</a>&ensp;<a href="/categories/notes/"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Notes</a></span></div>
-      <div class="post-meta-line"><span title="published on 2023-12-14 21:48:26"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-14">2023-12-14</time></span>&nbsp;<span title="Updated on 2023-12-14 21:48:26"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-14">2023-12-14</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>1242 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>6 minutes</span>&nbsp;</div>
+      <div class="post-meta-line"><span title="published on 2023-12-14 21:48:26"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-14">2023-12-14</time></span>&nbsp;<span title="Updated on 2023-12-14 21:48:26"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden="true"></i><time datetime="2023-12-14">2023-12-14</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>1330 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>7 minutes</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>Contents</span>
@@ -1031,8 +1031,43 @@
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo mount -t f2fs /dev/nvme0n1 /mnt/f2fs/</span></span></code></pre></td></tr></table>
 </div>
-</div><p>挂载成功后就可以使用filebench对ZNS进行性能测试了，还需要注意要更改filebench负载中的目录配置，比如<code>/mnt/f2fs</code>，一般要修改dir变量或者fileset path字段；同时要注意负载中描述的文件大小是否超出了SSD的容量，要通过计算将其修改为合适的大小。</p>
-<h1 id="reference">Reference</h1>
+</div><p>挂载成功后就可以使用filebench对ZNS进行性能测试了，还需要注意要更改filebench负载中的目录配置，比如<code>/mnt/f2fs</code>，一般要修改dir变量或者fileset path字段；同时要注意负载中描述的文件大小是否超出了SSD的容量，要通过计算将其修改为合适的大小。这里还需要注意，如果要测试的文件数量超过了1048576(1024*1024)，需要改一下<a href="https://github.com/filebench/filebench/blob/22620e602cbbebad90c0bd041896ebccf70dbf5f/ipc.h#L77"target="_blank" rel="external nofollow noopener noreferrer">ipc.h#L77</a>中的代码，否则会遇到<code>Out of shared memory (1)</code>的报错，完整的报错信息如下：</p>
+<div class="highlight" id="id-25"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~&gt; sudo filebench -f workload.f
+</span></span><span class="line"><span class="cl">Filebench Version 1.5-alpha3
+</span></span><span class="line"><span class="cl">0.000: Allocated 177MB of shared memory
+</span></span><span class="line"><span class="cl">0.006: Varmail Version 3.0 personality successfully loaded
+</span></span><span class="line"><span class="cl">0.006: Populating and pre-allocating filesets
+</span></span><span class="line"><span class="cl">0.552: Out of shared memory <span class="o">(</span>1<span class="o">)</span>! around line <span class="m">34</span>
+</span></span><span class="line"><span class="cl">0.552: fileset_populate_file: Can<span class="err">&#39;</span>t malloc filesetentry around line <span class="m">34</span>
+</span></span><span class="line"><span class="cl">0.552: Failed to create filesets around line <span class="m">34</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个问题的原因是filebench把支持的最大文件数量硬编码了，可以按需调大一些，修改后需要重新编译并install（参考<a href="https://github.com/filebench/filebench/issues/90#issuecomment-238138017"target="_blank" rel="external nofollow noopener noreferrer">Issues #90</a>，<a href="https://stackoverflow.com/questions/22688406/filebench-error-out-of-shared-memory-when-i-try-to-set-nfiles-a-very-big-numbe"target="_blank" rel="external nofollow noopener noreferrer">StackOverflow #22688406</a>）。例如修改为：</p>
+<div class="highlight" id="id-26"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#define	FILEBENCH_NFILESETS		(16)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define	FILEBENCH_NFILESETENTRIES	(1024 * 1024 * 10) </span><span class="c1">// 这个参数限制了每个fileset文件数量，按需扩大即可
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define	FILEBENCH_NPROCFLOWS		(1024)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define	FILEBENCH_NTHREADFLOWS 		(1024)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="reference">Reference</h1>
 <ol>
 <li>
 <p><a href="https://www.usenix.org/system/files/login/articles/login_spring16_02_tarasov.pdf"target="_blank" rel="external nofollow noopener noreferrer">[USENIX] Login'16</a></p>
